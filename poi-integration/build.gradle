@@ -17,9 +17,6 @@
 
 import java.util.regex.Pattern
 
-final String TEST9_SRC = 'src/test/java9'
-final String TEST9_OUT = layout.buildDirectory.dir('classes/java9/test/').get().asFile.absolutePath
-final String VERSIONS9 = 'META-INF/versions/9'
 final boolean IBMVM = System.getProperty("java.vendor").contains("IBM")
 
 configurations {
@@ -29,7 +26,7 @@ configurations {
 
 sourceSets {
     test {
-        output.dir(TEST9_OUT, builtBy: 'compileTest9')
+        output.dir(TEST_JPMS_OUT, builtBy: 'compileTestModuleInfo')
         if (IBMVM) {
             java {
                 exclude '**/HeapDump**'
@@ -39,9 +36,9 @@ sourceSets {
 }
 
 dependencies {
-    testImplementation 'org.apache.ant:ant:1.10.15'
-    testImplementation 'org.apache.commons:commons-collections4:4.5.0'
-    testImplementation 'com.google.guava:guava:33.5.0-jre'
+    testImplementation "org.apache.ant:ant:${antVersion}"
+    testImplementation 'org.apache.commons:commons-collections4:4.6.0'
+    testImplementation "com.google.guava:guava:${guavaVersion}"
     testImplementation 'org.apache.commons:commons-csv:1.14.1'
 
     misc(project(':poi-ooxml')) {
@@ -77,8 +74,9 @@ dependencies {
     }
     testImplementation project(path: ':poi-ooxml-lite-agent', configuration: 'archives')
     testImplementation "org.apache.logging.log4j:log4j-slf4j2-impl:${log4jVersion}"
-    testImplementation 'org.slf4j:slf4j-simple:2.0.17'
+    testImplementation "org.slf4j:slf4j-simple:${slf4jVersion}"
     testRuntimeOnly "org.apiguardian:apiguardian-api:${apiGuardianVersion}"
+    testRuntimeOnly "org.jspecify:jspecify:${jspecifyVersion}"
 }
 
 final String MODULE_NAME = 'org.apache.poi.stress'
@@ -91,35 +89,24 @@ final String OOXML_LITE_AGENT = "../build/dist/maven/poi-ooxml-lite-agent/poi-oo
 final String OOXML_LITE_REPORT = '../src/resources/ooxml-lite-report'
 final String OOXML_LITE_INCLUDES = "^(com/microsoft/schemas|org/(etsi|openxmlformats|w3/)|org/apache/poi/schemas)"
 
-tasks.register('compileTest9', JavaCompile) {
-    dependsOn 'compileTestJava', ':poi-ooxml:testJar', ':poi-scratchpad:testJar', ':poi-examples:jar'
-
-    javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
-    }
-    sourceCompatibility = 11
-    targetCompatibility = 11
-    destinationDirectory = file(TEST9_OUT + VERSIONS9)
-    source = file(TEST9_SRC)
-    options.compilerArgs = [
-            '--patch-module', "${MODULE_NAME}=${(sourceSets.main.output.classesDirs + sourceSets.test.output.classesDirs).asPath}",
-            '--module-path', files(MODULE_COMPILE_PATH).asPath
-    ]
-    classpath = files()
-}
+registerModuleInfoCompile(name: 'compileTestModuleInfo',
+    dependsOn: ['compileTestJava', ':poi-ooxml:testJar', ':poi-scratchpad:testJar', ':poi-examples:jar'],
+    src: TEST_JPMS_SRC, out: TEST_JPMS_OUT, module: MODULE_NAME,
+    patch: sourceSets.main.output.classesDirs + sourceSets.test.output.classesDirs,
+    modulePath: MODULE_COMPILE_PATH)
 
 
 jar {
     destinationDirectory = file("../build/dist/maven/${base.archivesName.get()}")
 
     manifest {
-        attributes('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')
+        attributes('Automatic-Module-Name': MODULE_NAME)
     }
 }
 
 // Create a separate jar for test-code to depend on it in other projects
 // See http://stackoverflow.com/questions/5144325/gradle-test-dependency
-task testJar(type: Jar, dependsOn: [ testClasses, compileTest9 ] ) {
+task testJar(type: Jar, dependsOn: [ testClasses, compileTestModuleInfo ] ) {
     destinationDirectory = file("../build/dist/maven/${base.archivesName.get()}-tests")
 
     setArchiveClassifier 'tests'
@@ -127,10 +114,6 @@ task testJar(type: Jar, dependsOn: [ testClasses, compileTest9 ] ) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     from sourceSets.test.output + sourceSets.main.output
-
-    manifest {
-        attributes('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')
-    }
 }
 
 artifacts {
@@ -143,7 +126,28 @@ test {
 
     dependsOn { testJar }
 
-    systemProperties['junit.jupiter.execution.parallel.enabled'] = 'true'
+    // TestAllFiles materialises several large workbooks at once (the XSSF handlers hold every
+    // decompressed part of a stream-opened workbook on the heap, and load each file two or
+    // three times over), so it needs more heap than the 2g the root build.gradle gives the
+    // other modules: under heap pressure the JVM first stalls in "Retried waiting for GCLocker
+    // too often" and then kills the JUnit engine with an OutOfMemoryError.
+    maxHeapSize = '3g'
+
+    // CI_BUILD is what the Jenkins nodes set; GitHub Actions sets CI=true.
+    if (Boolean.valueOf(System.getenv("CI_BUILD")) || Boolean.valueOf(System.getenv("CI"))) {
+        // On CI, also cap the parallelism: the default dynamic strategy runs one thread per
+        // processor, and several tests materialising large XSSF workbooks concurrently (the
+        // XSSF additional tests load each workbook twice via ExcelComparator) drove the test
+        // JVM into OutOfMemoryError on the Jenkins nodes, with tests slowing down
+        // progressively as the heap filled.
+        // Note: these systemProperties deliberately override the strictly-serial CI
+        // settings from the root build.gradle for this module.
+        systemProperties['junit.jupiter.execution.parallel.enabled'] = 'true'
+        systemProperties['junit.jupiter.execution.parallel.config.strategy'] = 'fixed'
+        systemProperties['junit.jupiter.execution.parallel.config.fixed.parallelism'] = '2'
+    } else {
+        systemProperties['junit.jupiter.execution.parallel.enabled'] = 'true'
+    }
 
     doFirst {
         jvmArgs += [
@@ -153,6 +157,10 @@ test {
         ]
         if (NO_SCRATCHPAD) {
             systemProperty 'scratchpad.ignore', 'true'
+        } else {
+            // org.apache.poi.stress only has a static (optional) dependency on scratchpad,
+            // so it has to be added to the module graph explicitly
+            jvmArgs += ['--add-modules', 'org.apache.poi.scratchpad']
         }
     }
 }

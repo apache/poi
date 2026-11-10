@@ -103,7 +103,8 @@ public final class DIB extends Bitmap {
         LittleEndian.putInt(header, 10, offset);
 
         //DIB data is the header + dib bytes
-        byte[] dib = IOUtils.safelyAllocate(header.length + (long)data.length, RecordAtom.getMaxRecordLength());
+        byte[] dib = IOUtils.safelyAllocate(header.length + (long)data.length,
+                RecordAtom.getMaxRecordLength(), "RecordAtom.setMaxRecordLength()");
         System.arraycopy(header, 0, dib, 0, header.length);
         System.arraycopy(data, 0, dib, header.length, data.length);
 

@@ -82,6 +82,17 @@ public class XSLFShadow extends XSLFShape implements Shadow<XSLFShape,XSLFTextPa
     }
 
     /**
+     * @return {@code true} if the shadow offset rotates and flips with its shape, which is the default if unset
+     *
+     * @since 6.1.0
+     */
+    @Override
+    public boolean isRotateWithShape() {
+        CTOuterShadowEffect ct = (CTOuterShadowEffect)getXmlObject();
+        return !ct.isSetRotWithShape() || ct.getRotWithShape();
+    }
+
+    /**
      * @return the color of this shadow.
      * Depending whether the parent shape is filled or stroked, this color is used to fill or stroke this shadow
      */

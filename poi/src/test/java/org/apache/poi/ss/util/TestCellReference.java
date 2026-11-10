@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.util;
 
+import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -322,7 +324,7 @@ final class TestCellReference {
 
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
             () -> CellReference.convertColStringToIndex("A$"));
-        assertTrue(e.getMessage().contains("A$"));
+        assertContains(e.getMessage(), "A$");
     }
 
     @Test
@@ -431,7 +433,7 @@ final class TestCellReference {
         String unescapedName = "'Don't Touch'!A5";
         new CellReference(escapedName);
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> new CellReference(unescapedName));
-        assertTrue(e.getMessage().startsWith("Bad sheet name quote escaping: "));
+        assertStartsWith(e.getMessage(), "Bad sheet name quote escaping: ");
     }
 
     @Test

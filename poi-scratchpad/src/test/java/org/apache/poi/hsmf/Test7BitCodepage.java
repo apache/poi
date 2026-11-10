@@ -19,8 +19,10 @@ package org.apache.poi.hsmf;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 
 import java.io.IOException;
+import java.time.Duration;
 
 import org.apache.poi.POIDataSamples;
 import org.junit.jupiter.api.BeforeEach;
@@ -85,5 +87,19 @@ public final class Test7BitCodepage {
        assertEquals("Subject öäü Subject", htmlbodybinary_utf_8.getSubject());
        assertNull(htmlbodybinary_utf_8.getTextBody());
        assertEquals("<!DOCTYPE html><html><meta charset=\\\"utf-8\\\"><body>HTML öäü</body></html>", htmlbodybinary_utf_8.getHtmlBody());
+   }
+
+   @Test
+   void testCharsetFromContentType() {
+       assertEquals("utf-8", MAPIMessage.getCharsetFromContentType("Content-Type: text/plain; charset=\"utf-8\""));
+       assertEquals("windows-1251", MAPIMessage.getCharsetFromContentType("content-type: text/plain; CHARSET=windows-1251"));
+       assertEquals("koi8-r", MAPIMessage.getCharsetFromContentType("Content-Type: text/plain; charset=x; charset='koi8-r"));
+       assertNull(MAPIMessage.getCharsetFromContentType("Content-Type: text/plain; charset=utf-8; format=flowed"));
+       assertNull(MAPIMessage.getCharsetFromContentType("Content-Type: text/plain;\n charset=utf-8"));
+       assertNull(MAPIMessage.getCharsetFromContentType("Content-Type: text/plain"));
+
+       // this used to take quadratic time, as every "charset=" was tried in turn
+       String header = "content-type:" + "charset=a".repeat(200_000) + ";";
+       assertTimeoutPreemptively(Duration.ofSeconds(10), () -> assertNull(MAPIMessage.getCharsetFromContentType(header)));
    }
 }

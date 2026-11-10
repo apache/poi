@@ -161,8 +161,7 @@ public final class IOUtils {
                 bos.write(new byte[limit-readBytes]);
             }
             byte[] peekedBytes = bos.toByteArray();
-            if(stream instanceof PushbackInputStream) {
-                PushbackInputStream pin = (PushbackInputStream)stream;
+            if(stream instanceof PushbackInputStream pin) {
                 pin.unread(peekedBytes, 0, readBytes);
             } else {
                 stream.reset();
@@ -197,7 +196,6 @@ public final class IOUtils {
         return toByteArray(stream, length, Integer.MAX_VALUE);
     }
 
-
     /**
      * Reads up to {@code length} bytes from the input stream, and returns the bytes read.
      *
@@ -213,7 +211,7 @@ public final class IOUtils {
      * @throws RecordFormatException If the requested length is invalid.
      */
     public static byte[] toByteArray(InputStream stream, final int length, final int maxLength) throws IOException {
-        return toByteArray(stream, length, maxLength, true, length != Integer.MAX_VALUE);
+        return toByteArray(stream, length, maxLength, true, length != Integer.MAX_VALUE, null);
     }
 
     /**
@@ -232,9 +230,85 @@ public final class IOUtils {
      * @since 5.4.1
      */
     public static byte[] toByteArray(InputStream stream, final long length, final int maxLength) throws IOException {
-        return toByteArray(stream,
-                length > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) length,
-                maxLength, true, length != Integer.MAX_VALUE);
+        checkLengthIsAnInt(length);
+        return toByteArray(stream, Math.toIntExact(length),
+                maxLength, true, length != Integer.MAX_VALUE, null);
+    }
+
+    /**
+     * Reads up to {@code length} bytes from the input stream, and returns the bytes read.
+     *
+     * @param stream The byte stream of data to read.
+     * @param length The maximum length to read, use {@link Integer#MAX_VALUE} to read the stream
+     *               until EOF
+     * @param maxLength if the input is equal to/longer than {@code maxLength} bytes,
+     *                  then throw an {@link IOException} complaining about the length.
+     *                  use {@link Integer#MAX_VALUE} to disable the check - if {@link #setByteArrayMaxOverride(int)} is
+     *                  set then that max of that value and this maxLength is used
+     * @param limitMethod name of method that can be used to change the max length
+     * @return A byte array with the read bytes.
+     * @throws IOException If reading data fails or EOF is encountered too early for the given length.
+     * @throws RecordFormatException If the requested length is invalid.
+     * @since 6.0.0
+     */
+    public static byte[] toByteArray(final InputStream stream, final int length, final int maxLength,
+                                     final String limitMethod) throws IOException {
+        return toByteArray(stream, length,
+                maxLength, true, length != Integer.MAX_VALUE, limitMethod);
+    }
+
+    /**
+     * Reads up to {@code length} bytes from the input stream, and returns the bytes read.
+     *
+     * @param stream The byte stream of data to read.
+     * @param length The maximum length to read, use {@link Integer#MAX_VALUE} to read the stream
+     *               until EOF
+     * @param maxLength if the input is equal to/longer than {@code maxLength} bytes,
+     *                  then throw an {@link IOException} complaining about the length.
+     *                  use {@link Integer#MAX_VALUE} to disable the check - if {@link #setByteArrayMaxOverride(int)} is
+     *                  set then that max of that value and this maxLength is used
+     * @param limitMethod name of method that can be used to change the max length
+     * @return A byte array with the read bytes.
+     * @throws IOException If reading data fails or EOF is encountered too early for the given length.
+     * @throws RecordFormatException If the requested length is invalid.
+     * @since 6.0.0
+     */
+    public static byte[] toByteArray(final InputStream stream, final long length, final int maxLength,
+                                     final String limitMethod) throws IOException {
+        checkLengthIsAnInt(length);
+        return toByteArray(stream, Math.toIntExact(length),
+                maxLength, true, length != Integer.MAX_VALUE, limitMethod);
+    }
+
+    /**
+     * Reads up to {@code length} bytes from the input stream, and returns the bytes read,
+     * while capping the initial buffer allocation.
+     *
+     * <p>Use this variant when {@code length} comes from untrusted input (e.g. a size field in a
+     * file header): the initial buffer is at most {@code maxInitBufferSize} bytes, so a bogus
+     * huge declared length cannot force a large eager allocation before any data is read. The
+     * buffer still grows as needed while real data arrives, bounded by {@code length} and
+     * {@code maxLength}.</p>
+     *
+     * @param stream The byte stream of data to read.
+     * @param length The maximum length to read, use {@link Integer#MAX_VALUE} to read the stream
+     *               until EOF
+     * @param maxLength if the input is equal to/longer than {@code maxLength} bytes,
+     *                  then throw an {@link IOException} complaining about the length.
+     *                  use {@link Integer#MAX_VALUE} to disable the check - if {@link #setByteArrayMaxOverride(int)} is
+     *                  set then that max of that value and this maxLength is used
+     * @param maxInitBufferSize the maximum initial size of the internal buffer; values &lt;= 0 disable
+     *                          the cap. Reads of more than this many bytes grow the buffer as needed.
+     * @param limitMethod name of method that can be used to change the max length
+     * @return A byte array with the read bytes.
+     * @throws IOException If reading data fails or EOF is encountered too early for the given length.
+     * @throws RecordFormatException If the requested length is invalid.
+     * @since 6.0.0
+     */
+    public static byte[] toByteArray(final InputStream stream, final int length, final int maxLength,
+                                     final int maxInitBufferSize, final String limitMethod) throws IOException {
+        return toByteArray(stream, length, maxLength, true, length != Integer.MAX_VALUE,
+                maxInitBufferSize, limitMethod);
     }
 
     /**
@@ -251,18 +325,58 @@ public final class IOUtils {
      * @since 5.2.1
      */
     public static byte[] toByteArrayWithMaxLength(InputStream stream, final int maxLength) throws IOException {
-        return toByteArray(stream, maxLength, maxLength, false, false);
+        return toByteArray(stream, maxLength, maxLength, false, false, null);
     }
 
     private static byte[] toByteArray(InputStream stream, final int length, final int maxLength,
-                                      final boolean checkEOFException, final boolean isLengthKnown) throws IOException {
+                                      final boolean checkEOFException, final boolean isLengthKnown,
+                                      final String limitMethod) throws IOException {
+        return toByteArray(stream, length, maxLength, checkEOFException, isLengthKnown, -1, limitMethod);
+    }
+
+    private static byte[] toByteArray(InputStream stream, final int length, final int maxLength,
+                                      final boolean checkEOFException, final boolean isLengthKnown,
+                                      final int maxInitBufferSize, final String limitMethod) throws IOException {
         final int derivedMaxLength = Math.max(maxLength, BYTE_ARRAY_MAX_OVERRIDE);
         if ((length != Integer.MAX_VALUE) || (derivedMaxLength != Integer.MAX_VALUE)) {
-            checkLength(length, derivedMaxLength);
+            if (limitMethod != null) {
+                checkLength(length, derivedMaxLength, limitMethod);
+            } else {
+                checkLength(length, derivedMaxLength);
+            }
         }
 
         final int derivedLen = isLengthKnown && length >= 0 ? Math.min(length, derivedMaxLength) : derivedMaxLength;
-        final int byteArrayInitLen = calculateByteArrayInitLength(isLengthKnown, length, derivedMaxLength);
+        final int byteArrayInitLen = calculateByteArrayInitLength(isLengthKnown, length, derivedMaxLength, maxInitBufferSize);
+        if (isLengthKnown && length >= 0) {
+            // Read straight into the result array. Going through a ByteArrayOutputStream would
+            // hold a second full copy of the data while toByteArray() copies it out, doubling the
+            // transient memory of every sized read (zip entries, records, ...).
+            // If the initial allocation is capped below the declared length (the length may come
+            // from untrusted input), grow the array as real data arrives - doubling, but never
+            // past the declared length - so a complete read ends in an exactly-sized array with
+            // no final copy, and the peak stays below twice the payload.
+            // Keep reading in DEFAULT_BUFFER_SIZE chunks as the buffered path does, so that
+            // streams which enforce limits per read (e.g. the zip-bomb ratio check) report
+            // the same byte counts as before.
+            byte[] result = new byte[byteArrayInitLen];
+            int totalBytes = 0, readBytes;
+            do {
+                if (totalBytes == result.length) {
+                    result = Arrays.copyOf(result, (int) Math.min(derivedLen,
+                            Math.max(2L * result.length, DEFAULT_BUFFER_SIZE)));
+                }
+                readBytes = stream.read(result, totalBytes, Math.min(DEFAULT_BUFFER_SIZE, result.length - totalBytes));
+                totalBytes += Math.max(readBytes, 0);
+            } while (totalBytes < derivedLen && readBytes > -1);
+            if (totalBytes == derivedLen) {
+                return result;
+            }
+            if (checkEOFException) {
+                throw new EOFException("unexpected EOF - expected len: " + derivedLen + " - actual len: " + totalBytes);
+            }
+            return Arrays.copyOf(result, totalBytes);
+        }
         final int internalBufferLen = DEFAULT_BUFFER_SIZE;
         try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(byteArrayInitLen).get()) {
             byte[] buffer = new byte[internalBufferLen];
@@ -290,8 +404,17 @@ public final class IOUtils {
 
     //open for testing
     static int calculateByteArrayInitLength(final boolean isLengthKnown, final int length, final int maxLength) {
+        return calculateByteArrayInitLength(isLengthKnown, length, maxLength, -1);
+    }
+
+    //open for testing
+    static int calculateByteArrayInitLength(final boolean isLengthKnown, final int length, final int maxLength,
+                                            final int maxInitBufferSize) {
         final int derivedLen = Math.min(length, maxLength);
-        final int bufferLen = isLengthKnown ? derivedLen : Math.min(DEFAULT_BUFFER_SIZE, derivedLen);
+        int bufferLen = isLengthKnown ? derivedLen : Math.min(DEFAULT_BUFFER_SIZE, derivedLen);
+        if (maxInitBufferSize > 0 && bufferLen > maxInitBufferSize) {
+            bufferLen = maxInitBufferSize;
+        }
         if (MAX_BYTE_ARRAY_INIT_SIZE > 0 && bufferLen > MAX_BYTE_ARRAY_INIT_SIZE) {
             return MAX_BYTE_ARRAY_INIT_SIZE;
         }
@@ -308,6 +431,15 @@ public final class IOUtils {
         }
     }
 
+    private static void checkLength(long length, int maxLength, String limitMethod) {
+        if (BYTE_ARRAY_MAX_OVERRIDE > 0) {
+            if (length > BYTE_ARRAY_MAX_OVERRIDE) {
+                throwRFE(length, BYTE_ARRAY_MAX_OVERRIDE);
+            }
+        } else if (length > maxLength) {
+            throwRFE(length, maxLength, limitMethod);
+        }
+    }
 
     /**
      * Returns an array (that shouldn't be written to!) of the
@@ -434,7 +566,14 @@ public final class IOUtils {
         long totalCount = 0;
         int readBytes = -1;
         do {
-            int todoBytes = (int)((limit < 0) ? DEFAULT_BUFFER_SIZE : Math.min(limit-totalCount, DEFAULT_BUFFER_SIZE));
+            final int todoBytes;
+            try {
+                todoBytes = limit < 0 ?
+                        DEFAULT_BUFFER_SIZE :
+                        Math.toIntExact(Math.min(limit - totalCount, DEFAULT_BUFFER_SIZE));
+            } catch (ArithmeticException e) {
+                throw new IOException("Int Overflow calculating todoBytes", e);
+            }
             if (todoBytes > 0) {
                 readBytes = inp.read(buff, 0, todoBytes);
                 if (readBytes > 0) {
@@ -551,12 +690,14 @@ public final class IOUtils {
         if (toSkip == 0) {
             return 0L;
         }
-        // use dedicated buffer to avoid having other threads possibly access the bytes in a shared byte array
-        final byte[] skipBuffer = new byte[SKIP_BUFFER_SIZE];
+        // use dedicated buffer to avoid having other threads possibly access the bytes in a shared byte array,
+        // but no larger than needed, as most skips are only a few bytes
+        final byte[] skipBuffer = new byte[(int) Math.min(toSkip, SKIP_BUFFER_SIZE)];
         long remain = toSkip;
         while (remain > 0) {
             // See https://issues.apache.org/jira/browse/IO-203 for why we use read() rather than delegating to skip()
-            final long n = input.read(skipBuffer, 0, (int) Math.min(remain, SKIP_BUFFER_SIZE));
+            final long n = input.read(
+                    skipBuffer, 0, Math.toIntExact(Math.min(remain, skipBuffer.length)));
             if (n < 0) { // EOF
                 break;
             }
@@ -570,34 +711,76 @@ public final class IOUtils {
 
     public static byte[] safelyAllocate(long length, int maxLength) {
         safelyAllocateCheck(length, maxLength);
-
-        checkByteSizeLimit(length);
-
-        return new byte[(int)length];
+        try {
+            return new byte[Math.toIntExact(length)];
+        } catch (ArithmeticException e) {
+            throw new RecordFormatException("Int Overflow with length", e);
+        }
     }
 
+    public static byte[] safelyAllocate(long length, int maxLength, String limitMethod) {
+        safelyAllocateCheck(length, maxLength);
+        try {
+            return new byte[Math.toIntExact(length)];
+        } catch (ArithmeticException e) {
+            throw new RecordFormatException("Int Overflow with length", e);
+        }
+    }
+
+    /**
+     * This method is targeted at byte array based checks (or equivalents streams of bytes).
+     * Arrays of object instances will take up a lot more memory than the same number of bytes.
+     * So we have {@link ArrayUtil#safelyAllocateCheck(long, int, String)} for generic array creations
+     * and the limits applied in ArrayUtil are intended to be a lot lower than the IOUtil ones.
+     * @throws RecordFormatException if the length is negative or too long
+     */
     public static void safelyAllocateCheck(long length, int maxLength) {
-        if (length < 0L) {
-            throw new RecordFormatException("Can't allocate an array of length < 0, but had " + length + " and " + maxLength);
-        }
-        if (length > (long)Integer.MAX_VALUE) {
-            throw new RecordFormatException("Can't allocate an array > " + Integer.MAX_VALUE);
-        }
+        globalLengthChecks(length);
         checkLength(length, maxLength);
     }
 
+    /**
+     * This method is targeted at byte array based checks (or equivalents streams of bytes).
+     * Arrays of object instances will take up a lot more memory than the same number of bytes.
+     * So we have {@link ArrayUtil#safelyAllocateCheck(long, int, String)} for generic array creations
+     * and the limits applied in ArrayUtil are intended to be a lot lower than the IOUtil ones.
+     *
+     * @param length
+     * @param maxLength
+     * @param limitMethod name of method that can be used to change the limit
+     * @throws RecordFormatException if the length is negative or too long
+     */
+    public static void safelyAllocateCheck(long length, int maxLength, String limitMethod) {
+        globalLengthChecks(length);
+        checkLength(length, maxLength, limitMethod);
+    }
+
     public static byte[] safelyClone(byte[] src, int offset, int length, int maxLength) {
+        return safelyClone(src, offset, length, maxLength, null);
+    }
+
+    public static byte[] safelyClone(byte[] src, int offset, int length,
+                                     int maxLength, String limitMethod) {
         if (src == null) {
             return null;
         }
 
         if (offset < 0 || length < 0 || maxLength < 0) {
-            throw new RecordFormatException("Invalid offset/length specified: "
-                    + "offset: " + offset + ", lenght: " + length + ", maxLength: " + maxLength);
+            if (limitMethod == null) {
+                throw new RecordFormatException(String.format(Locale.ROOT, "Invalid offset/length specified: " +
+                        "offset: %d, length: %d, maxLength: %d", offset, length, maxLength));
+            }
+            throw new RecordFormatException(String.format(Locale.ROOT, "Invalid offset/length specified: " +
+                    "offset: %d, length: %d, maxLength: %d.%n" +
+                    "You can set a higher override value with %s.", offset, length, maxLength, limitMethod));
         }
 
         int realLength = Math.min(src.length - offset, length);
-        safelyAllocateCheck(realLength, maxLength);
+        if (limitMethod == null) {
+            safelyAllocateCheck(realLength, maxLength);
+        } else {
+            safelyAllocateCheck(realLength, maxLength, limitMethod);
+        }
         return Arrays.copyOfRange(src, offset, offset+realLength);
     }
 
@@ -639,12 +822,33 @@ public final class IOUtils {
         return file;
     }
 
+    /**
+     * Replaces Windows Style `\` chars with `/` to allow path comparisons.
+     *
+     * @since 6.0.0
+     */
+    public static String normalizePath(final String path) {
+        return path == null ? path : path.replace('\\', '/');
+    }
+
     private static void throwRFE(long length, int maxLength) {
+        throwRFE(length, maxLength, "IOUtils.setByteArrayMaxOverride()");
+    }
+
+    static void throwRFE(long length, int maxLength, String limitMethod) {
         throw new RecordFormatException(String.format(Locale.ROOT, "Tried to allocate an array of length %,d" +
-                        ", but the maximum length for this record type is %,d.%n" +
-                        "If the file is not corrupt and not large, please open an issue on bugzilla to request %n" +
-                        "increasing the maximum allowable size for this record type.%n" +
-                        "You can set a higher override value with IOUtils.setByteArrayMaxOverride()", length, maxLength));
+                ", but the maximum length for this record type is %,d.%n" +
+                "If the file is not corrupt and not large, please open an issue on bugzilla to request %n" +
+                "increasing the maximum allowable size for this record type.%n" +
+                "You can set a higher override value with %s.", length, maxLength, limitMethod));
+    }
+
+    // no override available for the limit
+    static void throwStrictLimitRFE(long length, int maxLength) {
+        throw new RecordFormatException(String.format(Locale.ROOT, "Tried to allocate an array of length %,d" +
+                ", but the maximum length for this record type is %,d.%n" +
+                "If the file is not corrupt and not large, please open an issue on bugzilla to request %n" +
+                "increasing the maximum allowable size for this record type.%n", length, maxLength));
     }
 
     private static void throwRecordTruncationException(final int maxLength) {
@@ -652,6 +856,23 @@ public final class IOUtils {
                 "for this record type is %,d.%n" +
                 "If the file is not corrupt and not large, please open an issue on bugzilla to request %n" +
                 "increasing the maximum allowable size for this record type.%n" +
-                "You can set a higher override value with IOUtils.setByteArrayMaxOverride()", maxLength));
+                "You can set a higher override value with IOUtils.setByteArrayMaxOverride().", maxLength));
+    }
+
+    static void globalLengthChecks(long length) {
+        if (length < 0L) {
+            throw new RecordFormatException(String.format(Locale.ROOT,
+                    "Tried to allocate an array with negative length; %d was requested.",
+                    length));
+        }
+        checkLengthIsAnInt(length);
+    }
+
+    static void checkLengthIsAnInt(long length) {
+        if (length > (long)Integer.MAX_VALUE) {
+            throw new RecordFormatException(String.format(Locale.ROOT,
+                    "Tried to allocate an array with length greater than max allowed int (%d); %d was requested.",
+                    Integer.MAX_VALUE, length));
+        }
     }
 }

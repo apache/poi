@@ -21,6 +21,8 @@ import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.LazyRefEval;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.MathUtil;
+import org.apache.poi.util.StringUtil;
 
 import java.time.DateTimeException;
 import java.util.regex.Pattern;
@@ -32,14 +34,17 @@ public final class OperandResolver {
 
     // Based on regular expression defined in JavaDoc at {@link java.lang.Double#valueOf}
     // modified to remove support for NaN, Infinity, Hexadecimal support and floating type suffixes
-    private static final String Digits    = "(\\p{Digit}+)";
-    private static final String Exp    = "[eE][+-]?"+Digits;
+    // The quantifiers are possessive: "digits, optional '.', optional digits" could otherwise split a run
+    // of digits in many ways, and text that is not a number made matches() take polynomial time.
+    // Each part can only end where the next one starts, so this accepts the same text.
+    private static final String Digits    = "\\p{Digit}++";
+    private static final String Exp    = "([eE][+-]?"+Digits+")?+";
     private static final String fpRegex    =
-                ("[\\x00-\\x20]*" +
+                ("[\\x00-\\x20]*+" +
                  "[+-]?(" +
-                   "("+Digits+"(\\.)?("+Digits+"?)("+Exp+")?)|"+
-                 "(\\."+Digits+"("+Exp+")?))"+
-                 "[\\x00-\\x20]*");
+                   "("+Digits+"(\\.\\p{Digit}*+)?+"+Exp+")|"+
+                 "(\\."+Digits+Exp+"))"+
+                 "[\\x00-\\x20]*+");
     private static final Pattern fpPattern = Pattern.compile(fpRegex);
 
     private OperandResolver() {
@@ -61,15 +66,15 @@ public final class OperandResolver {
     public static ValueEval getSingleValue(ValueEval arg, int srcCellRow, int srcCellCol)
             throws EvaluationException {
         final ValueEval result;
-        if (arg instanceof RefEval) {
-            result = chooseSingleElementFromRef((RefEval) arg);
-        } else if (arg instanceof AreaEval) {
-            result = chooseSingleElementFromArea((AreaEval) arg, srcCellRow, srcCellCol);
+        if (arg instanceof RefEval re) {
+            result = chooseSingleElementFromRef(re);
+        } else if (arg instanceof AreaEval ae) {
+            result = chooseSingleElementFromArea(ae, srcCellRow, srcCellCol);
         } else {
             result = arg;
         }
-        if (result instanceof ErrorEval) {
-            throw new EvaluationException((ErrorEval) result);
+        if (result instanceof ErrorEval ee) {
+            throw new EvaluationException(ee);
         }
         return result;
     }
@@ -156,8 +161,8 @@ public final class OperandResolver {
     public static ValueEval chooseSingleElementFromArea(AreaEval ae,
             int srcCellRow, int srcCellCol) throws EvaluationException {
         ValueEval result = chooseSingleElementFromAreaInternal(ae, srcCellRow, srcCellCol);
-        if (result instanceof ErrorEval) {
-            throw new EvaluationException((ErrorEval) result);
+        if (result instanceof ErrorEval ee) {
+            throw new EvaluationException(ee);
         }
         return result;
     }
@@ -228,6 +233,7 @@ public final class OperandResolver {
      * <b>not</b>:<br>
      * &nbsp;&nbsp;{@code return (int)d; // wrong - rounds toward zero}
      *
+     * @throws EvaluationException (#NUM!) if the value does not fit an int
      */
     public static int coerceValueToInt(ValueEval ev) throws EvaluationException {
         if (ev == BlankEval.instance) {
@@ -236,7 +242,22 @@ public final class OperandResolver {
         double d = coerceValueToDouble(ev);
         // Note - the standard java type conversion from double to int truncates toward zero.
         // but Math.floor() truncates toward negative infinity
-        return (int)Math.floor(d);
+        return coerceDoubleToInt(Math.floor(d));
+    }
+
+    /**
+     * Converts a double to an int, truncating toward zero, for use as an integer argument of a function.
+     * Unlike {@link MathUtil#safeDoubleToInt(double)} a value that does not fit an int is reported the
+     * way Excel reports an unusable argument, as an error value rather than an exception.
+     *
+     * @throws EvaluationException (#NUM!) if the value is NaN, infinite or outside the int range
+     * @since 6.0.0
+     */
+    public static int coerceDoubleToInt(double d) throws EvaluationException {
+        if (Double.isNaN(d) || d > Integer.MAX_VALUE || d < Integer.MIN_VALUE) {
+            throw new EvaluationException(ErrorEval.NUM_ERROR);
+        }
+        return (int) d;
     }
 
     /**
@@ -255,12 +276,12 @@ public final class OperandResolver {
         if (ev == BlankEval.instance) {
             return 0.0;
         }
-        if (ev instanceof NumericValueEval) {
+        if (ev instanceof NumericValueEval num) {
             // this also handles booleans
-            return ((NumericValueEval)ev).getNumberValue();
+            return num.getNumberValue();
         }
-        if (ev instanceof StringEval) {
-            String sval = ((StringEval) ev).getStringValue();
+        if (ev instanceof StringEval sve) {
+            String sval = sve.getStringValue();
             Double dd = parseDouble(sval);
             if(dd == null) dd = parseDateTime(sval);
             if (dd == null) {
@@ -268,8 +289,7 @@ public final class OperandResolver {
             }
             return dd;
         }
-        if (ev instanceof LazyRefEval) {
-            final LazyRefEval lre = (LazyRefEval) ev;
+        if (ev instanceof LazyRefEval lre) {
             final ValueEval innerValueEval = lre.getInnerValueEvalForFirstSheet();
             if (innerValueEval == ev) {
                 throw new IllegalStateException("Circular lazy reference " + lre);
@@ -290,6 +310,7 @@ public final class OperandResolver {
      *  ".123" -&gt; 0.123<br>
      *  "1E4" -&gt; 1000<br>
      *  "-123" -&gt; -123.0<br>
+     *  "1E400" -&gt; {@code null} (beyond the range of a double; Excel has no infinite numbers)<br>
      *  These not supported yet:<br>
      *  " $ 1,000.00 " -&gt; 1000.0<br>
      *  "$1.25E4" -&gt; 12500.0<br>
@@ -300,13 +321,15 @@ public final class OperandResolver {
      */
     public static Double parseDouble(String pText) {
 
-        if (fpPattern.matcher(pText).matches())
+        if (fpPattern.matcher(pText).matches()) {
             try {
-                return Double.parseDouble(pText);
+                double d = Double.parseDouble(pText);
+                // Excel has no infinite numbers: text like "1E400" is not a number to it
+                return Double.isInfinite(d) ? null : Double.valueOf(d);
             } catch (NumberFormatException e) {
                 return null;
             }
-        else {
+        } else {
             return null;
         }
 
@@ -327,8 +350,7 @@ public final class OperandResolver {
      * @return the converted string value. never {@code null}
      */
     public static String coerceValueToString(ValueEval ve) {
-        if (ve instanceof StringValueEval) {
-            StringValueEval sve = (StringValueEval) ve;
+        if (ve instanceof StringValueEval sve) {
             return sve.getStringValue();
         }
         if (ve == BlankEval.instance) {
@@ -347,35 +369,34 @@ public final class OperandResolver {
             // TODO - remove 've == null' condition once AreaEval is fixed
             return null;
         }
-        if (ve instanceof BoolEval) {
-            return ((BoolEval) ve).getBooleanValue();
+        if (ve instanceof BoolEval be) {
+            return be.getBooleanValue();
         }
 
-        if (ve instanceof StringEval) {
+        if (ve instanceof StringEval se) {
             if (stringsAreBlanks) {
                 return null;
             }
-            String str = ((StringEval) ve).getStringValue();
-            if (str.equalsIgnoreCase("true")) {
+            String str = se.getStringValue();
+            if (StringUtil.equalsIgnoreCase(str, "true")) {
                 return Boolean.TRUE;
             }
-            if (str.equalsIgnoreCase("false")) {
+            if (StringUtil.equalsIgnoreCase(str, "false")) {
                 return Boolean.FALSE;
             }
             // else - string cannot be converted to boolean
             throw new EvaluationException(ErrorEval.VALUE_INVALID);
         }
 
-        if (ve instanceof NumericValueEval) {
-            NumericValueEval ne = (NumericValueEval) ve;
+        if (ve instanceof NumericValueEval ne) {
             double d = ne.getNumberValue();
             if (Double.isNaN(d)) {
                 throw new EvaluationException(ErrorEval.VALUE_INVALID);
             }
             return d != 0;
         }
-        if (ve instanceof ErrorEval) {
-            throw new EvaluationException((ErrorEval) ve);
+        if (ve instanceof ErrorEval ee) {
+            throw new EvaluationException(ee);
         }
         throw new IllegalStateException("Unexpected eval (" + ve.getClass().getName() + ")");
     }

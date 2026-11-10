@@ -47,11 +47,10 @@ public final class PPDrawingTextListing {
                 Record[] children = records[i].getChildRecords();
                 if (children != null && children.length != 0) {
                     for (int j = 0; j < children.length; j++) {
-                        if (children[j] instanceof PPDrawing) {
+                        if (children[j] instanceof PPDrawing ppd) {
                             System.out.println("Found PPDrawing at " + j + " in top level record " + i + " (" + records[i].getRecordType() + ")");
 
                             // Look for EscherTextboxWrapper's
-                            PPDrawing ppd = (PPDrawing) children[j];
                             EscherTextboxWrapper[] wrappers = ppd.getTextboxWrappers();
                             System.out.println("  Has " + wrappers.length + " textbox wrappers within");
 
@@ -64,12 +63,10 @@ public final class PPDrawingTextListing {
                                 Record[] pptatoms = tbw.getChildRecords();
                                 for (Record pptatom : pptatoms) {
                                     String text = null;
-                                    if (pptatom instanceof TextBytesAtom) {
-                                        TextBytesAtom tba = (TextBytesAtom) pptatom;
+                                    if (pptatom instanceof TextBytesAtom tba) {
                                         text = tba.getText();
                                     }
-                                    if (pptatom instanceof TextCharsAtom) {
-                                        TextCharsAtom tca = (TextCharsAtom) pptatom;
+                                    if (pptatom instanceof TextCharsAtom tca) {
                                         text = tca.getText();
                                     }
 

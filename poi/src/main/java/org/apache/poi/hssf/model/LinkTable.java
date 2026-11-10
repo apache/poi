@@ -38,6 +38,7 @@ import org.apache.poi.ss.formula.ptg.NameXPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Ref3DPtg;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Link Table (OOO pdf reference: 4.10.3 ) <p>
@@ -81,11 +82,11 @@ final class LinkTable {
             CRNRecord[] crns = new CRNRecord[nCRNs];
             for (int i = 0; i < crns.length; i++) {
                 Record record = rs.getNext();
-                if (!(record instanceof CRNRecord)) {
+                if (!(record instanceof CRNRecord crn)) {
                     throw new IllegalStateException("Record is not a CRNRecord: " +
                             (record == null ? "<null>" : record.getClass() + ": " + record) );
                 }
-                crns[i] = (CRNRecord) record;
+                crns[i] = crn;
             }
             _crns = crns;
         }
@@ -167,7 +168,7 @@ final class LinkTable {
          */
         public int getIndexOfName(String name) {
             for (int i = 0; i < _externalNameRecords.length; i++) {
-                if (_externalNameRecords[i].getText().equalsIgnoreCase(name)) {
+                if (StringUtil.equalsIgnoreCase(_externalNameRecords[i].getText(), name)) {
                     return i;
                 }
             }
@@ -359,7 +360,7 @@ final class LinkTable {
     }
 
     private static boolean isDuplicatedNames(NameRecord firstName, NameRecord lastName) {
-        return lastName.getNameText().equalsIgnoreCase(firstName.getNameText())
+        return StringUtil.equalsIgnoreCase(lastName.getNameText(), firstName.getNameText())
                 && isSameSheetNames(firstName, lastName);
     }
 
@@ -661,7 +662,7 @@ final class LinkTable {
         // find the posistion of the Add-In SupBookRecord in the workbook stream,
         // the created ExternalNameRecord will be appended to it
         for (org.apache.poi.hssf.record.Record record : _workbookRecordList.getRecords()) {
-            if (record instanceof SupBookRecord && ((SupBookRecord) record).isAddInFunctions()) {
+            if (record instanceof SupBookRecord sbr && sbr.isAddInFunctions()) {
                 break;
             }
             supLinkIndex++;
@@ -691,7 +692,7 @@ final class LinkTable {
      * Changes an external referenced file to another file.
      * A formular in Excel which refers a cell in another file is saved in two parts:
      * The referenced file is stored in an reference table. the row/cell information is saved separate.
-     * This method invokation will only change the reference in the lookup-table itself.
+     * This method invocation will only change the reference in the lookup-table itself.
      *
      * @param oldUrl The old URL to search for and which is to be replaced
      * @param newUrl The URL replacement

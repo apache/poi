@@ -23,37 +23,49 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 
 /**
- * @since 3.16-beta3
+ * @since 6.0.0
  */
 @Internal
-class XSSFBCellRange {
-    //TODO: Convert this to generate an AreaReference
+public class XSSFBCellRange {
 
-    public static final int length = 4* LittleEndianConsts.INT_SIZE;
+    //TODO: Convert this to generate an AreaReference
+    public static final int length = 4 * LittleEndianConsts.INT_SIZE;
+
+    private int firstRow;
+    private int lastRow;
+    private int firstCol;
+    private int lastCol;
+
+    public XSSFBCellRange(int firstRow, int lastRow, int firstCol, int lastCol) {
+        this.firstRow = firstRow;
+        this.lastRow = lastRow;
+        this.firstCol = firstCol;
+        this.lastCol = lastCol;
+    }
+
+    XSSFBCellRange() {
+    }
+
     /**
      * Parses an RfX cell range from the data starting at the offset.
-     * This performs no range checking.
      * @param data raw bytes
      * @param offset offset at which to start reading from data
-     * @param cellRange to overwrite. If null, a new cellRange will be created.
-     * @return a mutable cell range.
+     * @param cellRange to update. If null, a new cellRange will be created.
+     * @return the updated or new cell range
      */
     public static XSSFBCellRange parse(byte[] data, int offset, XSSFBCellRange cellRange) {
         if (cellRange == null) {
             cellRange = new XSSFBCellRange();
         }
-        cellRange.firstRow = XSSFBUtils.castToInt(LittleEndian.getUInt(data, offset)); offset += LittleEndianConsts.INT_SIZE;
-        cellRange.lastRow = XSSFBUtils.castToInt(LittleEndian.getUInt(data, offset)); offset += LittleEndianConsts.INT_SIZE;
-        cellRange.firstCol = XSSFBUtils.castToInt(LittleEndian.getUInt(data, offset)); offset += LittleEndianConsts.INT_SIZE;
-        cellRange.lastCol = XSSFBUtils.castToInt(LittleEndian.getUInt(data, offset));
-
+        cellRange.firstRow = Math.toIntExact(LittleEndian.getUInt(data, offset)); offset += LittleEndianConsts.INT_SIZE;
+        cellRange.lastRow = Math.toIntExact(LittleEndian.getUInt(data, offset)); offset += LittleEndianConsts.INT_SIZE;
+        cellRange.firstCol = Math.toIntExact(LittleEndian.getUInt(data, offset)); offset += LittleEndianConsts.INT_SIZE;
+        cellRange.lastCol = Math.toIntExact(LittleEndian.getUInt(data, offset));
         return cellRange;
     }
 
-    int firstRow;
-    int lastRow;
-    int firstCol;
-    int lastCol;
-
-
+    public int getFirstRow() { return firstRow; }
+    public int getLastRow() { return lastRow; }
+    public int getFirstCol() { return firstCol; }
+    public int getLastCol() { return lastCol; }
 }

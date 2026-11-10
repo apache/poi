@@ -638,10 +638,9 @@ public class CellReference implements GenericRecord {
         if (this == o) {
             return true;
         }
-        if(!(o instanceof CellReference)) {
+        if(!(o instanceof CellReference cr)) {
             return false;
         }
-        CellReference cr = (CellReference) o;
         return _rowIndex == cr._rowIndex
                 && _colIndex == cr._colIndex
                 && _isRowAbs == cr._isRowAbs

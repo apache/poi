@@ -66,24 +66,14 @@ final class OperandClassTransformer {
      * token to set its operand class.
      */
     public void transformFormula(ParseNode rootNode) {
-        byte rootNodeOperandClass;
-        switch (_formulaType) {
-            case CELL:
-                rootNodeOperandClass = Ptg.CLASS_VALUE;
-                break;
-            case ARRAY:
-                rootNodeOperandClass = Ptg.CLASS_ARRAY;
-                break;
-            case NAMEDRANGE:
-            case DATAVALIDATION_LIST:
-                rootNodeOperandClass = Ptg.CLASS_REF;
-                break;
-            default:
-                throw new IllegalStateException("Incomplete code - formula type ("
-                        + _formulaType + ") not supported yet");
-
-        }
-        transformNode(rootNode, rootNodeOperandClass, false);
+        byte rootNodeOperandClass = switch (_formulaType) {
+            case CELL -> Ptg.CLASS_VALUE;
+            case ARRAY -> Ptg.CLASS_ARRAY;
+            case NAMEDRANGE, DATAVALIDATION_LIST -> Ptg.CLASS_REF;
+            default -> throw new IllegalStateException("Incomplete code - formula type ("
+                    + _formulaType + ") not supported yet");
+        };
+        transformNode(rootNode, rootNodeOperandClass, false, 0);
     }
 
     /**
@@ -92,7 +82,13 @@ final class OperandClassTransformer {
      * the function return value).
      */
     private void transformNode(ParseNode node, byte desiredOperandClass,
-            boolean callerForceArrayFlag) {
+            boolean callerForceArrayFlag, int nesting) {
+        if (nesting > FormulaParser.getMaxNestingDepth()) {
+            throw new FormulaParseException("Formula has more than " + FormulaParser.getMaxNestingDepth()
+                    + " levels of nested parentheses, functions or unary signs. "
+                    + "You can increase the limit via FormulaParser.setMaxNestingDepth()");
+        }
+
         Ptg token = node.getToken();
         ParseNode[] children = node.getChildren();
         boolean isSimpleValueFunc = isSimpleValueFunction(token);
@@ -100,7 +96,16 @@ final class OperandClassTransformer {
         if (isSimpleValueFunc) {
             boolean localForceArray = desiredOperandClass == Ptg.CLASS_ARRAY;
             for (ParseNode child : children) {
-                transformNode(child, desiredOperandClass, localForceArray);
+                byte childOperandClass = desiredOperandClass;
+                if (desiredOperandClass == Ptg.CLASS_REF && !(child.getToken() instanceof AbstractFunctionPtg)) {
+                    // The function's own parameters are all 'V' class, so a 'R' request from the
+                    // caller (e.g. the 2nd/3rd argument of IF) must not leak through to a plain
+                    // reference operand - Excel shows #VALUE! for IF(A1<>"",MID(A1,1,2),"X")
+                    // if A1 is left as 'R' (bugs 55324 and 55747). Nested functions keep the
+                    // caller's class, e.g. FREQUENCY stays 'A' in COUNT(ABS(FREQUENCY(...))).
+                    childOperandClass = Ptg.CLASS_VALUE;
+                }
+                transformNode(child, childOperandClass, localForceArray, nesting + 1);
             }
             setSimpleValueFuncClass((AbstractFunctionPtg) token, desiredOperandClass, callerForceArrayFlag);
             return;
@@ -126,12 +131,12 @@ final class OperandClassTransformer {
             // be converted to 'V' type.
             byte localDesiredOperandClass = desiredOperandClass == Ptg.CLASS_REF ? Ptg.CLASS_VALUE : desiredOperandClass;
             for (ParseNode child : children) {
-                transformNode(child, localDesiredOperandClass, callerForceArrayFlag);
+                transformNode(child, localDesiredOperandClass, callerForceArrayFlag, nesting + 1);
             }
             return;
         }
-        if (token instanceof AbstractFunctionPtg) {
-            transformFunctionNode((AbstractFunctionPtg) token, children, desiredOperandClass, callerForceArrayFlag);
+        if (token instanceof AbstractFunctionPtg afp) {
+            transformFunctionNode(afp, children, desiredOperandClass, callerForceArrayFlag, nesting + 1);
             return;
         }
         if (children.length > 0) {
@@ -150,16 +155,14 @@ final class OperandClassTransformer {
     }
 
     private static boolean isSingleArgSum(Ptg token) {
-        if (token instanceof AttrPtg) {
-            AttrPtg attrPtg = (AttrPtg) token;
+        if (token instanceof AttrPtg attrPtg) {
             return attrPtg.isSum();
         }
         return false;
     }
 
     private static boolean isSimpleValueFunction(Ptg token) {
-        if (token instanceof AbstractFunctionPtg) {
-            AbstractFunctionPtg aptg = (AbstractFunctionPtg) token;
+        if (token instanceof AbstractFunctionPtg aptg) {
             if (aptg.getDefaultOperandClass() != Ptg.CLASS_VALUE) {
                 return false;
             }
@@ -194,33 +197,32 @@ final class OperandClassTransformer {
     }
 
     private void transformFunctionNode(AbstractFunctionPtg afp, ParseNode[] children,
-            byte desiredOperandClass, boolean callerForceArrayFlag) {
+            byte desiredOperandClass, boolean callerForceArrayFlag, int nesting) {
 
         boolean localForceArrayFlag;
         byte defaultReturnOperandClass = afp.getDefaultOperandClass();
 
         if (callerForceArrayFlag) {
-            switch (defaultReturnOperandClass) {
-                case Ptg.CLASS_REF:
+            localForceArrayFlag = switch (defaultReturnOperandClass) {
+                case Ptg.CLASS_REF -> {
                     if (desiredOperandClass == Ptg.CLASS_REF) {
                         afp.setClass(Ptg.CLASS_REF);
                     } else {
                         afp.setClass(Ptg.CLASS_ARRAY);
                     }
-                    localForceArrayFlag = false;
-                    break;
-                case Ptg.CLASS_ARRAY:
+                    yield false;
+                }
+                case Ptg.CLASS_ARRAY -> {
                     afp.setClass(Ptg.CLASS_ARRAY);
-                    localForceArrayFlag = false;
-                    break;
-                case Ptg.CLASS_VALUE:
+                    yield false;
+                }
+                case Ptg.CLASS_VALUE -> {
                     afp.setClass(Ptg.CLASS_ARRAY);
-                    localForceArrayFlag = true;
-                    break;
-                default:
-                    throw new IllegalStateException("Unexpected operand class ("
-                            + defaultReturnOperandClass + ")");
-            }
+                    yield true;
+                }
+                default -> throw new IllegalStateException("Unexpected operand class ("
+                        + defaultReturnOperandClass + ")");
+            };
         } else {
             if (defaultReturnOperandClass == desiredOperandClass) {
                 localForceArrayFlag = false;
@@ -275,7 +277,7 @@ final class OperandClassTransformer {
         for (int i = 0; i < children.length; i++) {
             ParseNode child = children[i];
             byte paramOperandClass = afp.getParameterClass(i);
-            transformNode(child, paramOperandClass, localForceArrayFlag);
+            transformNode(child, paramOperandClass, localForceArrayFlag, nesting + 1);
         }
     }
 

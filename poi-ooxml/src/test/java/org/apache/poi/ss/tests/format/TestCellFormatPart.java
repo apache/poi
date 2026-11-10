@@ -43,6 +43,7 @@ import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 /**
  * Class for spreadsheet-based tests, such as are used for cell formatting.
@@ -55,6 +56,7 @@ import org.junit.jupiter.api.Test;
  * flag "Categories" is not empty, only tests that have at least one category
  * listed in "Categories" are run.
  */
+@Isolated // modifies the default locale and we don't want to affect other tests running in parallel
 class TestCellFormatPart {
     private static final Pattern NUMBER_EXTRACT_FMT = Pattern.compile(
             "([-+]?[0-9]+)(\\.[0-9]+)?.*(?:(e).*?([+-]?[0-9]+))",

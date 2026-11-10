@@ -24,6 +24,7 @@ import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
+import org.apache.poi.ss.util.ExcelArithmetic;
 /**
  * Implementation of Excel 'Analysis ToolPak' function ISEVEN() ISODD()<br>
  */
@@ -55,11 +56,9 @@ final class ParityFunction implements FreeRefFunction {
     private static int evaluateArgParity(ValueEval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
         ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, (short)srcCellCol);
 
-        double d = OperandResolver.coerceValueToDouble(ve);
-        if (d < 0) {
-            d = -d;
-        }
-        long v = (long) Math.floor(d);
-        return Math.toIntExact(v & 0x0001);
+        // Excel truncates a non-integer argument, on its 15-digit view: ISEVEN(2.9999999999999996) is FALSE.
+        // The parity is taken in doubles so that magnitudes beyond the long range work.
+        double d = Math.abs(ExcelArithmetic.truncate(OperandResolver.coerceValueToDouble(ve)));
+        return d % 2 == 0 ? 0 : 1;
     }
 }

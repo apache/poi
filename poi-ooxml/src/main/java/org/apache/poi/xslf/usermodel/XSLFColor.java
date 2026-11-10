@@ -31,6 +31,7 @@ import org.apache.poi.sl.usermodel.ColorStyle;
 import org.apache.poi.sl.usermodel.PresetColor;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
@@ -145,18 +146,18 @@ public class XSLFColor {
         try (XmlCursor cur = obj.newCursor()) {
             XmlObject ch;
             for (int idx=0; color == null && (ch = nextObject(obj, cur, idx)) != null; idx++) {
-                if (ch instanceof CTHslColor) {
-                    color = toColor((CTHslColor)ch);
-                } else if (ch instanceof CTPresetColor) {
-                    color = toColor((CTPresetColor)ch);
-                } else if (ch instanceof CTSchemeColor) {
-                    color = toColor((CTSchemeColor)ch, theme);
-                } else if (ch instanceof CTScRgbColor) {
-                    color = toColor((CTScRgbColor)ch);
-                } else if (ch instanceof CTSRgbColor) {
-                    color = toColor((CTSRgbColor)ch);
-                } else if (ch instanceof CTSystemColor) {
-                    color = toColor((CTSystemColor)ch);
+                if (ch instanceof CTHslColor hsl) {
+                    color = toColor(hsl);
+                } else if (ch instanceof CTPresetColor prst) {
+                    color = toColor(prst);
+                } else if (ch instanceof CTSchemeColor scheme) {
+                    color = toColor(scheme, theme);
+                } else if (ch instanceof CTScRgbColor scrgb) {
+                    color = toColor(scrgb);
+                } else if (ch instanceof CTSRgbColor srgb) {
+                    color = toColor(srgb);
+                } else if (ch instanceof CTSystemColor sys) {
+                    color = toColor(sys);
                 } else if (!(ch instanceof CTFontReference) && idx > 0) {
                     throw new IllegalArgumentException("Unexpected color choice: " + ch.getClass());
                 }
@@ -166,14 +167,11 @@ public class XSLFColor {
     }
 
     private static XmlObject nextObject(XmlObject obj, XmlCursor cur, int idx) {
-        switch (idx) {
-            case 0:
-                return obj;
-            case 1:
-                return cur.toFirstChild() ? cur.getObject() : null;
-            default:
-                return cur.toNextSibling() ? cur.getObject() : null;
-        }
+        return switch (idx) {
+            case 0 -> obj;
+            case 1 -> cur.toFirstChild() ? cur.getObject() : null;
+            default -> cur.toNextSibling() ? cur.getObject() : null;
+        };
     }
 
     /**
@@ -183,11 +181,10 @@ public class XSLFColor {
      */
     @Internal
     protected void setColor(Color color) {
-        if (!(_xmlObject instanceof CTSolidColorFillProperties)) {
+        if (!(_xmlObject instanceof CTSolidColorFillProperties fill)) {
             LOGGER.atError().log("XSLFColor.setColor currently only supports CTSolidColorFillProperties");
             return;
         }
-        CTSolidColorFillProperties fill = (CTSolidColorFillProperties)_xmlObject;
         if (fill.isSetSrgbClr()) {
             fill.unsetSrgbClr();
         }
@@ -227,15 +224,15 @@ public class XSLFColor {
         } else {
             CTScRgbColor rgb = fill.addNewScrgbClr();
             double[] scRGB = DrawPaint.RGB2SCRGB(color);
-            rgb.setR((int)Math.rint(scRGB[0]*100_000d));
-            rgb.setG((int)Math.rint(scRGB[1]*100_000d));
-            rgb.setB((int)Math.rint(scRGB[2]*100_000d));
+            rgb.setR(MathUtil.safeDoubleToInt(Math.rint(scRGB[0]*100_000d)));
+            rgb.setG(MathUtil.safeDoubleToInt(Math.rint(scRGB[1]*100_000d)));
+            rgb.setB(MathUtil.safeDoubleToInt(Math.rint(scRGB[2]*100_000d)));
             alphaPct = (addAlpha) ? rgb.addNewAlpha() : null;
         }
 
         // alpha (%)
         if (alphaPct != null) {
-            alphaPct.setVal((int)Math.rint(rgbaf[3]*100_000));
+            alphaPct.setVal(MathUtil.safeDoubleToInt(Math.rint(rgbaf[3]*100_000)));
         }
     }
 

@@ -20,6 +20,7 @@ package org.apache.poi.poifs.filesystem;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -166,7 +167,7 @@ final class TestFilteringDirectoryNode {
         assertFalse(d.hasEntryCaseInsensitive(eRoot.getName()));
 
         // Check filtering down
-        assertTrue(d.getEntryCaseInsensitive(dirA.getName()) instanceof FilteringDirectoryNode);
+        assertInstanceOf(FilteringDirectoryNode.class, d.getEntryCaseInsensitive(dirA.getName()));
         assertFalse(d.getEntryCaseInsensitive(dirB.getName()) instanceof FilteringDirectoryNode);
 
         DirectoryEntry fdA = (DirectoryEntry) d.getEntryCaseInsensitive(dirA.getName());

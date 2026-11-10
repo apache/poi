@@ -218,7 +218,7 @@ public abstract class BaseTestSheetAutosizeColumn {
         row.createCell(0).setCellValue("x");
         row.createCell(1).setCellValue("xxxx");
         row.createCell(2).setCellValue("xxxxxxxxxxxx");
-        row.createCell(3).setCellValue("Apache\nSoftware Foundation"); // the text is splitted into two lines
+        row.createCell(3).setCellValue("Apache\nSoftware Foundation"); // the text is split into two lines
         row.createCell(4).setCellValue("Software Foundation");
 
         Cell cell5 = row.createCell(5);

@@ -47,7 +47,7 @@ import org.junit.jupiter.api.Test;
 
 public abstract class BaseTestPicture {
 
-    private final ITestDataProvider _testDataProvider;
+    protected final ITestDataProvider _testDataProvider;
 
     protected BaseTestPicture(ITestDataProvider testDataProvider) {
         _testDataProvider = testDataProvider;

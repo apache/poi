@@ -35,7 +35,7 @@ public final class TestXSSFChartSheet {
 
             //the third sheet is of type 'chartsheet'
             assertEquals("Chart1", wb.getSheetName(2));
-            assertTrue(wb.getSheetAt(2) instanceof XSSFChartSheet);
+            assertInstanceOf(XSSFChartSheet.class, wb.getSheetAt(2));
             assertEquals("Chart1", wb.getSheetAt(2).getSheetName());
 
             final CTChartsheet ctChartsheet = ((XSSFChartSheet) wb.getSheetAt(2)).getCTChartsheet();

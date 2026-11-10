@@ -135,23 +135,21 @@ public abstract class XYNumericFunction extends Fixed2ArgFunction {
         for (int i = 0; i < size; i++) {
             ValueEval vx = x.getItem(i);
             ValueEval vy = y.getItem(i);
-            if (vx instanceof ErrorEval) {
+            if (vx instanceof ErrorEval ex) {
                 if (firstXerr == null) {
-                    firstXerr = (ErrorEval) vx;
+                    firstXerr = ex;
                     continue;
                 }
             }
-            if (vy instanceof ErrorEval) {
+            if (vy instanceof ErrorEval ey) {
                 if (firstYerr == null) {
-                    firstYerr = (ErrorEval) vy;
+                    firstYerr = ey;
                     continue;
                 }
             }
             // only count pairs if both elements are numbers
-            if (vx instanceof NumberEval && vy instanceof NumberEval) {
+            if (vx instanceof NumberEval nx && vy instanceof NumberEval ny) {
                 accumlatedSome = true;
-                NumberEval nx = (NumberEval) vx;
-                NumberEval ny = (NumberEval) vy;
                 result += acc.accumulate(nx.getNumberValue(), ny.getNumberValue());
             } else {
                 // all other combinations of value types are silently ignored
@@ -170,14 +168,14 @@ public abstract class XYNumericFunction extends Fixed2ArgFunction {
     }
 
     private static ValueVector createValueVector(ValueEval arg) throws EvaluationException {
-        if (arg instanceof ErrorEval) {
-            throw new EvaluationException((ErrorEval) arg);
+        if (arg instanceof ErrorEval ee) {
+            throw new EvaluationException(ee);
         }
-        if (arg instanceof TwoDEval) {
-            return new AreaValueArray((TwoDEval) arg);
+        if (arg instanceof TwoDEval td) {
+            return new AreaValueArray(td);
         }
-        if (arg instanceof RefEval) {
-            return new RefValueArray((RefEval) arg);
+        if (arg instanceof RefEval re) {
+            return new RefValueArray(re);
         }
         return new SingleCellValueArray(arg);
     }

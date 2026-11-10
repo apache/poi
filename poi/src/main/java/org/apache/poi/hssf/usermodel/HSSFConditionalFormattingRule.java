@@ -84,8 +84,8 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
         return cfRuleRecord;
     }
     private CFRule12Record getCFRule12Record(boolean create) {
-        if (cfRuleRecord instanceof CFRule12Record) {
-            return (CFRule12Record) cfRuleRecord;
+        if (cfRuleRecord instanceof CFRule12Record rule12) {
+            return rule12;
         }
         if (create) {
             throw new IllegalArgumentException("Can't convert a CF into a CF12 record");
@@ -310,9 +310,9 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
         if (conditionType == CELL_COMPARISON) {
             byte comparisonOperation = cfRuleRecord.getComparisonOperation();
             switch(comparisonOperation) {
-                case ComparisonOperator.BETWEEN:
-                case ComparisonOperator.NOT_BETWEEN:
+                case ComparisonOperator.BETWEEN, ComparisonOperator.NOT_BETWEEN -> {
                     return toFormulaString(cfRuleRecord.getParsedExpression2());
+                }
             }
         }
         return null;

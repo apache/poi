@@ -18,8 +18,6 @@
 package org.apache.poi.ss.formula;
 
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.ptg.FuncVarPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.CellType;
 
 /**
@@ -62,21 +60,8 @@ final class SheetRefEvaluator {
      * @see org.apache.poi.ss.formula.functions.Subtotal
      */
     public boolean isSubTotal(int rowIndex, int columnIndex){
-        boolean subtotal = false;
         EvaluationCell cell = getSheet().getCell(rowIndex, columnIndex);
-        if(cell != null && cell.getCellType() == CellType.FORMULA){
-            EvaluationWorkbook wb = _bookEvaluator.getWorkbook();
-            for(Ptg ptg : wb.getFormulaTokens(cell)){
-                if(ptg instanceof FuncVarPtg){
-                    FuncVarPtg f = (FuncVarPtg)ptg;
-                    if("SUBTOTAL".equals(f.getName())) {
-                        subtotal = true;
-                        break;
-                    }
-                }
-            }
-        }
-        return subtotal;
+        return cell != null && cell.getCellType() == CellType.FORMULA && _bookEvaluator.isSubTotal(cell);
     }
 
     /**

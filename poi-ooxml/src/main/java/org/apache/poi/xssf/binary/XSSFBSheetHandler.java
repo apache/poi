@@ -30,6 +30,8 @@ import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
 import org.apache.poi.xssf.model.SharedStrings;
 import org.apache.poi.xssf.usermodel.XSSFComment;
@@ -130,7 +132,7 @@ public class XSSFBSheetHandler extends XSSFBParser {
 
         switch(type) {
             case BrtRowHdr:
-                int rw = XSSFBUtils.castToInt(LittleEndian.getUInt(data, 0));
+                int rw = Math.toIntExact(LittleEndian.getUInt(data, 0));
                 if (rw > 0x00100000) {//could make sure this is larger than currentRow, according to spec?
                     throw new XSSFBParseException("Row number beyond allowable range: "+rw);
                 }
@@ -298,7 +300,7 @@ public class XSSFBSheetHandler extends XSSFBParser {
 
     private void handleBrtCellIsst(byte[] data) {
         beforeCellValue(data);
-        int idx = XSSFBUtils.castToInt(LittleEndian.getUInt(data, XSSFBCellHeader.length));
+        int idx = Math.toIntExact(LittleEndian.getUInt(data, XSSFBCellHeader.length));
         RichTextString rtss = stringsTable.getItemAt(idx);
         handleStringCellValue(rtss.getString());
     }
@@ -447,9 +449,9 @@ public class XSSFBSheetHandler extends XSSFBParser {
          *     </code>. See the code in <code>
          * poi-examples/src/main/java/org/apache/poi/xssf/eventusermodel/XLSX2CSV.java</code> for an
          *     example of how to handle this scenario.
-         * @see #doubleCell(String, double, XSSFComment, ExcelNumberFormat)
+         * @see #doubleCell(String, double, Comment, ExcelNumberFormat)
          */
-        void stringCell(String cellReference, String value, XSSFComment comment);
+        void stringCell(String cellReference, String value, Comment comment);
 
         /**
          * Handles a numeric cell while providing the corresponding {@link ExcelNumberFormat}.
@@ -462,9 +464,9 @@ public class XSSFBSheetHandler extends XSSFBParser {
          *     </code>. See the code in <code>
          * poi-examples/src/main/java/org/apache/poi/xssf/eventusermodel/XLSX2CSV.java</code> for an
          *     example of how to handle this scenario.
-         * @see #stringCell(String, String, XSSFComment)
+         * @see #stringCell(String, String, Comment)
          */
-        void doubleCell(String cellReference, double value, XSSFComment comment, ExcelNumberFormat nf);
+        void doubleCell(String cellReference, double value, Comment comment, ExcelNumberFormat nf);
 
         /**
          * Handles a boolean cell.
@@ -476,9 +478,9 @@ public class XSSFBSheetHandler extends XSSFBParser {
          *     </code>. See the code in <code>
          * poi-examples/src/main/java/org/apache/poi/xssf/eventusermodel/XLSX2CSV.java</code> for an
          *     example of how to handle this scenario.
-         * @see #stringCell(String, String, XSSFComment)
+         * @see #stringCell(String, String, Comment)
          */
-        void booleanCell(String cellReference, boolean value, XSSFComment comment);
+        void booleanCell(String cellReference, boolean value, Comment comment);
 
         /**
          * Handles a cell that evaluates to an error.
@@ -492,7 +494,7 @@ public class XSSFBSheetHandler extends XSSFBParser {
          *     example of how to handle this scenario.
          * @see FormulaError
          */
-        void errorCell(String cellReference, FormulaError fe, XSSFComment comment);
+        void errorCell(String cellReference, FormulaError fe, Comment comment);
 
         /**
          * Receives header or footer text encountered in the sheet.
@@ -546,25 +548,25 @@ public class XSSFBSheetHandler extends XSSFBParser {
         }
 
         @Override
-        public void stringCell(String cellReference, String value, XSSFComment comment) {
+        public void stringCell(String cellReference, String value, Comment comment) {
             delegate.cell(cellReference, value, comment);
         }
 
         @Override
         public void doubleCell(
-            String cellReference, double value, XSSFComment comment, ExcelNumberFormat nf) {
+            String cellReference, double value, Comment comment, ExcelNumberFormat nf) {
             String formattedValue =
                 dataFormatter.formatRawCellContents(value, nf.getIdx(), nf.getFormat());
             delegate.cell(cellReference, formattedValue, comment);
         }
 
         @Override
-        public void booleanCell(String cellReference, boolean value, XSSFComment comment) {
+        public void booleanCell(String cellReference, boolean value, Comment comment) {
             delegate.cell(cellReference, Boolean.toString(value), comment);
         }
 
         @Override
-        public void errorCell(String cellReference, FormulaError fe, XSSFComment comment) {
+        public void errorCell(String cellReference, FormulaError fe, Comment comment) {
             // For backward compatibility, we pass "ERROR" as the cell value.
             // If you need the actual error code, you should implement
             // XSSFBSheetContentsHandler directly
@@ -590,7 +592,23 @@ public class XSSFBSheetHandler extends XSSFBParser {
         /**
          * A cell, with the given formatted value (may be null),
          * a url (may be null), a toolTip (may be null)
-         *  and possibly a comment (may be null), was encountered */
-        void hyperlinkCell(String cellReference, String formattedValue, String url, String toolTip, XSSFComment comment);
+         * and possibly a comment (may be null), was encountered.
+         *
+         * @deprecated use {@link #hyperlinkCell(String, String, String, String, Comment)}
+         */
+        @Deprecated
+        @Removal(version = "7.0.0")
+        default void hyperlinkCell(String cellReference, String formattedValue, String url, String toolTip, XSSFComment comment) {
+            hyperlinkCell(cellReference, formattedValue, url, toolTip, (Comment) comment);
+        }
+
+        /**
+         * A cell, with the given formatted value (may be null),
+         * a url (may be null), a toolTip (may be null)
+         * and possibly a comment (may be null), was encountered.
+         *
+         * @since 6.0.0
+         */
+        void hyperlinkCell(String cellReference, String formattedValue, String url, String toolTip, Comment comment);
     }
 }

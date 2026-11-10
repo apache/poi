@@ -21,6 +21,7 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 
 @Internal
@@ -77,8 +78,8 @@ public class ImageHeaderPICT {
     }
 
     public Dimension getSize() {
-        int height = (int)Math.round(bounds.height*DEFAULT_RESOLUTION/vRes);
-        int width = (int)Math.round(bounds.width*DEFAULT_RESOLUTION/hRes);
+        int height = MathUtil.safeDoubleToInt(Math.round(bounds.height*DEFAULT_RESOLUTION/vRes));
+        int width = MathUtil.safeDoubleToInt(Math.round(bounds.width*DEFAULT_RESOLUTION/hRes));
         return new Dimension(width, height);
     }
 

@@ -21,6 +21,7 @@ import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
@@ -68,10 +69,12 @@ final class WorkdayIntlFunction implements FreeRefFunction {
         double[] holidays;
         try {
             start = this.evaluator.evaluateDateArg(args[0], srcCellRow, srcCellCol);
-            days = (int) Math.floor(this.evaluator.evaluateNumberArg(args[1], srcCellRow, srcCellCol));
+            days = OperandResolver.coerceDoubleToInt(
+                    Math.floor(this.evaluator.evaluateNumberArg(args[1], srcCellRow, srcCellCol)));
             if (args.length >= 3) {
                 if (args[2] != BlankEval.instance) {
-                    weekendType = (int) this.evaluator.evaluateNumberArg(args[2], srcCellRow, srcCellCol);
+                    weekendType = OperandResolver.coerceDoubleToInt(
+                            this.evaluator.evaluateNumberArg(args[2], srcCellRow, srcCellCol));
                 }
                 if (!WorkdayCalculator.instance.getValidWeekendTypes().contains(weekendType)) {
                    return ErrorEval.NUM_ERROR;
@@ -79,10 +82,14 @@ final class WorkdayIntlFunction implements FreeRefFunction {
             }
             ValueEval holidaysCell = args.length >= 4 ? args[3] : null;
             holidays = this.evaluator.evaluateDatesArg(holidaysCell, srcCellRow, srcCellCol);
-            return new NumberEval(DateUtil.getExcelDate(
-                    WorkdayCalculator.instance.calculateWorkdays(start, days, weekendType, holidays)));
+            double result = DateUtil.getExcelDate(
+                    WorkdayCalculator.instance.calculateWorkdays(start, days, weekendType, holidays));
+            if (result >= DateUtil.MAX_EXCEL_DATE_SERIAL + 1) {
+                return ErrorEval.NUM_ERROR;
+            }
+            return new NumberEval(result);
         } catch (EvaluationException e) {
-            return ErrorEval.VALUE_INVALID;
+            return e.getErrorEval();
         }
     }
 

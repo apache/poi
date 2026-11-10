@@ -47,6 +47,7 @@ import org.apache.poi.sl.usermodel.StrokeStyle;
 import org.apache.poi.sl.usermodel.TextBox;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.SuppressForbidden;
 
@@ -184,7 +185,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
         if(paint == null) return;
 
         this._paint = paint;
-        if (paint instanceof Color) _foreground = (Color)paint;
+        if (paint instanceof Color c) _foreground = c;
     }
 
     /**
@@ -233,8 +234,8 @@ public class SLGraphics extends Graphics2D implements Cloneable {
         p.setPath(path);
         p.setFillColor(null);
         applyStroke(p);
-        if (_paint instanceof Color) {
-            p.setStrokeStyle((Color)_paint);
+        if (_paint instanceof Color c) {
+            p.setStrokeStyle(c);
         }
     }
 
@@ -307,7 +308,11 @@ public class SLGraphics extends Graphics2D implements Cloneable {
           Java graphics sets string coordinates by the baseline of the first character
           so we need to shift down by the height of the textbox
         */
-        txt.setAnchor(new Rectangle((int)x, (int)y, (int)width, (int)height));
+        txt.setAnchor(new Rectangle(
+                MathUtil.safeFloatToInt(x),
+                MathUtil.safeFloatToInt(y),
+                MathUtil.safeFloatToInt(width),
+                MathUtil.safeFloatToInt(height)));
     }
 
     /**
@@ -1772,8 +1777,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
     }
 
     protected void applyStroke(SimpleShape<?,?> shape) {
-        if (_stroke instanceof BasicStroke){
-            BasicStroke bs = (BasicStroke)_stroke;
+        if (_stroke instanceof BasicStroke bs){
             shape.setStrokeStyle((double)bs.getLineWidth());
             float[] dash = bs.getDashArray();
             if (dash != null) {
@@ -1784,8 +1788,8 @@ public class SLGraphics extends Graphics2D implements Cloneable {
     }
 
     protected void applyPaint(SimpleShape<?,?> shape) {
-        if (_paint instanceof Color) {
-            shape.setFillColor((Color)_paint);
+        if (_paint instanceof Color c) {
+            shape.setFillColor(c);
         }
     }
 

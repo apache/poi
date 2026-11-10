@@ -17,17 +17,15 @@
 
 package org.apache.poi.ss.formula.atp;
 
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.MathUtil;
 
 /**
  * A calculator for workdays, considering dates as excel representations.
@@ -36,26 +34,26 @@ public class WorkdayCalculator {
     public static final WorkdayCalculator instance = new WorkdayCalculator();
 
     private static final Set<Integer> standardWeekend =
-            new HashSet<>(Arrays.asList(Calendar.SATURDAY, Calendar.SUNDAY));
+            Set.of(Calendar.SATURDAY, Calendar.SUNDAY);
     private static final Set<Integer> sunMonWeekend =
-            new HashSet<>(Arrays.asList(Calendar.SUNDAY, Calendar.MONDAY));
+            Set.of(Calendar.SUNDAY, Calendar.MONDAY);
     private static final Set<Integer> monTuesWeekend =
-            new HashSet<>(Arrays.asList(Calendar.MONDAY, Calendar.TUESDAY));
+            Set.of(Calendar.MONDAY, Calendar.TUESDAY);
     private static final Set<Integer> tuesWedsWeekend =
-            new HashSet<>(Arrays.asList(Calendar.TUESDAY, Calendar.WEDNESDAY));
+            Set.of(Calendar.TUESDAY, Calendar.WEDNESDAY);
     private static final Set<Integer> wedsThursWeekend =
-            new HashSet<>(Arrays.asList(Calendar.WEDNESDAY, Calendar.THURSDAY));
+            Set.of(Calendar.WEDNESDAY, Calendar.THURSDAY);
     private static final Set<Integer> thursFriWeekend =
-            new HashSet<>(Arrays.asList(Calendar.THURSDAY, Calendar.FRIDAY));
+            Set.of(Calendar.THURSDAY, Calendar.FRIDAY);
     private static final Set<Integer> friSatWeekend =
-            new HashSet<>(Arrays.asList(Calendar.FRIDAY, Calendar.SATURDAY));
-    private static final Set<Integer> monWeekend =  Collections.singleton(Calendar.MONDAY);
-    private static final Set<Integer> tuesWeekend =  Collections.singleton(Calendar.TUESDAY);
-    private static final Set<Integer> wedsWeekend =  Collections.singleton(Calendar.WEDNESDAY);
-    private static final Set<Integer> thursWeekend = Collections.singleton(Calendar.THURSDAY);
-    private static final Set<Integer> friWeekend = Collections.singleton(Calendar.FRIDAY);
-    private static final Set<Integer> satWeekend = Collections.singleton(Calendar.SATURDAY);
-    private static final Set<Integer> sunWeekend = Collections.singleton(Calendar.SUNDAY);
+            Set.of(Calendar.FRIDAY, Calendar.SATURDAY);
+    private static final Set<Integer> monWeekend =  Set.of(Calendar.MONDAY);
+    private static final Set<Integer> tuesWeekend =  Set.of(Calendar.TUESDAY);
+    private static final Set<Integer> wedsWeekend =  Set.of(Calendar.WEDNESDAY);
+    private static final Set<Integer> thursWeekend = Set.of(Calendar.THURSDAY);
+    private static final Set<Integer> friWeekend = Set.of(Calendar.FRIDAY);
+    private static final Set<Integer> satWeekend = Set.of(Calendar.SATURDAY);
+    private static final Set<Integer> sunWeekend = Set.of(Calendar.SUNDAY);
     private static final Map<Integer, Set<Integer>> weekendTypeMap = new HashMap<>();
 
     static {
@@ -100,7 +98,8 @@ public class WorkdayCalculator {
         int weekendDay1Past = weekendDays.length == 0 ? 0 : this.pastDaysOfWeek(start, end, weekendDays[0]);
         int weekendDay2Past = weekendDays.length <= 1 ? 0 : this.pastDaysOfWeek(start, end, weekendDays[1]);
         int nonWeekendHolidays = this.calculateNonWeekendHolidays(start, end, holidays);
-        return (int) (end - start + 1) - weekendDay1Past - weekendDay2Past - nonWeekendHolidays;
+        return MathUtil.safeDoubleToInt(
+                (end - start + 1) - weekendDay1Past - weekendDay2Past - nonWeekendHolidays);
     }
 
     /**
@@ -152,8 +151,8 @@ public class WorkdayCalculator {
      */
     protected int pastDaysOfWeek(double start, double end, int dayOfWeek) {
         int pastDaysOfWeek = 0;
-        int startDay = (int) Math.floor(Math.min(start, end));
-        int endDay = (int) Math.floor(Math.max(end, start));
+        int startDay = MathUtil.safeDoubleToInt(Math.floor(Math.min(start, end)));
+        int endDay = MathUtil.safeDoubleToInt(Math.floor(Math.max(end, start)));
         for (; startDay <= endDay; startDay++) {
             Calendar today = LocaleUtil.getLocaleCalendar();
             today.setTime(DateUtil.getJavaDate(startDay));

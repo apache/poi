@@ -117,7 +117,7 @@ public interface Table {
      * checks if the given cell is part of the table.  Includes checking that they are on the same sheet.
      * @return true if the table and cell are on the same sheet and the cell is within the table range.
      * @since 3.17 beta 1
-     * @see #contains(CellReference) (prefered, faster execution and handles undefined cells)
+     * @see #contains(CellReference) (preferred, faster execution and handles undefined cells)
      */
     default boolean contains(Cell cell) {
         if (cell == null) return false;

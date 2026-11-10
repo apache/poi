@@ -19,15 +19,15 @@ package org.apache.poi.openxml4j.opc.internal;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
+import java.time.DateTimeException;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
@@ -37,7 +37,6 @@ import org.apache.poi.openxml4j.opc.PackageNamespaces;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageProperties;
-import org.apache.poi.util.LocaleUtil;
 
 /**
  * Represents the core properties part of a package.
@@ -50,27 +49,47 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
 
     public static final String NAMESPACE_DCTERMS_URI = PackageProperties.NAMESPACE_DCTERMS;
 
-    private static final String DEFAULT_DATEFORMAT =   "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    /**
+     * Format used when writing dates: xs:dateTime in UTC, without fractional seconds.
+     */
+    private static final DateTimeFormatter DEFAULT_DATEFORMAT =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ROOT).withZone(ZoneOffset.UTC);
 
-    private static final String[] DATE_FORMATS = new String[]{
-            DEFAULT_DATEFORMAT,
-            "yyyy-MM-dd'T'HH:mm:ss.SS'Z'",
-            "yyyy-MM-dd"
-    };
+    /**
+     * Parser for the W3CDTF profile of ISO 8601 (as used by dcterms:created / dcterms:modified),
+     * i.e. {@code YYYY[-MM[-DD[Thh:mm[:ss[.s+]][TZD]]]]} where TZD is {@code Z}, {@code +hh:mm},
+     * {@code -hh:mm} or (leniently) {@code +hhmm} / {@code -hhmm}.
+     * Missing fields default to the start of the period, a missing time zone is treated as UTC.
+     * Any number of fractional second digits is accepted (see bug 70229).
+     */
+    private static final DateTimeFormatter W3CDTF_DATEFORMAT = new DateTimeFormatterBuilder()
+            .appendValue(ChronoField.YEAR, 4)
+            .optionalStart()
+                .appendLiteral('-').appendValue(ChronoField.MONTH_OF_YEAR, 2)
+                .optionalStart()
+                    .appendLiteral('-').appendValue(ChronoField.DAY_OF_MONTH, 2)
+                    .optionalStart()
+                        .appendLiteral('T')
+                        .appendValue(ChronoField.HOUR_OF_DAY, 2)
+                        .appendLiteral(':').appendValue(ChronoField.MINUTE_OF_HOUR, 2)
+                        .optionalStart()
+                            .appendLiteral(':').appendValue(ChronoField.SECOND_OF_MINUTE, 2)
+                            .optionalStart().appendFraction(ChronoField.NANO_OF_SECOND, 1, 9, true).optionalEnd()
+                        .optionalEnd()
+                        .optionalStart().appendOffset("+HH:MM", "Z").optionalEnd()
+                        .optionalStart().appendOffset("+HHMM", "Z").optionalEnd()
+                    .optionalEnd()
+                .optionalEnd()
+            .optionalEnd()
+            .parseDefaulting(ChronoField.MONTH_OF_YEAR, 1)
+            .parseDefaulting(ChronoField.DAY_OF_MONTH, 1)
+            .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
+            .parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
+            .parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
+            .parseDefaulting(ChronoField.NANO_OF_SECOND, 0)
+            .parseDefaulting(ChronoField.OFFSET_SECONDS, 0)
+            .toFormatter(Locale.ROOT);
 
-    //Had to add this and TIME_ZONE_PAT to handle tz with colons.
-    //When we move to Java 7, we should be able to add another
-    //date format to DATE_FORMATS that uses XXX and get rid of this
-    //and TIME_ZONE_PAT
-    // TODO Fix this after the Java 7 upgrade
-    private final String[] TZ_DATE_FORMATS = new String[]{
-            "yyyy-MM-dd'T'HH:mm:ssz",
-            "yyyy-MM-dd'T'HH:mm:ss.Sz",
-            "yyyy-MM-dd'T'HH:mm:ss.SSz",
-            "yyyy-MM-dd'T'HH:mm:ss.SSSz",
-    };
-
-    private final Pattern TIME_ZONE_PAT = Pattern.compile("([-+]\\d\\d):?(\\d\\d)");
     /**
      * Constructor.
      *
@@ -660,36 +679,13 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
             return Optional.empty();
         }
 
-        Matcher m = TIME_ZONE_PAT.matcher(dateStr);
-        Date d = null;
-        if (m.find()) {
-            String dateTzStr = dateStr.substring(0, m.start())+m.group(1)+m.group(2);
-            d = parseDateFormat(TZ_DATE_FORMATS, dateTzStr);
+        try {
+            Instant instant = W3CDTF_DATEFORMAT.parse(dateStr, Instant::from);
+            return Optional.of(Date.from(instant));
+        } catch (DateTimeException e) {
+            throw new InvalidFormatException("Date " + dateStr + " not well formatted, expected W3CDTF format, "
+                + "e.g. yyyy-MM-dd'T'HH:mm:ss[.SSS]Z or yyyy-MM-dd'T'HH:mm:ss[.SSS]+HH:MM", e);
         }
-        if (d == null) {
-            String dateTzStr = dateStr.endsWith("Z") ? dateStr : (dateStr + "Z");
-            d = parseDateFormat(DATE_FORMATS, dateTzStr);
-        }
-        if (d != null) {
-            return Optional.of(d);
-        }
-
-        //if you're here, no pattern matched, throw exception
-        String allFormats = Stream.of(TZ_DATE_FORMATS, DATE_FORMATS)
-            .flatMap(Stream::of).collect(Collectors.joining(", "));
-        throw new InvalidFormatException("Date " + dateStr + " not well formatted, expected format in: "+ allFormats);
-    }
-
-    private static Date parseDateFormat(String[] formats, String dateTzStr) {
-        for (String fStr : formats) {
-            SimpleDateFormat df = new SimpleDateFormat(fStr, Locale.ROOT);
-            df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
-            Date d = df.parse(dateTzStr, new ParsePosition(0));
-            if (d != null) {
-                return d;
-            }
-        }
-        return null;
     }
 
     /**
@@ -698,16 +694,13 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      * @param d
      *            The Date to convert.
      * @return The formatted date or null.
-     * @see java.text.SimpleDateFormat
      */
     private static String getDateValue(Optional<Date> d) {
         return d.map(PackagePropertiesPart::getDateValue).orElse("");
     }
 
     private static String getDateValue(Date d) {
-        SimpleDateFormat df = new SimpleDateFormat(DEFAULT_DATEFORMAT, Locale.ROOT);
-        df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
-        return df.format(d);
+        return DEFAULT_DATEFORMAT.format(d.toInstant());
     }
 
     @Override

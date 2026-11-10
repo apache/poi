@@ -121,15 +121,15 @@ public final class DocumentEncryptionAtom extends PositionDependentRecordAtom {
         bos.writeInt(ei.getEncryptionFlags());
 
         final EncryptionHeader header = ei.getHeader();
-        if (!(header instanceof CryptoAPIEncryptionHeader)) {
+        if (!(header instanceof CryptoAPIEncryptionHeader capiHeader)) {
             throw new IllegalStateException("Had unexpected type of header: " + header.getClass());
         }
-        ((CryptoAPIEncryptionHeader) header).write(bos);
+        capiHeader.write(bos);
         final EncryptionVerifier verifier = ei.getVerifier();
-        if (!(verifier instanceof CryptoAPIEncryptionVerifier)) {
+        if (!(verifier instanceof CryptoAPIEncryptionVerifier capiVerifier)) {
             throw new IllegalStateException("Had unexpected type of verifier: " + verifier.getClass());
         }
-        ((CryptoAPIEncryptionVerifier) verifier).write(bos);
+        capiVerifier.write(bos);
 
         // Header
         LittleEndian.putInt(_header, 4, bos.getWriteIndex());

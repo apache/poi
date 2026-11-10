@@ -95,8 +95,8 @@ public final class UnknownEscherRecord extends EscherRecord {
                 EscherRecord child = recordFactory.createRecord( data, offset );
                 final int childBytesWritten;
 
-                if (child instanceof EscherContainerRecord) {
-                    childBytesWritten = ((EscherContainerRecord)child).fillFields(data, offset, recordFactory, nesting + 1);
+                if (child instanceof EscherContainerRecord ecr) {
+                    childBytesWritten = ecr.fillFields(data, offset, recordFactory, nesting + 1);
                 } else {
                     childBytesWritten = child.fillFields(data, offset, recordFactory, nesting + 1);
                 }
@@ -112,7 +112,8 @@ public final class UnknownEscherRecord extends EscherRecord {
             bytesRemaining = 0;
         }
 
-        thedata = IOUtils.safelyClone(data, offset + 8, bytesRemaining, MAX_RECORD_LENGTH);
+        thedata = IOUtils.safelyClone(data, offset + 8, bytesRemaining, MAX_RECORD_LENGTH,
+                "UnknownEscherRecord.setMaxRecordLength()");
 
         return bytesRemaining + 8;
     }
@@ -161,8 +162,8 @@ public final class UnknownEscherRecord extends EscherRecord {
             return;
         }
 
-        if (childRecords.size() > MAX_NUMBER_OF_CHILDREN) {
-            throw new IllegalStateException("Cannot add more than " + MAX_NUMBER_OF_CHILDREN +
+        if (childRecords.size() > getMaxNumberOfChildren()) {
+            throw new IllegalStateException("Cannot add more than " + getMaxNumberOfChildren() +
                     " child records, you can use 'EscherRecord.setMaxNumberOfChildren()' to increase the allow size");
         }
 
@@ -176,8 +177,8 @@ public final class UnknownEscherRecord extends EscherRecord {
     }
 
     public void addChildRecord(EscherRecord childRecord) {
-        if (_childRecords.size() >= MAX_NUMBER_OF_CHILDREN) {
-            throw new IllegalStateException("Cannot add more than " + MAX_NUMBER_OF_CHILDREN +
+        if (_childRecords.size() >= getMaxNumberOfChildren()) {
+            throw new IllegalStateException("Cannot add more than " + getMaxNumberOfChildren() +
                     " child records, you can use 'EscherRecord.setMaxNumberOfChildren()' to increase the allow size");
         }
 

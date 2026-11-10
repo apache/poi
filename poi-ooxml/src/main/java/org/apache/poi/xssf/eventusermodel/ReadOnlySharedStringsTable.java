@@ -224,10 +224,28 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
 
     @Override
     public RichTextString getItemAt(int idx) {
+        return new XSSFRichTextString(getRawItemAt(idx));
+    }
+
+    /**
+     * Return the raw text of the string at the given index, ie the text as it was stored in the
+     * shared strings table, without wrapping it in a {@link RichTextString}. Note that any
+     * <code>_xHHHH_</code> escape sequences are <em>not</em> decoded, just like they are not
+     * decoded by {@link #getItemAt(int)} - the decoding happens in
+     * {@link XSSFRichTextString#toString()}.
+     * <p>
+     * This is kept package private on purpose - it exists so that
+     * {@link XSSFSheetXMLHandler} can avoid creating an {@link XSSFRichTextString}
+     * (and the XmlBeans object backing it) for every string cell.
+     *
+     * @param idx index of the string to return
+     * @return the raw text at the specified position in this Shared String table
+     */
+    String getRawItemAt(int idx) {
         if (strings == null || idx >= strings.size()) {
             throw new IllegalStateException("Cannot get item at " + idx + " with strings: " + strings);
         }
-        return new XSSFRichTextString(strings.get(idx));
+        return strings.get(idx);
     }
 
     //// ContentHandler methods ////
@@ -244,9 +262,9 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
 
         if ("sst".equals(localName)) {
             String count = attributes.getValue("count");
-            if(count != null) this.count = (int) Long.parseLong(count);
+            if(count != null) this.count = Math.toIntExact(Long.parseLong(count));
             String uniqueCount = attributes.getValue("uniqueCount");
-            if(uniqueCount != null) this.uniqueCount = (int) Long.parseLong(uniqueCount);
+            if(uniqueCount != null) this.uniqueCount = Math.toIntExact(Long.parseLong(uniqueCount));
 
             this.strings = new ArrayList<>(
                     // corrupted files may have a very large number here, so only use it

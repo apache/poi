@@ -23,10 +23,12 @@ import java.util.List;
 
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff1;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTCustomXmlCell;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHeight;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
@@ -42,7 +44,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHeightRule;
  * the child {@link XWPFTableCell}s
  */
 public class XWPFTableRow {
-    private final CTRow ctRow;
+    private CTRow ctRow;
     private final XWPFTable table;
     private List<XWPFTableCell> tableCells;
 
@@ -55,6 +57,16 @@ public class XWPFTableRow {
     @Internal
     public CTRow getCtRow() {
         return ctRow;
+    }
+
+    /**
+     * Point this row at ctRow, the copy of its XML that a table has just added,
+     * and rebuild its cells from it.
+     */
+    void setCtRow(CTRow ctRow) {
+        this.ctRow = ctRow;
+        this.tableCells = null;
+        getTableCells();
     }
 
     /**
@@ -114,7 +126,9 @@ public class XWPFTableRow {
      */
     public int getHeight() {
         CTTrPr properties = getTrPr();
-        return properties.sizeOfTrHeightArray() == 0 ? 0 : (int) Units.toDXA(POIXMLUnits.parseLength(properties.getTrHeightArray(0).xgetVal()));
+        return properties.sizeOfTrHeightArray() == 0 ? 0 :
+                MathUtil.safeDoubleToInt(Units.toDXA(
+                        POIXMLUnits.parseLength(properties.getTrHeightArray(0).xgetVal())));
     }
 
     /**
@@ -128,7 +142,7 @@ public class XWPFTableRow {
     public void setHeight(int height) {
         CTTrPr properties = getTrPr();
         CTHeight h = properties.sizeOfTrHeightArray() == 0 ? properties.addNewTrHeight() : properties.getTrHeightArray(0);
-        h.setVal(new BigInteger(Integer.toString(height)));
+        h.setVal(BigInteger.valueOf(height));
     }
 
     /**
@@ -181,7 +195,13 @@ public class XWPFTableRow {
         List<ICell> cells = new ArrayList<>();
         //Can't use ctRow.getTcList because that only gets table cells
         //Can't use ctRow.getSdtList because that only gets sdts that are at cell level
-        try (XmlCursor cursor = ctRow.newCursor()) {
+        addTableICells(ctRow, cells);
+        return cells;
+    }
+
+    // cells wrapped in custom XML cells (w:customXml) count as cells of this row
+    private void addTableICells(XmlObject container, List<ICell> cells) {
+        try (XmlCursor cursor = container.newCursor()) {
             cursor.selectPath("./*");
             while (cursor.toNextSelection()) {
                 XmlObject o = cursor.getObject();
@@ -189,10 +209,11 @@ public class XWPFTableRow {
                     cells.add(new XWPFTableCell((CTTc) o, this, table.getBody()));
                 } else if (o instanceof CTSdtCell) {
                     cells.add(new XWPFSDTCell((CTSdtCell) o, this, table.getBody()));
+                } else if (o instanceof CTCustomXmlCell) {
+                    addTableICells(o, cells);
                 }
             }
         }
-        return cells;
     }
 
     /**

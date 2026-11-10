@@ -46,6 +46,8 @@ import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
 
+import static org.apache.poi.util.StringUtil.equalsIgnoreCase;
+
 /**
  * Common SlideShow extractor
  *
@@ -169,16 +171,15 @@ public class SlideShowExtractor<
             return;
         }
         for (final Shape<S,P> shape : master) {
-            if (shape instanceof TextShape) {
-                final TextShape<S,P> ts = (TextShape<S,P>)shape;
+            if (shape instanceof TextShape<S, P> ts) {
                 final String text = ts.getText();
                 if (text == null || text.isEmpty() || "*".equals(text)) {
                     continue;
                 }
 
                 if (ts.isPlaceholder()) {
-                    // don't bother about boiler plate text on master sheets
-                    LOG.atInfo().log("Ignoring boiler plate (placeholder) text on slide master: {}", text);
+                    // don't bother about boilerplate text on master sheets
+                    LOG.atInfo().log("Ignoring boilerplate (placeholder) text on slide master: {}", text);
                     continue;
                 }
 
@@ -220,28 +221,26 @@ public class SlideShowExtractor<
 
         // write header texts and determine footer text
         for (Shape<S, P> s : m) {
-            if (!(s instanceof TextShape)) {
-                continue;
-            }
-            final TextShape<S, P> ts = (TextShape<S, P>) s;
-            final PlaceholderDetails pd = ts.getPlaceholderDetails();
-            if (pd == null || !pd.isVisible() || pd.getPlaceholder() == null) {
-                continue;
-            }
-            switch (pd.getPlaceholder()) {
-                case HEADER:
-                    printTextParagraphs(ts.getTextParagraphs(), consumer);
-                    break;
-                case FOOTER:
-                    printTextParagraphs(ts.getTextParagraphs(), footerCon);
-                    break;
-                case SLIDE_NUMBER:
-                    printTextParagraphs(ts.getTextParagraphs(), footerCon, "\n", SlideShowExtractor::replaceSlideNumber);
-                    break;
-                case DATETIME:
-                    // currently not supported
-                default:
-                    break;
+            if (s instanceof TextShape<S, P> ts) {
+                final PlaceholderDetails pd = ts.getPlaceholderDetails();
+                if (pd == null || !pd.isVisible() || pd.getPlaceholder() == null) {
+                    continue;
+                }
+                switch (pd.getPlaceholder()) {
+                    case HEADER:
+                        printTextParagraphs(ts.getTextParagraphs(), consumer);
+                        break;
+                    case FOOTER:
+                        printTextParagraphs(ts.getTextParagraphs(), footerCon);
+                        break;
+                    case SLIDE_NUMBER:
+                        printTextParagraphs(ts.getTextParagraphs(), footerCon, "\n", SlideShowExtractor::replaceSlideNumber);
+                        break;
+                    case DATETIME:
+                        // currently not supported
+                    default:
+                        break;
+                }
             }
         }
     }
@@ -265,10 +264,10 @@ public class SlideShowExtractor<
     @SuppressWarnings("unchecked")
     private void printShapeText(final ShapeContainer<S,P> container, final Consumer<String> consumer) {
         for (Shape<S,P> shape : container) {
-            if (shape instanceof TextShape) {
-                printTextParagraphs(((TextShape<S,P>)shape).getTextParagraphs(), consumer);
-            } else if (shape instanceof TableShape) {
-                printShapeText((TableShape<S,P>)shape, consumer);
+            if (shape instanceof TextShape<S,P> ts) {
+                printTextParagraphs(ts.getTextParagraphs(), consumer);
+            } else if (shape instanceof TableShape<S,P> ts) {
+                printShapeText(ts, consumer);
             } else if (shape instanceof ShapeContainer) {
                 printShapeText((ShapeContainer<S,P>)shape, consumer);
             }
@@ -369,16 +368,11 @@ public class SlideShowExtractor<
         txt = txt.replace('\r', '\n');
         txt = txt.replace((char) 0x0B, sep);
 
-        switch (tr.getTextCap()) {
-            case ALL:
-                txt = txt.toUpperCase(LocaleUtil.getUserLocale());
-                break;
-            case SMALL:
-                txt = txt.toLowerCase(LocaleUtil.getUserLocale());
-                break;
-        }
-
-        return txt;
+        return switch (tr.getTextCap()) {
+            case ALL -> txt.toUpperCase(LocaleUtil.getUserLocale());
+            case SMALL -> txt.toLowerCase(LocaleUtil.getUserLocale());
+            default -> txt;
+        };
     }
 
     /**
@@ -408,14 +402,13 @@ public class SlideShowExtractor<
         return glyphs;
     }
     private static boolean filterFonts(Object o, String typeface, Boolean italic, Boolean bold) {
-        if (!(o instanceof TextRun)) {
+        if (o instanceof TextRun tr) {
+            return equalsIgnoreCase(typeface, tr.getFontFamily()) &&
+                    (italic == null || tr.isItalic() == italic) &&
+                    (bold == null || tr.isBold() == bold);
+        } else {
             return false;
         }
-        TextRun tr = (TextRun)o;
-        return
-            typeface.equalsIgnoreCase(tr.getFontFamily()) &&
-            (italic == null || tr.isItalic() == italic) &&
-            (bold == null || tr.isBold() == bold);
     }
 
     @Override

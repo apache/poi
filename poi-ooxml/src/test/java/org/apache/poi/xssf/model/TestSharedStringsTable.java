@@ -26,7 +26,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.poi.ss.usermodel.Sheet;
@@ -220,7 +219,7 @@ public final class TestSharedStringsTable {
             lst = lines
                     .map(String::trim)
                     .filter(((Predicate<String>) String::isEmpty).negate())
-                    .collect(Collectors.toList());
+                    .toList();
         }
 
         for (String str : lst) {

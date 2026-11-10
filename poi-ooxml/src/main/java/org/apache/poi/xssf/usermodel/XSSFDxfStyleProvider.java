@@ -53,7 +53,7 @@ public class XSSFDxfStyleProvider implements DifferentialStyleProvider {
             font = dxf.isSetFont() ? new XSSFFontFormatting(dxf.getFont(), colorMap) : null;
             if (dxf.isSetNumFmt()) {
                 CTNumFmt numFmt = dxf.getNumFmt();
-                number = new ExcelNumberFormat((int) numFmt.getNumFmtId(), numFmt.getFormatCode());
+                number = new ExcelNumberFormat(Math.toIntExact(numFmt.getNumFmtId()), numFmt.getFormatCode());
             } else {
                 number = null;
             }

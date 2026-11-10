@@ -31,6 +31,7 @@ import com.microsoft.schemas.office.visio.x2012.main.RelType;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.ooxml.POIXMLTypeLoader;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xdgf.exceptions.XDGFException;
@@ -63,7 +64,7 @@ public class XDGFMasters extends XDGFXMLDocumentPart {
     protected void onDocumentRead() {
         try {
             try (InputStream stream = getPackagePart().getInputStream()) {
-                _mastersObject = MastersDocument.Factory.parse(stream).getMasters();
+                _mastersObject = MastersDocument.Factory.parse(stream, POIXMLTypeLoader.DEFAULT_XML_OPTIONS).getMasters();
             } catch (XmlException | IOException e) {
                 throw new POIXMLException(e);
             }
@@ -87,15 +88,14 @@ public class XDGFMasters extends XDGFXMLDocumentPart {
                     throw new POIXMLException("Master relationship for " + relId + " not found");
                 }
 
-                if (!(part instanceof XDGFMasterContents)) {
+
+                if (part instanceof XDGFMasterContents contents) {
+                    contents.onDocumentRead();
+                    XDGFMaster master = new XDGFMaster(settings, contents, _document);
+                    _masters.put(master.getID(), master);
+                } else {
                     throw new POIXMLException("Unexpected masters relationship for " + relId + ": " + part);
                 }
-
-                XDGFMasterContents contents = (XDGFMasterContents)part;
-                contents.onDocumentRead();
-
-                XDGFMaster master = new XDGFMaster(settings, contents, _document);
-                _masters.put(master.getID(), master);
             }
         } catch (POIXMLException e) {
             throw XDGFException.wrap(this, e);

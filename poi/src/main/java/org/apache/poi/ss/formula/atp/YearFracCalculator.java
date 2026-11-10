@@ -21,9 +21,11 @@ import java.util.Calendar;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.MathUtil;
 
 
 /**
@@ -60,8 +62,8 @@ final class YearFracCalculator {
         // common logic for all bases
 
         // truncate day values
-        int startDateVal = (int) Math.floor(pStartDateVal);
-        int endDateVal = (int) Math.floor(pEndDateVal);
+        int startDateVal = OperandResolver.coerceDoubleToInt(Math.floor(pStartDateVal));
+        int endDateVal = OperandResolver.coerceDoubleToInt(Math.floor(pEndDateVal));
         if (startDateVal == endDateVal) {
             // when dates are equal, result is zero
             return 0;
@@ -73,14 +75,14 @@ final class YearFracCalculator {
             endDateVal = temp;
         }
 
-        switch (basis) {
-            case 0: return basis0(startDateVal, endDateVal);
-            case 1: return basis1(startDateVal, endDateVal);
-            case 2: return basis2(startDateVal, endDateVal);
-            case 3: return basis3(startDateVal, endDateVal);
-            case 4: return basis4(startDateVal, endDateVal);
-        }
-        throw new IllegalStateException("cannot happen");
+        return switch (basis) {
+            case 0 -> basis0(startDateVal, endDateVal);
+            case 1 -> basis1(startDateVal, endDateVal);
+            case 2 -> basis2(startDateVal, endDateVal);
+            case 3 -> basis3(startDateVal, endDateVal);
+            case 4 -> basis4(startDateVal, endDateVal);
+            default -> throw new IllegalStateException("cannot happen");
+        };
     }
 
 
@@ -250,7 +252,7 @@ final class YearFracCalculator {
         long msDiff = endDateMS - startDateMS;
 
         // some extra checks to make sure we don't hide some other bug with the rounding
-        int remainderHours = (int) ((msDiff % MS_PER_DAY) / MS_PER_HOUR);
+        int remainderHours = Math.toIntExact((msDiff % MS_PER_DAY) / MS_PER_HOUR);
         switch (remainderHours) {
             case 0:  // normal case
                 break;
@@ -261,7 +263,7 @@ final class YearFracCalculator {
                 throw new IllegalStateException("Unexpected date diff between " + startDateMS + " and " + endDateMS);
 
         }
-        return (int) (0.5 + ((double)msDiff / MS_PER_DAY));
+        return MathUtil.safeDoubleToInt((0.5 + ((double)msDiff / MS_PER_DAY)));
     }
 
     private static double averageYearLength(int startYear, int endYear) {

@@ -20,10 +20,7 @@ package org.apache.poi.ss.formula.eval;
 import org.apache.poi.ss.formula.functions.ArrayFunction;
 import org.apache.poi.ss.formula.functions.Fixed2ArgFunction;
 import org.apache.poi.ss.formula.functions.Function;
-import org.apache.poi.ss.util.NumberToTextConverter;
-
-import java.math.BigDecimal;
-import java.math.MathContext;
+import org.apache.poi.ss.util.ExcelArithmetic;
 
 public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction implements ArrayFunction {
 
@@ -44,8 +41,7 @@ public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction imple
                     try {
                         double d0 = OperandResolver.coerceValueToDouble(vA);
                         double d1 = OperandResolver.coerceValueToDouble(vB);
-                        double result = evaluate(d0, d1);
-                        return new NumberEval(result);
+                        return toValueEval(evaluate(d0, d1));
                     } catch (EvaluationException e){
                         return e.getErrorEval();
                     }
@@ -55,22 +51,27 @@ public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction imple
 
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
-        double result;
         try {
             double d0 = singleOperandEvaluate(arg0, srcRowIndex, srcColumnIndex);
             double d1 = singleOperandEvaluate(arg1, srcRowIndex, srcColumnIndex);
-            result = evaluate(d0, d1);
-            if (result == 0.0) { // this '==' matches +0.0 and -0.0
-                // Excel converts -0.0 to +0.0 for '*', '/', '%', '+' and '^'
-                if (!(this instanceof SubtractEvalClass)) {
-                    return NumberEval.ZERO;
-                }
-            }
-            if (Double.isNaN(result) || Double.isInfinite(result)) {
-                return ErrorEval.NUM_ERROR;
-            }
+            return toValueEval(evaluate(d0, d1));
         } catch (EvaluationException e) {
             return e.getErrorEval();
+        }
+    }
+
+    private ValueEval toValueEval(double result) {
+        if (result == 0.0) { // this '==' matches +0.0 and -0.0
+            // Excel converts -0.0 to +0.0 for '*', '/', '%', '+' and '^'
+            if (!(this instanceof SubtractEvalClass)) {
+                return NumberEval.ZERO;
+            }
+        } else if (Math.abs(result) < Double.MIN_NORMAL) {
+            // Excel does not support subnormal numbers: underflow gives 0
+            return NumberEval.ZERO;
+        }
+        if (Double.isNaN(result) || Double.isInfinite(result)) {
+            return ErrorEval.NUM_ERROR;
         }
         return new NumberEval(result);
     }
@@ -80,7 +81,7 @@ public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction imple
     public static final Function AddEval = new TwoOperandNumericOperation() {
         @Override
         protected double evaluate(double d0, double d1) {
-            return d0+d1;
+            return ExcelArithmetic.approxAdd(d0, d1);
         }
     };
     public static final Function DivideEval = new TwoOperandNumericOperation() {
@@ -89,25 +90,28 @@ public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction imple
             if (d1 == 0.0) {
                 throw new EvaluationException(ErrorEval.DIV_ZERO);
             }
-            BigDecimal bd0 = new BigDecimal(NumberToTextConverter.toText(d0));
-            BigDecimal bd1 = new BigDecimal(NumberToTextConverter.toText(d1));
-            return bd0.divide(bd1, MathContext.DECIMAL128).doubleValue();
+            return d0 / d1;
         }
     };
     public static final Function MultiplyEval = new TwoOperandNumericOperation() {
         @Override
         protected double evaluate(double d0, double d1) {
-            BigDecimal bd0 = new BigDecimal(NumberToTextConverter.toText(d0));
-            BigDecimal bd1 = new BigDecimal(NumberToTextConverter.toText(d1));
-            return bd0.multiply(bd1).doubleValue();
+            return d0 * d1;
         }
     };
     public static final Function PowerEval = new TwoOperandNumericOperation() {
         @Override
-        protected double evaluate(double d0, double d1) {
-            if(d0 < 0 && Math.abs(d1) > 0.0 && Math.abs(d1) < 1.0) {
-                return -1 * Math.pow(d0 * -1, d1);
+        protected double evaluate(double d0, double d1) throws EvaluationException {
+            if (d0 == 0.0) {
+                // Excel: 0^0 is #NUM! and 0^negative is #DIV/0! (Math.pow gives 1 and Infinity)
+                if (d1 == 0.0) {
+                    throw new EvaluationException(ErrorEval.NUM_ERROR);
+                }
+                if (d1 < 0.0) {
+                    throw new EvaluationException(ErrorEval.DIV_ZERO);
+                }
             }
+            // a negative base with a non-integer exponent is NaN, hence #NUM!, as in Excel (and POWER)
             return Math.pow(d0, d1);
         }
     };
@@ -117,7 +121,7 @@ public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction imple
         }
         @Override
         protected double evaluate(double d0, double d1) {
-            return d0-d1;
+            return ExcelArithmetic.approxSub(d0, d1);
         }
     }
     public static final Function SubtractEval = new SubtractEvalClass();

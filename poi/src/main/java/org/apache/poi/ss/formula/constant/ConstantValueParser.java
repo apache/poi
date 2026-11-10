@@ -80,14 +80,13 @@ public final class ConstantValueParser {
 
     private static Object readBoolean(LittleEndianInput in) {
         byte val = (byte)in.readLong(); // 7 bytes 'not used'
-        switch(val) {
-            case FALSE_ENCODING:
-                return Boolean.FALSE;
-            case TRUE_ENCODING:
-                return Boolean.TRUE;
-        }
-        // Don't tolerate unusual boolean encoded values (unless it becomes evident that they occur)
-        throw new IllegalArgumentException("unexpected boolean encoding (" + val + ")");
+        return switch (val) {
+            case FALSE_ENCODING -> Boolean.FALSE;
+            case TRUE_ENCODING -> Boolean.TRUE;
+            default ->
+                // Don't tolerate unusual boolean encoded values (unless it becomes evident that they occur)
+                    throw new IllegalArgumentException("unexpected boolean encoding (" + val + ")");
+        };
     }
 
     public static int getEncodedSize(Object[] values) {
@@ -127,27 +126,23 @@ public final class ConstantValueParser {
             out.writeLong(0L);
             return;
         }
-        if (value instanceof Boolean) {
-            Boolean bVal = ((Boolean)value);
+        if (value instanceof Boolean bVal) {
             out.writeByte(TYPE_BOOLEAN);
             long longVal = bVal ? 1L : 0L;
             out.writeLong(longVal);
             return;
         }
-        if (value instanceof Double) {
-            Double dVal = (Double) value;
+        if (value instanceof Double dVal) {
             out.writeByte(TYPE_NUMBER);
             out.writeDouble(dVal);
             return;
         }
-        if (value instanceof String) {
-            String val = (String) value;
+        if (value instanceof String val) {
             out.writeByte(TYPE_STRING);
             StringUtil.writeUnicodeString(out, val);
             return;
         }
-        if (value instanceof ErrorConstant) {
-            ErrorConstant ecVal = (ErrorConstant) value;
+        if (value instanceof ErrorConstant ecVal) {
             out.writeByte(TYPE_ERROR_CODE);
             long longVal = ecVal.getErrorCode();
             out.writeLong(longVal);

@@ -52,8 +52,8 @@ public class Rank extends Var2or3ArgFunction {
                 throw new EvaluationException(ErrorEval.NUM_ERROR);
             }
 
-            if (arg1 instanceof RefListEval) {
-                return eval(result, ((RefListEval)arg1), true);
+            if (arg1 instanceof RefListEval rle) {
+                return eval(result, rle, true);
             }
 
             final AreaEval aeRange = convertRangeArg(arg1);
@@ -84,8 +84,8 @@ public class Rank extends Var2or3ArgFunction {
                 throw new EvaluationException(ErrorEval.NUM_ERROR);
             }
 
-            if (arg1 instanceof RefListEval) {
-                return eval(result, ((RefListEval)arg1), order);
+            if (arg1 instanceof RefListEval rle) {
+                return eval(result, rle, order);
             }
 
             final AreaEval aeRange = convertRangeArg(arg1);
@@ -117,13 +117,13 @@ public class Rank extends Var2or3ArgFunction {
     private static ValueEval eval(double arg0, RefListEval aeRange, boolean descending_order) {
         int rank = 1;
         for(ValueEval ve : aeRange.getList()) {
-            if (ve instanceof RefEval) {
-                ve = ((RefEval) ve).getInnerValueEval(((RefEval) ve).getFirstSheetIndex());
+            if (ve instanceof RefEval re) {
+                ve = re.getInnerValueEval(re.getFirstSheetIndex());
             }
 
             final double value;
-            if (ve instanceof NumberEval) {
-                value = ((NumberEval)ve).getNumberValue();
+            if (ve instanceof NumberEval ne) {
+                value = ne.getNumberValue();
             } else {
                 continue;
             }
@@ -138,19 +138,19 @@ public class Rank extends Var2or3ArgFunction {
 
     private static Double getValue(AreaEval aeRange, int relRowIndex, int relColIndex) {
         ValueEval addend = aeRange.getRelativeValue(relRowIndex, relColIndex);
-        if (addend instanceof NumberEval) {
-            return ((NumberEval)addend).getNumberValue();
+        if (addend instanceof NumberEval ne) {
+            return ne.getNumberValue();
         }
         // everything else (including string and boolean values) counts as zero
         return null;
     }
 
     private static AreaEval convertRangeArg(ValueEval eval) throws EvaluationException {
-        if (eval instanceof AreaEval) {
-            return (AreaEval) eval;
+        if (eval instanceof AreaEval ae) {
+            return ae;
         }
-        if (eval instanceof RefEval) {
-            return ((RefEval)eval).offset(0, 0, 0, 0);
+        if (eval instanceof RefEval re) {
+            return re.offset(0, 0, 0, 0);
         }
         throw new EvaluationException(ErrorEval.VALUE_INVALID);
     }

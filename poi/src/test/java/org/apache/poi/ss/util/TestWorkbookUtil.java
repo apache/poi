@@ -18,6 +18,7 @@
 package org.apache.poi.ss.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
@@ -86,5 +87,22 @@ final class TestWorkbookUtil {
 
         actual = WorkbookUtil.createSafeSheetName("sheet:a4");
         assertEquals("sheet a4", actual);
+    }
+
+    @Test
+    void testValidateSheetNameRejectsControlCharacters() {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> WorkbookUtil.validateSheetName("before\u0000after"));
+        assertEquals("Invalid char (U+0000) found at index (6) in sheet name 'before\u0000after'", e.getMessage());
+        e = assertThrows(IllegalArgumentException.class,
+                () -> WorkbookUtil.validateSheetName("before\u0003after"));
+        assertEquals("Invalid char (U+0003) found at index (6) in sheet name 'before\u0003after'", e.getMessage());
+    }
+
+    @Test
+    void testValidateSheetNameMessageShowsPrintableChar() {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> WorkbookUtil.validateSheetName("a:b"));
+        assertEquals("Invalid char (:) found at index (1) in sheet name 'a:b'", e.getMessage());
     }
 }

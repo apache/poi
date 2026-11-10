@@ -17,8 +17,6 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import java.util.regex.Matcher;
-
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
@@ -55,18 +53,18 @@ public class ImReal extends Fixed1ArgFunction implements FreeRefFunction {
         }
         String iNumber = OperandResolver.coerceValueToString(veText1);
 
-        Matcher m = Imaginary.COMPLEX_NUMBER_PATTERN.matcher(iNumber);
-        if (!m.matches()) {
+        String[] groups = Imaginary.parseComplexNumber(iNumber);
+        if (groups == null) {
             return ErrorEval.NUM_ERROR;
         }
 
-        String realGroup = m.group(2);
-        if (realGroup.isEmpty()) {
+        String realGroup = groups[2];
+        if (realGroup.isEmpty() || Imaginary.isImaginaryOnly(groups)) {
             return new StringEval("0");
         }
 
-        String realSign = m.group(Imaginary.GROUP1_REAL_SIGN);
-        String groupRealNumber = m.group(Imaginary.GROUP2_IMAGINARY_INTEGER_OR_DOUBLE);
+        String realSign = groups[Imaginary.GROUP1_REAL_SIGN];
+        String groupRealNumber = groups[Imaginary.GROUP2_IMAGINARY_INTEGER_OR_DOUBLE];
         String sign = "+".equals(realSign) ? "" : realSign;
         String real = groupRealNumber.isEmpty() ? "1" : groupRealNumber;
 

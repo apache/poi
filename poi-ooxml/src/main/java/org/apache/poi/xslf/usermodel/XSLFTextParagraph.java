@@ -35,6 +35,7 @@ import org.apache.poi.sl.usermodel.TabStop.TabStopType;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.model.ParagraphPropertyFetcher;
 import org.apache.poi.xslf.model.ParagraphPropertyFetcher.ParaPropFetcher;
@@ -72,8 +73,8 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
             if (c.toFirstChild()) {
                 do {
                     XmlObject r = c.getObject();
-                    if (r instanceof CTTextLineBreak) {
-                        _runs.add(new XSLFLineBreak((CTTextLineBreak)r, this));
+                    if (r instanceof CTTextLineBreak br) {
+                        _runs.add(new XSLFLineBreak(br, this));
                     } else if (r instanceof CTRegularTextRun || r instanceof CTTextField) {
                         _runs.add(newTextRun(r));
                     }
@@ -136,22 +137,25 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         if (_runs.remove(textRun)) {
             XmlObject xo = textRun.getXmlObject();
             if (xo instanceof CTRegularTextRun) {
-                for (int i = 0; i < getXmlObject().sizeOfRArray(); i++) {
-                    if (getXmlObject().getRArray(i).equals(xo)) {
+                final CTRegularTextRun[] elements = getXmlObject().getRArray();
+                for (int i = 0; i < elements.length; i++) {
+                    if (elements[i].equals(xo)) {
                         getXmlObject().removeR(i);
                         return true;
                     }
                 }
             } else if (xo instanceof CTTextField) {
-                for (int i = 0; i < getXmlObject().sizeOfFldArray(); i++) {
-                    if (getXmlObject().getFldArray(i).equals(xo)) {
+                final CTTextField[] elements = getXmlObject().getFldArray();
+                for (int i = 0; i < elements.length; i++) {
+                    if (elements[i].equals(xo)) {
                         getXmlObject().removeFld(i);
                         return true;
                     }
                 }
             } else if (xo instanceof CTTextLineBreak) {
-                for (int i = 0; i < getXmlObject().sizeOfBrArray(); i++) {
-                    if (getXmlObject().getBrArray(i).equals(xo)) {
+                final CTTextLineBreak[] elements = getXmlObject().getBrArray();
+                for (int i = 0; i < elements.length; i++) {
+                    if (elements[i].equals(xo)) {
                         getXmlObject().removeBr(i);
                         return true;
                     }
@@ -309,12 +313,11 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
      */
     @SuppressWarnings("WeakerAccess")
     public void setBulletFontColor(PaintStyle color) {
-        if (!(color instanceof SolidPaint)) {
+        if (!(color instanceof SolidPaint sp)) {
             throw new IllegalArgumentException("Currently XSLF only supports SolidPaint");
         }
 
         // TODO: implement setting bullet color to null
-        SolidPaint sp = (SolidPaint)color;
         Color col = DrawPaint.applyColorTransform(sp.getSolidColor());
 
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
@@ -362,13 +365,13 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
 
         if(bulletSize >= 0) {
             CTTextBulletSizePercent pt = pr.isSetBuSzPct() ? pr.getBuSzPct() : pr.addNewBuSzPct();
-            pt.setVal(Integer.toString((int)(bulletSize*1000)));
+            pt.setVal(Integer.toString(MathUtil.safeDoubleToInt(bulletSize*1000)));
             if(pr.isSetBuSzPts()) {
                 pr.unsetBuSzPts();
             }
         } else {
             CTTextBulletSizePoint pt = pr.isSetBuSzPts() ? pr.getBuSzPts() : pr.addNewBuSzPts();
-            pt.setVal((int)(-bulletSize*100));
+            pt.setVal(MathUtil.safeDoubleToInt(-bulletSize*100));
             if(pr.isSetBuSzPct()) {
                 pr.unsetBuSzPct();
             }
@@ -588,13 +591,13 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
                 spc.unsetSpcPts();
             }
             final CTTextSpacingPercent pct = spc.isSetSpcPct() ? spc.getSpcPct() : spc.addNewSpcPct();
-            pct.setVal((int)(space*1000));
+            pct.setVal(MathUtil.safeDoubleToInt(space*1000));
         } else {
             if (spc.isSetSpcPct()) {
                 spc.unsetSpcPct();
             }
             final CTTextSpacingPoint pts = spc.isSetSpcPts() ? spc.getSpcPts() : spc.addNewSpcPts();
-            pts.setVal((int)(-space*100));
+            pts.setVal(MathUtil.safeDoubleToInt(-space*100));
         }
     }
 
@@ -726,22 +729,12 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
     @Internal
     public CTTextParagraphProperties getDefaultMasterStyle() {
         CTPlaceholder ph = _shape.getPlaceholderDetails().getCTPlaceholder(false);
-        String defaultStyleSelector;
-        switch(ph == null ? -1 : ph.getType().intValue()) {
-            case STPlaceholderType.INT_TITLE:
-            case STPlaceholderType.INT_CTR_TITLE:
-                defaultStyleSelector = "titleStyle";
-                break;
-            case -1: // no placeholder means plain text box
-            case STPlaceholderType.INT_FTR:
-            case STPlaceholderType.INT_SLD_NUM:
-            case STPlaceholderType.INT_DT:
-                defaultStyleSelector = "otherStyle";
-                break;
-            default:
-                defaultStyleSelector = "bodyStyle";
-                break;
-        }
+        String defaultStyleSelector = switch (ph == null ? -1 : ph.getType().intValue()) {
+            case STPlaceholderType.INT_TITLE, STPlaceholderType.INT_CTR_TITLE ->
+                    "titleStyle"; // no placeholder means plain text box
+            case -1, STPlaceholderType.INT_FTR, STPlaceholderType.INT_SLD_NUM, STPlaceholderType.INT_DT -> "otherStyle";
+            default -> "bodyStyle";
+        };
         int level = getIndentLevel();
 
         // wind up and find the root master sheet which must be slide master
@@ -943,16 +936,16 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         } else {
             setBullet(true);
             for (Object ostyle : styles) {
-                if (ostyle instanceof Number) {
-                    setBulletFontSize(((Number)ostyle).doubleValue());
-                } else if (ostyle instanceof Color) {
-                    setBulletFontColor((Color)ostyle);
+                if (ostyle instanceof Number number) {
+                    setBulletFontSize(number.doubleValue());
+                } else if (ostyle instanceof Color color) {
+                    setBulletFontColor(color);
                 } else if (ostyle instanceof Character) {
                     setBulletCharacter(ostyle.toString());
-                } else if (ostyle instanceof String) {
-                    setBulletFont((String)ostyle);
-                } else if (ostyle instanceof AutoNumberingScheme) {
-                    setBulletAutoNumber((AutoNumberingScheme)ostyle, 1);
+                } else if (ostyle instanceof String str) {
+                    setBulletFont(str);
+                } else if (ostyle instanceof AutoNumberingScheme scheme) {
+                    setBulletAutoNumber(scheme, 1);
                 }
             }
         }
@@ -1011,15 +1004,14 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
      */
     /* package */ void clearButKeepProperties() {
         CTTextParagraph thisP = getXmlObject();
-        for (int i=thisP.sizeOfBrArray(); i>0; i--) {
-            thisP.removeBr(i-1);
-        }
-        for (int i=thisP.sizeOfFldArray(); i>0; i--) {
-            thisP.removeFld(i-1);
-        }
+
+        // Capture the last run's properties before removing anything - _runs can
+        // include field-backed runs (<a:fld>, e.g. slide number/date placeholders),
+        // and reading from one after its underlying XML has already been removed
+        // throws XmlValueDisconnectedException. See
+        // https://github.com/apache/poi/issues/919
         if (!_runs.isEmpty()) {
-            int size = _runs.size();
-            XSLFTextRun lastRun = _runs.get(size-1);
+            XSLFTextRun lastRun = _runs.get(_runs.size() - 1);
             CTTextCharacterProperties cpOther = lastRun.getRPr(false);
             if (cpOther != null) {
                 if (thisP.isSetEndParaRPr()) {
@@ -1028,26 +1020,29 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
                 CTTextCharacterProperties cp = thisP.addNewEndParaRPr();
                 cp.set(cpOther);
             }
-            for (int i=size; i>0; i--) {
-                thisP.removeR(i-1);
-            }
-            _runs.clear();
         }
+
+        for (int i=thisP.sizeOfBrArray(); i>0; i--) {
+            thisP.removeBr(i-1);
+        }
+        for (int i=thisP.sizeOfFldArray(); i>0; i--) {
+            thisP.removeFld(i-1);
+        }
+        for (int i=thisP.sizeOfRArray(); i>0; i--) {
+            thisP.removeR(i-1);
+        }
+        _runs.clear();
     }
 
     @Override
     public boolean isHeaderOrFooter() {
         CTPlaceholder ph = _shape.getPlaceholderDetails().getCTPlaceholder(false);
         int phId = (ph == null ? -1 : ph.getType().intValue());
-        switch (phId) {
-            case STPlaceholderType.INT_SLD_NUM:
-            case STPlaceholderType.INT_DT:
-            case STPlaceholderType.INT_FTR:
-            case STPlaceholderType.INT_HDR:
-                return true;
-            default:
-                return false;
-        }
+        return switch (phId) {
+            case STPlaceholderType.INT_SLD_NUM, STPlaceholderType.INT_DT, STPlaceholderType.INT_FTR,
+                 STPlaceholderType.INT_HDR -> true;
+            default -> false;
+        };
     }
 
     /**

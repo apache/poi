@@ -25,6 +25,7 @@ import java.util.Map;
 import com.microsoft.schemas.office.visio.x2012.main.PageContentsDocument;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.ooxml.POIXMLTypeLoader;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.xdgf.exceptions.XDGFException;
 import org.apache.xmlbeans.XmlException;
@@ -45,7 +46,7 @@ public class XDGFPageContents extends XDGFBaseContents {
     protected void onDocumentRead() {
         try {
             try (InputStream stream = getPackagePart().getInputStream()) {
-                _pageContents = PageContentsDocument.Factory.parse(stream).getPageContents();
+                _pageContents = PageContentsDocument.Factory.parse(stream, POIXMLTypeLoader.DEFAULT_XML_OPTIONS).getPageContents();
             } catch (XmlException | IOException e) {
                 throw new POIXMLException(e);
             }

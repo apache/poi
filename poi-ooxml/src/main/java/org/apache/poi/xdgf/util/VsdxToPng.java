@@ -31,6 +31,7 @@ import java.nio.file.Path;
 import javax.imageio.ImageIO;
 
 import org.apache.poi.util.Dimension2DDouble;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.xdgf.usermodel.XDGFPage;
 import org.apache.poi.xdgf.usermodel.XmlVisioDocument;
 import org.apache.poi.xdgf.usermodel.shape.ShapeDebuggerRenderer;
@@ -65,8 +66,8 @@ public class VsdxToPng {
 
         Dimension2DDouble sz = page.getPageSize();
 
-        int width = (int) (scale * sz.getWidth());
-        int height = (int) (scale * sz.getHeight());
+        int width = MathUtil.safeDoubleToInt(scale * sz.getWidth());
+        int height = MathUtil.safeDoubleToInt(scale * sz.getHeight());
 
         BufferedImage img = new BufferedImage(width, height,
                 BufferedImage.TYPE_INT_RGB);

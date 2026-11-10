@@ -27,6 +27,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.Removal;
 
 /**
  * Raw picture data, normally attached to a SpreadsheetML Drawing.
@@ -55,20 +56,39 @@ public class XSSFPictureData extends POIXMLDocumentPart implements PictureData {
     /**
      * Relationships for each known picture type
      */
-    protected static final POIXMLRelation[] RELATIONS;
+    private static final POIXMLRelation[] PICTURE_RELATIONS;
     static {
-        RELATIONS = new POIXMLRelation[13];
-        RELATIONS[Workbook.PICTURE_TYPE_EMF] = XSSFRelation.IMAGE_EMF;
-        RELATIONS[Workbook.PICTURE_TYPE_WMF] = XSSFRelation.IMAGE_WMF;
-        RELATIONS[Workbook.PICTURE_TYPE_PICT] = XSSFRelation.IMAGE_PICT;
-        RELATIONS[Workbook.PICTURE_TYPE_JPEG] = XSSFRelation.IMAGE_JPEG;
-        RELATIONS[Workbook.PICTURE_TYPE_PNG] = XSSFRelation.IMAGE_PNG;
-        RELATIONS[Workbook.PICTURE_TYPE_DIB] = XSSFRelation.IMAGE_DIB;
-        RELATIONS[XSSFWorkbook.PICTURE_TYPE_GIF] = XSSFRelation.IMAGE_GIF;
-        RELATIONS[XSSFWorkbook.PICTURE_TYPE_TIFF] = XSSFRelation.IMAGE_TIFF;
-        RELATIONS[XSSFWorkbook.PICTURE_TYPE_EPS] = XSSFRelation.IMAGE_EPS;
-        RELATIONS[XSSFWorkbook.PICTURE_TYPE_BMP] = XSSFRelation.IMAGE_BMP;
-        RELATIONS[XSSFWorkbook.PICTURE_TYPE_WPG] = XSSFRelation.IMAGE_WPG;
+        PICTURE_RELATIONS = new POIXMLRelation[13];
+        PICTURE_RELATIONS[Workbook.PICTURE_TYPE_EMF] = XSSFRelation.IMAGE_EMF;
+        PICTURE_RELATIONS[Workbook.PICTURE_TYPE_WMF] = XSSFRelation.IMAGE_WMF;
+        PICTURE_RELATIONS[Workbook.PICTURE_TYPE_PICT] = XSSFRelation.IMAGE_PICT;
+        PICTURE_RELATIONS[Workbook.PICTURE_TYPE_JPEG] = XSSFRelation.IMAGE_JPEG;
+        PICTURE_RELATIONS[Workbook.PICTURE_TYPE_PNG] = XSSFRelation.IMAGE_PNG;
+        PICTURE_RELATIONS[Workbook.PICTURE_TYPE_DIB] = XSSFRelation.IMAGE_DIB;
+        PICTURE_RELATIONS[XSSFWorkbook.PICTURE_TYPE_GIF] = XSSFRelation.IMAGE_GIF;
+        PICTURE_RELATIONS[XSSFWorkbook.PICTURE_TYPE_TIFF] = XSSFRelation.IMAGE_TIFF;
+        PICTURE_RELATIONS[XSSFWorkbook.PICTURE_TYPE_EPS] = XSSFRelation.IMAGE_EPS;
+        PICTURE_RELATIONS[XSSFWorkbook.PICTURE_TYPE_BMP] = XSSFRelation.IMAGE_BMP;
+        PICTURE_RELATIONS[XSSFWorkbook.PICTURE_TYPE_WPG] = XSSFRelation.IMAGE_WPG;
+    }
+
+    /**
+     * Relationships for each known picture type
+     * <p>
+     * Changing this array has no effect, as POI uses its own copy.
+     *
+     * @deprecated the field will be removed
+     */
+    @Deprecated
+    @Removal(version = "7.0.0")
+    protected static final POIXMLRelation[] RELATIONS = PICTURE_RELATIONS.clone();
+
+    /**
+     * @param pictureType the picture type, used as the index into the relationships
+     * @return the relationship for the picture type, or {@code null} if there is none
+     */
+    static POIXMLRelation getRelationForType(int pictureType) {
+        return PICTURE_RELATIONS[pictureType];
     }
 
     /**
@@ -121,10 +141,10 @@ public class XSSFPictureData extends POIXMLDocumentPart implements PictureData {
     @Override
     public int getPictureType() {
         String contentType = getPackagePart().getContentType();
-        for (int i = 0; i < RELATIONS.length; i++) {
-            if(RELATIONS[i] == null) continue;
+        for (int i = 0; i < PICTURE_RELATIONS.length; i++) {
+            if(PICTURE_RELATIONS[i] == null) continue;
 
-            if(RELATIONS[i].getContentType().equals(contentType)){
+            if(PICTURE_RELATIONS[i].getContentType().equals(contentType)){
                 return i;
             }
         }

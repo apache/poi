@@ -19,7 +19,7 @@ package org.apache.poi.ss.formula.functions;
 
 import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -154,7 +154,7 @@ final class TestIndex {
      */
     private static AreaEval confirmAreaEval(String refText, ValueEval ve) {
         CellRangeAddress cra = CellRangeAddress.valueOf(refText);
-        assertTrue(ve instanceof AreaEval);
+        assertInstanceOf(AreaEval.class, ve);
         AreaEval ae = (AreaEval) ve;
         assertEquals(cra.getFirstRow(), ae.getFirstRow());
         assertEquals(cra.getFirstColumn(), ae.getFirstColumn());

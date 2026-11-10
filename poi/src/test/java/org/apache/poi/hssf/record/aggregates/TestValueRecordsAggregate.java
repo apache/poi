@@ -17,13 +17,6 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -47,6 +40,8 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.HexRead;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for {@link ValueRecordsAggregate}
@@ -81,7 +76,7 @@ final class TestValueRecordsAggregate {
 
         CellValueRecordInterface record = cvrs.get(0);
         assertNotNull( record, "Row contains a value" );
-        assertTrue( ( record instanceof FormulaRecordAggregate ), "First record is a FormulaRecordsAggregate");
+        assertInstanceOf(FormulaRecordAggregate.class, record, "First record is a FormulaRecordsAggregate");
     }
 
     private void constructValueRecord(List<org.apache.poi.hssf.record.Record> records) {

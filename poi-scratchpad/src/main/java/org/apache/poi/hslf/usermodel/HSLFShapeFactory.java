@@ -64,10 +64,9 @@ public final class HSLFShapeFactory {
     public static HSLFGroupShape createShapeGroup(EscherContainerRecord spContainer, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         boolean isTable = false;
         EscherRecord child = spContainer.getChild(0);
-        if (!(child instanceof EscherContainerRecord)) {
+        if (!(child instanceof EscherContainerRecord ecr)) {
             throw new RecordFormatException("Did not have a EscherContainerRecord: " + child);
         }
-        EscherContainerRecord ecr = (EscherContainerRecord) child;
         EscherRecord opt = HSLFShape.getEscherChild(ecr, EscherRecordTypes.USER_DEFINED);
 
         if (opt != null) {
@@ -75,8 +74,8 @@ public final class HSLFShapeFactory {
             List<EscherProperty> props = f.createProperties( opt.serialize(), 8, opt.getInstance() );
             for (EscherProperty ep : props) {
                 if (ep.getPropertyNumber() == EscherPropertyTypes.GROUPSHAPE__TABLEPROPERTIES.propNumber
-                    && ep instanceof EscherSimpleProperty
-                    && (((EscherSimpleProperty)ep).getPropertyValue() & 1) == 1) {
+                    && ep instanceof EscherSimpleProperty esp
+                    && (esp.getPropertyValue() & 1) == 1) {
                     isTable = true;
                     break;
                 }
@@ -117,7 +116,7 @@ public final class HSLFShapeFactory {
                 shape = createNonPrimitive(spContainer, parent);
                 break;
             default:
-                if (parent instanceof HSLFTable) {
+                if (parent instanceof HSLFTable table) {
                     EscherTextboxRecord etr = spContainer.getChildById(EscherTextboxRecord.RECORD_ID);
                     if (etr == null) {
                         LOG.atWarn().log("invalid ppt - add EscherTextboxRecord to cell");
@@ -126,7 +125,7 @@ public final class HSLFShapeFactory {
                         etr.setOptions((short)15);
                         spContainer.addChildRecord(etr);
                     }
-                    shape = new HSLFTableCell(spContainer, (HSLFTable)parent);
+                    shape = new HSLFTableCell(spContainer, table);
                 } else {
                     shape = new HSLFAutoShape(spContainer, parent);
                 }

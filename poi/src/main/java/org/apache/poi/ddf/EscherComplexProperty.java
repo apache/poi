@@ -69,7 +69,8 @@ public class EscherComplexProperty extends EscherProperty {
 
     private void ensureComplexData(int size) {
         if (this.complexData == null) {
-            complexData = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
+            complexData = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH,
+                    "EscherComplexProperty.setMaxRecordLength()");
         }
     }
 
@@ -172,7 +173,8 @@ public class EscherComplexProperty extends EscherProperty {
             return;
         }
 
-        byte[] newArray = IOUtils.safelyAllocate(newSize, MAX_RECORD_LENGTH);
+        byte[] newArray = IOUtils.safelyAllocate(newSize, MAX_RECORD_LENGTH,
+                "EscherComplexProperty.setMaxRecordLength()");
         System.arraycopy(complexData, 0, newArray, 0, Math.min(Math.min(complexData.length, copyLen),newSize));
         complexData = newArray;
         complexSize = newSize;
@@ -189,11 +191,9 @@ public class EscherComplexProperty extends EscherProperty {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof EscherComplexProperty)) {
+        if (!(o instanceof EscherComplexProperty escherComplexProperty)) {
             return false;
         }
-
-        EscherComplexProperty escherComplexProperty = (EscherComplexProperty) o;
 
         // not equal if size differs
         if (complexSize != escherComplexProperty.complexSize) {

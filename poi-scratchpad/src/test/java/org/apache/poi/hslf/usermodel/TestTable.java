@@ -22,8 +22,8 @@ package org.apache.poi.hslf.usermodel;
 import static org.apache.poi.hslf.HSLFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
@@ -89,7 +89,7 @@ public class TestTable {
         List<HSLFShape> shapes = s.getShapes();
         assertNotNull(shapes);
         assertEquals(3, shapes.size());
-        assertTrue(shapes.get(2) instanceof HSLFTable);
+        assertInstanceOf(HSLFTable.class, shapes.get(2));
         final HSLFTable table = (HSLFTable) shapes.get(2);
         assertEquals(4, table.getNumberOfColumns());
         assertEquals(6, table.getNumberOfRows());

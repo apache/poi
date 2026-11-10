@@ -132,14 +132,14 @@ public final class PercentRank implements Function {
         } else {
             int intermediateSignificance = significance < 5 ? 8 : significance + 3;
             ValueEval belowRank = calculateRank(numbers, closestMatchBelow, intermediateSignificance, false);
-            if (!(belowRank instanceof NumberEval)) {
+            if (!(belowRank instanceof NumberEval belowNum)) {
                 return belowRank;
             }
             ValueEval aboveRank = calculateRank(numbers, closestMatchAbove, intermediateSignificance, false);
-            if (!(aboveRank instanceof NumberEval)) {
+            if (!(aboveRank instanceof NumberEval aboveNum)) {
                 return aboveRank;
             }
-            return interpolate(x, closestMatchBelow, closestMatchAbove, (NumberEval)belowRank, (NumberEval)aboveRank, significance);
+            return interpolate(x, closestMatchBelow, closestMatchAbove, belowNum, aboveNum, significance);
         }
     }
 
@@ -153,18 +153,24 @@ public final class PercentRank implements Function {
         return new NumberEval(round(result, significance));
     }
 
+    /**
+     * A double has at most 17 significant digits, so rounding to more places than this changes
+     * nothing (and a huge count would make setScale build a number with billions of digits).
+     */
+    private static final int MAX_SIGNIFICANCE = 20;
+
     @Internal
     public static double round(BigDecimal bd, int significance) {
         //the rounding in https://support.microsoft.com/en-us/office/percentrank-function-f1b5836c-9619-4847-9fc9-080ec9024442
         //is very inconsistent, this hodge podge of rounding modes is the only way to match Excel results
+        significance = Math.min(significance, MAX_SIGNIFICANCE);
         BigDecimal bd2 = bd.setScale(significance + 3, RoundingMode.HALF_UP);
         return bd2.setScale(significance, RoundingMode.DOWN).doubleValue();
     }
 
     @Internal
     public static List<ValueEval> getValues(ValueEval eval, int srcRowIndex, int srcColumnIndex) throws EvaluationException {
-        if (eval instanceof AreaEval) {
-            AreaEval ae = (AreaEval)eval;
+        if (eval instanceof AreaEval ae) {
             List<ValueEval> list = new ArrayList<>();
             for (int r = ae.getFirstRow(); r <= ae.getLastRow(); r++) {
                 for (int c = ae.getFirstColumn(); c <= ae.getLastColumn(); c++) {

@@ -22,8 +22,6 @@ import java.util.Map;
 
 import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationSheet;
-import org.apache.poi.ss.formula.FormulaParser;
-import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.util.Internal;
 
@@ -77,11 +75,17 @@ public final class XSSFEvaluationWorkbook extends BaseXSSFEvaluationWorkbook {
         return _sheetCache.computeIfAbsent(sheet, rows -> new XSSFEvaluationSheet(sheet));
     }
 
+    /**
+     * The parsed tokens are cached by the {@link XSSFEvaluationSheet} the cell belongs to, so a
+     * formula is parsed once per evaluator rather than every time it is (re-)evaluated; the cache
+     * is kept in step by {@link #clearAllCachedResultValues()} and the sheet's
+     * {@code notifyUpdateCell}/{@code notifyDeleteCell}.
+     */
     @Override
     public Ptg[] getFormulaTokens(EvaluationCell evalCell) {
         final XSSFCell cell = ((XSSFEvaluationCell)evalCell).getXSSFCell();
         final int sheetIndex = _uBook.getSheetIndex(cell.getSheet());
-        return FormulaParser.parse(cell.getCellFormula(this), this,
-                FormulaType.CELL, sheetIndex, cell.getRowIndex());
+        final XSSFEvaluationSheet sheet = (XSSFEvaluationSheet) getSheet(sheetIndex);
+        return sheet.getFormulaTokens(cell, this, sheetIndex);
     }
 }

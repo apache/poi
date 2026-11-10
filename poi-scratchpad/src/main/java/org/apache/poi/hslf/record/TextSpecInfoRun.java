@@ -173,7 +173,8 @@ public class TextSpecInfoRun implements GenericRecord {
         if (smartTagFld.isSet(mask)) {
             // An unsigned integer specifies the count of items in rgSmartTagIndex.
             int count = source.readInt();
-            smartTagsBytes = IOUtils.safelyAllocate(4 + count * 4L, RecordAtom.getMaxRecordLength());
+            smartTagsBytes = IOUtils.safelyAllocate(4 + count * 4L, RecordAtom.getMaxRecordLength(),
+                    "RecordAtom.setMaxRecordLength()");
             LittleEndian.putInt(smartTagsBytes, 0, count);
             // An array of SmartTagIndex that specifies the indices.
             // The count of items in the array is specified by count.
@@ -210,17 +211,14 @@ public class TextSpecInfoRun implements GenericRecord {
                 continue;
             }
             boolean valid;
-            if (valO instanceof byte[]) {
-                byte[] bufB = (byte[]) valO;
+            if (valO instanceof byte[] bufB) {
                 valid = bufB.length > 0;
                 out.write(bufB);
-            } else if (valO instanceof Integer) {
-                int valI = ((Integer)valO);
+            } else if (valO instanceof Integer valI) {
                 valid = (valI != -1);
                 LittleEndian.putInt(buf, 0, valI);
                 out.write(buf);
-            } else if (valO instanceof Short) {
-                short valS = ((Short)valO);
+            } else if (valO instanceof Short valS) {
                 valid = (valS != -1);
                 LittleEndian.putShort(buf, 0, valS);
                 out.write(buf, 0, 2);

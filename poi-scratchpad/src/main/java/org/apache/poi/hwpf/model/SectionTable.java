@@ -79,7 +79,8 @@ public class SectionTable {
                 // The first short at the offset is the size of the grpprl.
                 int sepxSize = LittleEndian.getShort(documentStream, fileOffset);
                 fileOffset += LittleEndianConsts.SHORT_SIZE;
-                byte[] buf = IOUtils.safelyClone(documentStream, fileOffset, sepxSize, HWPFDocument.getMaxRecordLength());
+                byte[] buf = IOUtils.safelyClone(documentStream, fileOffset, sepxSize,
+                        HWPFDocument.getMaxRecordLength(), "HWPFDocument.setMaxRecordLength()");
                 _sections.add(new SEPX(sed, startAt, endAt, buf));
             }
         }

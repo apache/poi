@@ -30,6 +30,7 @@ import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.sl.image.ImageHeaderEMF;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.Units;
 
 /**
@@ -49,9 +50,15 @@ public final class EMF extends Metafile {
         super(recordContainer, bse);
     }
 
+    /**
+     * {@inheritDoc}
+     * @throws RecordFormatException if there is a problem with the size of the decompressed data.
+     * {@link Metafile#setMaxRecordLength(int)} can be used to change the limit applied.
+     * @throws HSLFException for parsing exceptions
+     */
     @Override
-    public byte[] getData(){
-        byte[] rawdata = getRawData();
+    public byte[] getData() {
+        final byte[] rawdata = getRawData();
         Header header = new Header();
         header.read(rawdata, CHECKSUM_SIZE);
 
@@ -60,10 +67,17 @@ public final class EMF extends Metafile {
                 InflaterInputStream inflater = new InflaterInputStream(is);
                 UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get()
         ) {
-            long len = IOUtils.skipFully(is,header.getSize() + (long)CHECKSUM_SIZE);
-            assert(len == header.getSize() + CHECKSUM_SIZE);
+            long skipLen = header.getSize() + (long)CHECKSUM_SIZE;
+            if (IOUtils.skipFully(is, skipLen) != skipLen) {
+                throw new RecordFormatException("EMF data is shorter than its header");
+            }
 
-            IOUtils.copy(inflater, out);
+            final int maxLength = getMaxRecordLength();
+            long copied = IOUtils.copy(inflater, out, (long) maxLength + 1);
+            if (copied > maxLength) {
+                throw new RecordFormatException(
+                        "Inflated EMF data exceeds maximum allowed size (" + maxLength + ")");
+            }
 
             return out.toByteArray();
         } catch (IOException e){
@@ -85,7 +99,9 @@ public final class EMF extends Metafile {
         header.setZipSize(compressed.length);
 
         byte[] checksum = getChecksum(data);
-        byte[] rawData = new byte[checksum.length * getUIDInstanceCount() + header.getSize() + compressed.length];
+        long rawDataSize = calcRawDataSize(getUIDInstanceCount(), checksum.length, header.getSize(), compressed.length);
+        byte[] rawData = IOUtils.safelyAllocate(rawDataSize, Metafile.getMaxRecordLength(),
+                "Metafile.setMaxRecordLength()");
         int offset = 0;
 
         System.arraycopy(checksum, 0, rawData, offset, checksum.length);

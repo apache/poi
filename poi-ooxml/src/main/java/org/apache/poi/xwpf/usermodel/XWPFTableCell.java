@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
@@ -98,22 +99,22 @@ public class XWPFTableCell implements IBody, ICell {
             cursor.selectPath("./*");
             while (cursor.toNextSelection()) {
                 XmlObject o = cursor.getObject();
-                if (o instanceof CTP) {
-                    XWPFParagraph p = new XWPFParagraph((CTP) o, this);
+                if (o instanceof CTP ctp) {
+                    XWPFParagraph p = new XWPFParagraph(ctp, this);
                     paragraphs.add(p);
                     bodyElements.add(p);
                 }
-                if (o instanceof CTTbl) {
-                    XWPFTable t = new XWPFTable((CTTbl) o, this, false);
+                if (o instanceof CTTbl ctTbl) {
+                    XWPFTable t = new XWPFTable(ctTbl, this, false);
                     tables.add(t);
                     bodyElements.add(t);
                 }
-                if (o instanceof CTSdtBlock) {
-                    XWPFSDT c = new XWPFSDT((CTSdtBlock) o, this);
+                if (o instanceof CTSdtBlock sdtBlock) {
+                    XWPFSDT c = new XWPFSDT(sdtBlock, this);
                     bodyElements.add(c);
                 }
-                if (o instanceof CTSdtRun) {
-                    XWPFSDT c = new XWPFSDT((CTSdtRun) o, this);
+                if (o instanceof CTSdtRun sdtRun) {
+                    XWPFSDT c = new XWPFSDT(sdtRun, this);
                     bodyElements.add(c);
                 }
             }
@@ -277,10 +278,10 @@ public class XWPFTableCell implements IBody, ICell {
         while (!(o instanceof CTP) && (cursor.toPrevSibling())) {
             o = cursor.getObject();
         }
-        if ((!(o instanceof CTP)) || o == p) {
+        if ((!(o instanceof CTP ctp)) || o == p) {
             paragraphs.add(0, newP);
         } else {
-            int pos = paragraphs.indexOf(getParagraph((CTP) o)) + 1;
+            int pos = paragraphs.indexOf(getParagraph(ctp)) + 1;
             paragraphs.add(pos, newP);
         }
         int i = 0;
@@ -314,10 +315,10 @@ public class XWPFTableCell implements IBody, ICell {
             while (!(o instanceof CTTbl) && (cursor.toPrevSibling())) {
                 o = cursor.getObject();
             }
-            if (!(o instanceof CTTbl)) {
+            if (!(o instanceof CTTbl tbl)) {
                 tables.add(0, newT);
             } else {
-                int pos = tables.indexOf(getTable((CTTbl) o)) + 1;
+                int pos = tables.indexOf(getTable(tbl)) + 1;
                 tables.add(pos, newT);
             }
             int i = 0;
@@ -400,7 +401,7 @@ public class XWPFTableCell implements IBody, ICell {
     public void insertTable(int pos, XWPFTable table) {
         bodyElements.add(pos, table);
         int i = 0;
-        for (CTTbl tbl : ctTc.getTblList()) {
+        for (CTTbl tbl : ctTc.getTblArray()) {
             if (tbl == table.getCTTbl()) {
                 break;
             }
@@ -470,13 +471,12 @@ public class XWPFTableCell implements IBody, ICell {
     }
 
     private void appendBodyElementText(StringBuilder text, IBodyElement e, boolean isLast) {
-        if (e instanceof XWPFParagraph) {
-            text.append(((XWPFParagraph) e).getText());
+        if (e instanceof XWPFParagraph paragraph) {
+            text.append(paragraph.getText());
             if (!isLast) {
                 text.append('\t');
             }
-        } else if (e instanceof XWPFTable) {
-            XWPFTable eTable = (XWPFTable) e;
+        } else if (e instanceof XWPFTable eTable) {
             for (XWPFTableRow row : eTable.getRows()) {
                 for (XWPFTableCell cell : row.getTableCells()) {
                     List<IBodyElement> localBodyElements = cell.getBodyElements();
@@ -490,8 +490,8 @@ public class XWPFTableCell implements IBody, ICell {
             if (!isLast) {
                 text.append('\n');
             }
-        } else if (e instanceof XWPFSDT) {
-            text.append(((XWPFSDT) e).getContent().getText());
+        } else if (e instanceof XWPFSDT sdt) {
+            text.append(sdt.getContent().getText());
             if (!isLast) {
                 text.append('\t');
             }
@@ -508,17 +508,15 @@ public class XWPFTableCell implements IBody, ICell {
         try (final XmlCursor cursor = cell.newCursor()) {
             cursor.toParent();
             o = cursor.getObject();
-            if (!(o instanceof CTRow)) {
+            if (!(o instanceof CTRow ctRow)) {
                 return null;
             }
-            row = (CTRow) o;
-            cursor.toParent();
-            o = cursor.getObject();
+            row = ctRow;
         }
-        if (!(o instanceof CTTbl)) {
+        CTTbl tbl = XWPFTable.getParentTable(row);
+        if (tbl == null) {
             return null;
         }
-        CTTbl tbl = (CTTbl) o;
         XWPFTable table = getTable(tbl);
         if (table == null) {
             return null;
@@ -534,8 +532,8 @@ public class XWPFTableCell implements IBody, ICell {
     public XWPFDocument getXWPFDocument() {
         if (xwpfDocument != null) {
             return xwpfDocument;
-        } else if (part instanceof XWPFTableCell) {
-            return getCellDocument((XWPFTableCell) part, 0);
+        } else if (part instanceof XWPFTableCell tableCell) {
+            return getCellDocument(tableCell, 0);
         } else if (part != null) {
             return part.getXWPFDocument();
         }
@@ -548,8 +546,8 @@ public class XWPFTableCell implements IBody, ICell {
         if (depth > MAX_RECURSION_DEPTH) {
             throw new IllegalStateException("Recursion depth exceeded while trying to get XWPFDocument from XWPFTableCell");
         }
-        if (cell.part instanceof XWPFTableCell) {
-            return getCellDocument((XWPFTableCell) cell.part, depth + 1);
+        if (cell.part instanceof XWPFTableCell tableCell) {
+            return getCellDocument(tableCell, depth + 1);
         } else {
             return cell.part.getXWPFDocument();
         }
@@ -624,6 +622,7 @@ public class XWPFTableCell implements IBody, ICell {
     }
 
     public int getWidth() {
-        return (int) Units.toDXA(POIXMLUnits.parseLength(getTcWidth().xgetW()));
+        return MathUtil.safeDoubleToInt(
+                Units.toDXA(POIXMLUnits.parseLength(getTcWidth().xgetW())));
     }
 }

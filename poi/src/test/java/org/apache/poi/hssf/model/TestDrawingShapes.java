@@ -20,6 +20,7 @@ package org.apache.poi.hssf.model;
 import static org.apache.poi.hssf.usermodel.HSSFTestHelper.getEscherAggregate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -788,9 +789,9 @@ class TestDrawingShapes {
             List<HSSFShape> children = patriarchBack.getChildren();
             assertEquals(4, children.size());
             HSSFShape hssfShape = children.get(0);
-            assertTrue(hssfShape instanceof HSSFSimpleShape);
+            assertInstanceOf(HSSFSimpleShape.class, hssfShape);
             HSSFAnchor anchor = hssfShape.getAnchor();
-            assertTrue(anchor instanceof HSSFClientAnchor);
+            assertInstanceOf(HSSFClientAnchor.class, anchor);
             assertEquals(0, anchor.getDx1());
             assertEquals(512, anchor.getDx2());
             assertEquals(0, anchor.getDy1());
@@ -802,9 +803,9 @@ class TestDrawingShapes {
             assertEquals(1, cAnchor.getRow2());
 
             hssfShape = children.get(1);
-            assertTrue(hssfShape instanceof HSSFSimpleShape);
+            assertInstanceOf(HSSFSimpleShape.class, hssfShape);
             anchor = hssfShape.getAnchor();
-            assertTrue(anchor instanceof HSSFClientAnchor);
+            assertInstanceOf(HSSFClientAnchor.class, anchor);
             assertEquals(512, anchor.getDx1());
             assertEquals(1024, anchor.getDx2());
             assertEquals(0, anchor.getDy1());
@@ -816,9 +817,9 @@ class TestDrawingShapes {
             assertEquals(1, cAnchor.getRow2());
 
             hssfShape = children.get(2);
-            assertTrue(hssfShape instanceof HSSFSimpleShape);
+            assertInstanceOf(HSSFSimpleShape.class, hssfShape);
             anchor = hssfShape.getAnchor();
-            assertTrue(anchor instanceof HSSFClientAnchor);
+            assertInstanceOf(HSSFClientAnchor.class, anchor);
             assertEquals(0, anchor.getDx1());
             assertEquals(512, anchor.getDx2());
             assertEquals(0, anchor.getDy1());
@@ -830,9 +831,9 @@ class TestDrawingShapes {
             assertEquals(2, cAnchor.getRow2());
 
             hssfShape = children.get(3);
-            assertTrue(hssfShape instanceof HSSFSimpleShape);
+            assertInstanceOf(HSSFSimpleShape.class, hssfShape);
             anchor = hssfShape.getAnchor();
-            assertTrue(anchor instanceof HSSFClientAnchor);
+            assertInstanceOf(HSSFClientAnchor.class, anchor);
             assertEquals(0, anchor.getDx1());
             assertEquals(512, anchor.getDx2());
             assertEquals(100, anchor.getDy1());

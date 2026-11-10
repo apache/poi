@@ -28,15 +28,14 @@
     <section><title>Project News</title>
 
       <!-- latest final release -->
-      <section><title>30 November 2025 - POI 5.5.1 available</title>
-        <p>The Apache POI team is pleased to announce the release of 5.5.1.
-          Several dependencies were updated to their latest versions to pick up security fixes and other improvements.</p>
+      <section><title>22 October 2026 - POI 6.0.0 available</title>
+        <p>The Apache POI team is pleased to announce the release of 6.0.0.</p>
         <p>A summary of changes is available in the
           <a href="https://www.apache.org/dyn/closer.lua/poi/release/RELEASE-NOTES.txt">Release Notes</a>.
-          A full list of changes is available in the <a href="changes.html#5.5.1">change log</a>.
+          A full list of changes is available in the <a href="changes.html#6.0.0">change log</a>.
           People interested should also follow the <a href="site:mailinglists">dev list</a> to track progress.</p>
-        <p>See the <a href="download.html#POI-5.5.1">downloads</a> page for more details.</p>
-        <p>POI requires Java 8 or newer since version 4.0.1.</p>
+        <p>See the <a href="download.html#POI-6.0.0">downloads</a> page for more details.</p>
+        <p>POI requires Java 17 or newer since version 6.0.0.</p>
       </section>
 
       <section><title>7 July 2025 - Source repository switched from Subversion to Git</title>

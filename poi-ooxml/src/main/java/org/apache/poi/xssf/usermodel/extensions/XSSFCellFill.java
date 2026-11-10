@@ -173,17 +173,17 @@ public final class XSSFCellFill {
     }
 
     public boolean equals(Object o) {
-        if (!(o instanceof XSSFCellFill)) return false;
-
-        XSSFCellFill cf = (XSSFCellFill) o;
-        
-        // bug 60845
-        // Do not compare the representing strings but the properties
-        // Reason:
-        //   The strings are different if the XMLObject is a fragment (e.g. the ones from cloneStyle)
-        //   even if they are in fact representing the same style
-        return Objects.equals(this.getFillBackgroundColor(), cf.getFillBackgroundColor())
-                && Objects.equals(this.getFillForegroundColor(), cf.getFillForegroundColor())
-                && Objects.equals(this.getPatternType(), cf.getPatternType());
+        if (o instanceof XSSFCellFill cf) {
+            // bug 60845
+            // Do not compare the representing strings but the properties
+            // Reason:
+            //   The strings are different if the XMLObject is a fragment (e.g. the ones from cloneStyle)
+            //   even if they are in fact representing the same style
+            return Objects.equals(this.getFillBackgroundColor(), cf.getFillBackgroundColor())
+                    && Objects.equals(this.getFillForegroundColor(), cf.getFillForegroundColor())
+                    && Objects.equals(this.getPatternType(), cf.getPatternType());
+        } else {
+            return false;
+        }
     }
 }

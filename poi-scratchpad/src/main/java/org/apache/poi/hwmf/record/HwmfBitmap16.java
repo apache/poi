@@ -71,15 +71,13 @@ public class HwmfBitmap16 implements GenericRecord {
         int size = 2*LittleEndianConsts.BYTE_SIZE+4*LittleEndianConsts.SHORT_SIZE;
         if (isPartial) {
             // Bits (4 bytes): This field MUST be ignored.
-            long skipSize = leis.skip(LittleEndianConsts.INT_SIZE);
-            assert(skipSize == LittleEndianConsts.INT_SIZE);
+            leis.skipFully(LittleEndianConsts.INT_SIZE);
             // Reserved (18 bytes): This field MUST be ignored.
-            skipSize = leis.skip(18);
-            assert(skipSize == 18);
+            leis.skipFully(18);
             size += 18+LittleEndianConsts.INT_SIZE;
         }
 
-        int length = (((width * bitsPixel + 15) >> 4) << 1) * height;
+        int length = Math.multiplyExact(((width * bitsPixel + 15) >> 4) << 1, height);
         bitmap = IOUtils.toByteArray(leis, length);
         
         // TODO: this is not implemented ... please provide a sample, if it

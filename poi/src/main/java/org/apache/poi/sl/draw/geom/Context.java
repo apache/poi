@@ -25,11 +25,13 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 public class Context {
+    // the digit runs are possessive: giving digits back never turns a failed match into a success,
+    // and backtracking into them is quadratic on long non-numeric strings
     private static final Pattern DOUBLE_PATTERN = Pattern.compile(
-        "[\\x00-\\x20]*[+-]?(NaN|Infinity|((((\\p{Digit}+)(\\.)?((\\p{Digit}+)?)" +
-        "([eE][+-]?(\\p{Digit}+))?)|(\\.(\\p{Digit}+)([eE][+-]?(\\p{Digit}+))?)|" +
-        "(((0[xX](\\p{XDigit}+)(\\.)?)|(0[xX](\\p{XDigit}+)?(\\.)(\\p{XDigit}+)))" +
-        "[pP][+-]?(\\p{Digit}+)))[fFdD]?))[\\x00-\\x20]*");
+        "[\\x00-\\x20]*[+-]?(NaN|Infinity|((((\\p{Digit}++)(\\.)?((\\p{Digit}++)?)" +
+        "([eE][+-]?(\\p{Digit}++))?)|(\\.(\\p{Digit}++)([eE][+-]?(\\p{Digit}++))?)|" +
+        "(((0[xX](\\p{XDigit}++)(\\.)?)|(0[xX](\\p{XDigit}++)?(\\.)(\\p{XDigit}++)))" +
+        "[pP][+-]?(\\p{Digit}++)))[fFdD]?))[\\x00-\\x20]*");
 
     private final Map<String, Double> _ctx = new HashMap<>();
     private final IAdjustableShape _props;
@@ -65,8 +67,8 @@ public class Context {
 
     public double evaluate(Formula fmla){
         double result = fmla.evaluate(this);
-        if (fmla instanceof GuideIf) {
-            String key = ((GuideIf)fmla).getName();
+        if (fmla instanceof GuideIf guideIf) {
+            String key = guideIf.getName();
             if (key != null) {
                 _ctx.put(key, result);
             }

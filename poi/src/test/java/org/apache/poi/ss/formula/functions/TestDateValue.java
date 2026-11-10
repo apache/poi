@@ -30,10 +30,12 @@ import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 /**
  * Tests for Excel function DATEVALUE()
  */
+@Isolated // modifies the default locale and we don't want to affect other tests running in parallel
 final class TestDateValue {
 
     @BeforeAll

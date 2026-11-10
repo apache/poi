@@ -100,7 +100,8 @@ public final class SlideAtom extends RecordAtom {
 
         // If there's any other bits of data, keep them about
         // 8 bytes header + 20 bytes to flags + 2 bytes flags = 30 bytes
-        reserved = IOUtils.safelyClone(source,start+30, len-30, getMaxRecordLength());
+        reserved = IOUtils.safelyClone(source,start+30, len-30, RecordAtom.getMaxRecordLength(),
+                "RecordAtom.setMaxRecordLength()");
     }
 
     /**
@@ -109,7 +110,7 @@ public final class SlideAtom extends RecordAtom {
     public SlideAtom(){
         _header = new byte[8];
         LittleEndian.putUShort(_header, 0, 2);
-        LittleEndian.putUShort(_header, 2, (int)_type);
+        LittleEndian.putUShort(_header, 2, Math.toIntExact(_type));
         LittleEndian.putInt(_header, 4, 24);
 
         byte[] ssdate = new byte[12];

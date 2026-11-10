@@ -130,16 +130,15 @@ public final class Match extends Var2or3ArgFunction {
     }
 
     private static ValueVector evaluateLookupRange(ValueEval eval) throws EvaluationException {
-        if (eval instanceof RefEval) {
-            RefEval re = (RefEval) eval;
+        if (eval instanceof RefEval re) {
             if (re.getNumberOfSheets() == 1) {
                 return new SingleValueVector(re.getInnerValueEval(re.getFirstSheetIndex()));
             } else {
                 return LookupUtils.createVector(re);
             }
         }
-        if (eval instanceof TwoDEval) {
-            ValueVector result = LookupUtils.createVector((TwoDEval)eval);
+        if (eval instanceof TwoDEval td) {
+            ValueVector result = LookupUtils.createVector(td);
             if (result == null) {
                 throw new EvaluationException(ErrorEval.NA);
             }
@@ -150,8 +149,7 @@ public final class Match extends Var2or3ArgFunction {
         if(eval instanceof NumericValueEval) {
             throw new EvaluationException(ErrorEval.NA);
         }
-        if (eval instanceof StringEval) {
-            StringEval se = (StringEval) eval;
+        if (eval instanceof StringEval se) {
             Double d = OperandResolver.parseDouble(se.getStringValue());
             if(d == null) {
                 // plain string
@@ -169,15 +167,13 @@ public final class Match extends Var2or3ArgFunction {
             throws EvaluationException {
         ValueEval match_type = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
 
-        if(match_type instanceof ErrorEval) {
-            throw new EvaluationException((ErrorEval)match_type);
+        if(match_type instanceof ErrorEval ee) {
+            throw new EvaluationException(ee);
         }
-        if(match_type instanceof NumericValueEval) {
-            NumericValueEval ne = (NumericValueEval) match_type;
+        if(match_type instanceof NumericValueEval ne) {
             return ne.getNumberValue();
         }
-        if (match_type instanceof StringEval) {
-            StringEval se = (StringEval) match_type;
+        if (match_type instanceof StringEval se) {
             Double d = OperandResolver.parseDouble(se.getStringValue());
             if(d == null) {
                 // plain string

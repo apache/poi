@@ -47,6 +47,8 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.MathUtil;
+import org.apache.poi.util.StringUtil;
 
 /**
  * For now this class renders only images supported by the javax.imageio.ImageIO framework.
@@ -78,7 +80,8 @@ public class BitmapImageRenderer implements ImageRenderer {
 
     @Override
     public boolean canRender(String contentType) {
-        return Stream.of(ALLOWED_TYPES).anyMatch(t -> t.contentType.equalsIgnoreCase(contentType));
+        return Stream.of(ALLOWED_TYPES).anyMatch(t ->
+                StringUtil.equalsIgnoreCase(t.contentType, contentType));
     }
 
     @Override
@@ -264,7 +267,10 @@ public class BitmapImageRenderer implements ImageRenderer {
         if (w_old == w_new && h_old == h_new) {
             return img;
         }
-        BufferedImage scaled = new BufferedImage((int)w_new, (int)h_new, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage scaled = new BufferedImage(
+                MathUtil.safeDoubleToInt(w_new),
+                MathUtil.safeDoubleToInt(h_new),
+                BufferedImage.TYPE_INT_ARGB);
         AffineTransform at = new AffineTransform();
         at.scale(w_new/w_old, h_new/h_old);
         AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
@@ -324,9 +330,16 @@ public class BitmapImageRenderer implements ImageRenderer {
         int iw = img.getWidth();
         int ih = img.getHeight();
 
-
         double cw = (100000-clip.left-clip.right) / 100000.0;
         double ch = (100000-clip.top-clip.bottom) / 100000.0;
+
+        if (anchor.getWidth() == 0 || anchor.getHeight() == 0 ||
+                iw == 0 || ih == 0 || cw == 0 || ch == 0) {
+            // If the size of the image, the source rectangle or the anchor is 0,
+            // we don't need to render anything.
+            return true;
+        }
+
         double sx = anchor.getWidth()/(iw*cw);
         double sy = anchor.getHeight()/(ih*ch);
         double tx = anchor.getX()-(iw*sx*clip.left/100000.0);

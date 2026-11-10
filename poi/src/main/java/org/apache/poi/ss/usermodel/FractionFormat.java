@@ -28,6 +28,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ss.format.SimpleFraction;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
+import org.apache.poi.util.MathUtil;
 
 /**
  * <p>Format class that handles Excel style fractions, such as "# #/#" and "#/###"</p>
@@ -52,7 +53,7 @@ public class FractionFormat extends Format {
     //but as of this writing, the numerators and denominators
     //with formats of that nature on very small values were quite
     //far from Excel's calculations
-    private static final int MAX_DENOM_POW = 4;
+    static final int MAX_DENOM_POW = 4;
 
     //there are two options:
     //a) an exact denominator is specified in the formatString
@@ -67,6 +68,15 @@ public class FractionFormat extends Format {
      * @param denomFormatString The format string for the denominator
      */
     public FractionFormat(String wholePartFormatString, String denomFormatString) {
+        this(wholePartFormatString, denomFormatString, MAX_DENOM_POW);
+    }
+
+    /**
+     * @param wholePartFormatString the format string for the whole part
+     * @param denomFormatString the format string for the denominator
+     * @param maxDenominatorDigits the most denominator digits, for a denominator given as digit placeholders
+     */
+    FractionFormat(String wholePartFormatString, String denomFormatString, int maxDenominatorDigits) {
         this.wholePartFormatString = wholePartFormatString;
 
         // initialize exactDenom and maxDenom
@@ -90,8 +100,8 @@ public class FractionFormat extends Format {
                 }
             } else if (m.group(1) != null) {
                 int len = m.group(1).length();
-                len = Math.min(len, MAX_DENOM_POW);
-                tmpMax = (int)Math.pow(10, len);
+                len = Math.min(len, maxDenominatorDigits);
+                tmpMax = MathUtil.safeDoubleToInt(Math.pow(10, len));
             } else {
                 tmpExact = 100;
             }
@@ -189,11 +199,11 @@ public class FractionFormat extends Format {
 
     @Override
     public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
-        if (!(obj instanceof Number)) {
+        if (!(obj instanceof Number number)) {
             throw new IllegalArgumentException("Cannot format object of " + obj.getClass() + " to number: " + obj);
         }
 
-        return toAppendTo.append(format((Number)obj));
+        return toAppendTo.append(format(number));
     }
 
     @Override

@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.usermodel;
 
+import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -155,7 +156,7 @@ public abstract class BaseTestRow {
             sheet.createRow(0);
             //Test low row bound exception
             IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> sheet.createRow(-1));
-            assertTrue(e.getMessage().startsWith("Invalid row number (-1)"));
+            assertStartsWith(e.getMessage(), "Invalid row number (-1)");
 
             //Test high row bound
             sheet.createRow(maxRowNum);
@@ -175,7 +176,7 @@ public abstract class BaseTestRow {
             //Test low cell bound
             IllegalArgumentException e;
             e = assertThrows(IllegalArgumentException.class, () -> row1.createCell(-1));
-            assertTrue(e.getMessage().startsWith("Invalid column index (-1)"));
+            assertStartsWith(e.getMessage(), "Invalid column index (-1)");
 
             //Test high cell bound
             e = assertThrows(IllegalArgumentException.class, () -> row1.createCell(maxCellNum + 1));

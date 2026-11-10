@@ -27,17 +27,18 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.StringUtil;
 
 /**
  * Formats a date value.
  */
 public class CellDateFormatter extends CellFormatter {
-    private boolean amPmUpper;
-    private boolean showM;
-    private boolean showAmPm;
+    private final boolean amPmUpper;
+    private final boolean showM;
+    private final boolean showAmPm;
     private final DateFormat dateFmt;
-    private String sFmt;
+    private final String sFmt;
 
     private static final Calendar EXCEL_EPOCH_CAL =
             LocaleUtil.getLocaleCalendar(1904, 0, 1);
@@ -46,7 +47,11 @@ public class CellDateFormatter extends CellFormatter {
 
     private static CellDateFormatter SIMPLE_DATE_FORMATTER;
 
-    class DatePartHandler implements CellFormatPart.PartHandler {
+    static class DatePartHandler implements CellFormatPart.PartHandler {
+        private boolean amPmUpper;
+        private boolean showM;
+        private boolean showAmPm;
+        private String sFmt;
         private int mStart = -1;
         private int mLen;
         private int hStart = -1;
@@ -169,6 +174,10 @@ public class CellDateFormatter extends CellFormatter {
         StringBuffer descBuf = CellFormatPart.parseFormat(format,
                 CellFormatType.DATE, partHandler);
         partHandler.finish(descBuf);
+        amPmUpper = partHandler.amPmUpper;
+        showM = partHandler.showM;
+        showAmPm = partHandler.showAmPm;
+        sFmt = partHandler.sFmt;
         dateFmt = new SimpleDateFormat(descBuf.toString(), locale);
         dateFmt.setTimeZone(LocaleUtil.getUserTimeZone());
     }
@@ -177,8 +186,7 @@ public class CellDateFormatter extends CellFormatter {
     public synchronized void formatValue(StringBuffer toAppendTo, Object value) {
         if (value == null)
             value = 0.0;
-        if (value instanceof Number) {
-            Number num = (Number) value;
+        if (value instanceof Number num) {
             // Convert from fractional days to milliseconds. Excel always rounds up.
             double v = Math.round(num.doubleValue() * NUM_MILLISECONDS_IN_DAY);
             if (v == 0L) {
@@ -186,11 +194,14 @@ public class CellDateFormatter extends CellFormatter {
             } else {
                 Calendar c = (Calendar)EXCEL_EPOCH_CAL.clone();
                 // If milliseconds were not requested in the format string, round the seconds.
-                int seconds = (int) (sFmt == null ? Math.round(v / 1000) : v / 1000);
+                int seconds = MathUtil.safeDoubleToInt(sFmt == null ? Math.round(v / 1000) : v / 1000);
                 c.add(Calendar.SECOND, seconds);
                 c.add(Calendar.MILLISECOND, (int)(v % 1000));
                 value = c.getTime();
             }
+        } else if (value instanceof Date date && sFmt == null) {
+            // as for a number: if milliseconds were not requested in the format string, round the seconds
+            value = new Date(Math.round(date.getTime() / 1000.0) * 1000);
         }
 
         AttributedCharacterIterator it = dateFmt.formatToCharacterIterator(value);
@@ -209,7 +220,7 @@ public class CellDateFormatter extends CellFormatter {
                         if (msecs < 0) {
                             msecs += 1000;
                         }
-                        formatter.format(locale, sFmt, msecs / 1000.0);
+                        formatter.format(locale, sFmt == null ? "%f" : sFmt, msecs / 1000.0);
                     }
                     toAppendTo.delete(pos, pos + 2);
                     doneMillis = true;

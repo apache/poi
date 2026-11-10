@@ -70,7 +70,8 @@ public final class EscherTextboxRecord extends EscherRecord {
         int bytesRemaining = readHeader( data, offset );
 
         // Save the data, ready for the calling code to do something useful with it
-        thedata = IOUtils.safelyClone(data, offset + 8, bytesRemaining, MAX_RECORD_LENGTH);
+        thedata = IOUtils.safelyClone(data, offset + 8, bytesRemaining, MAX_RECORD_LENGTH,
+                "EscherTextboxRecord.setMaxRecordLength()");
         return bytesRemaining + 8;
     }
 
@@ -117,7 +118,8 @@ public final class EscherTextboxRecord extends EscherRecord {
      * @param length the length of the block
      */
     public void setData(byte[] b, int start, int length) {
-        thedata = IOUtils.safelyClone(b, start, length, MAX_RECORD_LENGTH);
+        thedata = IOUtils.safelyClone(b, start, length, MAX_RECORD_LENGTH,
+                "EscherTextboxRecord.setMaxRecordLength()");
     }
 
     /**

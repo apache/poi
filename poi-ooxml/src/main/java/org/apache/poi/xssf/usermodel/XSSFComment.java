@@ -230,12 +230,13 @@ public class XSSFComment implements Comment {
      */
     @Override
     public void setString(RichTextString string) {
-        if(!(string instanceof XSSFRichTextString)){
+        if(string instanceof XSSFRichTextString richTextString) {
+            _str = richTextString;
+            _comment.setText(_str.getCTRst());
+            _comments.commentUpdated(this);
+        } else {
             throw new IllegalArgumentException("Only XSSFRichTextString argument is supported");
         }
-        _str = (XSSFRichTextString)string;
-        _comment.setText(_str.getCTRst());
-        _comments.commentUpdated(this);
     }
     
     public void setString(String string) {

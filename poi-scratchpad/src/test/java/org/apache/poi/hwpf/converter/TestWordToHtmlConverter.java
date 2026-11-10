@@ -17,10 +17,26 @@
 package org.apache.poi.hwpf.converter;
 
 import static org.apache.poi.POITestCase.assertContains;
-import static org.apache.poi.POITestCase.assertNotContained;
+import static org.apache.poi.POITestCase.assertNotContains;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.regex.Matcher;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -28,8 +44,12 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.POITestCase;
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.XMLHelper;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.w3c.dom.Document;
@@ -109,34 +129,225 @@ public class TestWordToHtmlConverter {
 
         for (String match : contains.split("\\|")) {
             if (match.startsWith("!")) {
-                assertNotContained(result, match.substring(1));
+                POITestCase.assertNotContains(result, match.substring(1));
             } else {
                 assertContains(result, match);
             }
         }
     }
 
+    @Test
+    void testFieldPatterns() {
+        Matcher m = AbstractWordConverter.PATTERN_HYPERLINK_EXTERNAL.matcher(" HYPERLINK \"http://testuri.org/\" ");
+        assertTrue(m.matches());
+        assertEquals("http://testuri.org/", m.group(1));
+
+        m = AbstractWordConverter.PATTERN_HYPERLINK_LOCAL.matcher("HYPERLINK \\l \"_Toc1\" text\"");
+        assertTrue(m.matches());
+        assertEquals("_Toc1", m.group(1));
+        assertEquals("text\"", m.group(2));
+
+        m = AbstractWordConverter.PATTERN_PAGEREF.matcher("\r\n PAGEREF _Toc2 \t\\h \\* MERGEFORMAT \r");
+        assertTrue(m.find());
+        assertEquals("_Toc2", m.group(1));
+
+        m = AbstractWordConverter.PATTERN_PAGEREF.matcher("PAGEREF _Toc2\t\\h");
+        assertTrue(m.find());
+        assertEquals("_Toc2\t", m.group(1));
+    }
+
+    @Test
+    void testFieldPatternsBacktracking() {
+        // these used to take minutes, as every shorter match was retried before failing
+        assertTimeoutPreemptively(Duration.ofSeconds(10), () -> {
+            assertFalse(AbstractWordConverter.PATTERN_HYPERLINK_EXTERNAL.matcher(
+                "HYPERLINK \"" + "\"".repeat(100_000) + "\"\nx").matches());
+            assertFalse(AbstractWordConverter.PATTERN_HYPERLINK_LOCAL.matcher(
+                "HYPERLINK \\l \"" + "\" ".repeat(50_000) + "\nx").matches());
+            assertFalse(AbstractWordConverter.PATTERN_PAGEREF.matcher(
+                "PAGEREF " + "\t".repeat(100_000) + "x").find());
+            assertFalse(AbstractWordConverter.PATTERN_PAGEREF.matcher(
+                "PAGEREF " + "\\h".repeat(50_000) + "\n\n").find());
+        });
+    }
+
+    @Test
+    void testFontNameInStylesheet() throws Exception {
+        // the font name is written into the text of the <style> element, which the html output
+        // method does not escape, so a crafted name used to close the element and add markup
+        String fontName = "</style><p>x";
+        try (POIFSFileSystem fs = new POIFSFileSystem(SAMPLES.openResourceAsStream("SampleDoc.doc"))) {
+            renameFont(fs, "Times New Roman", fontName);
+
+            try (HWPFDocument hwpfDocument = new HWPFDocument(fs)) {
+                String result = getHtmlText(hwpfDocument, true);
+                assertNotContains(result, "</style><p>");
+                assertContains(result, "font-family:\"\\3c /style\\3e \\3c p\\3e x\";");
+            }
+        }
+    }
+
+    @Test
+    void testScriptHyperlink() throws Exception {
+        // the target of a HYPERLINK field is copied into the href of the link, so a
+        // javascript: target ran script in the page when the link was followed
+        String result = getScriptHyperlinkHtml(null);
+        assertNotContains(result, "javascript:");
+        assertContains(result, "<span class=\"s1\">Hyperlink text</span>");
+    }
+
+    @Test
+    void testCustomHyperlinkValidator() throws Exception {
+        // a validator only applies to standard URLs, it can't let a javascript: target through
+        String result = getScriptHyperlinkHtml(h -> true);
+        assertNotContains(result, "javascript:");
+        assertContains(result, "<span class=\"s1\">Hyperlink text</span>");
+
+        try (HWPFDocument hwpfDocument = new HWPFDocument(SAMPLES.openResourceAsStream("hyperlink.doc"))) {
+            result = getHtmlText(hwpfDocument, true, h -> h.startsWith("http://testuri.org/"));
+            assertContains(result, "<a href=\"http://testuri.org/\">");
+        }
+
+        try (HWPFDocument hwpfDocument = new HWPFDocument(SAMPLES.openResourceAsStream("hyperlink.doc"))) {
+            result = getHtmlText(hwpfDocument, true, h -> false);
+            assertNotContains(result, "<a href");
+            assertContains(result, "<span class=\"s1\">Hyperlink text</span>");
+        }
+    }
+
+    @Test
+    void testIsSafeHyperlink() {
+        List<String> safe = Arrays.asList(
+            "http://testuri.org/",
+            "HTTPS://testuri.org/",
+            "mailto:someone@testuri.org",
+            "file:///C:/docs/a.doc",
+            "C:\\docs\\a.doc",
+            "\\\\server\\share\\a.doc",
+            "docs/a.doc",
+            "#_Toc1",
+            "a.doc#x:y",
+            "");
+        List<String> unsafe = Arrays.asList(
+            "javascript:alert(1)",
+            "JavaScript:alert(1)",
+            " \u0001javascript:alert(1)",
+            "java\tscr\nipt:alert(1)",
+            "vbscript:msgbox(1)",
+            "data:text/html,<script>alert(1)</script>");
+
+        assertThat("safe targets that are rejected",
+            safe.stream().filter(h -> !WordToHtmlUtils.isSafeHyperlink(h)).collect(Collectors.toList()), empty());
+        assertThat("unsafe targets that are accepted",
+            unsafe.stream().filter(WordToHtmlUtils::isSafeHyperlink).collect(Collectors.toList()), empty());
+    }
+
+    @Test
+    void testCssFontFamily() {
+        assertEquals("Times New Roman", WordToHtmlUtils.cssFontFamily("Times New Roman"));
+        assertEquals("MS-Mincho_2", WordToHtmlUtils.cssFontFamily("MS-Mincho_2"));
+        assertEquals("\"3M Sans\"", WordToHtmlUtils.cssFontFamily("3M Sans"));
+        assertEquals("\"Font -1\"", WordToHtmlUtils.cssFontFamily("Font -1"));
+        assertEquals("\"a\\22 b\\5c c\\a d\"", WordToHtmlUtils.cssFontFamily("a\"b\\c\nd"));
+    }
+
+    /**
+     * Overwrites the name of a font in the font table of the table stream, in place: the new
+     * name must not be longer than the old one, the rest of the entry is padded with zeros.
+     */
+    private static void renameFont(POIFSFileSystem fs, String oldName, String newName) throws IOException {
+        // not closed, as that would close the file system too
+        HWPFDocument hwpfDocument = new HWPFDocument(fs);
+        byte[] table = hwpfDocument.getTableStream();
+        String tableName = hwpfDocument.getFileInformationBlock().getFibBase().isFWhichTblStm() ? "1Table" : "0Table";
+        int start = hwpfDocument.getFileInformationBlock().getFcSttbfffn();
+        int end = start + hwpfDocument.getFileInformationBlock().getLcbSttbfffn();
+
+        byte[] oldBytes = (oldName + "\0").getBytes(StandardCharsets.UTF_16LE);
+        byte[] newBytes = Arrays.copyOf(newName.getBytes(StandardCharsets.UTF_16LE), oldBytes.length);
+        for (int i = start; i + oldBytes.length <= end; i++) {
+            if (Arrays.equals(oldBytes, Arrays.copyOfRange(table, i, i + oldBytes.length))) {
+                System.arraycopy(newBytes, 0, table, i, newBytes.length);
+                fs.createOrUpdateDocument(new ByteArrayInputStream(table), tableName);
+                return;
+            }
+        }
+        throw new IllegalStateException("font " + oldName + " not found");
+    }
+
+    /**
+     * Converts hyperlink.doc with the target of its HYPERLINK field changed to a javascript: one.
+     *
+     * @param hyperlinkValidator the validator to set on the converter, or null for the default
+     */
+    private static String getScriptHyperlinkHtml(Predicate<String> hyperlinkValidator) throws Exception {
+        try (POIFSFileSystem fs = new POIFSFileSystem(SAMPLES.openResourceAsStream("hyperlink.doc"))) {
+            replaceText(fs, "http://testuri.org/", "javascript:alert(1)");
+
+            try (HWPFDocument hwpfDocument = new HWPFDocument(fs)) {
+                return getHtmlText(hwpfDocument, true, hyperlinkValidator);
+            }
+        }
+    }
+
+    /**
+     * Overwrites every occurrence of a text in the WordDocument stream, in place: the new
+     * text must have the same length as the old one.
+     */
+    static void replaceText(POIFSFileSystem fs, String oldText, String newText) throws IOException {
+        byte[] oldBytes = oldText.getBytes(StandardCharsets.UTF_16LE);
+        byte[] newBytes = newText.getBytes(StandardCharsets.UTF_16LE);
+        assertEquals(oldBytes.length, newBytes.length);
+
+        byte[] stream;
+        try (InputStream is = fs.createDocumentInputStream("WordDocument")) {
+            stream = IOUtils.toByteArray(is);
+        }
+        boolean found = false;
+        for (int i = 0; i + oldBytes.length <= stream.length; i++) {
+            if (Arrays.equals(oldBytes, Arrays.copyOfRange(stream, i, i + oldBytes.length))) {
+                System.arraycopy(newBytes, 0, stream, i, newBytes.length);
+                found = true;
+            }
+        }
+        assertTrue(found, "text " + oldText + " not found");
+        fs.createOrUpdateDocument(new ByteArrayInputStream(stream), "WordDocument");
+    }
+
     private static String getHtmlText(final String sampleFileName, boolean emulatePictureStorage) throws Exception {
+        try (HWPFDocument hwpfDocument = new HWPFDocument(SAMPLES.openResourceAsStream(sampleFileName))) {
+            return getHtmlText(hwpfDocument, emulatePictureStorage);
+        }
+    }
+
+    private static String getHtmlText(HWPFDocument hwpfDocument, boolean emulatePictureStorage) throws Exception {
+        return getHtmlText(hwpfDocument, emulatePictureStorage, null);
+    }
+
+    private static String getHtmlText(HWPFDocument hwpfDocument, boolean emulatePictureStorage,
+                                      Predicate<String> hyperlinkValidator) throws Exception {
         Document newDocument = XMLHelper.newDocumentBuilder().newDocument();
         WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(newDocument);
 
-        try (HWPFDocument hwpfDocument = new HWPFDocument(SAMPLES.openResourceAsStream(sampleFileName))) {
-            if (emulatePictureStorage) {
-                wordToHtmlConverter.setPicturesManager((content, pictureType, suggestedName, widthInches, heightInches) -> suggestedName);
-            }
-
-            wordToHtmlConverter.processDocument(hwpfDocument);
-
-            StringWriter stringWriter = new StringWriter();
-
-            Transformer transformer = XMLHelper.newTransformer();
-            transformer.setOutputProperty(OutputKeys.METHOD, "html");
-            transformer.transform(
-                new DOMSource(wordToHtmlConverter.getDocument()),
-                new StreamResult(stringWriter));
-
-            return stringWriter.toString();
+        if (hyperlinkValidator != null) {
+            wordToHtmlConverter.setHyperlinkValidator(hyperlinkValidator);
         }
+
+        if (emulatePictureStorage) {
+            wordToHtmlConverter.setPicturesManager((content, pictureType, suggestedName, widthInches, heightInches) -> suggestedName);
+        }
+
+        wordToHtmlConverter.processDocument(hwpfDocument);
+
+        StringWriter stringWriter = new StringWriter();
+
+        Transformer transformer = XMLHelper.newTransformer();
+        transformer.setOutputProperty(OutputKeys.METHOD, "html");
+        transformer.transform(
+            new DOMSource(wordToHtmlConverter.getDocument()),
+            new StreamResult(stringWriter));
+
+        return stringWriter.toString();
     }
 
 

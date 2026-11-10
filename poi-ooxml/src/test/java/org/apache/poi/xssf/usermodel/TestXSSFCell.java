@@ -32,6 +32,7 @@ import java.util.List;
 
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.HSSFITestDataProvider;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.tests.usermodel.BaseTestXCell;
@@ -688,7 +689,11 @@ public final class TestXSSFCell extends BaseTestXCell {
     }
 
     /**
-     * Bug 61869: updating a shared formula produces an unreadable file
+     * Bug 61869: updating a shared formula produces an unreadable file.
+     * <p>
+     * As in Excel, a cell that is given its own formula leaves the shared formula group it was in:
+     * the other cells keep the formula they had, and if the edited cell was the master the next
+     * cell of the group takes over that role.
      */
     @Test
     void test61869() throws Exception {
@@ -698,6 +703,7 @@ public final class TestXSSFCell extends BaseTestXCell {
             assertEquals("SUM(A2,B2)", c2.getCellFormula());
             assertEquals(STCellFormulaType.SHARED, c2.getCTCell().getF().getT());
             assertEquals(0, c2.getCTCell().getF().getSi());
+            assertEquals("C2:C3", c2.getCTCell().getF().getRef());
             XSSFCell c3 = sheet.getRow(2).getCell(2);
             assertEquals(STCellFormulaType.SHARED, c3.getCTCell().getF().getT());
             assertEquals(0, c3.getCTCell().getF().getSi());
@@ -706,15 +712,63 @@ public final class TestXSSFCell extends BaseTestXCell {
             assertEquals("SUM(A2,B2)", sheet.getSharedFormula(0).getStringValue());
 
             c2.setCellFormula("SUM(A2:B2)");
-            assertEquals(STCellFormulaType.SHARED, c2.getCTCell().getF().getT()); // c2 remains the master formula
+            // c2 has left the group and is an ordinary formula cell now
+            assertEquals("SUM(A2:B2)", c2.getCellFormula());
+            assertFalse(c2.getCTCell().getF().isSetT());
+            assertFalse(c2.getCTCell().getF().isSetSi());
+            assertFalse(c2.getCTCell().getF().isSetRef());
 
-            assertEquals("SUM(A2:B2)", sheet.getSharedFormula(0).getStringValue());
+            // c3 keeps its formula and has become the master of what is left of the group
+            assertEquals("SUM(A3,B3)", c3.getCellFormula());
             assertEquals(STCellFormulaType.SHARED, c3.getCTCell().getF().getT());
             assertEquals(0, c3.getCTCell().getF().getSi());
-            assertEquals("SUM(A3:B3)", c3.getCellFormula());  // formula in the follower cell is rebuilt
+            assertEquals("C3", c3.getCTCell().getF().getRef());
+            assertEquals("SUM(A3,B3)", sheet.getSharedFormula(0).getStringValue());
 
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                XSSFSheet sheet2 = wb2.getSheetAt(0);
+                assertEquals("SUM(A2:B2)", sheet2.getRow(1).getCell(2).getCellFormula());
+                assertEquals("SUM(A3,B3)", sheet2.getRow(2).getCell(2).getCellFormula());
+                assertEquals("SUM(A3,B3)", sheet2.getSharedFormula(0).getStringValue());
+            }
         }
+    }
 
+    /**
+     * A follower cell of a shared formula group that is given its own formula leaves the group;
+     * the master and the other followers are untouched.
+     */
+    @Test
+    void settingAFormulaOnASharedFormulaFollowerUnsharesIt() throws Exception {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("58106.xlsx")) {
+            XSSFSheet sheet = wb.getSheetAt(0);
+            XSSFRow row = sheet.getRow(12);
+            XSSFCell master = row.getCell(1);
+            XSSFCell d13 = row.getCell(3);
+            assertEquals("B13:G13", master.getCTCell().getF().getRef());
+            assertEquals("SUM(D1:D3)", d13.getCellFormula());
+            assertEquals(STCellFormulaType.SHARED, d13.getCTCell().getF().getT());
+
+            d13.setCellFormula("MAX(D1:D3)");
+            assertEquals("MAX(D1:D3)", d13.getCellFormula());
+            assertFalse(d13.getCTCell().getF().isSetT());
+            assertFalse(d13.getCTCell().getF().isSetSi());
+
+            // the rest of the group is as it was
+            assertEquals("SUM(B1:B3)", master.getCellFormula());
+            assertEquals("B13:G13", master.getCTCell().getF().getRef());
+            assertEquals("SUM(B1:B3)", sheet.getSharedFormula(0).getStringValue());
+            assertEquals("SUM(C1:C3)", row.getCell(2).getCellFormula());
+            assertEquals("SUM(E1:E3)", row.getCell(4).getCellFormula());
+            assertEquals(STCellFormulaType.SHARED, row.getCell(4).getCTCell().getF().getT());
+
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                XSSFRow row2 = wb2.getSheetAt(0).getRow(12);
+                assertEquals("MAX(D1:D3)", row2.getCell(3).getCellFormula());
+                assertEquals("SUM(C1:C3)", row2.getCell(2).getCellFormula());
+                assertEquals("SUM(G1:G3)", row2.getCell(6).getCellFormula());
+            }
+        }
     }
 
     @Test
@@ -848,5 +902,67 @@ public final class TestXSSFCell extends BaseTestXCell {
         cell.getCTCell().setT(STCellType.INLINE_STR);
         cell.getCTCell().setIs(rst);
         assertEquals(text, cell.getStringCellValue());
+    }
+
+    @Test
+    void testEscapeLiteralUnicodeSequences() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            assertFalse(wb.isEscapeLiteralUnicodeSequences());
+            XSSFSheet sheet = wb.createSheet();
+            XSSFRow row = sheet.createRow(0);
+            row.createCell(0).setCellValue("_x0041_ col");
+            row.createCell(1).setCellValue("_x000D_");
+
+            wb.setEscapeLiteralUnicodeSequences(true);
+            assertTrue(wb.isEscapeLiteralUnicodeSequences());
+            row.createCell(2).setCellValue("_x0041_ col");
+            row.createCell(3).setCellValue(new HSSFRichTextString("_x0042_"));
+            XSSFCell formulaCell = row.createCell(4);
+            formulaCell.setCellFormula("\"_x0043_\"");
+            formulaCell.setCellValue("_x0043_");
+            XSSFCell numericCell = row.createCell(5);
+            numericCell.setCellValue(1);
+            numericCell.setCellFormula("\"_x0044_\"");
+            numericCell.setCellValue("_x0044_");
+            // an XSSFRichTextString holds the stored form of its text, so it is not escaped
+            row.createCell(6).setCellValue(new XSSFRichTextString("_x0045_"));
+            row.createCell(7).setCellValue(new XSSFRichTextString(XSSFRichTextString.utfEncode("_x0046_")));
+            row.createCell(8).setCellValue("a\u0001b");
+
+            // in-memory values are the literal text
+            assertEquals("_x0041_ col", row.getCell(2).getStringCellValue());
+            assertEquals("_x0043_", formulaCell.getStringCellValue());
+
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                XSSFRow row2 = wb2.getSheetAt(0).getRow(0);
+                // written before the option was enabled
+                assertEquals("A col", row2.getCell(0).getStringCellValue());
+                assertEquals("\r", row2.getCell(1).getStringCellValue());
+
+                assertEquals("_x0041_ col", row2.getCell(2).getStringCellValue());
+                assertEquals("_x0042_", row2.getCell(3).getStringCellValue());
+                assertEquals("_x0043_", row2.getCell(4).getStringCellValue());
+                assertEquals("_x0044_", row2.getCell(5).getStringCellValue());
+                assertEquals("E", row2.getCell(6).getStringCellValue());
+                assertEquals("_x0046_", row2.getCell(7).getStringCellValue());
+                assertEquals("a\u0001b", row2.getCell(8).getStringCellValue());
+            }
+        }
+    }
+
+    @Test
+    void testEscapeLiteralUnicodeSequencesSetCellType() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            wb.setEscapeLiteralUnicodeSequences(true);
+            XSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+            cell.setCellFormula("\"_x0041_\"");
+            cell.setCellValue("_x0041_");
+            cell.setCellType(CellType.STRING);
+            assertEquals("_x0041_", cell.getStringCellValue());
+
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                assertEquals("_x0041_", wb2.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
+            }
+        }
     }
 }

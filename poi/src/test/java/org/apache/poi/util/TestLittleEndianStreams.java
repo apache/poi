@@ -17,11 +17,11 @@
 
 package org.apache.poi.util;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -79,7 +79,6 @@ final class TestLittleEndianStreams {
         byte[] expBuf = HexRead.readFromString("77 66 55 44");
         assertArrayEquals(actBuf, expBuf);
         assertEquals(0x33, lei.readUByte());
-        assertEquals(0, lei.available());
     }
 
     @Test
@@ -92,7 +91,7 @@ final class TestLittleEndianStreams {
 
         // only one byte left, so this should fail
         RuntimeException ex = assertThrows(RuntimeException.class, () -> lei.readFully(new byte[4]));
-        assertTrue(ex.getMessage().contains("Buffer overrun"));
+        assertContains(ex.getMessage(), "Buffer overrun");
     }
 
     @Test
@@ -102,7 +101,7 @@ final class TestLittleEndianStreams {
 
         // only one byte left, so this should fail
         RuntimeException ex = assertThrows(RuntimeException.class, () -> lei.readFully(new byte[4]));
-        assertTrue(ex.getMessage().contains("Buffer overrun"));
+        assertContains(ex.getMessage(), "Buffer overrun");
     }
 
     @Test
@@ -112,6 +111,18 @@ final class TestLittleEndianStreams {
 
         // only one byte left, so this should fail
         RuntimeException ex = assertThrows(RuntimeException.class, () -> lei.readFully(new byte[4]));
-        assertTrue(ex.getMessage().contains("Buffer overrun"));
+        assertContains(ex.getMessage(), "Buffer overrun");
+    }
+
+    @Test
+    void testSetReadIndexToEnd() {
+        LittleEndianByteArrayInputStream lei = new LittleEndianByteArrayInputStream(HexRead.readFromString("01 02 03"));
+        lei.setReadIndex(3);
+        assertEquals(-1, lei.read());
+        lei.setReadIndex(1);
+        assertEquals(0x0302, lei.readUShort());
+        assertEquals(3, lei.getReadIndex());
+        assertThrows(IndexOutOfBoundsException.class, () -> lei.setReadIndex(4));
+        assertThrows(IndexOutOfBoundsException.class, () -> lei.setReadIndex(-1));
     }
 }

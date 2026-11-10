@@ -748,12 +748,12 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    void writeBrokenFile() throws IOException {
-        try (final Workbook wb = _testDataProvider.openSampleWorkbook("clusterfuzz-testcase-minimized-POIXSSFFuzzer-5185049589579776.xlsx")) {
-            try (OutputStream out = NullOutputStream.INSTANCE) {
-                assertThrows(IllegalArgumentException.class,
-                        () -> wb.write(out));
-            }
-        }
+    void writeBrokenFile() {
+        // this malformed workbook used to open and then fail on write - the zip entry size
+        // validation now rejects it while reading (an entry holds more data than its
+        // declared size)
+        RuntimeException ex = assertThrows(RuntimeException.class,
+                () -> _testDataProvider.openSampleWorkbook("clusterfuzz-testcase-minimized-POIXSSFFuzzer-5185049589579776.xlsx"));
+        assertTrue(ex.getMessage().contains("more data than its declared size"), ex.getMessage());
     }
 }

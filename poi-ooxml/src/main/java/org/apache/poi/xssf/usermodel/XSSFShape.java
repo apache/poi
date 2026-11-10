@@ -18,6 +18,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.Shape;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTLineProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNoFillProperties;
@@ -120,7 +121,7 @@ public abstract class XSSFShape implements Shape {
     public void setLineWidth( double lineWidth ) {
         CTShapeProperties props = getShapeProperties();
         CTLineProperties ln = props.isSetLn() ? props.getLn() : props.addNewLn();
-        ln.setW((int)(lineWidth*Units.EMU_PER_POINT));
+        ln.setW(MathUtil.safeDoubleToInt(lineWidth*Units.EMU_PER_POINT));
     }
 
     /**

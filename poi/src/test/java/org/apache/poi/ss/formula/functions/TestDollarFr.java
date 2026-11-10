@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import static org.apache.poi.ss.util.Utils.assertDouble;
+import static org.apache.poi.ss.util.Utils.assertDoubleAndDisplay;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -71,6 +72,18 @@ final class TestDollarFr {
             assertDouble(fe, cell, "DOLLARFR(-1.125,16)", -1.02, tolerance);
             assertDouble(fe, cell, "DOLLARFR(1.000125,16)", 1.00002, tolerance);
             assertDouble(fe, cell, "DOLLARFR(1.125,32)", 1.04, tolerance);
+        }
+    }
+
+    @Test
+    void testPlainIeeeArithmetic() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            assertDoubleAndDisplay(fe, cell, "DOLLARFR(1.125,16)", 1 + 0.125 * 16 / 100, "1.02");
+            assertDoubleAndDisplay(fe, cell, "DOLLARFR(-1.125,16)", -(1 + 0.125 * 16 / 100), "-1.02");
+            // the fractional part of 1.1 is 0.10000000000000009 in binary; Excel displays the result as 1.016
+            assertDoubleAndDisplay(fe, cell, "DOLLARFR(1.1,16)", 1 + (1.1 - 1) * 16 / 100, "1.016");
         }
     }
 

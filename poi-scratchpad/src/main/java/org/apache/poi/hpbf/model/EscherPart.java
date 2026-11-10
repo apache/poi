@@ -89,7 +89,7 @@ public abstract class EscherPart extends HPBFPart {
             size += escherRecord.getRecordSize();
         }
 
-        byte[] data = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
+        byte[] data = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH, "EscherPart.setMaxRecordLength()");
         size = 0;
         for (EscherRecord record : records) {
             int thisSize =

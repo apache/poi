@@ -56,7 +56,8 @@ public final class QCTextBit extends QCBit {
     }
 
     public void setText(String text) {
-        byte[] data = IOUtils.safelyAllocate(text.length() * 2L, MAX_RECORD_LENGTH);
+        byte[] data = IOUtils.safelyAllocate(text.length() * 2L, MAX_RECORD_LENGTH,
+                "QCTextBit.setMaxRecordLength()");
         StringUtil.putUnicodeLE(text, data, 0);
         setData(data);
     }

@@ -75,4 +75,32 @@ final class TestFloor {
             assertError(fe, cell, "FLOOR(\"abc\", \"def\")", FormulaError.VALUE);
         }
     }
+
+    @Test
+    void testFloorActsOnExcelsFifteenDigitView() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            // 880000000*0.00849/3 is 2490399.9999999995 in binary, 2490400 to Excel
+            assertDouble(fe, cell, "FLOOR(880000000*0.00849/3,1)", 2490400.0, 0);
+            assertDouble(fe, cell, "FLOOR(2490399.9999999995,1)", 2490400.0, 0);
+            assertDouble(fe, cell, "FLOOR(2490399.9999999995,100)", 2490400.0, 0);
+            assertDouble(fe, cell, "FLOOR(-2490399.9999999995,-1)", -2490400.0, 0);
+            assertDouble(fe, cell, "FLOOR(0.7/0.1,1)", 7.0, 0);
+            assertDouble(fe, cell, "FLOOR(0.3-0.1-0.1,0.1)", 0.1, 0);
+            assertDouble(fe, cell, "FLOOR(0.1+0.2,0.1)", 0.3, 0);
+            assertDouble(fe, cell, "FLOOR(4.35*100,1)", 435.0, 0);
+            // the significance is seen the same way: 0.1*3 is 0.3, not 0.30000000000000004
+            assertDouble(fe, cell, "FLOOR(0.9,0.1*3)", 0.9, 0);
+            assertDouble(fe, cell, "FLOOR(1.6,0.7+0.1)", 1.6, 0);
+            assertDouble(fe, cell, "FLOOR(-0.9,-(0.1*3))", -0.9, 0);
+            // values that differ within 15 significant digits are floored normally
+            assertDouble(fe, cell, "FLOOR(2490399.99999999,1)", 2490399.0, 0);
+            assertDouble(fe, cell, "FLOOR(2.99999999999999,1)", 2.0, 0);
+            // exact binary fractions are never approximated
+            assertDouble(fe, cell, "FLOOR(2.5,1)", 2.0, 0);
+            assertDouble(fe, cell, "FLOOR(2.5,0.5)", 2.5, 0);
+            assertDouble(fe, cell, "FLOOR(1E15+0.5,1)", 1E15, 0);
+        }
+    }
 }

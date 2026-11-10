@@ -17,9 +17,13 @@
 package org.apache.poi.openxml4j.opc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URI;
+import java.time.Duration;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.junit.jupiter.api.Test;
@@ -143,4 +147,26 @@ class TestPackagingURIHelper {
         assertEquals("javascript:///", uri.toASCIIString());
     }
 
+    @Test
+    void testIsRelationshipPartURI() throws Exception {
+        assertTrue(PackagingURIHelper.isRelationshipPartURI(new URI("/_rels/.rels")));
+        assertTrue(PackagingURIHelper.isRelationshipPartURI(new URI("/word/_rels/document.xml.rels")));
+        // the '.' before "rels" matches any character
+        assertTrue(PackagingURIHelper.isRelationshipPartURI(new URI("/_relsxrels")));
+        assertTrue(PackagingURIHelper.isRelationshipPartURI(new URI("/_rels.rels")));
+        assertFalse(PackagingURIHelper.isRelationshipPartURI(new URI("/_relsrels")));
+        assertFalse(PackagingURIHelper.isRelationshipPartURI(new URI("/word/document.xml")));
+        assertFalse(PackagingURIHelper.isRelationshipPartURI(new URI("/_rels/x%0A.rels")));
+    }
+
+    /**
+     * The regex this used to be checked with backtracked quadratically on "_rels" repeated
+     */
+    @Test
+    void testIsRelationshipPartURISlowness() throws Exception {
+        URI uri = new URI("_rels".repeat(40_000) + "x");
+        Boolean result = assertTimeoutPreemptively(Duration.ofSeconds(10),
+                () -> PackagingURIHelper.isRelationshipPartURI(uri));
+        assertFalse(result);
+    }
 }

@@ -34,7 +34,9 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
+import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.openxml4j.opc.ZipPackage;
 import org.apache.poi.openxml4j.opc.internal.FileHelper;
 import org.apache.poi.openxml4j.opc.internal.InvalidZipException;
@@ -51,8 +53,8 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -84,14 +86,18 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 import java.util.zip.CRC32;
 
+import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleFileStream;
 import static org.apache.poi.xssf.XSSFTestDataSamples.getSampleFile;
 import static org.apache.poi.xssf.XSSFTestDataSamples.openSampleWorkbook;
@@ -100,6 +106,7 @@ import static org.apache.poi.xssf.XSSFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -488,7 +495,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             assertEquals("Numbers", wb1.getSheetName(0));
             //the second sheet is of type 'chartsheet'
             assertEquals("Chart", wb1.getSheetName(1));
-            assertTrue(wb1.getSheetAt(1) instanceof XSSFChartSheet);
+            assertInstanceOf(XSSFChartSheet.class, wb1.getSheetAt(1));
             assertEquals("SomeJunk", wb1.getSheetName(2));
 
             wb1.removeSheetAt(2);
@@ -770,9 +777,9 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
                 assertSheetOrder(read, "Sheet1-Renamed", "Sheet2", "Sheet3");
                 XSSFSheet sheet = (XSSFSheet) read.getSheet("Sheet1-Renamed");
                 XDDFChartData.Series series = sheet.getDrawingPatriarch().getCharts().get(0).getChartSeries().get(0).getSeries(0);
-                assertTrue(series instanceof XDDFBarChartData.Series, "should be a bar chart data series");
+                assertInstanceOf(XDDFBarChartData.Series.class, series, "should be a bar chart data series");
                 String formula = series.getCategoryData().getFormula();
-                assertTrue(formula.startsWith("'Sheet1-Renamed'!"), "should contain new sheet name");
+                assertStartsWith("should contain new sheet name", formula, "'Sheet1-Renamed'!");
             }
         }
     }
@@ -1199,6 +1206,85 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         wb.close();
     }
 
+    @Test
+    void testRemoveSheetRemovesDrawingParts() throws IOException {
+        try (XSSFWorkbook wb = openSampleWorkbook("WithThreeCharts.xlsx")) {
+            // Sheet2 has two charts, Sheet3 has one
+            wb.removeSheetAt(1);
+            try (XSSFWorkbook wb2 = writeOutAndReadBack(wb)) {
+                assertEquals(1, wb2.getPackage().getPartsByName(Pattern.compile("/xl/charts/.*")).size());
+                assertEquals(1, wb2.getSheet("Sheet3").getDrawingPatriarch().getCharts().size());
+            }
+        }
+
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            byte[] shared = {1, 2, 3};
+            byte[] own = {4, 5, 6};
+            int sharedIdx = wb.addPicture(shared, Workbook.PICTURE_TYPE_PNG);
+            int ownIdx = wb.addPicture(own, Workbook.PICTURE_TYPE_PNG);
+            XSSFDrawing dg1 = wb.createSheet("Sheet1").createDrawingPatriarch();
+            dg1.createPicture(new XSSFClientAnchor(), sharedIdx);
+            dg1.createPicture(new XSSFClientAnchor(), ownIdx);
+            wb.createSheet("Sheet2").createDrawingPatriarch().createPicture(new XSSFClientAnchor(), sharedIdx);
+
+            wb.removeSheetAt(0);
+            try (XSSFWorkbook wb2 = writeOutAndReadBack(wb)) {
+                // the picture used by the remaining sheet is kept, the other one is removed
+                assertEquals(1, wb2.getPackage().getPartsByName(Pattern.compile("/xl/media/.*")).size());
+                XSSFPicture pic = (XSSFPicture) wb2.getSheetAt(0).getDrawingPatriarch().getShapes().get(0);
+                assertArrayEquals(shared, pic.getPictureData().getData());
+            }
+        }
+    }
+
+    @Test
+    void testRemoveSheetUpdatesPictureList() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            byte[] removed = {1, 2, 3};
+            byte[] kept = {4, 5, 6};
+            int removedIdx = wb.addPicture(removed, Workbook.PICTURE_TYPE_PNG);
+            int keptIdx = wb.addPicture(kept, Workbook.PICTURE_TYPE_PNG);
+            wb.createSheet("Template").createDrawingPatriarch().createPicture(new XSSFClientAnchor(), removedIdx);
+            XSSFDrawing other = wb.createSheet("Other").createDrawingPatriarch();
+            other.createPicture(new XSSFClientAnchor(), keptIdx);
+
+            wb.removeSheetAt(wb.getSheetIndex("Template"));
+            // the picture only the removed sheet used is no longer listed
+            assertEquals(1, wb.getAllPictures().size());
+            assertArrayEquals(kept, wb.getAllPictures().get(0).getData());
+
+            // the remaining part names don't follow the list any more, so a new picture needs a free one
+            assertEquals(1, wb.addPicture(removed, Workbook.PICTURE_TYPE_PNG));
+            for (int i = 0; i < wb.getAllPictures().size(); i++) {
+                other.createPicture(new XSSFClientAnchor(), i);
+            }
+
+            try (XSSFWorkbook wb2 = writeOutAndReadBack(wb)) {
+                assertEquals(2, wb2.getPackage().getPartsByName(Pattern.compile("/xl/media/.*")).size());
+                List<XSSFShape> shapes = wb2.getSheetAt(0).getDrawingPatriarch().getShapes();
+                assertEquals(3, shapes.size());
+                assertArrayEquals(kept, ((XSSFPicture) shapes.get(0)).getPictureData().getData());
+                assertArrayEquals(kept, ((XSSFPicture) shapes.get(1)).getPictureData().getData());
+                assertArrayEquals(removed, ((XSSFPicture) shapes.get(2)).getPictureData().getData());
+            }
+        }
+    }
+
+    @Test
+    void testRemoveSheetKeepsPartTargetedByRelativeHyperlink() throws Exception {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            int idx = wb.addPicture(new byte[]{1, 2, 3}, Workbook.PICTURE_TYPE_PNG);
+            PackagePartName image = wb.getAllPictures().get(idx).getPackagePart().getPartName();
+            wb.createSheet("Sheet1").createDrawingPatriarch().createPicture(new XSSFClientAnchor(), idx);
+            // internal hyperlinks keep their target as written, here relative to the sheet
+            wb.createSheet("Sheet2").getPackagePart().addRelationship(
+                    new URI("../media/image1.png"), TargetMode.INTERNAL, PackageRelationshipTypes.HYPERLINK_PART);
+
+            wb.removeSheetAt(0);
+            assertTrue(wb.getPackage().containPart(image));
+        }
+    }
+
     /**
      * See bug #61700
      */
@@ -1241,7 +1327,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             expectFormattedContent(A4, " עִבְרִית and اَلْعَرَبِيَّةُ");
 
             Comment a3Comment = sheet.getCellComment(new CellAddress("A3"));
-            assertTrue(a3Comment.getString().getString().contains("تعليق الاختبا"));
+            assertContains(a3Comment.getString().getString(), "تعليق الاختبا");
         }
     }
 

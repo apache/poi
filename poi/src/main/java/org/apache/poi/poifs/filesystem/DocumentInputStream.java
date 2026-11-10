@@ -24,10 +24,10 @@ import static org.apache.poi.util.LittleEndianConsts.SHORT_SIZE;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Iterator;
 
 import org.apache.poi.poifs.property.DocumentProperty;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianInput;
 
@@ -141,7 +141,7 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
     }
 
     @Override
-    public synchronized void mark(int ignoredReadlimit) {
+    public void mark(int ignoredReadlimit) {
         _marked_offset = _current_offset;
         _marked_offset_count = Math.max(0, _current_block_count - 1);
     }
@@ -152,9 +152,7 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
         if (atEOD()) {
             return EOF;
         }
-        byte[] b = new byte[1];
-        int result = read(b, 0, 1);
-        return (result == EOF) ? EOF : (b[0] & 0xFF);
+        return readUByte();
     }
 
     @Override
@@ -189,7 +187,7 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
      * method repositions the stream to its beginning.
      */
     @Override
-    public synchronized void reset() {
+    public void reset() {
         // Special case for reset to the start
         if(_marked_offset == 0 && _marked_offset_count == 0) {
             _current_block_count = _marked_offset_count;
@@ -243,9 +241,15 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
 
         long rval = new_offset - _current_offset;
 
-        // TODO Do this better
-        byte[] skip = IOUtils.safelyAllocate(rval, Integer.MAX_VALUE);
-        readFully(skip);
+        // move through the blocks without copying the skipped bytes
+        int remaining = (int) rval;
+        while (remaining > 0) {
+            nextBlockIfExhausted();
+            int limit = Math.min(remaining, _buffer.remaining());
+            _buffer.position(_buffer.position() + limit);
+            _current_offset += limit;
+            remaining -= limit;
+        }
         return rval;
     }
 
@@ -284,10 +288,7 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
 
         int read = 0;
         while(read < len) {
-           if(_buffer == null || _buffer.remaining() == 0) {
-              _current_block_count++;
-              _buffer = _data.next();
-           }
+           nextBlockIfExhausted();
 
            int limit = Math.min(len-read, _buffer.remaining());
            _buffer.get(buf, off+read, limit);
@@ -302,38 +303,90 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
     }
 
 
+    /**
+     * Moves on to the next block if the current one has no bytes left
+     */
+    private void nextBlockIfExhausted() {
+        if (_buffer == null || !_buffer.hasRemaining()) {
+            _current_block_count++;
+            _buffer = _data.next();
+        }
+    }
+
+    /**
+     * Returns the current block if the next {@code size} bytes can be read from it,
+     * so that small values can be decoded without a temporary array.
+     * The caller must have checked that {@code size} bytes are available.
+     *
+     * @return the current block, or {@code null} if the value spans a block boundary
+     */
+    private ByteBuffer blockWithRemaining(int size) {
+        nextBlockIfExhausted();
+        if (_buffer.remaining() < size) {
+            return null;
+        }
+        _current_offset += size;
+        return _buffer;
+    }
+
+    private static boolean isLittleEndian(ByteBuffer bb) {
+        return bb.order() == ByteOrder.LITTLE_ENDIAN;
+    }
+
     @Override
-   public byte readByte() {
-      return (byte) readUByte();
-   }
+    public byte readByte() {
+        checkAvailable(1);
+        ByteBuffer bb = blockWithRemaining(1);
+        if (bb != null) {
+            return bb.get();
+        }
+        byte[] data = new byte[1];
+        readFully(data, 0, 1);
+        return data[0];
+    }
 
-   @Override
-   public double readDouble() {
-      return Double.longBitsToDouble(readLong());
-   }
+    @Override
+    public double readDouble() {
+        return Double.longBitsToDouble(readLong());
+    }
 
-   @Override
+    @Override
     public long readLong() {
         checkAvailable(LONG_SIZE);
+        ByteBuffer bb = blockWithRemaining(LONG_SIZE);
+        if (bb != null) {
+            long v = bb.getLong();
+            return isLittleEndian(bb) ? v : Long.reverseBytes(v);
+        }
         byte[] data = new byte[LONG_SIZE];
         readFully(data, 0, LONG_SIZE);
         return LittleEndian.getLong(data, 0);
     }
 
-   @Override
-   public short readShort() {
-      checkAvailable(SHORT_SIZE);
-      byte[] data = new byte[SHORT_SIZE];
-      readFully(data, 0, SHORT_SIZE);
-      return LittleEndian.getShort(data);
-   }
+    @Override
+    public short readShort() {
+        checkAvailable(SHORT_SIZE);
+        ByteBuffer bb = blockWithRemaining(SHORT_SIZE);
+        if (bb != null) {
+            short v = bb.getShort();
+            return isLittleEndian(bb) ? v : Short.reverseBytes(v);
+        }
+        byte[] data = new byte[SHORT_SIZE];
+        readFully(data, 0, SHORT_SIZE);
+        return LittleEndian.getShort(data);
+    }
 
-   @Override
+    @Override
     public int readInt() {
         checkAvailable(INT_SIZE);
-      byte[] data = new byte[INT_SIZE];
-      readFully(data, 0, INT_SIZE);
-      return LittleEndian.getInt(data);
+        ByteBuffer bb = blockWithRemaining(INT_SIZE);
+        if (bb != null) {
+            int v = bb.getInt();
+            return isLittleEndian(bb) ? v : Integer.reverseBytes(v);
+        }
+        byte[] data = new byte[INT_SIZE];
+        readFully(data, 0, INT_SIZE);
+        return LittleEndian.getInt(data);
     }
 
     public long readUInt() {
@@ -343,19 +396,11 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
 
     @Override
     public int readUShort() {
-        checkAvailable(SHORT_SIZE);
-      byte[] data = new byte[SHORT_SIZE];
-      readFully(data, 0, SHORT_SIZE);
-      return LittleEndian.getUShort(data);
+        return readShort() & 0xFFFF;
     }
 
     @Override
     public int readUByte() {
-        checkAvailable(1);
-        byte[] data = new byte[1];
-        readFully(data, 0, 1);
-        if (data[0] >= 0)
-            return data[0];
-        return data[0] + 256;
+        return readByte() & 0xFF;
     }
 }

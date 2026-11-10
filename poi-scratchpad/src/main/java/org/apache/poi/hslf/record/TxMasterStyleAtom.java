@@ -71,7 +71,8 @@ public final class TxMasterStyleAtom extends RecordAtom {
     protected TxMasterStyleAtom(byte[] source, int start, int len) {
         _header = Arrays.copyOfRange(source, start, start+8);
 
-        _data = IOUtils.safelyClone(source, start+8, len-8, getMaxRecordLength());
+        _data = IOUtils.safelyClone(source, start+8, len-8, RecordAtom.getMaxRecordLength(),
+                "RecordAtom.setMaxRecordLength()");
 
         //read available styles
         try {

@@ -135,15 +135,35 @@ public class POIFSStream implements Iterable<ByteBuffer>
         ChainLoopDetector loopDetector = blockStore.getChainLoopDetector();
         free(loopDetector);
     }
-    private void free(ChainLoopDetector loopDetector) {
+    private void free(ChainLoopDetector loopDetector) throws IOException {
         int nextBlock = startBlock;
         while(nextBlock != POIFSConstants.END_OF_CHAIN) {
             int thisBlock = nextBlock;
             loopDetector.claim(thisBlock);
             nextBlock = blockStore.getNextBlock(thisBlock);
+            clearBlock(thisBlock);
             blockStore.setNextBlock(thisBlock, POIFSConstants.UNUSED_BLOCK);
         }
         this.startBlock = POIFSConstants.END_OF_CHAIN;
+    }
+
+    /**
+     * Zeros a block which is being freed. Free blocks are written out
+     *  with the file system, so they would otherwise keep the data of
+     *  deleted or replaced streams.
+     */
+    private void clearBlock(int block) throws IOException {
+        final ByteBuffer buffer;
+        try {
+            buffer = blockStore.getBlockAt(block);
+        } catch (IndexOutOfBoundsException | NoSuchElementException e) {
+            // the block isn't backed by any data (e.g. a truncated file), so there is nothing to clear
+            return;
+        }
+        while (buffer.hasRemaining()) {
+            buffer.put((byte)0);
+        }
+        blockStore.releaseBuffer(buffer);
     }
 
     /**
@@ -231,6 +251,7 @@ public class POIFSStream implements Iterable<ByteBuffer>
         int prevBlock, nextBlock;
 
         StreamBlockByteBuffer() throws IOException {
+            blockStore.checkWriteable();
             loopDetector = blockStore.getChainLoopDetector();
             prevBlock = POIFSConstants.END_OF_CHAIN;
             nextBlock = startBlock;

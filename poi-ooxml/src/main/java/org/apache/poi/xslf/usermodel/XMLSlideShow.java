@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -53,8 +52,7 @@ import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianConsts;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.Units;
 import org.apache.poi.util.XMLHelper;
@@ -64,6 +62,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesMasterIdListE
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPresentation;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdList;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdListEntry;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideSize;
 import org.openxmlformats.schemas.presentationml.x2006.main.PresentationDocument;
 
@@ -191,21 +190,21 @@ public class XMLSlideShow extends POIXMLDocument
             Map<String, XSLFChart> chartMap = new HashMap<>();
             for (RelationPart rp : getRelationParts()) {
                 POIXMLDocumentPart p = rp.getDocumentPart();
-                if (p instanceof XSLFSlide) {
-                    shIdMap.put(rp.getRelationship().getId(), (XSLFSlide) p);
+                if (p instanceof XSLFSlide xslfSlide) {
+                    shIdMap.put(rp.getRelationship().getId(), xslfSlide);
                     for (POIXMLDocumentPart c : p.getRelations()) {
-                        if (c instanceof XSLFChart) {
-                            chartMap.put(c.getPackagePart().getPartName().getName(), (XSLFChart) c);
+                        if (c instanceof XSLFChart xslfChart) {
+                            chartMap.put(c.getPackagePart().getPartName().getName(), xslfChart);
                         }
                     }
-                } else if (p instanceof XSLFSlideMaster) {
-                    masterMap.put(getRelationId(p), (XSLFSlideMaster) p);
-                } else if (p instanceof XSLFTableStyles) {
-                    _tableStyles = (XSLFTableStyles) p;
-                } else if (p instanceof XSLFNotesMaster) {
-                    _notesMaster = (XSLFNotesMaster) p;
-                } else if (p instanceof XSLFCommentAuthors) {
-                    _commentAuthors = (XSLFCommentAuthors) p;
+                } else if (p instanceof XSLFSlideMaster xslfSlideMaster) {
+                    masterMap.put(getRelationId(p), xslfSlideMaster);
+                } else if (p instanceof XSLFTableStyles xslfTableStyles) {
+                    _tableStyles = xslfTableStyles;
+                } else if (p instanceof XSLFNotesMaster xslfNotesMaster) {
+                    _notesMaster = xslfNotesMaster;
+                } else if (p instanceof XSLFCommentAuthors xslfCommentAuthors) {
+                    _commentAuthors = xslfCommentAuthors;
                 }
             }
 
@@ -214,21 +213,21 @@ public class XMLSlideShow extends POIXMLDocument
 
             _masters.clear();
             if (_presentation.isSetSldMasterIdLst()) {
-                _presentation.getSldMasterIdLst().getSldMasterIdList().forEach(
-                        id -> _masters.add(masterMap.get(id.getId2()))
-                );
+                for (CTSlideMasterIdListEntry id : _presentation.getSldMasterIdLst().getSldMasterIdArray()) {
+                    _masters.add(masterMap.get(id.getId2()));
+                }
             }
 
             _slides.clear();
             if (_presentation.isSetSldIdLst()) {
-                _presentation.getSldIdLst().getSldIdList().forEach(id -> {
+                for (CTSlideIdListEntry id : _presentation.getSldIdLst().getSldIdArray()) {
                     XSLFSlide sh = shIdMap.get(id.getId2());
                     if (sh == null) {
                         LOG.atWarn().log("Slide with r:id {} was defined, but didn't exist in package, skipping", box(id.getId()));
                     } else {
                         _slides.add(sh);
                     }
-                });
+                }
             }
         } catch (POIException e) {
             throw new IOException(e);
@@ -257,6 +256,9 @@ public class XMLSlideShow extends POIXMLDocument
 
     @Override
     public List<XSLFPictureData> getPictureData() {
+        // removing a slide or shape can remove image parts from the package, and the list
+        // holds its own instances, so drop the entries by part rather than by instance
+        _pictures.removeIf(p -> !getPackage().containPart(p.getPackagePart().getPartName()));
         if (_pictures.isEmpty()) {
             getPackage().getPartsByName(GET_PICTURE_DATA_PATTERN).forEach(part -> {
                 XSLFPictureData pd = new XSLFPictureData(part);
@@ -281,7 +283,7 @@ public class XMLSlideShow extends POIXMLDocument
                 .mapToLong(CTSlideIdListEntry::getId).max();
 
         final XSLFRelation relationType = XSLFRelation.SLIDE;
-        final int slideNumber = (int)(Math.max(maxId.orElse(0),255)+1);
+        final int slideNumber = MathUtil.safeDoubleToInt(Math.max(maxId.orElse(0),255)+1);
         final int cnt = findNextAvailableFileNameIndex(relationType);
 
         RelationPart rp = createRelationship
@@ -504,25 +506,24 @@ public class XMLSlideShow extends POIXMLDocument
      */
     public XSLFSlide removeSlide(int index) {
         XSLFSlide slide = _slides.remove(index);
-        removeRelation(slide);
         _presentation.getSldIdLst().removeSldId(index);
         for (POIXMLDocumentPart p : slide.getRelations()) {
-            if (p instanceof XSLFChart) {
-                XSLFChart chart = (XSLFChart) p;
+            if (p instanceof XSLFChart chart) {
                 slide.removeChartRelation(chart);
                 _charts.remove(chart);
-            } else if (p instanceof XSLFSlideLayout) {
-                XSLFSlideLayout layout = (XSLFSlideLayout) p;
+            } else if (p instanceof XSLFSlideLayout layout) {
                 slide.removeLayoutRelation(layout);
             } else if (p instanceof XSLFNotes) {
                 XSLFNotes notes = slide.removeNotes(_notesMaster);
                 removeRelation(notes);
-            } else if (p instanceof XSLFPictureData) {
-                XSLFPictureData picture = (XSLFPictureData) p;
+            } else if (p instanceof XSLFPictureData picture) {
                 removePictureRelations(slide, picture);
                 _pictures.remove(picture);
             }
         }
+        // removing the slide also removes the parts which only it used,
+        // so the relations above need to be handled first
+        removeRelation(slide);
         return slide;
     }
 
@@ -533,12 +534,11 @@ public class XMLSlideShow extends POIXMLDocument
     private void removePictureRelations(XSLFSlide slide, XSLFShapeContainer container, XSLFPictureData picture) {
         for (XSLFShape shape : container.getShapes()) {
             // Find either group shapes (and recurse) ...
-            if (shape instanceof XSLFGroupShape) {
-                removePictureRelations(slide, (XSLFGroupShape)shape, picture);
+            if (shape instanceof XSLFGroupShape group) {
+                removePictureRelations(slide, group, picture);
             }
             // ... or the picture shape with this picture data and remove its relation to the picture data.
-            if (shape instanceof XSLFPictureShape) {
-                XSLFPictureShape pic = (XSLFPictureShape) shape;
+            if (shape instanceof XSLFPictureShape pic) {
                 if (pic.getPictureData() == picture) {
                     slide.removePictureRelation(pic);
                 }
@@ -551,7 +551,7 @@ public class XMLSlideShow extends POIXMLDocument
         CTSlideSize sz = _presentation.getSldSz();
         int cx = sz.getCx();
         int cy = sz.getCy();
-        return new Dimension((int) Units.toPoints(cx), (int) Units.toPoints(cy));
+        return new Dimension(MathUtil.safeDoubleToInt(Units.toPoints(cx)), MathUtil.safeDoubleToInt(Units.toPoints(cy)));
     }
 
     @Override
@@ -633,7 +633,8 @@ public class XMLSlideShow extends POIXMLDocument
      */
     @Override
     public XSLFPictureData addPicture(File pict, PictureType format) throws IOException {
-        byte[] data = IOUtils.safelyAllocate(pict.length(), MAX_RECORD_LENGTH);
+        byte[] data = IOUtils.safelyAllocate(pict.length(), MAX_RECORD_LENGTH,
+            "XMLSlideShow.setMaxRecordLength()");
         try (InputStream is = Files.newInputStream(pict.toPath())) {
             IOUtils.readFully(is, data);
         }
@@ -651,11 +652,8 @@ public class XMLSlideShow extends POIXMLDocument
     @Override
     public XSLFPictureData findPictureData(byte[] pictureData) {
         long checksum = IOUtils.calculateChecksum(pictureData);
-        byte[] cs = new byte[LittleEndianConsts.LONG_SIZE];
-        LittleEndian.putLong(cs, 0, checksum);
-
         for (XSLFPictureData pic : getPictureData()) {
-            if (Arrays.equals(pic.getChecksum(), cs)) {
+            if (pic.hasData(pictureData, checksum)) {
                 return pic;
             }
         }
@@ -732,8 +730,8 @@ public class XMLSlideShow extends POIXMLDocument
         }
         final POIXMLDocumentPart docPart = parent.getRelationPartById(blipId).getDocumentPart();
         XSLFPictureData parData;
-        if (docPart instanceof XSLFPictureData) {
-            parData = (XSLFPictureData)docPart;
+        if (docPart instanceof XSLFPictureData pd) {
+            parData = pd;
         } else {
             throw new IllegalStateException("cannot import blip " + blipId + " - its document part is not XSLFPictureData");
         }

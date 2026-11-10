@@ -876,8 +876,8 @@ public final class PropertyTemplate {
         Map<CellPropertyType, Object> cellProperties = _propertyTemplate.get(cell);
         if (cellProperties != null) {
             Object obj = cellProperties.get(property);
-            if (obj instanceof BorderStyle) {
-                value = (BorderStyle) obj;
+            if (obj instanceof BorderStyle bs) {
+                value = bs;
             }
         }
         return value;
@@ -961,8 +961,8 @@ public final class PropertyTemplate {
      * @return short value, or 0 if not a short
      */
     private static short getShort(Object value) {
-        if (value instanceof Number) {
-            return ((Number) value).shortValue();
+        if (value instanceof Number n) {
+            return n.shortValue();
         }
         return 0;
     }

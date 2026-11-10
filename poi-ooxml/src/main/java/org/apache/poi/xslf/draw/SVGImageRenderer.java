@@ -30,6 +30,7 @@ import java.lang.ref.WeakReference;
 
 import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
 import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.bridge.BridgeException;
 import org.apache.batik.bridge.DocumentLoader;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.ext.awt.RenderingHintsKeyExt;
@@ -40,6 +41,8 @@ import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.poi.sl.usermodel.PictureData;
+import org.apache.poi.util.MathUtil;
+import org.apache.poi.util.StringUtil;
 import org.w3c.dom.svg.SVGDocument;
 
 public class SVGImageRenderer implements ImageRenderer {
@@ -50,7 +53,6 @@ public class SVGImageRenderer implements ImageRenderer {
 
     public SVGImageRenderer() {
         String parser = XMLResourceDescriptor.getXMLParserClassName();
-        // TOOO: tell the batik guys to use secure parsing feature
         svgFact = new SAXSVGDocumentFactory(parser);
         SVGUserAgent agent = new SVGUserAgent();
 
@@ -63,7 +65,12 @@ public class SVGImageRenderer implements ImageRenderer {
     public void loadImage(InputStream data, String contentType) throws IOException {
         SVGDocument document = (SVGDocument)svgFact.createDocument("", data);
         ((SVGUserAgent)context.getUserAgent()).initViewbox(document);
-        builder.build(context, document);
+        try {
+            builder.build(context, document);
+        } catch (BridgeException e) {
+            // e.g. a blocked or broken external reference - skip this picture instead of the whole slide
+            throw new IOException("Unable to render SVG image", e);
+        }
     }
 
     @Override
@@ -88,7 +95,7 @@ public class SVGImageRenderer implements ImageRenderer {
 
     @Override
     public BufferedImage getImage(Dimension2D dim) {
-        BufferedImage bi = new BufferedImage((int)dim.getWidth(), (int)dim.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage bi = new BufferedImage(MathUtil.safeDoubleToInt(dim.getWidth()), MathUtil.safeDoubleToInt(dim.getHeight()), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = (Graphics2D) bi.getGraphics();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
@@ -145,7 +152,7 @@ public class SVGImageRenderer implements ImageRenderer {
 
     @Override
     public boolean canRender(String contentType) {
-        return PictureData.PictureType.SVG.contentType.equalsIgnoreCase(contentType);
+        return StringUtil.equalsIgnoreCase(PictureData.PictureType.SVG.contentType, contentType);
     }
 
     @Override

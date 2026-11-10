@@ -67,6 +67,24 @@ class TestXSSFXLookupFunction {
         }
     }
 
+    // https://bz.apache.org/bugzilla/show_bug.cgi?id=70145
+    // lookup_array given as an array expression - the "multiple criteria" idiom
+    @Test
+    void testBug70145ArrayExpressionLookupArray() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet("Sheet1");
+            addRow(sheet, 0, null, "Name", "Color", "Age");
+            addRow(sheet, 1, null, "Nala", "Tricolor", 1, null, null, "Nala");
+            addRow(sheet, 2, null, "Nala", "White and Grey", 2.5, null, null, "Tricolor");
+            addRow(sheet, 3, null, "Nala", "White and Grey", 7);
+            addRow(sheet, 4, null, "Duca", "Tigrine", 2.5);
+            XSSFFormulaEvaluator fe = new XSSFFormulaEvaluator(wb);
+            XSSFCell cell = sheet.getRow(3).createCell(6);
+            assertDouble(fe, cell, "_xlfn.XLOOKUP(1,(B2:B11=G2)*(C2:C11=G3),D2:D11)", 1);
+            assertDouble(fe, cell, "_xlfn.XLOOKUP(1,(B2:B11=\"Duca\")*(C2:C11=\"Tigrine\"),D2:D11)", 2.5);
+        }
+    }
+
     private XSSFWorkbook initWorkbook2() {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();

@@ -18,6 +18,7 @@
 package org.apache.poi.ss.formula.functions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -85,28 +86,39 @@ final class TestFixed {
         confirm("FIXED(10,-2,TRUE)", "0");
         // rounding propagation
         confirm("FIXED(99.9,0,TRUE)", "100");
+        // rounds on Excel's 15-digit view, and shows the decimal rather than the binary value
+        confirm("FIXED(2.675,2,TRUE)", "2.68");
+        confirm("FIXED(-2.675,2,TRUE)", "-2.68");
+        confirm("FIXED(0.1+0.2,17,TRUE)", "0.30000000000000000");
+        confirm("FIXED(1+2^-52,16,TRUE)", "1.0000000000000000");
+        confirm("FIXED(0.1,20,TRUE)", "0.10000000000000000000");
+        confirm("FIXED(1,127,TRUE)", "1." + "0".repeat(127));
+        // places are bounded: over 127 is #VALUE!, a hugely negative count gives 0
+        confirmValueError("FIXED(1,128)");
+        confirmValueError("FIXED(1,1E9)");
+        confirm("FIXED(1E300,-1000000000,TRUE)", "0");
     }
 
     @Test
     void testOptionalParams() {
         Fixed fixed = new Fixed();
         ValueEval evaluate = fixed.evaluate(0, 0, new NumberEval(1234.56789));
-        assertTrue(evaluate instanceof StringEval);
+        assertInstanceOf(StringEval.class, evaluate);
         assertEquals("1,234.57", ((StringEval)evaluate).getStringValue());
 
         evaluate = fixed.evaluate(0, 0, new NumberEval(1234.56789), new NumberEval(1));
-        assertTrue(evaluate instanceof StringEval);
+        assertInstanceOf(StringEval.class, evaluate);
         assertEquals("1,234.6", ((StringEval)evaluate).getStringValue());
 
         evaluate = fixed.evaluate(0, 0, new NumberEval(1234.56789), new NumberEval(1), BoolEval.TRUE);
-        assertTrue(evaluate instanceof StringEval);
+        assertInstanceOf(StringEval.class, evaluate);
         assertEquals("1234.6", ((StringEval)evaluate).getStringValue());
 
         evaluate = fixed.evaluate(new ValueEval[] {}, 1, 1);
-        assertTrue(evaluate instanceof ErrorEval);
+        assertInstanceOf(ErrorEval.class, evaluate);
 
         evaluate = fixed.evaluate(new ValueEval[] { new NumberEval(1), new NumberEval(1), new NumberEval(1), new NumberEval(1) }, 1, 1);
-        assertTrue(evaluate instanceof ErrorEval);
+        assertInstanceOf(ErrorEval.class, evaluate);
     }
 
     private void confirm(String formulaText, String expectedResult) {

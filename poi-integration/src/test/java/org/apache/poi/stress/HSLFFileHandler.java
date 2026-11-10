@@ -27,6 +27,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class HSLFFileHandler extends SlideShowHandler {
@@ -59,6 +60,7 @@ public class HSLFFileHandler extends SlideShowHandler {
     }
 
     // a test-case to test all .ppt files without executing the full TestAllFiles
+    @Disabled("This is run as part of overall poi-integration testing already, we should not always run this but only use it locally")
     @Override
     @Test
     void test() throws Exception {

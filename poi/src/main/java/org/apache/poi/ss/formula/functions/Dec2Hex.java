@@ -21,9 +21,10 @@ import java.util.Locale;
 
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.*;
+import org.apache.poi.util.StringUtil;
 
 /**
- * Implementation for Excel DELTA() function.
+ * Implementation for Excel DEC2HEX() function.
  * <p>
  * <b>Syntax</b>:<br> <b>DEC2HEX  </b>(<b>number</b>,<b>places</b> )<br>
  * <p>
@@ -58,7 +59,7 @@ public final class Dec2Hex extends Var1or2ArgFunction implements FreeRefFunction
 
     private static final long MIN_VALUE = Long.parseLong("-549755813888");
     private static final long MAX_VALUE = Long.parseLong("549755813887");
-    private static final int DEFAULT_PLACES_VALUE = 10;
+    private static final int MAX_PLACES = 10;
 
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval number, ValueEval places) {
         ValueEval veText1;
@@ -76,50 +77,47 @@ public final class Dec2Hex extends Var1or2ArgFunction implements FreeRefFunction
         }
 
         //If number < -549,755,813,888 or if number > 549,755,813,887, this function returns the #NUM! error value.
-        if (number1.longValue() < MIN_VALUE || number1.longValue() > MAX_VALUE)  {
+        //A non-integer number is truncated
+        if (number1 <= MIN_VALUE - 1 || number1 >= MAX_VALUE + 1)  {
             return ErrorEval.NUM_ERROR;
         }
+        long value = number1.longValue();
 
-        int placesNumber = 0;
-        if (number1 < 0) {
-            placesNumber = DEFAULT_PLACES_VALUE;
-        }
-        else if (places != null) {
-            ValueEval placesValueEval;
-            try {
-                placesValueEval = OperandResolver.getSingleValue(places, srcRowIndex, srcColumnIndex);
-            } catch (EvaluationException e) {
-                return e.getErrorEval();
-            }
-            String placesStr = OperandResolver.coerceValueToString(placesValueEval);
-            Double placesNumberDouble = OperandResolver.parseDouble(placesStr);
-
-            //non numeric value
-            if (placesNumberDouble == null) {
-                return ErrorEval.VALUE_INVALID;
-            }
-
-            //If this argument contains a decimal value, this function ignores the numbers to the right side of the decimal point.
-            placesNumber = placesNumberDouble.intValue();
-
-            if (placesNumber < 0)  {
-                return ErrorEval.NUM_ERROR;
-            }
+        if (value < 0) {
+            //places is ignored: a 10-character (40-bit) two's-complement number
+            return new StringEval(Long.toHexString(value & 0xFFFFFFFFFFL).toUpperCase(Locale.ROOT));
         }
 
-        String hex;
-        if (placesNumber != 0) {
-            hex = String.format(Locale.ROOT, "%0"+placesNumber+"X", number1.intValue());
-        }
-        else {
-            hex = Long.toHexString(number1.longValue());
+        String hex = Long.toHexString(value).toUpperCase(Locale.ROOT);
+        if (places == null) {
+            return new StringEval(hex);
         }
 
-        if (number1 < 0) {
-            hex =  "FF"+  hex.substring(2);
+        ValueEval placesValueEval;
+        try {
+            placesValueEval = OperandResolver.getSingleValue(places, srcRowIndex, srcColumnIndex);
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
+        String placesStr = OperandResolver.coerceValueToString(placesValueEval);
+        Double placesNumberDouble = OperandResolver.parseDouble(placesStr);
+
+        //non numeric value
+        if (placesNumberDouble == null) {
+            return ErrorEval.VALUE_INVALID;
         }
 
-        return new StringEval(hex.toUpperCase(Locale.ROOT));
+        //If this argument contains a decimal value, this function ignores the numbers to the right side of the decimal point.
+        //Excel accepts 1 to 10 places (the width of the largest result); anything else is #NUM!,
+        //as is a result that needs more than places characters.
+        if (placesNumberDouble < 1 || placesNumberDouble >= MAX_PLACES + 1) {
+            return ErrorEval.NUM_ERROR;
+        }
+        int placesNumber = placesNumberDouble.intValue();
+        if (hex.length() > placesNumber) {
+            return ErrorEval.NUM_ERROR;
+        }
+        return new StringEval(StringUtil.repeat('0', placesNumber - hex.length()) + hex);
     }
 
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {

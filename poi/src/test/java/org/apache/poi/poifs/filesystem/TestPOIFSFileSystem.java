@@ -18,6 +18,7 @@
 package org.apache.poi.poifs.filesystem;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.*;
@@ -37,9 +38,11 @@ import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.storage.BATBlock;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.LittleEndian;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * Tests for the POIFSFileSystem
@@ -163,8 +166,31 @@ final class TestPOIFSFileSystem {
                 () -> new POIFSFileSystem(stream),
                 "File is corrupt and shouldn't have been opened"
             );
-            assertTrue(ex.getMessage().contains("Block 1148 not found"));
+            assertContains(ex.getMessage(), "Block 1148 not found");
         }
+    }
+
+    /**
+     * A negative sector in the header's list of FAT sectors is rejected
+     *  (GitHub #1548)
+     */
+    @ParameterizedTest
+    @ValueSource(ints = { Integer.MIN_VALUE, POIFSConstants.UNUSED_BLOCK, POIFSConstants.FAT_SECTOR_BLOCK })
+    void testNegativeFATSector(int fatSector) throws Exception {
+        byte[] data;
+        try (POIFSFileSystem fs = new POIFSFileSystem()) {
+            UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
+            fs.writeFilesystem(baos);
+            data = baos.toByteArray();
+        }
+        // First entry of the FAT sector list in the header
+        LittleEndian.putInt(data, 0x4C, fatSector);
+
+        IllegalStateException ex = assertThrows(
+            IllegalStateException.class,
+            () -> new POIFSFileSystem(new ByteArrayInputStream(data))
+        );
+        assertContains(ex.getMessage(), "Invalid block offset " + fatSector);
     }
 
     /**

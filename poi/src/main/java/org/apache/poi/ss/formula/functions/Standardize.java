@@ -24,9 +24,6 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
-
 /**
  * Implementation for Excel STANDARDIZE() function.<p>
  *
@@ -54,9 +51,7 @@ public final class Standardize extends Fixed3ArgFunction implements FreeRefFunct
                 return ErrorEval.NUM_ERROR;
             }
 
-            BigDecimal result = BigDecimal.valueOf(xval.doubleValue() - mean.doubleValue())
-                    .divide(BigDecimal.valueOf(stdev), MathContext.DECIMAL128);
-            return new NumberEval(result.doubleValue());
+            return new NumberEval((xval - mean) / stdev);
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }

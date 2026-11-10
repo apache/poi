@@ -48,7 +48,7 @@ public final class CryptoFunctions {
 
     //arbitrarily selected; may need to increase
     private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000;
-    static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     /**
      * @param length the max record length allowed for CryptoFunctions
@@ -308,7 +308,7 @@ public final class CryptoFunctions {
     private static byte[] getBlockX(byte[] hash, int size, byte fill) {
         if (hash.length == size) return hash;
 
-        byte[] result = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
+        byte[] result = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH, "CryptoFunctions.setMaxRecordLength()");
         Arrays.fill(result, fill);
         System.arraycopy(hash, 0, result, 0, Math.min(result.length, hash.length));
         return result;

@@ -76,21 +76,14 @@ public class TextAlignmentProp extends TextProp {
     }
 
     public TextAlign getTextAlign() {
-        switch (getValue()) {
-            default:
-            case LEFT:
-                return TextAlign.LEFT;
-            case CENTER:
-                return TextAlign.CENTER;
-            case RIGHT:
-                return TextAlign.RIGHT;
-            case JUSTIFY:
-                return TextAlign.JUSTIFY;
-            case DISTRIBUTED:
-                return TextAlign.DIST;
-            case THAIDISTRIBUTED:
-                return TextAlign.THAI_DIST;
-        }
+        return switch (getValue()) {
+            case CENTER -> TextAlign.CENTER;
+            case RIGHT -> TextAlign.RIGHT;
+            case JUSTIFY -> TextAlign.JUSTIFY;
+            case DISTRIBUTED -> TextAlign.DIST;
+            case THAIDISTRIBUTED -> TextAlign.THAI_DIST;
+            default -> TextAlign.LEFT;
+        };
     }
 
     @Override

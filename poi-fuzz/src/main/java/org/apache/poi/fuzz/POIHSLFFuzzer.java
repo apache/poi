@@ -66,7 +66,8 @@ public class POIHSLFFuzzer {
 			}
 		} catch (IOException | IllegalArgumentException | RecordFormatException |
 				 IllegalStateException | HSLFException | IndexOutOfBoundsException |
-				 BufferUnderflowException | POIXMLException | NoSuchElementException e) {
+				 BufferUnderflowException | POIXMLException | NoSuchElementException |
+				 ArithmeticException e) {
 			// expected here
 		}
 	}

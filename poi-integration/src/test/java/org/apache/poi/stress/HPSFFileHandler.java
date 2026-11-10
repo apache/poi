@@ -39,6 +39,7 @@ import org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
 import org.junit.jupiter.api.Test;
 
@@ -69,7 +70,7 @@ public class HPSFFileHandler extends POIFSFileHandler {
              HPSFPropertiesExtractor extractor = new HPSFPropertiesExtractor(poifs)) {
 
             String fileAndParentName = file.getParentFile().getName() + "/" + file.getName();
-            String relPath = file.getPath().replaceAll(".*test-data", "test-data").replace('\\', '/');
+            String relPath = IOUtils.normalizePath(file.getPath().replaceAll(".*test-data", "test-data"));
 
             assertFalse(EXPECTED_EXTRACTOR_FAILURES.contains(fileAndParentName),
                 "Expected Extraction to fail for file " + relPath + " and handler " + this + ", but did not fail!");

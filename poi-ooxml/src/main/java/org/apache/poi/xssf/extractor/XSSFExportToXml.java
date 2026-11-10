@@ -81,13 +81,6 @@ import org.xml.sax.SAXException;
 public class XSSFExportToXml implements Comparator<String>{
     private static final Logger LOG = PoiLogManager.getLogger(XSSFExportToXml.class);
 
-
-    @FunctionalInterface
-    private interface SecurityFeature {
-        void accept(String name) throws SAXException;
-    }
-
-
     private XSSFMap map;
     private final HashMap<String, Integer> indexMap = new HashMap<>();
     /**
@@ -306,8 +299,7 @@ public class XSSFExportToXml implements Comparator<String>{
         default:
 
         }
-        if (node instanceof Element) {
-            Element currentElement = (Element) node;
+        if (node instanceof Element currentElement) {
             currentElement.setTextContent(value);
         } else {
             node.setNodeValue(value);
@@ -410,7 +402,7 @@ public class XSSFExportToXml implements Comparator<String>{
 
         String[] leftTokens = leftXpath.split("/");
         String[] rightTokens = rightXpath.split("/");
-        String samePath = "";
+        StringBuilder samePath = new StringBuilder();
 
         int minLength = Math.min(leftTokens.length, rightTokens.length);
 
@@ -422,10 +414,10 @@ public class XSSFExportToXml implements Comparator<String>{
             String rightElementName = rightTokens[i];
 
             if (leftElementName.equals(rightElementName)) {
-                samePath += "/" + leftElementName;
+                samePath.append('/').append(leftElementName);
                 localComplexTypeRootNode = getComplexTypeForElement(leftElementName, xmlSchema, localComplexTypeRootNode);
             } else {
-                return indexOfElementInComplexType(samePath, leftElementName, rightElementName,localComplexTypeRootNode);
+                return indexOfElementInComplexType(samePath.toString(), leftElementName, rightElementName,localComplexTypeRootNode);
             }
         }
 
@@ -549,15 +541,5 @@ public class XSSFExportToXml implements Comparator<String>{
             node = node.getNextSibling();
         }
         return complexTypeNode;
-    }
-
-    private static void trySet(String name, SecurityFeature securityFeature) {
-        try {
-            securityFeature.accept(name);
-        } catch (Exception e) {
-            LOG.atWarn().withThrowable(e).log("SchemaFactory feature ({}) unsupported", name);
-        } catch (AbstractMethodError ame) {
-            LOG.atWarn().withThrowable(ame).log("Cannot set SchemaFactory feature ({}) because outdated XML parser in classpath", name);
-        }
     }
 }

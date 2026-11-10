@@ -67,20 +67,32 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
         super(null);
         this.chunkSize = chunkSize;
         int cs = chunkSize == STREAMING ? 4096 : chunkSize;
-        this.chunk = IOUtils.safelyAllocate(cs, CryptoFunctions.MAX_RECORD_LENGTH);
+        this.chunk = IOUtils.safelyAllocate(cs, CryptoFunctions.getMaxRecordLength(),
+                "CryptoFunctions.setMaxRecordLength()");
         this.plainByteFlags = new SparseBitSet(cs);
         this.chunkBits = Integer.bitCount(cs-1);
         this.fileOut = TempFile.createTempFile("encrypted_package", "crypt");
         this.out = Files.newOutputStream(fileOut.toPath());
         this.dir = dir;
-        this.cipher = initCipherForBlock(null, 0, false);
+        try {
+            this.cipher = initCipherForBlock(null, 0, false);
+        } catch (IOException | GeneralSecurityException | RuntimeException e) {
+            // the constructor did not complete, so the caller has no instance to close -
+            // release the stream and the temp file here instead of leaking both
+            IOUtils.closeQuietly(this.out);
+            if (!fileOut.delete()) {
+                LOG.atWarn().log("Can't delete temp file: {}", fileOut);
+            }
+            throw e;
+        }
     }
 
     public ChunkedCipherOutputStream(OutputStream stream, int chunkSize) throws IOException, GeneralSecurityException {
         super(stream);
         this.chunkSize = chunkSize;
         int cs = chunkSize == STREAMING ? 4096 : chunkSize;
-        this.chunk = IOUtils.safelyAllocate(cs, CryptoFunctions.MAX_RECORD_LENGTH);
+        this.chunk = IOUtils.safelyAllocate(cs, CryptoFunctions.getMaxRecordLength(),
+                "CryptoFunctions.setMaxRecordLength()");
         this.plainByteFlags = new SparseBitSet(cs);
         this.chunkBits = Integer.bitCount(cs-1);
         this.fileOut = null;
@@ -138,7 +150,7 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
 
         final int chunkMask = getChunkMask();
         while (len > 0) {
-            int posInChunk = (int)(pos & chunkMask);
+            int posInChunk = Math.toIntExact(pos & chunkMask);
             int nextLen = Math.min(chunk.length-posInChunk, len);
             System.arraycopy(b, off, chunk, posInChunk, nextLen);
             if (writePlain) {
@@ -163,11 +175,11 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
             return;
         }
 
-        int posInChunk = (int)(pos & getChunkMask());
+        int posInChunk = Math.toIntExact(pos & getChunkMask());
 
         // normally posInChunk is 0, i.e. on the next chunk (-> index-1)
         // but if called on close(), posInChunk is somewhere within the chunk data
-        int index = (int)(pos >> chunkBits);
+        int index = Math.toIntExact(pos >> chunkBits);
         boolean lastChunk;
         if (posInChunk==0) {
             index--;
@@ -218,7 +230,7 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
         if (doFinal && "IBMJCE".equals(cipher.getProvider().getName()) && "RC4".equals(cipher.getAlgorithm())) {
             // workaround for IBMs cipher not resetting on doFinal
 
-            int index = (int)(pos >> chunkBits);
+            int index = Math.toIntExact(pos >> chunkBits);
             boolean lastChunk;
             if (posInChunk==0) {
                 index--;
@@ -258,8 +270,8 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
             super.close();
 
             if (fileOut != null) {
-                int oleStreamSize = (int)(fileOut.length()+LittleEndianConsts.LONG_SIZE);
-                calculateChecksum(fileOut, (int)pos);
+                int oleStreamSize = Math.toIntExact(fileOut.length()+LittleEndianConsts.LONG_SIZE);
+                calculateChecksum(fileOut, Math.toIntExact(pos));
                 dir.createDocument(DEFAULT_POIFS_ENTRY, oleStreamSize, this::processPOIFSWriterEvent);
                 createEncryptionInfoEntry(dir, fileOut);
             }

@@ -81,7 +81,7 @@ public final class HexDump {
      *            null
      */
 
-    public synchronized static void dump(final byte [] data, final long offset,
+    public static void dump(final byte [] data, final long offset,
             final OutputStream stream, final int index)
     throws IOException, ArrayIndexOutOfBoundsException, IllegalArgumentException {
         dump(data, offset, stream, index, Integer.MAX_VALUE);
@@ -294,7 +294,7 @@ public final class HexDump {
         char[] buf = new char[nDigits];
         long acc = value;
         for(int i=nDigits-1; i>=0; i--) {
-            int digit = (int) (acc & 0x0F);
+            int digit = Math.toIntExact(acc & 0x0F);
             buf[i] = (char) (digit < 10 ? ('0' + digit) : ('A' + digit - 10));
             acc >>>= 4;
         }

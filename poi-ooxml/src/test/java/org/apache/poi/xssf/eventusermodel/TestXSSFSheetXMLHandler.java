@@ -20,7 +20,7 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler.SheetContentsHandler;
-import org.apache.poi.xssf.usermodel.XSSFComment;
+import org.apache.poi.ss.usermodel.Comment;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
@@ -61,7 +61,7 @@ class TestXSSFSheetXMLHandler {
 
                     @Override
                     public void cell(final String cellReference, final String formattedValue,
-                                     final XSSFComment comment) {
+                                     final Comment comment) {
                         assertEquals("\uD83D\uDE1Cmore text", formattedValue);
                         assertEquals(0, cellCount++);
                     }
@@ -94,7 +94,7 @@ class TestXSSFSheetXMLHandler {
 
                     @Override
                     public void cell(final String cellReference, final String formattedValue,
-                                     final XSSFComment comment) {
+                                     final Comment comment) {
                     }
                 }, false));
 
@@ -125,7 +125,7 @@ class TestXSSFSheetXMLHandler {
 
                     @Override
                     public void cell(final String cellReference, final String formattedValue,
-                                     final XSSFComment comment) {
+                                     final Comment comment) {
                         cellValues.put(cellReference, formattedValue);
                     }
                 }, false));

@@ -19,6 +19,7 @@ package org.apache.poi.hwpf.usermodel;
 
 import static org.apache.poi.hwpf.HWPFTestDataSamples.openSampleFile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 
@@ -47,8 +48,11 @@ public final class TestRangeReplacement {
     /**
      * Test just opening the files
      */
-    void testOpen() {
-        openSampleFile(illustrativeDocFile);
+    @Test
+    void testOpen() throws IOException {
+        try (HWPFDocument doc = openSampleFile(illustrativeDocFile)) {
+            assertNotNull(doc);
+        }
     }
 
     /**

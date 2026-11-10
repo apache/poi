@@ -56,7 +56,7 @@ public final class FunctionEval {
     /**
      * Array elements corresponding to unimplemented functions are <code>null</code>
      */
-    protected static final Function[] functions = produceFunctions();
+    private static final Function[] functions = produceFunctions();
 
     /**
      * See <a href="https://www.openoffice.org/sc/excelfileformat.pdf">Apache Open Office Excel File Format,
@@ -369,6 +369,27 @@ public final class FunctionEval {
             throw new NotImplementedException("FuncIx=" + functionIndex);
         }
         return result;
+    }
+
+    /**
+     * Like {@link #getBasicFunction(int)}, but answers {@code null} instead of throwing for a
+     * function that is not implemented (or for an unknown index), so callers that only want to
+     * inspect a function do not pay for an exception.
+     *
+     * @return the function, or {@code null} for the 'free ref' functions, unimplemented functions
+     * and out-of-range indexes
+     * @since 6.0.0
+     */
+    public static Function getBasicFunctionOrNull(int functionIndex) {
+        if (functionIndex < 0 || functionIndex >= functions.length) {
+            return null;
+        }
+        switch (functionIndex) {
+        case FunctionID.INDIRECT:
+        case FunctionID.EXTERNAL_FUNC:
+            return null;
+        }
+        return functions[functionIndex];
     }
 
     /**

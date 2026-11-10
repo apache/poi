@@ -17,6 +17,7 @@ limitations under the License.
 
 package org.apache.poi.ss.util;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -59,7 +60,7 @@ final class TestCellRangeAddress {
     void testLoadInvalid() {
         RuntimeException e = assertThrows(RuntimeException.class, () ->
             new CellRangeAddress(TestcaseRecordInputStream.create(0x000, new byte[]{(byte) 0x02})));
-        assertTrue(e.getMessage().contains("Ran out of data"));
+        assertContains(e.getMessage(), "Ran out of data");
     }
 
     @Test

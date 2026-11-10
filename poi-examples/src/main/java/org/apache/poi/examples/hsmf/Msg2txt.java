@@ -27,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
+import org.apache.poi.util.IOUtils;
 
 /**
  * Reads one or several Outlook MSG files and for each of them creates
@@ -130,7 +131,9 @@ public class Msg2txt {
           fileName = attachment.getAttachLongFileName().toString();
        }
 
-        File f = new File(dir, fileName);
+        // the attachment name comes from the message and may have problematic characters, so we should use
+        // IOUtils which has some code to escape problematic chars
+        File f = IOUtils.newFile(dir, fileName);
         try (OutputStream fileOut = new FileOutputStream(f)) {
             fileOut.write(attachment.getAttachData().getValue());
         }

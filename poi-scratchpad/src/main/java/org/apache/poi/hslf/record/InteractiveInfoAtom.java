@@ -151,7 +151,8 @@ public class InteractiveInfoAtom extends RecordAtom {
         _header = Arrays.copyOfRange(source, start, start+8);
 
         // Get the record data.
-        _data = IOUtils.safelyClone(source, start+8, len-8, getMaxRecordLength());
+        _data = IOUtils.safelyClone(source, start+8, len-8, RecordAtom.getMaxRecordLength(),
+                "RecordAtom.setMaxRecordLength()");
 
         // Must be at least 16 bytes long
         if(_data.length < 16) {

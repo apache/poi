@@ -17,7 +17,7 @@
 
 package org.apache.poi.hpbf.model.qcbits;
 
-import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 
@@ -56,7 +56,7 @@ public abstract class QCPLCBit extends QCBit {
         typeOfPLCS = (int)LittleEndian.getUInt(data, 4);
 
         // Init the arrays that we can
-        IOUtils.safelyAllocateCheck(numberOfPLCs, MAX_NUMBER_OF_PLCS);
+        ArrayUtil.strictAllocateCheck(numberOfPLCs, MAX_NUMBER_OF_PLCS);
         plcValA = new long[numberOfPLCs];
         plcValB = new long[numberOfPLCs];
     }
@@ -98,18 +98,14 @@ public abstract class QCPLCBit extends QCBit {
     public static QCPLCBit createQCPLCBit(String thingType, String bitType, byte[] data) {
         // Grab the type
         int type = (int)LittleEndian.getUInt(data, 4);
-        switch(type) {
-            case 0:
-                return new Type0(thingType, bitType, data);
-            case 4:
-                return new Type4(thingType, bitType, data);
-            case 8:
-                return new Type8(thingType, bitType, data);
-            case 12: // 0xc
-                return new Type12(thingType, bitType, data);
-            default:
-                throw new IllegalArgumentException("Sorry, I don't know how to deal with PLCs of type " + type);
-        }
+        return switch (type) {
+            case 0 -> new Type0(thingType, bitType, data);
+            case 4 -> new Type4(thingType, bitType, data);
+            case 8 -> new Type8(thingType, bitType, data);
+            case 12 -> // 0xc
+                    new Type12(thingType, bitType, data);
+            default -> throw new IllegalArgumentException("Sorry, I don't know how to deal with PLCs of type " + type);
+        };
     }
 
 

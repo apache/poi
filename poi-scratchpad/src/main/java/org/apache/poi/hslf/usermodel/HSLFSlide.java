@@ -166,18 +166,14 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
         dgg.setDrawingsSaved(dgg.getDrawingsSaved() + 1);
 
         for (EscherContainerRecord c : dgContainer.getChildContainers()) {
-            EscherSpRecord spr = null;
-            switch(EscherRecordTypes.forTypeID(c.getRecordId())){
-                case SPGR_CONTAINER:
+            EscherSpRecord spr = switch(EscherRecordTypes.forTypeID(c.getRecordId())){
+                case SPGR_CONTAINER -> {
                     EscherContainerRecord dc = (EscherContainerRecord)c.getChild(0);
-                    spr = dc.getChildById(EscherSpRecord.RECORD_ID);
-                    break;
-                case SP_CONTAINER:
-                    spr = c.getChildById(EscherSpRecord.RECORD_ID);
-                    break;
-                default:
-                    break;
-            }
+                    yield dc.getChildById(EscherSpRecord.RECORD_ID);
+                }
+                case SP_CONTAINER -> c.getChildById(EscherSpRecord.RECORD_ID);
+                default -> null;
+            };
             if(spr != null) {
                 spr.setShapeId(allocateShapeId());
             }
@@ -411,8 +407,8 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
 
         if (binaryTags != null) {
             for (final org.apache.poi.hslf.record.Record record : binaryTags.getChildRecords()) {
-                if (record instanceof Comment2000) {
-                    comments.add(new HSLFComment((Comment2000)record));
+                if (record instanceof Comment2000 comment) {
+                    comments.add(new HSLFComment(comment));
                 }
             }
         }
@@ -488,16 +484,11 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
         final SlideLayoutType slt = getSlideRecord().getSlideAtom().getSSlideLayoutAtom().getGeometryType();
         final boolean isTitle =
             (slt == SlideLayoutType.TITLE_SLIDE || slt == SlideLayoutType.TITLE_ONLY || slt == SlideLayoutType.MASTER_TITLE);
-        switch (placeholder) {
-            case HEADER:
-                return hf.isHeaderVisible() && hf.getHeaderAtom() != null && !isTitle;
-            case FOOTER:
-                return hf.isFooterVisible() && hf.getFooterAtom() != null && !isTitle;
-            case DATETIME:
-            case SLIDE_NUMBER:
-            default:
-                return false;
-        }
+        return switch (placeholder) {
+            case HEADER -> hf.isHeaderVisible() && hf.getHeaderAtom() != null && !isTitle;
+            case FOOTER -> hf.isFooterVisible() && hf.getFooterAtom() != null && !isTitle;
+            default -> false;
+        };
     }
 
     @Override

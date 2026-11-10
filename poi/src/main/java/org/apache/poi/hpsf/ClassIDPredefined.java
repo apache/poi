@@ -128,8 +128,8 @@ public enum ClassIDPredefined {
             if (classId == null) {
                 classId = new ClassID(externalForm);
             }
+            return classId;
         }
-        return classId;
     }
 
     public String getFileExtension() {

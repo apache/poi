@@ -17,6 +17,7 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -59,7 +60,7 @@ public final class TestXSLFSlideShowFactory extends BaseTestSlideShowFactory {
         // In the meantime, this function will modify SampleShow.pptx on disk.
         AssertionError ex = assertThrows(AssertionError.class, () -> testFactoryFromFile(filename),
             "Bug 58779: " + removeExpectedExceptionMsg);
-        assertTrue(ex.getMessage().contains("SampleShow.pptx sample file was modified as a result of closing the slideshow"));
+        assertContains(ex.getMessage(), "SampleShow.pptx sample file was modified as a result of closing the slideshow");
     }
 
     @Test

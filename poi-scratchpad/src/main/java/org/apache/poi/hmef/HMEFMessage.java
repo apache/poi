@@ -106,8 +106,7 @@ public final class HMEFMessage {
 
         messageAttributes.add(attr);
 
-        if (attr instanceof TNEFMAPIAttribute) {
-            TNEFMAPIAttribute tnefMAPI = (TNEFMAPIAttribute) attr;
+        if (attr instanceof TNEFMAPIAttribute tnefMAPI) {
             mapiAttributes.addAll(tnefMAPI.getMAPIAttributes());
         }
     }

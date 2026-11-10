@@ -74,8 +74,8 @@ public final class TNEFStringAttribute extends TNEFAttribute {
       if(attr == null) {
          return null;
       }
-      if(attr instanceof TNEFStringAttribute) {
-         return ((TNEFStringAttribute)attr).getString();
+      if(attr instanceof TNEFStringAttribute stringAttribute) {
+         return stringAttribute.getString();
       }
 
       LOG.atWarn().log("Warning, non string property found: {}", attr);

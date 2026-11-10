@@ -78,11 +78,11 @@ public final class RecordFactory {
             // Not needed by POI.  Regenerated from scratch by POI when spreadsheet is written
             return new Record[] { null, };
         }
-        if (record instanceof RKRecord) {
-            return new Record[] { convertToNumberRecord((RKRecord) record), };
+        if (record instanceof RKRecord rk) {
+            return new Record[] { convertToNumberRecord(rk), };
         }
-        if (record instanceof MulRKRecord) {
-            return convertRKRecords((MulRKRecord)record);
+        if (record instanceof MulRKRecord mrk) {
+            return convertRKRecords(mrk);
         }
         return new Record[] { record, };
     }
@@ -199,7 +199,8 @@ public final class RecordFactory {
         while ((record = recStream.nextRecord()) != null) {
             records.add(record);
 
-            IOUtils.safelyAllocateCheck(records.size(), MAX_NUMBER_OF_RECORDS);
+            IOUtils.safelyAllocateCheck(records.size(), MAX_NUMBER_OF_RECORDS,
+                    "RecordFactory.setMaxNumberOfRecords");
         }
 
         return records;

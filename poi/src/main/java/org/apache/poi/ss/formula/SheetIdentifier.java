@@ -32,9 +32,14 @@ public class SheetIdentifier {
         return _sheetIdentifier;
     }
     protected void asFormulaString(StringBuilder sb) {
+        if (_sheetIdentifier == null) {
+            return;
+        }
+
         if (_bookName != null) {
             sb.append(" [").append(_sheetIdentifier.getName()).append("]");
         }
+
         if (_sheetIdentifier.isQuoted()) {
             sb.append('\'').append(_sheetIdentifier.getName()).append("'");
         } else {

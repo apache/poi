@@ -692,8 +692,8 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     @Override
     public void setFillBackgroundColor(org.apache.poi.ss.usermodel.Color color)
     {
-        if (color instanceof HSSFColor) {
-            final short index = ((HSSFColor)color).getIndex();
+        if (color instanceof HSSFColor hssfColor) {
+            final short index = hssfColor.getIndex();
             if (index != -1) setFillBackgroundColor(index);
         } else if (color != null) {
             throw new IllegalArgumentException("HSSFCellStyle only accepts HSSFColor instances");
@@ -752,8 +752,8 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     @Override
     public void setFillForegroundColor(org.apache.poi.ss.usermodel.Color color)
     {
-        if (color instanceof HSSFColor) {
-            final short index = ((HSSFColor)color).getIndex();
+        if (color instanceof HSSFColor hssfColor) {
+            final short index = hssfColor.getIndex();
             if (index != -1) setFillForegroundColor(index);
         } else if (color != null) {
             throw new IllegalArgumentException("HSSFCellStyle only accepts HSSFColor instances");
@@ -888,8 +888,8 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
      */
     @Override
     public void cloneStyleFrom(CellStyle source) {
-        if(source instanceof HSSFCellStyle) {
-            this.cloneStyleFrom((HSSFCellStyle)source);
+        if(source instanceof HSSFCellStyle style) {
+            this.cloneStyleFrom(style);
         } else {
             CellUtil.cloneStyle(source, this, _hssfWorkbook);
         }
@@ -942,8 +942,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
         if (obj == null) {
             return false;
         }
-        if (obj instanceof HSSFCellStyle) {
-            final HSSFCellStyle other = (HSSFCellStyle) obj;
+        if (obj instanceof HSSFCellStyle other) {
             if (_format == null) {
                 if (other._format != null) {
                     return false;

@@ -65,9 +65,9 @@ public final class Averageifs extends Baseifs {
 
             @Override
             public void addValue(ValueEval value) {
-                if(!(value instanceof NumberEval)) return;
+                if(!(value instanceof NumberEval ne)) return;
 
-                double d = ((NumberEval) value).getNumberValue();
+                double d = ne.getNumberValue();
                 sum += d;
                 count++;
 

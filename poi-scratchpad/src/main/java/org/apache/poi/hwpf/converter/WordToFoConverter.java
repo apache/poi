@@ -23,8 +23,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Transformer;
@@ -109,6 +111,8 @@ public class WordToFoConverter extends AbstractWordConverter
 
     private Set<String> usedIds = new LinkedHashSet<>();
 
+    private Predicate<String> hyperlinkValidator = hyperlink -> true;
+
     /**
      * Creates new instance of {@link WordToFoConverter}. Can be used for output
      * several {@link HWPFDocument}s into single FO document.
@@ -192,6 +196,32 @@ public class WordToFoConverter extends AbstractWordConverter
     public boolean isOutputCharactersLanguage()
     {
         return outputCharactersLanguage;
+    }
+
+    /**
+     * @return the extra check a HYPERLINK field target has to pass to be written as a link
+     * @see #setHyperlinkValidator(Predicate)
+     * @since 6.1.0
+     */
+    public Predicate<String> getHyperlinkValidator()
+    {
+        return hyperlinkValidator;
+    }
+
+    /**
+     * Sets an extra check a HYPERLINK field target has to pass to be written as the
+     * {@code external-destination} of a link, e.g. to only link to some hosts. The validator
+     * is only consulted for targets that pass {@link WordToHtmlUtils#isSafeHyperlink(String)},
+     * so it can reject standard URLs but never let a {@code javascript:} or other script
+     * target through. The text of a field whose target is rejected is kept, but it is not
+     * linked. The default accepts every target that passes the built-in check.
+     *
+     * @param hyperlinkValidator returns true for the targets to write as links
+     * @since 6.1.0
+     */
+    public void setHyperlinkValidator( Predicate<String> hyperlinkValidator )
+    {
+        this.hyperlinkValidator = Objects.requireNonNull( hyperlinkValidator, "hyperlinkValidator" );
     }
 
     @Override
@@ -340,9 +370,12 @@ public class WordToFoConverter extends AbstractWordConverter
             Element currentBlock, Range textRange, int currentTableLevel,
             String hyperlink )
     {
-        Element basicLink = foDocumentFacade
-                .createBasicLinkExternal( hyperlink );
-        currentBlock.appendChild( basicLink );
+        // keep the text of a link to e.g. a javascript: target, but don't make it a link
+        Element basicLink = currentBlock;
+        if ( WordToHtmlUtils.isSafeHyperlink( hyperlink ) && hyperlinkValidator.test( hyperlink ) ) {
+            basicLink = foDocumentFacade.createBasicLinkExternal( hyperlink );
+            currentBlock.appendChild( basicLink );
+        }
 
         if ( textRange != null )
             processCharacters( wordDocument, currentTableLevel, textRange,
@@ -382,9 +415,8 @@ public class WordToFoConverter extends AbstractWordConverter
         if ( childNodes.getLength() > 0 )
         {
             Node lastChild = childNodes.item( childNodes.getLength() - 1 );
-            if ( lastChild instanceof Element )
+            if ( lastChild instanceof Element lastElement )
             {
-                Element lastElement = (Element) lastChild;
                 if ( !lastElement.hasAttribute( "break-after" ) )
                 {
                     block = lastElement;

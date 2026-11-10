@@ -50,7 +50,9 @@ public class EmbeddedData {
         if (filename == null) {
             this.filename = "unknown.bin";
         } else {
-            this.filename = filename.replaceAll("[^/\\\\]*[/\\\\]", "").trim();
+            // only the name after the last '/' or '\', without a regex that was quadratic on a long name
+            int lastSeparator = Math.max(filename.lastIndexOf('/'), filename.lastIndexOf('\\'));
+            this.filename = filename.substring(lastSeparator + 1).trim();
         }
     }
     

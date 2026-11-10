@@ -87,7 +87,7 @@ public class RLEDecompressingInputStream extends InputStream {
         if (len == -1) {
             return -1;
         }
-        if (pos >= len) {
+        while (pos >= len) {
             if ((len = readChunk()) == -1) {
                 return -1;
             }
@@ -108,7 +108,7 @@ public class RLEDecompressingInputStream extends InputStream {
         int length = l;
         while (length > 0) {
             if (pos >= len) {
-                if ((len = readChunk()) == -1) {
+                if (len == -1 || (len = readChunk()) == -1) {
                     return offset > off ? offset - off : -1;
                 }
             }
@@ -125,17 +125,17 @@ public class RLEDecompressingInputStream extends InputStream {
     public long skip(long n) throws IOException {
         //this relies on readChunk's readFully to skipFully
         long length = n;
-        while (length > 0) {
+        while (length > 0 && len != -1) {
             if (pos >= len) {
                 if ((len = readChunk()) == -1) {
-                    return -1;
+                    break;
                 }
             }
-            int c = (int) Math.min(n, len - (long)pos);
+            int c = Math.toIntExact(Math.min(length, len - pos));
             pos += c;
             length -= c;
         }
-        return n;
+        return Math.max(0, n - length);
     }
 
     @Override
@@ -155,6 +155,8 @@ public class RLEDecompressingInputStream extends InputStream {
      */
     private int readChunk() throws IOException {
         pos = 0;
+        // a chunk that fails to decode leaves the stream at its end, not with stale bytes in buf
+        len = -1;
         int w = readShort(in);
         if (w == -1 || w == 0) {
             return -1;
@@ -165,6 +167,11 @@ public class RLEDecompressingInputStream extends InputStream {
         }
         boolean rawChunk = (w & 0x8000) == 0;
         if (rawChunk) {
+            // MS-OVBA: an uncompressed chunk always holds exactly 4096 bytes
+            if (chunkSize != buf.length) {
+                throw new IllegalStateException(String.format(Locale.ROOT,
+                    "Uncompressed chunk must hold %d bytes, header gives %d", buf.length, chunkSize));
+            }
             if (IOUtils.readFully(in, buf, 0, chunkSize) < chunkSize) {
                 throw new IllegalStateException(String.format(Locale.ROOT, "Not enough bytes read, expected %d", chunkSize));
             }
@@ -186,7 +193,12 @@ public class RLEDecompressingInputStream extends InputStream {
                         // literal
                         final int b = in.read();
                         if (b == -1) {
-                            return -1;
+                            // truncated input: keep what was decompressed so far, as for a missing flag byte
+                            return outOffset;
+                        }
+                        if (outOffset >= buf.length) {
+                            throw new IllegalStateException(String.format(Locale.ROOT,
+                                "Decompressed chunk exceeds the maximum of %d bytes", buf.length));
                         }
                         buf[outOffset++] = (byte) b;
                         inOffset++;
@@ -194,12 +206,24 @@ public class RLEDecompressingInputStream extends InputStream {
                         // compressed token
                         int token = readShort(in);
                         if (token == -1) {
-                            return -1;
+                            return outOffset;
                         }
                         inOffset += 2;
                         int copyLenBits = getCopyLenBits(outOffset - 1);
                         int copyOffset = (token >> (copyLenBits)) + 1;
                         int copyLen = (token & (POWER2[copyLenBits] - 1)) + 3;
+                        // MS-OVBA 2.4.1.3.19: a CopyToken may only reference bytes already
+                        // decompressed in the current chunk, and a chunk never exceeds 4096 bytes
+                        if (copyOffset > outOffset) {
+                            throw new IllegalStateException(String.format(Locale.ROOT,
+                                "Copy token offset %d reaches before the start of the chunk (%d bytes decompressed)",
+                                copyOffset, outOffset));
+                        }
+                        if (copyLen > buf.length - outOffset) {
+                            throw new IllegalStateException(String.format(Locale.ROOT,
+                                "Copy token length %d at offset %d exceeds the maximum chunk size of %d bytes",
+                                copyLen, outOffset, buf.length));
+                        }
                         int startPos = outOffset - copyOffset;
                         int endPos = startPos + copyLen;
                         for (int i = startPos; i < endPos; i++) {

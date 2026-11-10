@@ -67,8 +67,7 @@ public final class MissingRecordAwareHSSFListener implements HSSFListener {
         int thisColumn;
         CellValueRecordInterface[] expandedRecords = null;
 
-        if (record instanceof CellValueRecordInterface) {
-            CellValueRecordInterface valueRec = (CellValueRecordInterface) record;
+        if (record instanceof CellValueRecordInterface valueRec) {
             thisRow = valueRec.getRow();
             thisColumn = valueRec.getColumn();
         } else {
@@ -83,15 +82,15 @@ public final class MissingRecordAwareHSSFListener implements HSSFListener {
             switch (record.getSid()) {
                 // the BOFRecord can represent either the beginning of a sheet or
                 // the workbook
-                case BOFRecord.sid:
+                case BOFRecord.sid -> {
                     BOFRecord bof = (BOFRecord) record;
-                    if (bof.getType() == BOFRecord.TYPE_WORKBOOK || 
+                    if (bof.getType() == BOFRecord.TYPE_WORKBOOK ||
                             bof.getType() == BOFRecord.TYPE_WORKSHEET) {
                         // Reset the row and column counts - new workbook / worksheet
                         resetCounts();
                     }
-                    break;
-                case RowRecord.sid:
+                }
+                case RowRecord.sid -> {
                     RowRecord rowrec = (RowRecord) record;
 
                     // If there's a jump in rows, fire off missing row records
@@ -105,34 +104,34 @@ public final class MissingRecordAwareHSSFListener implements HSSFListener {
                     // Record this as the last row we saw
                     lastRowRow = rowrec.getRowNumber();
                     lastCellColumn = -1;
-                    break;
-
-                case SharedFormulaRecord.sid:
+                }
+                case SharedFormulaRecord.sid -> {
                     // SharedFormulaRecord occurs after the first FormulaRecord of the cell range.
                     // There are probably (but not always) more cell records after this
                     // - so don't fire off the LastCellOfRowDummyRecord yet
                     childListener.processRecord(record);
                     return;
-                case MulBlankRecord.sid:
+                }
+                case MulBlankRecord.sid -> {
                     // These appear in the middle of the cell records, to
                     //  specify that the next bunch are empty but styled
                     // Expand this out into multiple blank cells
                     MulBlankRecord mbr = (MulBlankRecord)record;
                     expandedRecords = RecordFactory.convertBlankRecords(mbr);
-                    break;
-                case MulRKRecord.sid:
+                }
+                case MulRKRecord.sid -> {
                     // This is multiple consecutive number cells in one record
                     // Exand this out into multiple regular number cells
                     MulRKRecord mrk = (MulRKRecord)record;
                     expandedRecords = RecordFactory.convertRKRecords(mrk);
-                    break;
-                case NoteRecord.sid:
+                }
+                case NoteRecord.sid -> {
                     NoteRecord nrec = (NoteRecord) record;
                     thisRow = nrec.getRow();
                     thisColumn = nrec.getColumn();
-                    break;
-                default:
-                    break;
+                }
+                default -> {
+                }
             }
         }
 

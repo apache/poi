@@ -63,18 +63,35 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 public class EventBasedExcelExtractor implements POIOLE2TextExtractor, org.apache.poi.ss.extractor.ExcelExtractor {
     private final POIFSFileSystem poifs;
     private final DirectoryNode _dir;
+    private final char[] _password;
     private boolean doCloseFilesystem = true;
     boolean _includeSheetNames = true;
     boolean _formulasNotResults;
 
     public EventBasedExcelExtractor(DirectoryNode dir) {
+        this(dir, null);
+    }
+
+    /**
+     * @since 6.0.0
+     */
+    public EventBasedExcelExtractor(DirectoryNode dir, char[] password) {
         poifs = null;
         _dir = dir;
+        _password = password;
     }
 
     public EventBasedExcelExtractor(POIFSFileSystem fs) {
+        this(fs, null);
+    }
+
+    /**
+     * @since 6.0.0
+     */
+    public EventBasedExcelExtractor(POIFSFileSystem fs, char[] password) {
         poifs = fs;
         _dir = fs.getRoot();
+        _password = password;
     }
 
     /**
@@ -94,7 +111,6 @@ public class EventBasedExcelExtractor implements POIOLE2TextExtractor, org.apach
     public SummaryInformation getSummaryInformation() {
         throw new IllegalStateException("Metadata extraction not supported in streaming mode, please use ExcelExtractor");
     }
-
 
     /**
      * Would control the inclusion of cell comments from the document,
@@ -158,7 +174,7 @@ public class EventBasedExcelExtractor implements POIOLE2TextExtractor, org.apach
         HSSFRequest request = new HSSFRequest();
         request.addListenerForAllRecords(ft);
 
-        factory.processWorkbookEvents(request, _dir);
+        factory.processWorkbookEvents(request, _dir, _password);
 
         return tl;
     }
@@ -184,11 +200,11 @@ public class EventBasedExcelExtractor implements POIOLE2TextExtractor, org.apach
             int thisRow = -1;
 
             switch (record.getSid()) {
-                case BoundSheetRecord.sid:
+                case BoundSheetRecord.sid -> {
                     BoundSheetRecord sr = (BoundSheetRecord) record;
                     sheetNames.add(sr.getSheetname());
-                    break;
-                case BOFRecord.sid:
+                }
+                case BOFRecord.sid -> {
                     BOFRecord bof = (BOFRecord) record;
                     if (bof.getType() == BOFRecord.TYPE_WORKSHEET) {
                         sheetNum++;
@@ -199,12 +215,10 @@ public class EventBasedExcelExtractor implements POIOLE2TextExtractor, org.apach
                             _text.append(sheetNames.get(sheetNum));
                         }
                     }
-                    break;
-                case SSTRecord.sid:
-                    sstRecord = (SSTRecord) record;
-                    break;
+                }
+                case SSTRecord.sid -> sstRecord = (SSTRecord) record;
 
-                case FormulaRecord.sid:
+                case FormulaRecord.sid -> {
                     FormulaRecord frec = (FormulaRecord) record;
                     thisRow = frec.getRow();
 
@@ -220,8 +234,8 @@ public class EventBasedExcelExtractor implements POIOLE2TextExtractor, org.apach
                             thisText = _ft.formatNumberDateCell(frec);
                         }
                     }
-                    break;
-                case StringRecord.sid:
+                }
+                case StringRecord.sid -> {
                     if (outputNextStringValue) {
                         // String for formula
                         StringRecord srec = (StringRecord) record;
@@ -229,32 +243,32 @@ public class EventBasedExcelExtractor implements POIOLE2TextExtractor, org.apach
                         thisRow = nextRow;
                         outputNextStringValue = false;
                     }
-                    break;
-                case LabelRecord.sid:
+                }
+                case LabelRecord.sid -> {
                     LabelRecord lrec = (LabelRecord) record;
                     thisRow = lrec.getRow();
                     thisText = lrec.getValue();
-                    break;
-                case LabelSSTRecord.sid:
+                }
+                case LabelSSTRecord.sid -> {
                     LabelSSTRecord lsrec = (LabelSSTRecord) record;
                     thisRow = lsrec.getRow();
                     if (sstRecord == null) {
                         throw new IllegalStateException("No SST record found");
                     }
                     thisText = sstRecord.getString(lsrec.getSSTIndex()).toString();
-                    break;
-                case NoteRecord.sid:
+                }
+                case NoteRecord.sid -> {
                     NoteRecord nrec = (NoteRecord) record;
                     thisRow = nrec.getRow();
                     // TODO: Find object to match nrec.getShapeId()
-                    break;
-                case NumberRecord.sid:
+                }
+                case NumberRecord.sid -> {
                     NumberRecord numrec = (NumberRecord) record;
                     thisRow = numrec.getRow();
                     thisText = _ft.formatNumberDateCell(numrec);
-                    break;
-                default:
-                    break;
+                }
+                default -> {
+                }
             }
 
             if (thisText != null) {
@@ -303,8 +317,8 @@ public class EventBasedExcelExtractor implements POIOLE2TextExtractor, org.apach
         // also ensure that an underlying DirectoryNode
         // is closed properly to avoid leaking file-handles
         DirectoryEntry root = getRoot();
-        if (root instanceof DirectoryNode) {
-            Closeable fs = ((DirectoryNode) root).getFileSystem();
+        if (root instanceof DirectoryNode node) {
+            Closeable fs = node.getFileSystem();
             if (isCloseFilesystem() && fs != null) {
                 fs.close();
             }

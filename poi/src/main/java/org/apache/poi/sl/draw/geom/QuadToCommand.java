@@ -78,8 +78,7 @@ public final class QuadToCommand implements QuadToCommandIf {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof QuadToCommand)) return false;
-        QuadToCommand that = (QuadToCommand) o;
+        if (!(o instanceof QuadToCommand that)) return false;
         return Objects.equals(pt1, that.pt1) &&
                 Objects.equals(pt2, that.pt2);
     }

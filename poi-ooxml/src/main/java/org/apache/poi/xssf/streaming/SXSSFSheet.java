@@ -30,6 +30,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.PaneInformation;
 import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.usermodel.*;
@@ -82,13 +83,12 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
             int leftMostColumn = Integer.MAX_VALUE;
             int rightMostColumn = 0;
             for (Row row : xssfSheet) {
-                rowCount++;
-                if (row.getFirstCellNum() < leftMostColumn) {
-                    final int first = row.getFirstCellNum();
-                    final int last = row.getLastCellNum() - 1;
-                    leftMostColumn = Math.min(first, leftMostColumn);
-                    rightMostColumn = Math.max(last, rightMostColumn);
+                if (row.getPhysicalNumberOfCells() == 0) {
+                    continue;
                 }
+                rowCount++;
+                leftMostColumn = Math.min(row.getFirstCellNum(), leftMostColumn);
+                rightMostColumn = Math.max(row.getLastCellNum() - 1, rightMostColumn);
             }
             if (rowCount > 0) {
                 this.leftMostColumn = leftMostColumn;
@@ -100,6 +100,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     public SXSSFSheet(SXSSFWorkbook workbook, XSSFSheet xSheet) throws IOException {
         _workbook = workbook;
         _sh = xSheet;
+        calculateLeftAndRightMostColumns(xSheet);
         _writer = workbook.createSheetDataWriter();
         setRandomAccessWindowSize(_workbook.getRandomAccessWindowSize());
         try {
@@ -220,22 +221,30 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     }
 
     /**
-     * Returns the number of physically defined rows (NOT the number of rows in the sheet)
+     * Returns the number of physically defined rows (NOT the number of rows in the sheet).
+     * This includes the rows of the template sheet, if this workbook was created from
+     * an existing {@link XSSFWorkbook}, and the rows that have already been flushed to disk.
      *
      * @return the number of physically defined rows in this sheet
      */
     @Override
     public int getPhysicalNumberOfRows() {
-        return _rows.size() + _writer.getNumberOfFlushedRows();
+        return _sh.getPhysicalNumberOfRows() + _rows.size() + _writer.getNumberOfFlushedRows();
     }
 
     /**
-     * Gets the first row on the sheet
+     * Gets the first row on the sheet. This takes the rows of the template sheet into account,
+     * if this workbook was created from an existing {@link XSSFWorkbook}, as well as the rows
+     * that have already been flushed to disk.
      *
-     * @return the number of the first logical row on the sheet (0-based)
+     * @return the number of the first logical row on the sheet (0-based), or -1 if there are no rows
      */
     @Override
     public int getFirstRowNum() {
+        // rows in the template always precede the rows created in this sheet, see createRow
+        if (_sh.getPhysicalNumberOfRows() > 0) {
+            return _sh.getFirstRowNum();
+        }
         if(_writer.getNumberOfFlushedRows() > 0) {
             return _writer.getLowestIndexOfFlushedRows();
         }
@@ -243,13 +252,23 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     }
 
     /**
-     * Gets the last row on the sheet
+     * Gets the last row on the sheet. This takes the rows of the template sheet into account,
+     * if this workbook was created from an existing {@link XSSFWorkbook}, as well as the rows
+     * that have already been flushed to disk. This means that {@code createRow(getLastRowNum() + 1)}
+     * can be used to append a row to a sheet of a template workbook.
      *
-     * @return last row contained n this sheet (0-based)
+     * @return last row contained in this sheet (0-based), or -1 if there are no rows
      */
     @Override
     public int getLastRowNum() {
-        return _rows.isEmpty() ? -1 : _rows.lastKey();
+        if (!_rows.isEmpty()) {
+            return _rows.lastKey();
+        }
+        // rows are flushed in ascending order and always follow the rows in the template, see createRow
+        if (_writer.getNumberOfFlushedRows() > 0) {
+            return _writer.getLastFlushedRow();
+        }
+        return _sh.getLastRowNum();
     }
 
     /**
@@ -1667,7 +1686,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
 
         // get the best-fit width of rows currently in the random access window
         final double w1 = SheetUtil.getColumnWidth(this, column, useMergedCells);
-        final int activeWidth = (int) ((256 * w1) + getArbitraryExtraWidth());
+        final int activeWidth = MathUtil.safeDoubleToInt((256 * w1) + getArbitraryExtraWidth());
 
         // the best-fit width for both flushed rows and random access window rows
         // flushedWidth or activeWidth may be negative if column contains only blank cells

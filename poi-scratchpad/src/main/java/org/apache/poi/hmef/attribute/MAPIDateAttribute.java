@@ -76,8 +76,8 @@ public final class MAPIDateAttribute extends MAPIAttribute {
       if(attr == null) {
          return null;
       }
-      if(attr instanceof MAPIDateAttribute) {
-         return ((MAPIDateAttribute)attr).getDate();
+      if(attr instanceof MAPIDateAttribute dateAttribute) {
+         return dateAttribute.getDate();
       }
 
       LOG.atWarn().log("Warning, non date property found: {}", attr);

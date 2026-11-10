@@ -90,6 +90,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.Removal;
+import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.XLSBUnsupportedException;
 import org.apache.poi.xssf.model.CalculationChain;
@@ -191,6 +192,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * Whether a call to {@link XSSFCell#setCellFormula(String)} will validate the formula or not.
      */
     private boolean cellFormulaValidation = true;
+
+    /**
+     * Whether literal <code>_xHHHH_</code> sequences in string cell values are escaped when stored.
+     */
+    private boolean escapeLiteralUnicodeSequences;
 
     /**
      * array of pictures for this workbook
@@ -417,20 +423,20 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
             Map<String, ExternalLinksTable> elIdMap = new HashMap<>();
             for(RelationPart rp : getRelationParts()){
                 POIXMLDocumentPart p = rp.getDocumentPart();
-                if(p instanceof SharedStringsTable) {
-                    sharedStringSource = (SharedStringsTable)p;
-                } else if(p instanceof StylesTable) {
-                    stylesSource = (StylesTable)p;
-                } else if(p instanceof ThemesTable) {
-                    theme = (ThemesTable)p;
-                } else if(p instanceof CalculationChain) {
-                    calcChain = (CalculationChain)p;
-                } else if(p instanceof MapInfo) {
-                    mapInfo = (MapInfo)p;
-                } else if (p instanceof XSSFSheet) {
-                    shIdMap.put(rp.getRelationship().getId(), (XSSFSheet)p);
-                } else if (p instanceof ExternalLinksTable) {
-                    elIdMap.put(rp.getRelationship().getId(), (ExternalLinksTable)p);
+                if(p instanceof SharedStringsTable sharedStringsTable) {
+                    this.sharedStringSource = sharedStringsTable;
+                } else if(p instanceof StylesTable stylesTable) {
+                    this.stylesSource = stylesTable;
+                } else if(p instanceof ThemesTable themesTable) {
+                    theme = themesTable;
+                } else if(p instanceof CalculationChain calculationChain) {
+                    this.calcChain = calculationChain;
+                } else if(p instanceof MapInfo info) {
+                    this.mapInfo = info;
+                } else if (p instanceof XSSFSheet xssfSheet) {
+                    shIdMap.put(rp.getRelationship().getId(), xssfSheet);
+                } else if (p instanceof ExternalLinksTable externalLinksTable) {
+                    elIdMap.put(rp.getRelationship().getId(), externalLinksTable);
                 }
             }
             boolean packageReadOnly = (getPackage().getPackageAccess() == PackageAccess.READ);
@@ -601,15 +607,15 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      */
     @Override
     public int addPicture(byte[] pictureData, int format) {
-        int imageNumber = getAllPictures().size() + 1;
-        XSSFPictureData img = createRelationship(XSSFPictureData.RELATIONS[format], this.xssfFactory, imageNumber, true).getDocumentPart();
+        int imageNumber = nextPictureNumber(format);
+        XSSFPictureData img = createRelationship(XSSFPictureData.getRelationForType(format), this.xssfFactory, imageNumber, true).getDocumentPart();
         try (OutputStream out = img.getPackagePart().getOutputStream()) {
             out.write(pictureData);
         } catch (IOException e) {
             throw new POIXMLException(e);
         }
         pictures.add(img);
-        return imageNumber - 1;
+        return pictures.size() - 1;
     }
 
     /**
@@ -628,13 +634,21 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * @see #getAllPictures()
      */
     public int addPicture(InputStream is, int format) throws IOException {
-        int imageNumber = getAllPictures().size() + 1;
-        XSSFPictureData img = createRelationship(XSSFPictureData.RELATIONS[format], this.xssfFactory, imageNumber, true).getDocumentPart();
+        int imageNumber = nextPictureNumber(format);
+        XSSFPictureData img = createRelationship(XSSFPictureData.getRelationForType(format), this.xssfFactory, imageNumber, true).getDocumentPart();
         try (OutputStream out = img.getPackagePart().getOutputStream()) {
             IOUtils.copy(is, out);
         }
         pictures.add(img);
-        return imageNumber - 1;
+        return pictures.size() - 1;
+    }
+
+    /**
+     * The picture list can have gaps in the part numbers once the pictures only
+     * a removed sheet used have been dropped, so look for a free one
+     */
+    private int nextPictureNumber(int format) {
+        return getNextPartNumber(XSSFPictureData.getRelationForType(format), getAllPictures().size() + 1);
     }
 
     /**
@@ -692,8 +706,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         for(RelationPart rp : rels) {
             POIXMLDocumentPart r = rp.getDocumentPart();
             // do not copy the drawing relationship, it will be re-created
-            if(r instanceof XSSFDrawing) {
-                dg = (XSSFDrawing)r;
+            if(r instanceof XSSFDrawing drawing) {
+                dg = drawing;
                 continue;
             }
 
@@ -757,11 +771,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
                 List<RelationPart> srcRels = drawingPatriarch.getRelationParts();
                 for (RelationPart rp : srcRels) {
                     POIXMLDocumentPart r = rp.getDocumentPart();
-                    if (r instanceof XSSFChart) {
+                    if (r instanceof XSSFChart srcChart) {
                         // Replace chart relation part with new relationship, cloning the chart's content
                         RelationPart chartPart = clonedDg.createChartRelationPart();
                         XSSFChart chart = chartPart.getDocumentPart();
-                        chart.importContent((XSSFChart) r);
+                        chart.importContent(srcChart);
                         chart.replaceReferences(clonedSheet);
                     } else {
                         addRelation(rp, clonedDg);
@@ -979,7 +993,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         outerloop:
         while(true) {
             for(XSSFSheet sh : sheets) {
-                sheetNumber = (int)Math.max(sh.sheet.getSheetId() + 1, sheetNumber);
+                sheetNumber = Math.toIntExact(Math.max(sh.sheet.getSheetId() + 1, sheetNumber));
             }
 
             // Bug 57165: We also need to check that the resulting file name is not already taken
@@ -1038,7 +1052,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     }
 
     /**
-     * Convenience method to get the active sheet.  The active sheet is is the sheet
+     * Convenience method to get the active sheet.  The active sheet is the sheet
      * which is currently displayed when the workbook is viewed in Excel.
      * 'Selected' sheet(s) is a distinct concept.
      */
@@ -1046,7 +1060,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     public int getActiveSheetIndex() {
         //activeTab (Active Sheet Index) Specifies an unsignedInt
         //that contains the index to the active sheet in this book view.
-        return (int)workbook.getBookViews().getWorkbookViewArray(0).getActiveTab();
+        return Math.toIntExact(workbook.getBookViews().getWorkbookViewArray(0).getActiveTab());
     }
 
     /**
@@ -1232,7 +1246,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         }
 
         for (XSSFSheet sheet : sheets) {
-            if (name.equalsIgnoreCase(sheet.getSheetName())) {
+            if (StringUtil.equalsIgnoreCase(name, sheet.getSheetName())) {
                 return sheet;
             }
         }
@@ -1263,7 +1277,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     public int getSheetIndex(String name) {
         int idx = 0;
         for (XSSFSheet sh : sheets) {
-            if (name.equalsIgnoreCase(sh.getSheetName())) {
+            if (StringUtil.equalsIgnoreCase(name, sh.getSheetName())) {
                 return idx;
             }
             idx++;
@@ -1437,6 +1451,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         removeRelation(sheet);
         sheets.remove(index);
 
+        // removing the sheet also removes the pictures only it used
+        if (pictures != null) {
+            pictures.removeIf(p -> !getPackage().containPart(p.getPackagePart().getPartName()));
+        }
+
         // only set new sheet if there are still some left
         if(sheets.isEmpty()) {
             return;
@@ -1521,7 +1540,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     }
 
     /**
-     * Convenience method to set the active sheet.  The active sheet is is the sheet
+     * Convenience method to set the active sheet.  The active sheet is the sheet
      * which is currently displayed when the workbook is viewed in Excel.
      * 'Selected' sheet(s) is a distinct concept.
      */
@@ -1941,7 +1960,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
                 ctName = ctName.substring(0, MAX_SENSITIVE_SHEET_NAME_LEN);
             }
 
-            if (excludeSheetIdx != i && name.equalsIgnoreCase(ctName)) {
+            if (excludeSheetIdx != i && StringUtil.equalsIgnoreCase(name, ctName)) {
                 return true;
             }
         }
@@ -2037,17 +2056,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
 
         final CTSheet ctSheet = sheets.get(sheetIx).sheet;
         switch (visibility) {
-            case VISIBLE:
-                ctSheet.setState(STSheetState.VISIBLE);
-                break;
-            case HIDDEN:
-                ctSheet.setState(STSheetState.HIDDEN);
-                break;
-            case VERY_HIDDEN:
-                ctSheet.setState(STSheetState.VERY_HIDDEN);
-                break;
-            default:
-                throw new IllegalArgumentException("This should never happen");
+            case VISIBLE -> ctSheet.setState(STSheetState.VISIBLE);
+            case HIDDEN -> ctSheet.setState(STSheetState.HIDDEN);
+            case VERY_HIDDEN -> ctSheet.setState(STSheetState.VERY_HIDDEN);
+            default -> throw new IllegalArgumentException("This should never happen");
         }
     }
 
@@ -2062,7 +2074,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      */
     protected void onDeleteFormula(XSSFCell cell){
         if(calcChain != null) {
-            int sheetId = (int)cell.getSheet().sheet.getSheetId();
+            int sheetId = Math.toIntExact(cell.getSheet().sheet.getSheetId());
             calcChain.removeItem(sheetId, cell.getReference());
         }
     }
@@ -2198,8 +2210,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         } else {
             List<RelationPart> relationParts = getRelationParts();
             for (RelationPart relationPart : relationParts) {
-                if (relationPart.getDocumentPart() instanceof ExternalLinksTable) {
-                    ExternalLinksTable linksTable = relationPart.getDocumentPart();
+                if (relationPart.getDocumentPart() instanceof ExternalLinksTable linksTable) {
                     String linkedFileName = linksTable.getLinkedFileName();
                     if(linkedFileName.equals(name)){
                         String s = relationPart.getRelationship().getTargetURI().toString();
@@ -2312,6 +2323,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * Validate the password against the stored hash, the hashing method will be determined
      *  by the existing password attributes
      * @return true, if the hashes match (... though original password may differ ...)
+     * @throws org.apache.poi.EncryptedDocumentException if the stored spin count is outside the range allowed by
+     *  {@link org.apache.poi.poifs.crypt.agile.AgileEncryptionVerifier#getMaxSpinCount()}
      */
     public boolean validateWorkbookPassword(String password) {
         if (!workbookProtectionPresent()) {
@@ -2338,6 +2351,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * Validate the password against the stored hash, the hashing method will be determined
      *  by the existing password attributes
      * @return true if the hashes match (... though original password may differ ...)
+     * @throws org.apache.poi.EncryptedDocumentException if the stored spin count is outside the range allowed by
+     *  {@link org.apache.poi.poifs.crypt.agile.AgileEncryptionVerifier#getMaxSpinCount()}
      */
     public boolean validateRevisionsPassword(String password) {
         if (!workbookProtectionPresent()) {
@@ -2553,7 +2568,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         if (name != null && sheets != null) {
             for (XSSFSheet sheet : sheets) {
                 for (XSSFTable tbl : sheet.getTables()) {
-                    if (name.equalsIgnoreCase(tbl.getName())) {
+                    if (StringUtil.equalsIgnoreCase(name, tbl.getName())) {
                         return tbl;
                     }
                 }
@@ -2620,6 +2635,43 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      */
     public boolean getCellFormulaValidation() {
         return this.cellFormulaValidation;
+    }
+
+    /**
+     * Whether literal <code>_xHHHH_</code> sequences in string cell values are escaped when stored.
+     * <p>
+     * OOXML uses <code>_xHHHH_</code> to escape characters, and POI and Excel decode such sequences
+     * when reading string values. Without escaping, a value such as <code>_x0041_ col</code> is read
+     * back as <code>A col</code>. When this is enabled, the leading underscore of such sequences is
+     * stored as <code>_x005F_</code> (see {@link XSSFRichTextString#utfEncode(String)}), so the value
+     * is read back unchanged. Characters that cannot be represented in XML 1.0, such as U+0001,
+     * are stored as <code>_xHHHH_</code> escapes too, rather than being replaced with <code>?</code>.
+     * <p>
+     * This applies to string values set with {@link XSSFCell#setCellValue(String)}, to cached
+     * formula string results, and to {@link org.apache.poi.ss.usermodel.RichTextString}s that are
+     * not {@link XSSFRichTextString}s. An {@link XSSFRichTextString} already holds the stored form of its text (its
+     * {@link XSSFRichTextString#getString()} decodes <code>_xHHHH_</code> sequences), so it is stored
+     * as is; use {@link XSSFRichTextString#utfEncode(String)} on the text you put into it.
+     * <p>
+     * Defaults to {@code false}, which stores strings as given. This allows deliberate escapes,
+     * e.g. <code>_x000D_</code>, to be written.
+     *
+     * @param value true to escape literal <code>_xHHHH_</code> sequences
+     * @since 6.0.0
+     */
+    public void setEscapeLiteralUnicodeSequences(boolean value) {
+        this.escapeLiteralUnicodeSequences = value;
+    }
+
+    /**
+     * Whether literal <code>_xHHHH_</code> sequences in string cell values are escaped when stored.
+     *
+     * @return true if literal <code>_xHHHH_</code> sequences are escaped
+     * @see #setEscapeLiteralUnicodeSequences(boolean)
+     * @since 6.0.0
+     */
+    public boolean isEscapeLiteralUnicodeSequences() {
+        return this.escapeLiteralUnicodeSequences;
     }
 
     @Override

@@ -161,7 +161,8 @@ public class SXSSFWorkbook implements Workbook {
      *   </li>
      *   <li>
      *       Append rows to existing sheets. The row number MUST be greater
-     *       than {@code max(rownum)} in the template sheet.
+     *       than {@code max(rownum)} in the template sheet, so use
+     *       {@code sheet.createRow(sheet.getLastRowNum() + 1)}.
      *   </li>
      *   <li>
      *       Use existing workbook as a template and re-use global objects such
@@ -191,7 +192,7 @@ public class SXSSFWorkbook implements Workbook {
 
 
     /**
-     * Constructs an workbook from an existing workbook.
+     * Constructs a workbook from an existing workbook.
      * <p>
      * When a new node is created via {@link SXSSFSheet#createRow} and the total number
      * of unflushed records would exceed the specified value, then the
@@ -215,7 +216,7 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     /**
-     * Constructs an workbook from an existing workbook.
+     * Constructs a workbook from an existing workbook.
      * <p>
      * When a new node is created via {@link SXSSFSheet#createRow} and the total number
      * of unflushed records would exceed the specified value, then the
@@ -240,7 +241,7 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     /**
-     * Constructs an workbook from an existing workbook.
+     * Constructs a workbook from an existing workbook.
      * <p>
      * When a new node is created via {@link SXSSFSheet#createRow} and the total number
      * of unflushed records would exceed the specified value, then the
@@ -341,7 +342,7 @@ public class SXSSFWorkbook implements Workbook {
      * Set whether temp files should be compressed.
      * <p>
      *   SXSSF writes sheet data in temporary files (a temp file per-sheet)
-     *   and the size of these temp files can grow to to a very large size,
+     *   and the size of these temp files can grow to a very large size,
      *   e.g. for a 20 MB csv data the size of the temp xml file become few GB large.
      *   If the "compress" flag is set to <code>true</code> then the temporary XML is gzipped.
      * </p>
@@ -374,6 +375,35 @@ public class SXSSFWorkbook implements Workbook {
      */
     public boolean shouldCalculateSheetDimensions() {
         return shouldCalculateSheetDimensions;
+    }
+
+    /**
+     * Whether literal <code>_xHHHH_</code> sequences in string cell values are escaped when written.
+     * This sets the option on the underlying {@link XSSFWorkbook}.
+     * <p>
+     * Values set with {@link SXSSFCell#setCellValue(String)} and cached formula string results are
+     * escaped. With a shared strings table, {@link org.apache.poi.xssf.usermodel.XSSFRichTextString} values are written as is, see
+     * {@link XSSFWorkbook#setEscapeLiteralUnicodeSequences(boolean)}. Inline strings hold only the
+     * text of an {@link org.apache.poi.xssf.usermodel.XSSFRichTextString}, so they are escaped and read back as its
+     * {@link org.apache.poi.xssf.usermodel.XSSFRichTextString#getString()}.
+     *
+     * @param value true to escape literal <code>_xHHHH_</code> sequences
+     * @see XSSFWorkbook#setEscapeLiteralUnicodeSequences(boolean)
+     * @since 6.0.0
+     */
+    public void setEscapeLiteralUnicodeSequences(boolean value) {
+        _wb.setEscapeLiteralUnicodeSequences(value);
+    }
+
+    /**
+     * Whether literal <code>_xHHHH_</code> sequences in string cell values are escaped when written.
+     *
+     * @return true if literal <code>_xHHHH_</code> sequences are escaped
+     * @see #setEscapeLiteralUnicodeSequences(boolean)
+     * @since 6.0.0
+     */
+    public boolean isEscapeLiteralUnicodeSequences() {
+        return _wb.isEscapeLiteralUnicodeSequences();
     }
 
     @Internal
@@ -567,7 +597,7 @@ public class SXSSFWorkbook implements Workbook {
 //start of interface implementation
 
     /**
-     * Convenience method to get the active sheet.  The active sheet is is the sheet
+     * Convenience method to get the active sheet.  The active sheet is the sheet
      * which is currently displayed when the workbook is viewed in Excel.
      * 'Selected' sheet(s) is a distinct concept.
      *
@@ -579,7 +609,7 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     /**
-     * Convenience method to set the active sheet.  The active sheet is is the sheet
+     * Convenience method to set the active sheet.  The active sheet is the sheet
      * which is currently displayed when the workbook is viewed in Excel.
      * 'Selected' sheet(s) is a distinct concept.
      *

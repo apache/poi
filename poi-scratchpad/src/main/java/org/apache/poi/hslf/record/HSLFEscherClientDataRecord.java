@@ -65,7 +65,8 @@ public class HSLFEscherClientDataRecord extends EscherClientDataRecord {
     @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
-        byte[] remainingData = IOUtils.safelyClone(data,  offset+8,  bytesRemaining, RecordAtom.getMaxRecordLength());
+        byte[] remainingData = IOUtils.safelyClone(data,  offset+8,  bytesRemaining, RecordAtom.getMaxRecordLength(),
+                "RecordAtom.setMaxRecordLength()");
         setRemainingData(remainingData);
         return bytesRemaining + 8;
     }

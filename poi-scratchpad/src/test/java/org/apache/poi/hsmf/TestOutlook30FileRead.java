@@ -17,6 +17,7 @@
 
 package org.apache.poi.hsmf;
 
+import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -61,7 +62,7 @@ public final class TestOutlook30FileRead {
     void testReadDisplayTo() throws ChunkNotFoundException {
         String obtained = mapiMessage.getDisplayTo();
 
-        assertTrue(obtained.startsWith("Bohn, Shawn"));
+        assertStartsWith(obtained, "Bohn, Shawn");
     }
 
     /**
@@ -93,7 +94,7 @@ public final class TestOutlook30FileRead {
     @Test
     void testReadBody() throws Exception {
         String obtained = mapiMessage.getTextBody();
-        assertTrue(obtained.startsWith("I am shutting down"));
+        assertStartsWith(obtained, "I am shutting down");
     }
 
     /**

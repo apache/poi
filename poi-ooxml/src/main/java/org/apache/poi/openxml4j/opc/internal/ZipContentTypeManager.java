@@ -56,8 +56,8 @@ public class ZipContentTypeManager extends ContentTypeManager {
     @SuppressWarnings("resource")
     @Override
     public boolean saveImpl(Document content, OutputStream out) {
-        final ZipArchiveOutputStream zos = (out instanceof ZipArchiveOutputStream)
-                ? (ZipArchiveOutputStream) out : new ZipArchiveOutputStream(out);
+        final ZipArchiveOutputStream zos = (out instanceof ZipArchiveOutputStream zaos)
+                ? zaos : new ZipArchiveOutputStream(out);
 
         ZipArchiveEntry partEntry = new ZipArchiveEntry(CONTENT_TYPES_PART_NAME);
         try {

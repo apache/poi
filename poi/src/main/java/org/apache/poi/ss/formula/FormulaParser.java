@@ -82,6 +82,8 @@ import org.apache.poi.ss.util.CellReference.NameType;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.StringUtil;
 
+import static org.apache.poi.util.StringUtil.equalsIgnoreCase;
+
 /**
  * This class parses a formula string into a List of tokens in RPN order.
  * Inspired by "Lets Build a Compiler" by Jack Crenshaw
@@ -98,6 +100,13 @@ import org.apache.poi.util.StringUtil;
 @Internal
 public final class FormulaParser {
     private static final Logger LOGGER = PoiLogManager.getLogger(FormulaParser.class);
+
+    /**
+     * The default value for {@link #getMaxNestingDepth()}. Excel itself allows 64 levels of nested functions.
+     */
+    public static final int DEFAULT_MAX_NESTING_DEPTH = 128;
+
+    private static int MAX_NESTING_DEPTH = DEFAULT_MAX_NESTING_DEPTH;
 
     private final String _formulaString;
     private final int _formulaLength;
@@ -128,6 +137,9 @@ public final class FormulaParser {
     private final int _sheetIndex;
     private final int _rowIndex; // 0-based
 
+    /** the number of parentheses, function calls and unary signs enclosing the current parse position */
+    private int _nestingDepth;
+
 
     /**
      * Create the formula parser, with the string that is to be
@@ -149,6 +161,31 @@ public final class FormulaParser {
         _formulaLength = _formulaString.length();
         _sheetIndex = sheetIndex;
         _rowIndex = rowIndex;
+    }
+
+    /**
+     * The parser is recursive, so deeply nested formulas could otherwise exhaust the thread stack.
+     * Formulas with more levels of nested parentheses, function calls and unary signs than this
+     * are rejected with a {@link FormulaParseException}.
+     *
+     * @param maxNestingDepth the maximum nesting depth (defaults to {@link #DEFAULT_MAX_NESTING_DEPTH})
+     * @throws IllegalArgumentException if {@code maxNestingDepth} is negative
+     * @since 6.0.0
+     */
+    public static void setMaxNestingDepth(int maxNestingDepth) {
+        if (maxNestingDepth < 0) {
+            throw new IllegalArgumentException("maxNestingDepth must not be negative: " + maxNestingDepth);
+        }
+        MAX_NESTING_DEPTH = maxNestingDepth;
+    }
+
+    /**
+     * @return the maximum levels of nested parentheses, function calls and unary signs in a formula
+     * @see #setMaxNestingDepth(int)
+     * @since 6.0.0
+     */
+    public static int getMaxNestingDepth() {
+        return MAX_NESTING_DEPTH;
     }
 
     /**
@@ -207,10 +244,10 @@ public final class FormulaParser {
     public static Area3DPxg parseStructuredReference(String tableText, FormulaParsingWorkbook workbook, int rowIndex) {
         final int sheetIndex = -1; //don't care?
         Ptg[] arr = FormulaParser.parse(tableText, workbook, FormulaType.CELL, sheetIndex, rowIndex);
-        if (arr.length != 1 || !(arr[0] instanceof Area3DPxg) ) {
+        if (arr.length != 1 || !(arr[0] instanceof Area3DPxg area) ) {
             throw new IllegalStateException("Illegal structured reference, had length: " + arr.length);
         }
-        return (Area3DPxg) arr[0];
+        return area;
     }
 
     /** Read New Character From Input Stream */
@@ -253,6 +290,14 @@ public final class FormulaParser {
     }
 
     /** Report What Was Expected */
+    private void enterNesting() {
+        if (++_nestingDepth > MAX_NESTING_DEPTH) {
+            throw new FormulaParseException("Formula has more than " + MAX_NESTING_DEPTH
+                    + " levels of nested parentheses, functions or unary signs. "
+                    + "You can increase the limit via FormulaParser.setMaxNestingDepth()");
+        }
+    }
+
     private RuntimeException expected(String s) {
         String msg;
 
@@ -320,7 +365,7 @@ public final class FormulaParser {
             value.appendCodePoint(this.look);
             nextChar();
         }
-        return value.length() == 0 ? null : value.toString();
+        return value.isEmpty() ? null : value.toString();
     }
 
     private ParseNode parseRangeExpression() {
@@ -350,7 +395,7 @@ public final class FormulaParser {
 
     private static ParseNode augmentWithMemPtg(ParseNode root) {
         Ptg memPtg;
-        if (needsMemFunc(root)) {
+        if (needsMemFunc(root, 0)) {
             memPtg = new MemFuncPtg(root.getEncodedSize());
         } else {
             memPtg = new MemAreaPtg(root.getEncodedSize());
@@ -363,7 +408,13 @@ public final class FormulaParser {
      *  a tMemFunc token is used"
      *
      */
-    private static boolean needsMemFunc(ParseNode root) {
+    private static boolean needsMemFunc(ParseNode root, int nesting) {
+        if (nesting > FormulaParser.getMaxNestingDepth()) {
+            throw new FormulaParseException("Formula has more than " + FormulaParser.getMaxNestingDepth()
+                    + " levels of nested parentheses, functions or unary signs. "
+                    + "You can increase the limit via FormulaParser.setMaxNestingDepth()");
+        }
+
         Ptg token = root.getToken();
         if (token instanceof AbstractFunctionPtg) {
             return true;
@@ -378,7 +429,7 @@ public final class FormulaParser {
         if (token instanceof OperationPtg || token instanceof ParenthesisPtg) {
             // expect RangePtg, but perhaps also UnionPtg, IntersectionPtg etc
             for(ParseNode child : root.getChildren()) {
-                if (needsMemFunc(child)) {
+                if (needsMemFunc(child, nesting + 1)) {
                     return true;
                 }
             }
@@ -412,8 +463,7 @@ public final class FormulaParser {
         }
 
         // next 2 are special cases of OperationPtg
-        if (tkn instanceof AbstractFunctionPtg) {
-            AbstractFunctionPtg afp = (AbstractFunctionPtg) tkn;
+        if (tkn instanceof AbstractFunctionPtg afp) {
             byte returnClass = afp.getDefaultOperandClass();
             //CLASS_VALUE was added as valid to support example 6 in
             //https://support.microsoft.com/en-us/office/xlookup-function-b7fd680e-6d10-43e6-84f9-88eae8bf5929
@@ -487,6 +537,10 @@ public final class FormulaParser {
                         throw new FormulaParseException("Cell reference or Named Range "
                                 + "expected after sheet name at index " + _pointer + ".");
                     }
+                    if (_book == null) {
+                        throw new FormulaParseException("Cannot access name '" + name +
+                                "' for sheet " + sheetIden.asFormulaString() + " without workbook");
+                    }
                     Ptg nameXPtg = _book.getNameXPtg(name, sheetIden);
                     if (nameXPtg == null) {
                         throw new FormulaParseException("Specified name '" + name +
@@ -519,7 +573,7 @@ public final class FormulaParser {
                 resetPointer(colonPos);
                 if (!part1.isCell()) {
                     String prefix = "";
-                    if (sheetIden != null) {
+                    if (sheetIden != null && sheetIden.getSheetIdentifier() != null) {
                         prefix = "'" + sheetIden.getSheetIdentifier().getName() + '!';
                     }
                     throw new FormulaParseException(prefix + part1.getRep() + "' is not a proper reference.");
@@ -675,23 +729,12 @@ public final class FormulaParser {
                 break;
             }
             switch (specName) {
-                case specAll:
-                    isAllSpec = true;
-                    break;
-                case specData:
-                    isDataSpec = true;
-                    break;
-                case specHeaders:
-                    isHeadersSpec = true;
-                    break;
-                case specThisRow:
-                    isThisRowSpec = true;
-                    break;
-                case specTotals:
-                    isTotalsSpec = true;
-                    break;
-                default:
-                    throw new FormulaParseException("Unknown special quantifier " + specName);
+                case specAll -> isAllSpec = true;
+                case specData -> isDataSpec = true;
+                case specHeaders -> isHeadersSpec = true;
+                case specThisRow -> isThisRowSpec = true;
+                case specTotals -> isTotalsSpec = true;
+                default -> throw new FormulaParseException("Unknown special quantifier " + specName);
             }
             nSpecQuantifiers++;
             if (look == ','){
@@ -738,23 +781,12 @@ public final class FormulaParser {
                 String name = parseAsSpecialQuantifier();
                 if (name!=null) {
                     switch (name) {
-                        case specAll:
-                            isAllSpec = true;
-                            break;
-                        case specData:
-                            isDataSpec = true;
-                            break;
-                        case specHeaders:
-                            isHeadersSpec = true;
-                            break;
-                        case specThisRow:
-                            isThisRowSpec = true;
-                            break;
-                        case specTotals:
-                            isTotalsSpec = true;
-                            break;
-                        default:
-                            throw new FormulaParseException("Unknown special quantifier " + name);
+                        case specAll -> isAllSpec = true;
+                        case specData -> isDataSpec = true;
+                        case specHeaders -> isHeadersSpec = true;
+                        case specThisRow -> isThisRowSpec = true;
+                        case specTotals -> isTotalsSpec = true;
+                        default -> throw new FormulaParseException("Unknown special quantifier " + name);
                     }
                     nSpecQuantifiers++;
                 } else {
@@ -836,7 +868,7 @@ public final class FormulaParser {
 
         } else if (nColQuantifiers == 1 && !isThisRow) {
             if (startColumnName == null) {
-                throw new IllegalStateException("Cannot parse column: " + startColumnName + " with formula " + _formulaString);
+                throw new IllegalStateException("Cannot parse column: missing column name in formula " + _formulaString);
             }
             int idx = tbl.findColumnIndex(startColumnName);
             if (idx == -1) {
@@ -929,8 +961,8 @@ public final class FormulaParser {
         if(look == '['){
             return parseStructuredReference(name);
         }
-        if (name.equalsIgnoreCase("TRUE") || name.equalsIgnoreCase("FALSE")) {
-            return  new ParseNode(BoolPtg.valueOf(name.equalsIgnoreCase("TRUE")));
+        if (equalsIgnoreCase(name, "TRUE") || equalsIgnoreCase(name, "FALSE")) {
+            return  new ParseNode(BoolPtg.valueOf(equalsIgnoreCase(name, "TRUE")));
         }
         if (_book == null) {
             // Only test cases omit the book (expecting it not to be needed)
@@ -978,15 +1010,13 @@ public final class FormulaParser {
         if (ch > 128) {
             return true;
         }
-        switch (ch) {
-            case '.':
-            case '_':
-            case '?':
-            case '\\': // of all things
-                return true;
-        }
-        // includes special non-name control characters like ! $ : , ( ) [ ] and space
-        return false;
+        return switch (ch) {
+            case '.', '_', '?', '\\' -> // of all things
+                    true;
+            default ->
+                // includes special non-name control characters like ! $ : , ( ) [ ] and space
+                    false;
+        };
     }
 
     /**
@@ -1265,7 +1295,16 @@ public final class FormulaParser {
      */
     private SheetIdentifier parseSheetRange(String bookname, NameIdentifier sheet1Name, boolean isSndPartOfQuotedRange) {
         nextChar();
-        SheetIdentifier sheet2 = parseSheetName(isSndPartOfQuotedRange);
+
+        // need to keep an eye on nesting to avoid stackoverflow
+        SheetIdentifier sheet2;
+        enterNesting();
+        try {
+            sheet2 = parseSheetName(isSndPartOfQuotedRange);
+        } finally {
+            _nestingDepth--;
+        }
+
         if (sheet2 != null) {
            return new SheetRangeIdentifier(bookname, sheet1Name, sheet2.getSheetIdentifier());
         }
@@ -1285,13 +1324,12 @@ public final class FormulaParser {
         if (ch > 128) {
             return true;
         }
-        switch(ch) {
-            case '.': // dot is OK
-            case '_': // underscore is OK
-            case ' ': // space is OK
-                return true;
-        }
-        return false;
+        return switch (ch) { // dot is OK
+            // underscore is OK
+            case '.', '_', ' ' -> // space is OK
+                    true;
+            default -> false;
+        };
     }
 
     /**
@@ -1362,17 +1400,16 @@ public final class FormulaParser {
                     LOGGER.atWarn().log("FormulaParser.function: Name '{}' is completely unknown in the current workbook.", name);
                     // name is probably the name of an unregistered User-Defined Function
                     switch (_book.getSpreadsheetVersion()) {
-                        case EXCEL97:
+                        case EXCEL97 -> {
                             // HSSFWorkbooks require a name to be added to Workbook defined names table
                             addName(name);
                             hName = _book.getName(name, _sheetIndex);
                             nameToken = hName.createPtg();
-                            break;
-                        case EXCEL2007:
+                        }
+                        case EXCEL2007 ->
                             // XSSFWorkbooks store formula names as strings.
                             nameToken = new NameXPxg(name);
-                            break;
-                        default:
+                        default ->
                             throw new IllegalStateException("Unexpected spreadsheet version: " + _book.getSpreadsheetVersion().name());
                     }
                 }
@@ -1380,7 +1417,13 @@ public final class FormulaParser {
         }
 
         match('(');
-        ParseNode[] args = Arguments();
+        ParseNode[] args;
+        enterNesting();
+        try {
+            args = Arguments();
+        } finally {
+            _nestingDepth--;
+        }
         match(')');
 
         return getFunction(name, nameToken, args);
@@ -1562,7 +1605,13 @@ public final class FormulaParser {
                 return parseUnary(true);
             case '(':
                 match('(');
-                ParseNode inside = unionExpression();
+                ParseNode inside;
+                enterNesting();
+                try {
+                    inside = unionExpression();
+                } finally {
+                    _nestingDepth--;
+                }
                 match(')');
                 return new ParseNode(ParenthesisPtg.instance, inside);
             case '"':
@@ -1588,24 +1637,32 @@ public final class FormulaParser {
     private ParseNode parseUnary(boolean isPlus) {
 
         boolean numberFollows = isDigit(look) || look=='.';
-        ParseNode factor = powerFactor();
+        // Excel gives negation higher precedence than '^': -2^2 is (-2)^2 = 4, not -(2^2).
+        // So the operand of a unary sign is a factor without '^'; the enclosing powerFactor() applies any '^'.
+        ParseNode factor;
+        enterNesting();
+        try {
+            factor = percentFactor();
+        } finally {
+            _nestingDepth--;
+        }
 
         if (numberFollows) {
             // + or - directly next to a number is parsed with the number
 
             Ptg token = factor.getToken();
-            if (token instanceof NumberPtg) {
+            if (token instanceof NumberPtg numberPtg) {
                 if (isPlus) {
                     return factor;
                 }
-                token = new NumberPtg(-((NumberPtg)token).getValue());
+                token = new NumberPtg(-numberPtg.getValue());
                 return new ParseNode(token);
             }
-            if (token instanceof IntPtg) {
+            if (token instanceof IntPtg intPtg) {
                 if (isPlus) {
                     return factor;
                 }
-                int intVal = ((IntPtg)token).getValue();
+                int intVal = intPtg.getValue();
                 // note - cannot use IntPtg for negatives
                 token = new NumberPtg(-intVal);
                 return new ParseNode(token);
@@ -1688,10 +1745,10 @@ public final class FormulaParser {
 
     private Boolean parseBooleanLiteral() {
         String iden = parseUnquotedIdentifier();
-        if ("TRUE".equalsIgnoreCase(iden)) {
+        if (StringUtil.equalsIgnoreCase("TRUE", iden)) {
             return Boolean.TRUE;
         }
-        if ("FALSE".equalsIgnoreCase(iden)) {
+        if (StringUtil.equalsIgnoreCase("FALSE", iden)) {
             return Boolean.FALSE;
         }
         throw expected("'TRUE' or 'FALSE'");
@@ -1699,10 +1756,10 @@ public final class FormulaParser {
 
     private static Double convertArrayNumber(Ptg ptg, boolean isPositive) {
         double value;
-        if (ptg instanceof IntPtg) {
-            value = ((IntPtg)ptg).getValue();
-        } else  if (ptg instanceof NumberPtg) {
-            value = ((NumberPtg)ptg).getValue();
+        if (ptg instanceof IntPtg ip) {
+            value = ip.getValue();
+        } else  if (ptg instanceof NumberPtg np) {
+            value = np.getValue();
         } else {
             throw new IllegalStateException("Unexpected ptg (" + ptg.getClass().getName() + ")");
         }
@@ -1744,7 +1801,12 @@ public final class FormulaParser {
             throw expected("Integer");
         }
 
-        return getNumberPtgFromString(number1, number2, exponent);
+        Ptg ptg = getNumberPtgFromString(number1, number2, exponent);
+        if (ptg instanceof NumberPtg np && Double.isInfinite(np.getValue())) {
+            // Excel refuses to enter a formula whose literal is beyond the double range, e.g. 1E400
+            throw new FormulaParseException("Number literal is too large: " + number1 + (number2 == null ? "" : "." + number2) + "E" + exponent);
+        }
+        return ptg;
     }
 
 
@@ -1757,7 +1819,7 @@ public final class FormulaParser {
         part1 = part1.toUpperCase(Locale.ROOT);
 
         switch(part1.charAt(0)) {
-            case 'V': {
+            case 'V' -> {
                 FormulaError fe = FormulaError.VALUE;
                 if(part1.equals(fe.name())) {
                     match('!');
@@ -1765,7 +1827,7 @@ public final class FormulaParser {
                 }
                 throw expected(fe.getString());
             }
-            case 'R': {
+            case 'R' -> {
                 FormulaError fe = FormulaError.REF;
                 if(part1.equals(fe.name())) {
                     match('!');
@@ -1773,7 +1835,7 @@ public final class FormulaParser {
                 }
                 throw expected(fe.getString());
             }
-            case 'D': {
+            case 'D' -> {
                 FormulaError fe = FormulaError.DIV0;
                 if(part1.equals("DIV")) {
                     match('/');
@@ -1783,7 +1845,7 @@ public final class FormulaParser {
                 }
                 throw expected(fe.getString());
             }
-            case 'N': {
+            case 'N' -> {
                 FormulaError fe = FormulaError.NAME;
                 if(part1.equals(fe.name())) {
                     // only one that ends in '?'
@@ -1825,7 +1887,7 @@ public final class FormulaParser {
             sb.appendCodePoint(look);
             nextChar();
         }
-        if (sb.length() < 1) {
+        if (sb.isEmpty()) {
             return null;
         }
 
@@ -1900,16 +1962,17 @@ public final class FormulaParser {
             skipWhite();
             Ptg operator;
             switch(look) {
-                case '*':
+                case '*' -> {
                     match('*');
                     operator = MultiplyPtg.instance;
-                    break;
-                case '/':
+                }
+                case '/' -> {
                     match('/');
                     operator = DividePtg.instance;
-                    break;
-                default:
+                }
+                default -> {
                     return result; // finished with Term
+                }
             }
             ParseNode other = powerFactor();
             result = new ParseNode(operator, result, other);
@@ -1993,15 +2056,17 @@ public final class FormulaParser {
             }
             return GreaterThanPtg.instance;
         }
-        switch(look) {
-            case '=':
+        return switch (look) {
+            case '=' -> {
                 match('=');
-                return LessEqualPtg.instance;
-            case '>':
+                yield LessEqualPtg.instance;
+            }
+            case '>' -> {
                 match('>');
-                return NotEqualPtg.instance;
-        }
-        return LessThanPtg.instance;
+                yield NotEqualPtg.instance;
+            }
+            default -> LessThanPtg.instance;
+        };
     }
 
 
@@ -2027,16 +2092,17 @@ public final class FormulaParser {
             skipWhite();
             Ptg operator;
             switch(look) {
-                case '+':
+                case '+' -> {
                     match('+');
                     operator = AddPtg.instance;
-                    break;
-                case '-':
+                }
+                case '-' -> {
                     match('-');
                     operator = SubtractPtg.instance;
-                    break;
-                default:
+                }
+                default -> {
                     return result; // finished with additive expression
+                }
             }
             ParseNode other = Term();
             result = new ParseNode(operator, result, other);

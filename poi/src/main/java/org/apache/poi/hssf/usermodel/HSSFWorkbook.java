@@ -114,6 +114,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.Removal;
+import org.apache.poi.util.StringUtil;
 
 /**
  * High level representation of a workbook.  This is the first object most users
@@ -242,6 +243,10 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     public static int getMaxImageLength() {
         final int ioMaxSize = IOUtils.getByteArrayMaxOverride();
         return ioMaxSize < 0 ? MAX_IMAGE_LENGTH : Math.min(MAX_IMAGE_LENGTH, ioMaxSize);
+    }
+
+    public static byte[] safelyAllocate(long len) {
+        return IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH, "HSSFWorkbook.setMaxRecordLength()");
     }
 
     /**
@@ -763,7 +768,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     }
 
     /**
-     * Convenience method to set the active sheet.  The active sheet is is the sheet
+     * Convenience method to set the active sheet.  The active sheet is the sheet
      * which is currently displayed when the workbook is viewed in Excel.
      * 'Selected' sheet(s) is a distinct concept.
      */
@@ -1159,7 +1164,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         for (int k = 0; k < _sheets.size(); k++) {
             String sheetname = workbook.getSheetName(k);
 
-            if (sheetname.equalsIgnoreCase(name)) {
+            if (StringUtil.equalsIgnoreCase(sheetname, name)) {
                 return _sheets.get(k);
             }
         }
@@ -1577,7 +1582,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      * @since 6.0.0
      */
     public void setOutputPassword(final char[] password) {
-        this.outputPasswordChars = password;
+        this.outputPasswordChars = password == null ? null : password.clone();
     }
 
     /**
@@ -1670,7 +1675,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
                 if (sid == BoundSheetRecord.sid) {
                     // special case for the field_1_position_of_BOF (=lbPlyPos) field of
                     // the BoundSheet8 record which must be unencrypted
-                    byte[] bsrBuf = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
+                    byte[] bsrBuf = safelyAllocate(len);
                     plain.readFully(bsrBuf);
                     os.writePlain(bsrBuf, 0, 4);
                     os.write(bsrBuf, 4, len - 4);
@@ -1864,8 +1869,8 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
 
             RefModeRecord refModeRecord = null;
             for (RecordBase record : records) {
-                if (record instanceof RefModeRecord) {
-                    refModeRecord = (RefModeRecord)record;
+                if (record instanceof RefModeRecord refMode) {
+                    refModeRecord = refMode;
                     break;
                 }
             }
@@ -1900,8 +1905,8 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
 
             RefModeRecord refModeRecord = null;
             for (RecordBase record : records) {
-                if (record instanceof RefModeRecord) {
-                    refModeRecord = (RefModeRecord)record;
+                if (record instanceof RefModeRecord refMode) {
+                    refModeRecord = refMode;
                     break;
                 }
             }
@@ -1930,7 +1935,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         for (int k = 0; k < names.size(); k++) {
             String nameName = getNameName(k);
 
-            if (nameName.equalsIgnoreCase(name)) {
+            if (StringUtil.equalsIgnoreCase(nameName, name)) {
                 return k;
             }
         }
@@ -2078,7 +2083,8 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
             case PICTURE_TYPE_WMF:
                 // remove first 22 bytes if file starts with the WMF placeable header
                 if (FileMagic.valueOf(pictureData) == FileMagic.WMF) {
-                    pictureData = IOUtils.safelyClone(pictureData, 22, pictureData.length - 22, getMaxImageLength());
+                    pictureData = IOUtils.safelyClone(pictureData, 22, pictureData.length - 22,
+                            getMaxImageLength(), "HSSFWorkbook.setMaxImageLength()");
                 }
                 // fall through
             case PICTURE_TYPE_EMF:
@@ -2104,26 +2110,13 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
 
         blipRecord.setRecordId((short) (EscherBlipRecord.RECORD_ID_START + format));
         switch (format) {
-            case PICTURE_TYPE_EMF:
-                blipRecord.setOptions(HSSFPictureData.MSOBI_EMF);
-                break;
-            case PICTURE_TYPE_WMF:
-                blipRecord.setOptions(HSSFPictureData.MSOBI_WMF);
-                break;
-            case PICTURE_TYPE_PICT:
-                blipRecord.setOptions(HSSFPictureData.MSOBI_PICT);
-                break;
-            case PICTURE_TYPE_PNG:
-                blipRecord.setOptions(HSSFPictureData.MSOBI_PNG);
-                break;
-            case PICTURE_TYPE_JPEG:
-                blipRecord.setOptions(HSSFPictureData.MSOBI_JPEG);
-                break;
-            case PICTURE_TYPE_DIB:
-                blipRecord.setOptions(HSSFPictureData.MSOBI_DIB);
-                break;
-            default:
-                throw new IllegalStateException("Unexpected picture format: " + format);
+            case PICTURE_TYPE_EMF -> blipRecord.setOptions(HSSFPictureData.MSOBI_EMF);
+            case PICTURE_TYPE_WMF -> blipRecord.setOptions(HSSFPictureData.MSOBI_WMF);
+            case PICTURE_TYPE_PICT -> blipRecord.setOptions(HSSFPictureData.MSOBI_PICT);
+            case PICTURE_TYPE_PNG -> blipRecord.setOptions(HSSFPictureData.MSOBI_PNG);
+            case PICTURE_TYPE_JPEG -> blipRecord.setOptions(HSSFPictureData.MSOBI_JPEG);
+            case PICTURE_TYPE_DIB -> blipRecord.setOptions(HSSFPictureData.MSOBI_DIB);
+            default -> throw new IllegalStateException("Unexpected picture format: " + format);
         }
 
         EscherBSERecord r = new EscherBSERecord();
@@ -2151,9 +2144,9 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         // The drawing group record always exists at the top level, so we won't need to do this recursively.
         List<HSSFPictureData> pictures = new ArrayList<>();
         for (org.apache.poi.hssf.record.Record r : workbook.getRecords()) {
-            if (r instanceof AbstractEscherHolderRecord) {
-                ((AbstractEscherHolderRecord) r).decode();
-                List<EscherRecord> escherRecords = ((AbstractEscherHolderRecord) r).getEscherRecords();
+            if (r instanceof AbstractEscherHolderRecord escherHolder) {
+                escherHolder.decode();
+                List<EscherRecord> escherRecords = escherHolder.getEscherRecords();
                 searchForPictures(escherRecords, pictures);
             }
         }
@@ -2169,8 +2162,8 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     private void searchForPictures(List<EscherRecord> escherRecords, List<HSSFPictureData> pictures) {
         for (EscherRecord escherRecord : escherRecords) {
 
-            if (escherRecord instanceof EscherBSERecord) {
-                EscherBlipRecord blip = ((EscherBSERecord) escherRecord).getBlipRecord();
+            if (escherRecord instanceof EscherBSERecord bse) {
+                EscherBlipRecord blip = bse.getBlipRecord();
                 if (blip != null) {
                     // TODO: Some kind of structure.
                     HSSFPictureData picture = new HSSFPictureData(blip);
@@ -2326,10 +2319,10 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      */
     private void getAllEmbeddedObjects(HSSFShapeContainer parent, List<HSSFObjectData> objects) {
         for (HSSFShape shape : parent.getChildren()) {
-            if (shape instanceof HSSFObjectData) {
-                objects.add((HSSFObjectData) shape);
-            } else if (shape instanceof HSSFShapeContainer) {
-                getAllEmbeddedObjects((HSSFShapeContainer) shape, objects);
+            if (shape instanceof HSSFObjectData objectData) {
+                objects.add(objectData);
+            } else if (shape instanceof HSSFShapeContainer container) {
+                getAllEmbeddedObjects(container, objects);
             }
         }
     }

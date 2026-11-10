@@ -70,16 +70,14 @@ public final class VisioTextExtractor implements POIOLE2TextExtractor {
         return text.toArray(new String[0]);
     }
     private void findText(Stream stream, List<String> text) {
-        if(stream instanceof PointerContainingStream) {
-            PointerContainingStream ps = (PointerContainingStream)stream;
+        if(stream instanceof PointerContainingStream ps) {
             if (ps.getPointedToStreams() != null) {
                 for (final Stream substream : ps.getPointedToStreams()) {
                     findText(substream, text);
                 }
             }
         }
-        if(stream instanceof ChunkStream) {
-            ChunkStream cs = (ChunkStream)stream;
+        if(stream instanceof ChunkStream cs) {
             for(final Chunk chunk : cs.getChunks()) {
                 if(chunk != null &&
                         chunk.getName() != null &&

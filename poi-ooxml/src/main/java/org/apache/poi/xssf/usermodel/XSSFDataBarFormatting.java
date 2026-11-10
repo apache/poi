@@ -52,14 +52,14 @@ public class XSSFDataBarFormatting implements DataBarFormatting {
     }
 
     public int getWidthMin() {
-        return (int)_databar.getMinLength();
+        return Math.toIntExact(_databar.getMinLength());
     }
     public void setWidthMin(int width) {
         _databar.setMinLength(width);
     }
 
     public int getWidthMax() {
-        return (int)_databar.getMaxLength();
+        return Math.toIntExact(_databar.getMaxLength());
     }
     public void setWidthMax(int width) {
         _databar.setMaxLength(width);

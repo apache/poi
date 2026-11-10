@@ -56,8 +56,7 @@ final class CountUtils {
                 for (int rcIx=0; rcIx<width; rcIx++) {
                     ValueEval ve = areaEval.getValue(sIx, rrIx, rcIx);
 
-                    if(criteriaPredicate instanceof I_MatchAreaPredicate){
-                        I_MatchAreaPredicate areaPredicate = (I_MatchAreaPredicate)criteriaPredicate;
+                    if(criteriaPredicate instanceof I_MatchAreaPredicate areaPredicate){
                         if(!areaPredicate.matches(areaEval, rrIx, rcIx)) continue;
                     }
 
@@ -89,14 +88,14 @@ final class CountUtils {
         if (eval == null) {
             throw new IllegalArgumentException("eval must not be null");
         }
-        if (eval instanceof ThreeDEval) {
-            return countMatchingCellsInArea((ThreeDEval) eval, criteriaPredicate);
+        if (eval instanceof ThreeDEval threeDEval) {
+            return countMatchingCellsInArea(threeDEval, criteriaPredicate);
         }
         if (eval instanceof TwoDEval) {
             throw new IllegalArgumentException("Count requires 3D Evals, 2D ones aren't supported");
         }
-        if (eval instanceof RefEval) {
-            return CountUtils.countMatchingCellsInRef((RefEval) eval, criteriaPredicate);
+        if (eval instanceof RefEval refEval) {
+            return CountUtils.countMatchingCellsInRef(refEval, criteriaPredicate);
         }
         return criteriaPredicate.matches(eval) ? 1 : 0;
     }

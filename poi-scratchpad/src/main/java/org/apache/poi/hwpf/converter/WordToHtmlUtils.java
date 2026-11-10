@@ -16,6 +16,9 @@
 ==================================================================== */
 package org.apache.poi.hwpf.converter;
 
+import java.util.Locale;
+import java.util.Set;
+
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
@@ -27,6 +30,9 @@ import org.w3c.dom.Element;
 @Beta
 public class WordToHtmlUtils extends AbstractWordUtils
 {
+    private static final Set<String> SAFE_HYPERLINK_SCHEMES = Set.of(
+            "http", "https", "ftp", "mailto", "file", "news", "tel" );
+
     public static void addBold( final boolean bold, StringBuilder style )
     {
         style.append("font-weight:").append(bold ? "bold" : "normal").append(";");
@@ -115,7 +121,107 @@ public class WordToHtmlUtils extends AbstractWordUtils
         if ( isEmpty( fontFamily ) )
             return;
 
-        style.append("font-family:").append(fontFamily).append(";");
+        style.append("font-family:").append(cssFontFamily(fontFamily)).append(";");
+    }
+
+    /**
+     * The font name comes straight from the document and ends up in the text of the
+     * {@code <style>} element, which the html output method writes unescaped. Names whose
+     * space-separated words are all CSS identifiers (letters, digits, hyphens and underscores,
+     * not starting with a digit or a hyphen and digit) are written as they are; anything
+     * else is written as a CSS string, with quotes, backslashes, control characters and the
+     * HTML delimiters hex-escaped, so the name can neither close the style element nor add
+     * declarations of its own.
+     */
+    static String cssFontFamily( final String fontFamily )
+    {
+        if ( isCssIdentifiers( fontFamily ) )
+            return fontFamily;
+
+        StringBuilder sb = new StringBuilder( fontFamily.length() + 2 );
+        sb.append( '"' );
+        for ( int i = 0; i < fontFamily.length(); i++ )
+        {
+            char c = fontFamily.charAt( i );
+            if ( c < 0x20 || c == '"' || c == '\\' || c == '<' || c == '>' )
+            {
+                sb.append( '\\' ).append( Integer.toHexString( c ) ).append( ' ' );
+            }
+            else
+            {
+                sb.append( c );
+            }
+        }
+        sb.append( '"' );
+        return sb.toString();
+    }
+
+    private static boolean isCssIdentifiers( final String fontFamily )
+    {
+        boolean wordStart = true;
+        for ( int i = 0; i < fontFamily.length(); i++ )
+        {
+            char c = fontFamily.charAt( i );
+            if ( c == ' ' )
+            {
+                wordStart = true;
+                continue;
+            }
+            if ( !Character.isLetterOrDigit( c ) && c != '-' && c != '_' )
+                return false;
+            if ( wordStart )
+            {
+                // an identifier must not start with a digit, or with a hyphen and a digit
+                char first = c == '-' && i + 1 < fontFamily.length() ? fontFamily.charAt( i + 1 ) : c;
+                if ( Character.isDigit( first ) )
+                    return false;
+                wordStart = false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * The target of a HYPERLINK field comes straight from the document and ends up in the
+     * {@code href} of a link, where a scheme like {@code javascript:} runs script in the page
+     * when the link is followed. Targets without a scheme (relative paths, fragments, UNC
+     * paths), Windows drive paths and the common document link schemes are accepted. The
+     * scheme is looked up the way browsers parse it, i.e. after dropping tabs and line breaks
+     * anywhere and control characters and spaces at the start.
+     * <p>
+     * {@link WordToHtmlConverter} and {@link WordToFoConverter} always apply this check, before
+     * any validator set with {@link WordToHtmlConverter#setHyperlinkValidator(java.util.function.Predicate)}
+     * or {@link WordToFoConverter#setHyperlinkValidator(java.util.function.Predicate)}.
+     *
+     * @param hyperlink the target of a HYPERLINK field
+     * @return true if the target can be written as the {@code href} of a link
+     * @since 6.1.0
+     */
+    public static boolean isSafeHyperlink( final String hyperlink )
+    {
+        StringBuilder target = new StringBuilder( hyperlink.length() );
+        for ( int i = 0; i < hyperlink.length(); i++ )
+        {
+            char c = hyperlink.charAt( i );
+            if ( c != '\t' && c != '\n' && c != '\r' && ( c > ' ' || target.length() > 0 ) )
+                target.append( c );
+        }
+
+        // scheme = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." ) ":"
+        int end = 0;
+        while ( end < target.length() && isSchemeChar( target.charAt( end ), end == 0 ) )
+            end++;
+        // no scheme at all, or a single letter, i.e. a drive like C:\
+        if ( end < 2 || end == target.length() || target.charAt( end ) != ':' )
+            return true;
+        return SAFE_HYPERLINK_SCHEMES.contains( target.substring( 0, end ).toLowerCase( Locale.ROOT ) );
+    }
+
+    private static boolean isSchemeChar( final char c, final boolean first )
+    {
+        if ( ( c >= 'a' && c <= 'z' ) || ( c >= 'A' && c <= 'Z' ) )
+            return true;
+        return !first && ( ( c >= '0' && c <= '9' ) || c == '+' || c == '-' || c == '.' );
     }
 
     public static void addFontSize( final int fontSize, StringBuilder style )

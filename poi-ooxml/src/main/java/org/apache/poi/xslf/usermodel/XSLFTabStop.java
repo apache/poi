@@ -33,7 +33,7 @@ public class XSLFTabStop implements TabStop {
 
     /** position in EMUs */
     public int getPosition() {
-        return (int)POIXMLUnits.parseLength(tabStop.xgetPos());
+        return Math.toIntExact(POIXMLUnits.parseLength(tabStop.xgetPos()));
     }
 
     /** position in EMUs */

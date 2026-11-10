@@ -59,14 +59,14 @@ public final class Notes extends SheetContainer
 
         // Find the interesting ones in there
         for (Record child : _children) {
-            if (child instanceof NotesAtom) {
-                notesAtom = (NotesAtom) child;
+            if (child instanceof NotesAtom atom) {
+                notesAtom = atom;
             }
-            if (child instanceof PPDrawing) {
-                ppDrawing = (PPDrawing) child;
+            if (child instanceof PPDrawing drawing) {
+                ppDrawing = drawing;
             }
-            if (ppDrawing != null && child instanceof ColorSchemeAtom) {
-                _colorScheme = (ColorSchemeAtom) child;
+            if (ppDrawing != null && child instanceof ColorSchemeAtom csa) {
+                _colorScheme = csa;
             }
         }
     }

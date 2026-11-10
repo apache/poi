@@ -56,8 +56,8 @@ public final class HSSFObjectData extends HSSFPicture implements ObjectData {
         String streamName = "MBD" + HexDump.toHex(streamId);
 
         Entry entry = _root.getEntryCaseInsensitive(streamName);
-        if (entry instanceof DirectoryEntry) {
-            return (DirectoryEntry) entry;
+        if (entry instanceof DirectoryEntry dirEntry) {
+            return dirEntry;
         }
         throw new IOException("Stream " + streamName + " was not an OLE2 directory");
     }
@@ -83,8 +83,8 @@ public final class HSSFObjectData extends HSSFPicture implements ObjectData {
     protected EmbeddedObjectRefSubRecord findObjectRecord() {
 
         for (Object subRecord : getObjRecord().getSubRecords()) {
-            if (subRecord instanceof EmbeddedObjectRefSubRecord) {
-                return (EmbeddedObjectRefSubRecord) subRecord;
+            if (subRecord instanceof EmbeddedObjectRefSubRecord embeddedObjectRef) {
+                return embeddedObjectRef;
             }
         }
 

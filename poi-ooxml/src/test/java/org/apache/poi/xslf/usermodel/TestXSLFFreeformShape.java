@@ -19,6 +19,7 @@ package org.apache.poi.xslf.usermodel;
 
 import org.apache.poi.sl.draw.SLGraphics;
 import org.junit.jupiter.api.Test;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPath2D;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 
 import java.awt.Color;
@@ -35,6 +36,8 @@ import java.io.IOException;
 
 import static org.apache.poi.xslf.usermodel.TestXSLFSimpleShape.getSpPr;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TestXSLFFreeformShape {
 
@@ -108,11 +111,61 @@ class TestXSLFFreeformShape {
         }
     }
 
-    private void comparePoint(PathIterator pi, int type, double x0, double y0) {
+    /**
+     * Bug 69522: the quadBezTo element was missing from poi-ooxml-lite, so a path with a
+     * quadratic curve failed with a ClassCastException in poi-ooxml-lite based setups
+     */
+    @Test
+    void testQuadraticCurveBug69522() throws IOException {
+        Path2D.Double path = new Path2D.Double();
+        path.moveTo(10, 20);
+        path.lineTo(110, 20);
+        path.quadTo(160, 70, 110, 120);
+        path.curveTo(80, 150, 40, 150, 10, 120);
+        path.closePath();
+
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            XSLFSlide slide = ppt.createSlide();
+            XSLFFreeformShape shape = slide.createFreeform();
+            // 1 + 1 + 2 + 3 points, plus 1 for the close
+            assertEquals(8, shape.setPath(path));
+
+            CTPath2D ctPath = getSpPr(shape).getCustGeom().getPathLst().getPathArray(0);
+            assertEquals(1, ctPath.sizeOfQuadBezToArray());
+            assertEquals(1, ctPath.sizeOfCubicBezToArray());
+
+            PathIterator pi = shape.getPath().getPathIterator(new AffineTransform());
+            comparePoint(pi, PathIterator.SEG_MOVETO, 10, 20);
+            pi.next();
+            comparePoint(pi, PathIterator.SEG_LINETO, 110, 20);
+            pi.next();
+            comparePoint(pi, PathIterator.SEG_QUADTO, 160, 70, 110, 120);
+            pi.next();
+            comparePoint(pi, PathIterator.SEG_CUBICTO, 80, 150, 40, 150, 10, 120);
+            pi.next();
+            comparePoint(pi, PathIterator.SEG_CLOSE);
+            pi.next();
+            assertTrue(pi.isDone());
+
+            // the reporter's route: a Graphics2D fill on a group shape
+            XSLFGroupShape group = slide.createGroup();
+            group.setAnchor(new Rectangle2D.Double(0, 0, 200, 200));
+            group.setInteriorAnchor(new Rectangle2D.Double(0, 0, 200, 200));
+            Graphics2D graphics = new SLGraphics(group);
+            graphics.fill(path);
+            graphics.dispose();
+            assertEquals(1, group.getShapes().size());
+            assertInstanceOf(XSLFFreeformShape.class, group.getShapes().get(0));
+        }
+    }
+
+    private void comparePoint(PathIterator pi, int type, double... coords) {
         double[] points = new double[6];
         int piType = pi.currentSegment(points);
         assertEquals(type, piType);
-        assertEquals(x0, points[0], 0);
-        assertEquals(y0, points[1], 0);
+        for (int i = 0; i < coords.length; i++) {
+            assertEquals(coords[i], points[i], 0);
+        }
     }
+
 }

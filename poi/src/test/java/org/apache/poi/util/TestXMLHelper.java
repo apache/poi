@@ -17,10 +17,13 @@
 
 package org.apache.poi.util;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -122,9 +125,7 @@ class TestXMLHelper {
                 assertTrue(reader.getFeature(XMLConstants.FEATURE_SECURE_PROCESSING));
             } catch (SAXNotRecognizedException e) {
                 // can happen for older XML Parsers, e.g. we have a CI Job which runs with Xerces XML Parser
-                assertTrue(reader.getClass().getName().contains("org.apache.xerces"),
-                    "Had Exception about not-recognized SAX feature: " + e + " which is only expected" +
-                    " for Xerces XML Parser, but had parser: " + reader);
+                assertContains(reader.getClass().getName(), "org.apache.xerces");
             }
             readers.add(reader);
         }
@@ -170,5 +171,46 @@ class TestXMLHelper {
     @Test
     void testNewTransformer() throws Exception {
         assertNotNull(XMLHelper.newTransformer());
+    }
+
+    @Test
+    void testEscapeXmlNull() {
+        assertNull(XMLHelper.escapeXml(null));
+    }
+
+    @Test
+    void testEscapeXmlNoSpecialCharsReturnsSameInstance() {
+        // fast path: nothing to escape, so the original string is returned unchanged
+        String s = "no special chars here 123";
+        assertSame(s, XMLHelper.escapeXml(s));
+        String empty = "";
+        assertSame(empty, XMLHelper.escapeXml(empty));
+    }
+
+    @Test
+    void testEscapeXmlEachPredefinedEntity() {
+        assertEquals("&amp;", XMLHelper.escapeXml("&"));
+        assertEquals("&lt;", XMLHelper.escapeXml("<"));
+        assertEquals("&gt;", XMLHelper.escapeXml(">"));
+        assertEquals("&quot;", XMLHelper.escapeXml("\""));
+        assertEquals("&apos;", XMLHelper.escapeXml("'"));
+    }
+
+    @Test
+    void testEscapeXmlAmpersandNotDoubleEscaped() {
+        // '&' must be escaped exactly once, even when adjacent to another special char
+        assertEquals("a&amp;&lt;b", XMLHelper.escapeXml("a&<b"));
+        assertEquals("&amp;amp;", XMLHelper.escapeXml("&amp;"));
+    }
+
+    @Test
+    void testEscapeXmlMixedContentPreservesNormalChars() {
+        assertEquals("x &lt;y&gt; &amp; &quot;z&quot; 1", XMLHelper.escapeXml("x <y> & \"z\" 1"));
+    }
+
+    @Test
+    void testEscapeXmlAttributeInjectionIsNeutralised() {
+        // a value that would otherwise break out of an r:id="..." attribute
+        assertEquals("rId1&quot;/&gt;&lt;evil&gt;", XMLHelper.escapeXml("rId1\"/><evil>"));
     }
 }

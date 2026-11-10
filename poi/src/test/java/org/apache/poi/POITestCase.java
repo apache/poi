@@ -51,38 +51,38 @@ public final class POITestCase {
     }
 
     public static void assertStartsWith(String string, String prefix) {
-        assertNotNull(string);
-        assertNotNull(prefix);
+        assertNotNull(string, "expected non-null value for 'string'");
+        assertNotNull(prefix, "expected non-null value for 'prefix'");
         assertThat(string, startsWith(prefix));
     }
 
     public static void assertStartsWith(String message, String string, String prefix) {
-        assertNotNull(message, string);
-        assertNotNull(message, prefix);
+        assertNotNull(string, "expected non-null value for 'string'");
+        assertNotNull(prefix, "expected non-null value for 'prefix'");
         assertThat(message, string, startsWith(prefix));
     }
 
     public static void assertEndsWith(String string, String suffix) {
-        assertNotNull(string);
-        assertNotNull(suffix);
+        assertNotNull(string, "expected non-null value for 'string'");
+        assertNotNull(suffix, "expected non-null value for 'suffix'");
         assertThat(string, endsWith(suffix));
     }
 
     public static void assertContains(String haystack, String needle) {
-        assertNotNull(haystack);
-        assertNotNull(needle);
+        assertNotNull(haystack, "expected non-null value for 'haystack'");
+        assertNotNull(needle, "expected non-null value for 'needle'");
         assertThat(haystack, containsString(needle));
     }
 
     public static void assertContains(String message, String haystack, String needle) {
-        assertNotNull(message, haystack);
-        assertNotNull(message, needle);
+        assertNotNull(haystack, "expected non-null value for 'haystack'");
+        assertNotNull(needle, "expected non-null value for 'needle'");
         assertThat(message, haystack, containsString(needle));
     }
 
     public static void assertContainsIgnoreCase(String haystack, String needle, Locale locale) {
-        assertNotNull(haystack);
-        assertNotNull(needle);
+        assertNotNull(haystack, "expected non-null value for 'haystack'");
+        assertNotNull(needle, "expected non-null value for 'needle'");
         String hay = haystack.toLowerCase(locale);
         String n = needle.toLowerCase(locale);
         assertTrue(hay.contains(n), "Unable to find expected text '" + needle + "' in text:\n" + haystack);
@@ -91,9 +91,9 @@ public final class POITestCase {
         assertContainsIgnoreCase(haystack, needle, Locale.ROOT);
     }
 
-    public static void assertNotContained(String haystack, String needle) {
-        assertNotNull(haystack);
-        assertNotNull(needle);
+    public static void assertNotContains(String haystack, String needle) {
+        assertNotNull(haystack, "expected non-null value for 'haystack'");
+        assertNotNull(needle, "expected non-null value for 'needle'");
         assertThat(haystack, not(containsString(needle)));
     }
 
@@ -101,11 +101,11 @@ public final class POITestCase {
      * @param map haystack
      * @param key needle
      */
-    public static  <T> void assertContains(Map<T, ?> map, T key) {
+    public static <T> void assertContains(Map<T, ?> map, T key) {
         assertTrue(map.containsKey(key), "Unable to find " + key + " in " + map);
     }
 
-    public static <T> void assertNotContained(Set<T> set, T element) {
+    public static <T> void assertNotContains(Set<T> set, T element) {
         assertThat("Set should not contain " + element, set, not(hasItem(element)));
     }
 

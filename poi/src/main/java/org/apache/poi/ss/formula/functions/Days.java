@@ -25,6 +25,7 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
+import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.util.DateParser;
@@ -78,16 +79,19 @@ public class Days implements FreeRefFunction {
 
     static LocalDate getDate(ValueEval eval, int srcRowIndex, int srcColumnIndex) throws EvaluationException {
         ValueEval ve = OperandResolver.getSingleValue(eval, srcRowIndex, srcColumnIndex);
-        try {
-            double d0 = NumericFunction.singleOperandEvaluate(ve, srcRowIndex, srcColumnIndex);
-            return getDate(d0);
-        } catch (Exception e) {
-            String strText1 = OperandResolver.coerceValueToString(ve);
-            return DateParser.parseLocalDate(strText1);
+        if (ve instanceof StringEval se && OperandResolver.parseDouble(se.getStringValue()) == null) {
+            return DateParser.parseLocalDate(se.getStringValue());
         }
+        return getDate(OperandResolver.coerceValueToDouble(ve));
     }
 
-    private static LocalDate getDate(double date) {
+    /**
+     * @throws EvaluationException (#NUM!) if the serial is not a date Excel can work with
+     */
+    static LocalDate getDate(double date) throws EvaluationException {
+        if (date < 0 || date >= DateUtil.MAX_EXCEL_DATE_SERIAL + 1) {
+            throw new EvaluationException(ErrorEval.NUM_ERROR);
+        }
         Date d = DateUtil.getJavaDate(date, false);
         return d.toInstant()
                 .atZone(LocaleUtil.getUserTimeZone().toZoneId())

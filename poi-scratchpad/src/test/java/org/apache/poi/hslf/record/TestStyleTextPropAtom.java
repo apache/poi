@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -232,7 +233,7 @@ public final class TestStyleTextPropAtom {
         assertEquals(2,b_ch_1.getTextPropList().size());
         TextProp tp_1_1 = b_ch_1.getTextPropList().get(0);
         TextProp tp_1_2 = b_ch_1.getTextPropList().get(1);
-        assertTrue(tp_1_1 instanceof CharFlagsTextProp);
+        assertInstanceOf(CharFlagsTextProp.class, tp_1_1);
         assertEquals("font.size", tp_1_2.getName());
         assertEquals(20, tp_1_2.getValue());
 
@@ -241,7 +242,7 @@ public final class TestStyleTextPropAtom {
         TextProp tp_2_1 = b_ch_2.getTextPropList().get(0);
         TextProp tp_2_2 = b_ch_2.getTextPropList().get(1);
         TextProp tp_2_3 = b_ch_2.getTextPropList().get(2);
-        assertTrue(tp_2_1 instanceof CharFlagsTextProp);
+        assertInstanceOf(CharFlagsTextProp.class, tp_2_1);
         assertEquals("font.size", tp_2_2.getName());
         assertEquals("font.color", tp_2_3.getName());
         assertEquals(20, tp_2_2.getValue());
@@ -259,7 +260,7 @@ public final class TestStyleTextPropAtom {
         TextProp tp_4_1 = b_ch_4.getTextPropList().get(0);
         TextProp tp_4_2 = b_ch_4.getTextPropList().get(1);
         TextProp tp_4_3 = b_ch_4.getTextPropList().get(2);
-        assertTrue(tp_4_1 instanceof CharFlagsTextProp);
+        assertInstanceOf(CharFlagsTextProp.class, tp_4_1);
         assertEquals("font.index", tp_4_2.getName());
         assertEquals("font.size", tp_4_3.getName());
         assertEquals(24, tp_4_3.getValue());

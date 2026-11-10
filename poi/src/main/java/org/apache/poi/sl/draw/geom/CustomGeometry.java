@@ -127,8 +127,7 @@ public final class CustomGeometry implements Iterable<PathIf>{
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof CustomGeometry)) return false;
-        CustomGeometry that = (CustomGeometry) o;
+        if (!(o instanceof CustomGeometry that)) return false;
         return Objects.equals(adjusts, that.adjusts) &&
                 Objects.equals(guides, that.guides) &&
                 Objects.equals(handles, that.handles) &&

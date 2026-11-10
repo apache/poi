@@ -18,8 +18,9 @@
 package org.apache.poi.ss.formula.atp;
 
 import org.apache.poi.ss.formula.OperationEvaluationContext;
-import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 
@@ -48,8 +49,15 @@ final class Ifs implements FreeRefFunction {
         }
 
         for (int i = 0; i < args.length; i = i + 2) {
-            BoolEval logicalTest = (BoolEval) args[i];
-            if (logicalTest.getBooleanValue()) {
+            boolean logicalTest;
+            try {
+                ValueEval ve = OperandResolver.getSingleValue(args[i], ec.getRowIndex(), ec.getColumnIndex());
+                Boolean b = OperandResolver.coerceValueToBoolean(ve, false);
+                logicalTest = b != null && b;
+            } catch (EvaluationException e) {
+                return e.getErrorEval();
+            }
+            if (logicalTest) {
                 return args[i + 1];
             }
         }

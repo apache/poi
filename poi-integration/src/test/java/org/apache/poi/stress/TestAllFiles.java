@@ -35,8 +35,9 @@ import java.util.stream.Stream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
+import org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource;
+import org.apache.poi.util.IOUtils;
 import org.apache.tools.ant.DirectoryScanner;
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -81,6 +82,13 @@ public class TestAllFiles {
 		}
 
 		ROOT_DIR = dir;
+
+		// Buffer large zip entries to temp files instead of holding them in memory. Some test
+		// files inflate to nearly the 100MB per-entry limit (e.g. spreadsheet/deep-data.xlsx
+		// has an entry that inflates to ~92MB while staying just above the minimum inflate
+		// ratio); materialising those on the heap on every open, with tests running in
+		// parallel, drives the CI builds into OutOfMemoryError.
+		ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(16_000_000);
 	}
 
     public static final String[] SCAN_EXCLUDES = {
@@ -102,6 +110,9 @@ public class TestAllFiles {
 
         // invalid files
         "spreadsheet/bug69769.xlsx",
+
+        // fuzz files
+        "slideshow/clusterfuzz-testcase-minimized-POIHSLFFuzzer-4630915954114560.ppt",
 
         // NOTE: Expected failures should usually be added in file "poi-integration-exceptions.csv" instead
         // of being listed here in order to also verify the expected exception details!
@@ -235,12 +246,6 @@ public class TestAllFiles {
         try {
             Thread.currentThread().setName("Handle - " + file + " - " + handler);
 
-            // Some of the tests hang in JDK 8 due to Graphics-Rendering issues in JDK itself,
-            // therefore we do not run some tests here
-            Assumptions.assumeFalse(isJava8() && (
-                    file.endsWith("23884_defense_FINAL_OOimport_edit.ppt")
-            ), "Some files hang in JDK graphics rendering on Java 8 due to a JDK bug");
-
             System.out.println("Running handleFiles on "+file);
             FileHandler fileHandler = handler.getHandler();
             assertNotNull(fileHandler, "Did not find a handler for file " + file);
@@ -337,7 +342,7 @@ public class TestAllFiles {
         if (msg == null) return null;
 
         // Windows path replacement
-        msg = msg.replace('\\', '/');
+        msg = IOUtils.normalizePath(msg);
 
         // Adjust file paths to remove unwanted file path info.
         int filePathIndex = msg.indexOf(ROOT_DIR.toString());
@@ -347,10 +352,6 @@ public class TestAllFiles {
         }
 
         return msg;
-    }
-
-    private static boolean isJava8() {
-        return System.getProperty("java.version").startsWith("1.8");
     }
 
     private static String[] concat(String[] a, String[] b) {

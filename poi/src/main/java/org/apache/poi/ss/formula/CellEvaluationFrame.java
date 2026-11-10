@@ -17,8 +17,7 @@
 
 package org.apache.poi.ss.formula;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Arrays;
 
 import org.apache.poi.ss.formula.eval.ValueEval;
 
@@ -28,12 +27,17 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 final class CellEvaluationFrame {
 
     private final FormulaCellCacheEntry _cce;
-    private final Set<CellCacheEntry> _sensitiveInputCells;
+    /**
+     * the cells read so far, in reading order. A cell the formula reads twice appears twice; the
+     * duplicates are dropped when the entry registers itself with its inputs, which is cheaper
+     * than de-duplicating every read here (most formulas read each cell once)
+     */
+    private CellCacheEntry[] _sensitiveInputCells = CellCacheEntry.EMPTY_ARRAY;
+    private int _sensitiveInputCellCount;
     private FormulaUsedBlankCellSet _usedBlankCellGroup;
 
     public CellEvaluationFrame(FormulaCellCacheEntry cce) {
         _cce = cce;
-        _sensitiveInputCells = new HashSet<>();
     }
     public CellCacheEntry getCCE() {
         return _cce;
@@ -49,20 +53,26 @@ final class CellEvaluationFrame {
      * @param inputCell a cell directly used by the formula of this evaluation frame
      */
     public void addSensitiveInputCell(CellCacheEntry inputCell) {
-        _sensitiveInputCells.add(inputCell);
+        int n = _sensitiveInputCellCount;
+        if (n == _sensitiveInputCells.length) {
+            _sensitiveInputCells = Arrays.copyOf(_sensitiveInputCells, n == 0 ? 8 : n * 2);
+        }
+        _sensitiveInputCells[n] = inputCell;
+        _sensitiveInputCellCount = n + 1;
     }
     /**
      * @return never <code>null</code>, (possibly empty) array of all cells directly used while
-     * evaluating the formula of this frame.
+     * evaluating the formula of this frame, possibly with duplicates. The frame is done with the
+     * array afterwards, so the caller may keep it.
      */
     private CellCacheEntry[] getSensitiveInputCells() {
-        int nItems = _sensitiveInputCells.size();
+        int nItems = _sensitiveInputCellCount;
         if (nItems < 1) {
             return CellCacheEntry.EMPTY_ARRAY;
         }
-        CellCacheEntry[] result = new CellCacheEntry[nItems];
-        _sensitiveInputCells.toArray(result);
-        return result;
+        return nItems == _sensitiveInputCells.length
+                ? _sensitiveInputCells
+                : Arrays.copyOf(_sensitiveInputCells, nItems);
     }
     public void addUsedBlankCell(EvaluationWorkbook evalWorkbook, int bookIndex, int sheetIndex, int rowIndex, int columnIndex) {
         if (_usedBlankCellGroup == null) {

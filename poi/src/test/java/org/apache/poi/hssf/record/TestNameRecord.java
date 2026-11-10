@@ -17,11 +17,11 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.apache.poi.POITestCase.assertEndsWith;
 import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -56,7 +56,7 @@ final class TestNameRecord {
         NameRecord name = new NameRecord(TestcaseRecordInputStream.create(NameRecord.sid, examples));
         String description = name.getDescriptionText();
         assertNotNull(description);
-        assertTrue(description.endsWith("Macro recorded 27-Sep-93 by ALLWOR"));
+        assertEndsWith(description, "Macro recorded 27-Sep-93 by ALLWOR");
     }
 
     @Test

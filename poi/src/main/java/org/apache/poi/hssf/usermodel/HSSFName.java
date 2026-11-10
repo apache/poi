@@ -26,6 +26,7 @@ import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.StringUtil;
 
 /**
  * High Level Representation of a 'defined name' which could be a 'built-in' name,
@@ -144,7 +145,8 @@ public final class HSSFName implements Name {
         {
             NameRecord rec = wb.getNameRecord(i);
             if (rec != _definedNameRec) {
-                if (rec.getNameText().equalsIgnoreCase(nameName) && sheetNumber == rec.getSheetNumber()){
+                if (StringUtil.equalsIgnoreCase(rec.getNameText(), nameName) &&
+                        sheetNumber == rec.getSheetNumber()) {
                     String msg = "The "+(sheetNumber == 0 ? "workbook" : "sheet")+" already contains this name: " + nameName;
                     _definedNameRec.setNameText(nameName + "(2)");
                     throw new IllegalArgumentException(msg);
@@ -186,7 +188,7 @@ public final class HSSFName implements Name {
         if (name.length() > 255) {
             throw new IllegalArgumentException("Invalid name: '"+name+"': cannot exceed 255 characters in length");
         }
-        if (name.equalsIgnoreCase("R") || name.equalsIgnoreCase("C")) {
+        if (StringUtil.equalsIgnoreCase(name, "R") || StringUtil.equalsIgnoreCase(name, "C")) {
             throw new IllegalArgumentException("Invalid name: '"+name+"': cannot be special shorthand R or C");
         }
 

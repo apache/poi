@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -39,10 +40,12 @@ import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 /**
  * Unit tests for HSSFDataFormatter.java
  */
+@Isolated // modifies the default locale and we don't want to affect other tests running in parallel
 public final class TestHSSFDataFormatter {
     private static TimeZone userTimeZone;
 
@@ -275,8 +278,7 @@ public final class TestHSSFDataFormatter {
             assertNotEquals("555.47431", fmtval);
 
             // check we found the time properly
-            assertTrue(fmtval.contains("11:23"),
-                "Format came out incorrect - " + fmt + " - found " + fmtval + ", but expected to find '11:23'");
+            assertContains(fmtval, "11:23");
         }
 
         // test number formats
@@ -339,14 +341,20 @@ public final class TestHSSFDataFormatter {
         HSSFCell cell = row.getCell(0);
         log("\n==== FORMULA CELL ====");
 
-        // first without a formula evaluator
+        char decimalSeparator = DecimalFormatSymbols.getInstance(LocaleUtil.getUserLocale()).getDecimalSeparator();
+
+        // first without a formula evaluator - since POI 6.0.0, the cached value is used by default
         log(formatter.formatCellValue(cell) + "\t (without evaluator)");
-        assertEquals("SUM(12.25,12.25)/100", formatter.formatCellValue(cell));
+        assertEquals(decimalSeparator + "00%", formatter.formatCellValue(cell));
+
+        // the formula itself is returned if the pre-POI 6.0.0 behaviour is restored
+        HSSFDataFormatter formulaFormatter = new HSSFDataFormatter();
+        formulaFormatter.setUseCachedValuesForFormulaCells(false);
+        assertEquals("SUM(12.25,12.25)/100", formulaFormatter.formatCellValue(cell));
 
         // now with a formula evaluator
         HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(wb);
         log(formatter.formatCellValue(cell, evaluator) + "\t\t\t (with evaluator)");
-        char decimalSeparator = DecimalFormatSymbols.getInstance(LocaleUtil.getUserLocale()).getDecimalSeparator();
         assertEquals("24" + decimalSeparator + "50%", formatter.formatCellValue(cell,evaluator));
 
     }

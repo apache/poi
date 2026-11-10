@@ -28,11 +28,16 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.PosixFileAttributeView;
+import java.nio.file.attribute.PosixFilePermission;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class DefaultTempFileCreationStrategyTest {
 
@@ -212,6 +217,34 @@ class DefaultTempFileCreationStrategyTest {
                     "Failed for " + file);
         } finally {
             assertTrue(file.delete());
+        }
+    }
+
+    @Test
+    void testPosixPermissions() throws IOException {
+        DefaultTempFileCreationStrategy strategy = new DefaultTempFileCreationStrategy();
+        File dir = strategy.createTempDirectory("posixtest");
+        try {
+            Path dirPath = dir.toPath();
+            // Skip test if POSIX file attribute view not supported on this filesystem
+            Assumptions.assumeTrue(Files.getFileAttributeView(dirPath, PosixFileAttributeView.class) != null,
+                    "POSIX file attributes not supported on this filesystem");
+
+            File f = strategy.createTempFile("posixtestfile", ".tmp");
+            try {
+                Set<PosixFilePermission> perms = Files.getPosixFilePermissions(f.toPath());
+                // Owner should have read/write, no group/other perms
+                assertTrue(perms.contains(PosixFilePermission.OWNER_READ));
+                assertTrue(perms.contains(PosixFilePermission.OWNER_WRITE));
+                assertFalse(perms.contains(PosixFilePermission.GROUP_READ));
+                assertFalse(perms.contains(PosixFilePermission.GROUP_WRITE));
+                assertFalse(perms.contains(PosixFilePermission.OTHERS_READ));
+                assertFalse(perms.contains(PosixFilePermission.OTHERS_WRITE));
+            } finally {
+                assertTrue(f.delete());
+            }
+        } finally {
+            FileUtils.deleteDirectory(dir);
         }
     }
 }

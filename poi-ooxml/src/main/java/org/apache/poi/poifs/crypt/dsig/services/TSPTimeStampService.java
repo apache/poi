@@ -92,14 +92,13 @@ public class TSPTimeStampService implements TimeStampService {
      * Maps the digest algorithm to corresponding OID value.
      */
     public ASN1ObjectIdentifier mapDigestAlgoToOID(HashAlgorithm digestAlgo) {
-        switch (digestAlgo) {
-        case sha1:   return X509ObjectIdentifiers.id_SHA1;
-        case sha256: return NISTObjectIdentifiers.id_sha256;
-        case sha384: return NISTObjectIdentifiers.id_sha384;
-        case sha512: return NISTObjectIdentifiers.id_sha512;
-        default:
-            throw new IllegalArgumentException("unsupported digest algo: " + digestAlgo);
-        }
+        return switch (digestAlgo) {
+            case sha1 -> X509ObjectIdentifiers.id_SHA1;
+            case sha256 -> NISTObjectIdentifiers.id_sha256;
+            case sha384 -> NISTObjectIdentifiers.id_sha384;
+            case sha512 -> NISTObjectIdentifiers.id_sha512;
+            default -> throw new IllegalArgumentException("unsupported digest algo: " + digestAlgo);
+        };
     }
 
     @Override
@@ -247,7 +246,7 @@ public class TSPTimeStampService implements TimeStampService {
                 return Stream.concat(ul.stream(), cl).map(CRLEntry::getCrlBytes);
             })
             .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     protected boolean matchCRLbyUrl(CRLEntry other, X509Certificate holder, String url) {

@@ -88,8 +88,7 @@ public final class XSSFFormulaUtils {
         // update charts
         List<POIXMLDocumentPart> rels = _wb.getSheetAt(sheetIndex).getRelations();
         for (POIXMLDocumentPart r : rels) {
-            if (r instanceof XSSFDrawing) {
-                XSSFDrawing dg = (XSSFDrawing) r;
+            if (r instanceof XSSFDrawing dg) {
                 for (XSSFChart chart : dg.getCharts()) {
                     Node dom = chart.getCTChartSpace().getDomNode();
                     updateDomSheetReference(dom, oldName, newName);
@@ -143,15 +142,13 @@ public final class XSSFFormulaUtils {
     }
 
     private void updatePtg(Ptg ptg, String oldName, String newName) {
-        if (ptg instanceof Pxg) {
-            Pxg pxg = (Pxg)ptg;
+        if (ptg instanceof Pxg pxg) {
             if (pxg.getExternalWorkbookNumber() < 1) {
                 if (pxg.getSheetName() != null &&
                         pxg.getSheetName().equals(oldName)) {
                     pxg.setSheetName(newName);
                 }
-                if (pxg instanceof Pxg3D) {
-                    Pxg3D pxg3D = (Pxg3D)pxg;
+                if (pxg instanceof Pxg3D pxg3D) {
                     if (pxg3D.getLastSheetName() != null &&
                             pxg3D.getLastSheetName().equals(oldName)) {
                         pxg3D.setLastSheetName(newName);

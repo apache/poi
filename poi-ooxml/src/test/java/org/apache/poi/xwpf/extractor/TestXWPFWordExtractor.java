@@ -19,10 +19,9 @@ package org.apache.poi.xwpf.extractor;
 
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertEndsWith;
-import static org.apache.poi.POITestCase.assertNotContained;
+import static org.apache.poi.POITestCase.assertNotContains;
 import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -33,6 +32,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.poi.POITestCase;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
@@ -41,7 +41,9 @@ import org.apache.poi.xwpf.usermodel.XWPFSDT;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.junit.jupiter.api.Test;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtContentRun;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRun;
 
@@ -290,8 +292,8 @@ class TestXWPFWordExtractor {
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
             String text = extractor.getText();
             assertTrue(text.length() > 0);
-            assertFalse(text.contains("AUTHOR"));
-            assertFalse(text.contains("CREATEDATE"));
+            assertNotContains(text, "AUTHOR");
+            assertNotContains(text, "CREATEDATE");
         }
     }
 
@@ -459,7 +461,7 @@ class TestXWPFWordExtractor {
             assertContains(txt, "Getting the perfect");
             //this content appears only in the glossary document
             //once we add processing for this, we can change this to contains
-            assertNotContained(txt, "table rows");
+            POITestCase.assertNotContains(txt, "table rows");
         }
     }
 
@@ -545,4 +547,23 @@ class TestXWPFWordExtractor {
         return allsdts;
     }
 
+    @Test
+    void testCustomXmlCellsAndWrappedRunsInSdt() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTRow row = doc.getDocument().getBody().addNewTbl().addNewTr();
+            row.addNewCustomXml().addNewTc().addNewP().addNewR().addNewT().setStringValue("custom cell");
+            row.addNewSdt().addNewSdtContent().addNewTc().addNewP().addNewR().addNewT().setStringValue("sdt cell");
+
+            CTSdtContentRun content = doc.getDocument().getBody().addNewP().addNewSdt().addNewSdtContent();
+            content.addNewR().addNewT().setStringValue("run ");
+            content.addNewHyperlink().addNewR().addNewT().setStringValue("link ");
+            content.addNewFldSimple().addNewR().addNewT().setStringValue("field ");
+            content.addNewSmartTag().addNewR().addNewT().setStringValue("tag");
+
+            try (XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc);
+                 XWPFWordExtractor extractor = new XWPFWordExtractor(doc2)) {
+                assertEquals("custom cell\tsdt cell\n\nrun link field tag\n", extractor.getText());
+            }
+        }
+    }
 }

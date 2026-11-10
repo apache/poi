@@ -24,9 +24,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -47,17 +45,17 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 @Isolated   // this test changes global static BYTE_ARRAY_MAX_OVERRIDE
 public abstract class BaseTestPPTIterating {
-    static final Set<String> OLD_FILES = new HashSet<>(Arrays.asList(
+    static final Set<String> OLD_FILES = Set.of(
         "PPT95.ppt", "pp40only.ppt"
-    ));
+    );
 
-    static final Set<String> ENCRYPTED_FILES = new HashSet<>(Arrays.asList(
+    static final Set<String> ENCRYPTED_FILES = Set.of(
         "cryptoapi-proc2356.ppt",
         "Password_Protected-np-hello.ppt",
         "Password_Protected-56-hello.ppt",
         "Password_Protected-hello.ppt",
         "ppt_with_png_encrypted.ppt"
-    ));
+    );
 
     static final Map<String,Class<? extends Throwable>> EXCLUDED = new HashMap<>();
     static {

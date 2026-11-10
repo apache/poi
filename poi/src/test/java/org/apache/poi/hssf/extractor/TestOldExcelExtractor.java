@@ -333,7 +333,7 @@ final class TestOldExcelExtractor {
             System.setOut(str);
             OldExcelExtractor.main(new String[] {file.getAbsolutePath()});
             String string = out.toString(StandardCharsets.UTF_8);
-            assertTrue(string.contains("Table C-13--Lemons"), "Had: " + string);
+            assertContains(string, "Table C-13--Lemons");
         } finally {
             System.setOut(save);
         }

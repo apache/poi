@@ -40,6 +40,7 @@ import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 
 @Internal
 public class PathGradientPaint implements Paint {
@@ -147,13 +148,13 @@ public class PathGradientPaint implements Paint {
 
             Rectangle2D destRect = new Rectangle2D.Double();
             Rectangle2D.intersect(childRect, deviceBounds, destRect);
-            int dx = (int)(destRect.getX()-deviceBounds.getX());
-            int dy = (int)(destRect.getY()-deviceBounds.getY());
-            int dw = (int)destRect.getWidth();
-            int dh = (int)destRect.getHeight();
+            int dx = MathUtil.safeDoubleToInt(destRect.getX()-deviceBounds.getX());
+            int dy = MathUtil.safeDoubleToInt(destRect.getY()-deviceBounds.getY());
+            int dw = MathUtil.safeDoubleToInt(destRect.getWidth());
+            int dh = MathUtil.safeDoubleToInt(destRect.getHeight());
             Object data = raster.getDataElements(dx, dy, dw, dh, null);
-            dx = (int)(destRect.getX()-childRect.getX());
-            dy = (int)(destRect.getY()-childRect.getY());
+            dx = MathUtil.safeDoubleToInt(destRect.getX()-childRect.getX());
+            dy = MathUtil.safeDoubleToInt(destRect.getY()-childRect.getY());
             childRaster.setDataElements(dx, dy, dw, dh, data);
 
             return childRaster;
@@ -162,7 +163,7 @@ public class PathGradientPaint implements Paint {
         int getGradientSteps(Shape gradientShape) {
             Rectangle rect = gradientShape.getBounds();
             int lower = 1;
-            int upper = (int)(Math.max(rect.getWidth(),rect.getHeight())/2.0);
+            int upper = MathUtil.safeDoubleToInt(Math.max(rect.getWidth(),rect.getHeight())/2.0);
             while (lower < upper-1) {
                 int mid = lower + (upper - lower) / 2;
                 BasicStroke bs = new BasicStroke(mid, capStyle, joinStyle);
@@ -184,7 +185,9 @@ public class PathGradientPaint implements Paint {
             }
 
             ColorModel cm = getColorModel();
-            raster = cm.createCompatibleWritableRaster((int)deviceBounds.getWidth(), (int)deviceBounds.getHeight());
+            raster = cm.createCompatibleWritableRaster(
+                    MathUtil.safeDoubleToInt(deviceBounds.getWidth()),
+                    MathUtil.safeDoubleToInt(deviceBounds.getHeight()));
             BufferedImage img = new BufferedImage(cm, raster, false, null);
             Graphics2D graphics = img.createGraphics();
             graphics.setRenderingHints(hints);

@@ -73,8 +73,7 @@ public final class POIFSChunkParser {
         // Note - we don't handle children of children yet, as
         //  there doesn't seem to be any use of that in Outlook
         for (Entry entry : node) {
-            if (entry instanceof DirectoryNode) {
-                DirectoryNode dir = (DirectoryNode) entry;
+            if (entry instanceof DirectoryNode dir) {
                 ChunkGroup group = null;
 
                 // Do we know what to do with it?
@@ -145,8 +144,8 @@ public final class POIFSChunkParser {
             return;
         }
 
-        if (entry instanceof DocumentNode) {
-            try (DocumentInputStream inp = new DocumentInputStream((DocumentNode) entry)) {
+        if (entry instanceof DocumentNode docNode) {
+            try (DocumentInputStream inp = new DocumentInputStream(docNode)) {
                 chunk.readValue(inp);
             } catch (IOException e) {
                 LOG.atError().withThrowable(e).log("Error reading from part {}", entry.getName());
@@ -216,8 +215,8 @@ public final class POIFSChunkParser {
             return new MessageSubmissionChunk(namePrefix, chunkId, type);
         } else if (type == Types.BINARY && chunkId == MAPIProperty.ATTACH_DATA.id) {
             ByteChunkDeferred bcd = new ByteChunkDeferred(namePrefix, chunkId, type);
-            if (entry instanceof DocumentNode) {
-                bcd.readValue((DocumentNode) entry);
+            if (entry instanceof DocumentNode docNode) {
+                bcd.readValue(docNode);
             }
             return bcd;
         } else {
@@ -226,8 +225,8 @@ public final class POIFSChunkParser {
             if (isMultiValue[0]) {
                 return readMultiValue(namePrefix, ids, chunkId, entry, type, multiChunks);
             } else {
-                if (type == Types.DIRECTORY && entry instanceof DirectoryNode) {
-                    return new DirectoryChunk((DirectoryNode) entry, namePrefix, chunkId, type);
+                if (type == Types.DIRECTORY && entry instanceof DirectoryNode dirNode) {
+                    return new DirectoryChunk(dirNode, namePrefix, chunkId, type);
                 } else if (type == Types.BINARY) {
                     return new ByteChunk(namePrefix, chunkId, type);
                 } else if (type == Types.ASCII_STRING || type == Types.UNICODE_STRING) {

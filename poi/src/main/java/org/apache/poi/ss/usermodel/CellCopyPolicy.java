@@ -27,6 +27,8 @@ public class CellCopyPolicy {
     public static final boolean DEFAULT_COPY_CELL_FORMULA_POLICY = true;
     public static final boolean DEFAULT_COPY_HYPERLINK_POLICY = true;
     public static final boolean DEFAULT_MERGE_HYPERLINK_POLICY = false;
+    /** @since 6.0.0 */
+    public static final boolean DEFAULT_ADJUST_FORMULA_REFERENCES_POLICY = false;
     
     // row-level policies
     public static final boolean DEFAULT_COPY_ROW_HEIGHT_POLICY = true;
@@ -41,6 +43,7 @@ public class CellCopyPolicy {
     private boolean copyCellFormula = DEFAULT_COPY_CELL_FORMULA_POLICY;
     private boolean copyHyperlink = DEFAULT_COPY_HYPERLINK_POLICY;
     private boolean mergeHyperlink = DEFAULT_MERGE_HYPERLINK_POLICY;
+    private boolean adjustFormulaReferences = DEFAULT_ADJUST_FORMULA_REFERENCES_POLICY;
     
     // row-level policies
     private boolean copyRowHeight = DEFAULT_COPY_ROW_HEIGHT_POLICY;
@@ -66,6 +69,7 @@ public class CellCopyPolicy {
         copyCellFormula = other.isCopyCellFormula();
         copyHyperlink = other.isCopyHyperlink();
         mergeHyperlink = other.isMergeHyperlink();
+        adjustFormulaReferences = other.isAdjustFormulaReferences();
         
         copyRowHeight = other.isCopyRowHeight();
         condenseRows = other.isCondenseRows();
@@ -82,6 +86,7 @@ public class CellCopyPolicy {
         copyCellFormula = builder.copyCellFormula;
         copyHyperlink = builder.copyHyperlink;
         mergeHyperlink = builder.mergeHyperlink;
+        adjustFormulaReferences = builder.adjustFormulaReferences;
         
         copyRowHeight = builder.copyRowHeight;
         condenseRows = builder.condenseRows;
@@ -96,6 +101,7 @@ public class CellCopyPolicy {
         private boolean copyCellFormula = DEFAULT_COPY_CELL_FORMULA_POLICY;
         private boolean copyHyperlink = DEFAULT_COPY_HYPERLINK_POLICY;
         private boolean mergeHyperlink = DEFAULT_MERGE_HYPERLINK_POLICY;
+        private boolean adjustFormulaReferences = DEFAULT_ADJUST_FORMULA_REFERENCES_POLICY;
         
         // row-level policies
         private boolean copyRowHeight = DEFAULT_COPY_ROW_HEIGHT_POLICY;
@@ -131,6 +137,16 @@ public class CellCopyPolicy {
             this.mergeHyperlink = mergeHyperlink;
             return this;
         }
+        /**
+         * @param adjustFormulaReferences whether to adjust the relative references of copied formulas
+         * @return this builder
+         * @see CellCopyPolicy#setAdjustFormulaReferences(boolean)
+         * @since 6.0.0
+         */
+        public Builder adjustFormulaReferences(boolean adjustFormulaReferences) {
+            this.adjustFormulaReferences = adjustFormulaReferences;
+            return this;
+        }
         
         // row-level policies
         public Builder rowHeight(boolean copyRowHeight) {
@@ -159,6 +175,7 @@ public class CellCopyPolicy {
                 .cellFormula(copyCellFormula)
                 .copyHyperlink(copyHyperlink)
                 .mergeHyperlink(mergeHyperlink)
+                .adjustFormulaReferences(adjustFormulaReferences)
                 .rowHeight(copyRowHeight)
                 .condenseRows(condenseRows)
                 .mergedRegions(copyMergedRegions);
@@ -209,6 +226,37 @@ public class CellCopyPolicy {
         this.copyCellFormula = copyCellFormula;
     }
     
+    /**
+     * @return whether the relative references of copied formulas are adjusted
+     * @see #setAdjustFormulaReferences(boolean)
+     * @since 6.0.0
+     */
+    public boolean isAdjustFormulaReferences() {
+        return adjustFormulaReferences;
+    }
+
+    /**
+     * Sets whether {@link org.apache.poi.ss.util.CellUtil#copyCell} adjusts the relative references
+     * of a copied formula by the row and column offset between the source and destination cells,
+     * as Excel does when a formula is copied and pasted.
+     * <p>
+     * Absolute references, and the absolute parts of mixed references, are not changed.
+     * References keep the sheet they refer to. A reference that would move past the limits of the
+     * destination workbook's {@link org.apache.poi.ss.SpreadsheetVersion} becomes {@code #REF!}.
+     * The formula is parsed against the destination workbook. If it cannot be parsed there
+     * (e.g. it refers to a sheet or name that the destination workbook does not have),
+     * it is copied unchanged.
+     * <p>
+     * Defaults to {@code false}, which copies formulas unchanged.
+     * Row copies (e.g. {@code copyRowFrom}) shift formula references whatever this setting is.
+     *
+     * @param adjustFormulaReferences whether to adjust the relative references of copied formulas
+     * @since 6.0.0
+     */
+    public void setAdjustFormulaReferences(boolean adjustFormulaReferences) {
+        this.adjustFormulaReferences = adjustFormulaReferences;
+    }
+
     /**
      * @return the copyHyperlink
      */

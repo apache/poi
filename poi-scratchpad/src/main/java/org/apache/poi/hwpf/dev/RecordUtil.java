@@ -105,7 +105,7 @@ public class RecordUtil
     {
         byte parentSize = 0;
         byte numBits = 0;
-        int mask = (int) Long.parseLong( bitMask.substring( 2 ), 16 );
+        int mask = Math.toIntExact(Long.parseLong(bitMask.substring(2), 16));
 
         switch (parentType) {
             case "byte":

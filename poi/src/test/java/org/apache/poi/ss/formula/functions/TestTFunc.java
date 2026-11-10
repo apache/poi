@@ -18,9 +18,9 @@
 package org.apache.poi.ss.formula.functions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.BlankEval;
@@ -86,7 +86,7 @@ final class TestTFunc {
     }
 
     private static void confirmString(ValueEval eval, String expected) {
-        assertTrue(eval instanceof StringEval);
+        assertInstanceOf(StringEval.class, eval);
         assertEquals(expected, ((StringEval)eval).getStringValue());
     }
 

@@ -18,7 +18,7 @@
 package org.apache.poi.ss.formula.functions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -85,11 +85,11 @@ class TestEOMonth {
     @Test
     void testEOMonthInvalidArguments() {
         ValueEval result = eOMonth.evaluate(new ValueEval[] {new NumberEval(DATE_1902_09_26)}, ec);
-        assertTrue(result instanceof ErrorEval);
+        assertInstanceOf(ErrorEval.class, result);
         assertEquals(FormulaError.VALUE.getCode(), ((ErrorEval) result).getErrorCode(), 0);
 
         result = eOMonth.evaluate(new ValueEval[] {new StringEval("a"), new StringEval("b")}, ec);
-        assertTrue(result instanceof ErrorEval);
+        assertInstanceOf(ErrorEval.class, result);
         assertEquals(FormulaError.VALUE.getCode(), ((ErrorEval) result).getErrorCode(), 0);
     }
 

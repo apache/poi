@@ -18,6 +18,7 @@
 package org.apache.poi.sl.usermodel;
 
 import org.apache.poi.common.Duplicatable;
+import org.apache.poi.util.MathUtil;
 
 /**
  * This is a replacement for {@link java.awt.Insets} which works on doubles
@@ -94,8 +95,7 @@ public final class Insets2D implements Duplicatable {
      * @since      JDK1.1
      */
     public boolean equals(Object obj) {
-    if (obj instanceof Insets2D) {
-        Insets2D insets = (Insets2D)obj;
+    if (obj instanceof Insets2D insets) {
         return ((top == insets.top) && (left == insets.left) &&
             (bottom == insets.bottom) && (right == insets.right));
     }
@@ -113,7 +113,7 @@ public final class Insets2D implements Duplicatable {
         double val1 = sum1 * (sum1 + 1)/2 + left;
         double val2 = sum2 * (sum2 + 1)/2 + top;
         double sum3 = val1 + val2;
-        return (int)(sum3 * (sum3 + 1)/2 + val2);
+        return MathUtil.safeDoubleToInt((sum3 * (sum3 + 1)/2 + val2));
     }
 
     /**

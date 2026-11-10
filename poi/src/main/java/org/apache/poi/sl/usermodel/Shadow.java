@@ -49,5 +49,15 @@ P extends TextParagraph<S,P,? extends TextRun>
      * @return the color of this shadow. 
      * Depending whether the parent shape is filled or stroked, this color is used to fill or stroke this shadow
      */
-    SolidPaint getFillStyle();    
+    SolidPaint getFillStyle();
+
+    /**
+     * @return {@code true} if the shadow offset rotates and flips with its shape,
+     *  {@code false} if the shadow keeps its direction on the page
+     *
+     * @since 6.1.0
+     */
+    default boolean isRotateWithShape() {
+        return false;
+    }
 }

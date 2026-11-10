@@ -32,6 +32,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 import org.apache.poi.xddf.usermodel.XDDFColor;
 import org.apache.poi.xddf.usermodel.XDDFFillProperties;
@@ -325,7 +326,7 @@ public class XDDFTextRun {
         if (offset == null) {
             getOrCreateProperties().setBaseline(null);
         } else {
-            getOrCreateProperties().setBaseline((int) (offset * 1000));
+            getOrCreateProperties().setBaseline(MathUtil.safeDoubleToInt(offset * 1000));
         }
     }
 

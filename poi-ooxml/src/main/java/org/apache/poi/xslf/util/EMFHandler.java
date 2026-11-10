@@ -108,8 +108,8 @@ class EMFHandler extends MFProxy {
 
     @Override
     public Iterable<EmbeddedPart> getEmbeddings(int slideNo) {
-        return (imgr instanceof EmbeddedExtractor)
-            ? ((EmbeddedExtractor) imgr).getEmbeddings()
+        return (imgr instanceof EmbeddedExtractor embeddedExtractor)
+            ? embeddedExtractor.getEmbeddings()
             : Collections.emptyList();
     }
 

@@ -281,6 +281,141 @@ class TestXSLFTable {
     }
 
     @Test
+    void testBorderColorOverwrite() throws IOException {
+        XMLSlideShow ppt = new XMLSlideShow();
+        XSLFSlide slide = ppt.createSlide();
+        XSLFTable tbl = slide.createTable();
+        XSLFTableRow row = tbl.addRow();
+        XSLFTableCell cell = row.addCell();
+
+        for (BorderEdge edge : BorderEdge.values()) {
+            cell.setBorderColor(edge, Color.yellow);
+            assertEquals(Color.yellow, cell.getBorderColor(edge));
+            // additional calls to setBorderColor do not add multiple solidFill elements
+            cell.setBorderColor(edge, Color.red);
+            assertEquals(Color.red, cell.getBorderColor(edge));
+        }
+
+        ppt.close();
+    }
+
+    @Test
+    void sharedEdgeIsSetOnBothCells() throws IOException {
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            XSLFTable tbl = ppt.createSlide().createTable(3, 3);
+            XSLFTableCell centre = tbl.getCell(1, 1);
+
+            centre.setBorderColor(BorderEdge.top, Color.red);
+            centre.setBorderWidth(BorderEdge.top, 2.0);
+            assertEquals(Color.red, tbl.getCell(0, 1).getBorderColor(BorderEdge.bottom));
+            assertEquals(2.0, tbl.getCell(0, 1).getBorderWidth(BorderEdge.bottom), 0);
+
+            centre.setBorderColor(BorderEdge.left, Color.green);
+            assertEquals(Color.green, tbl.getCell(1, 0).getBorderColor(BorderEdge.right));
+
+            centre.setBorderColor(BorderEdge.bottom, Color.blue);
+            assertEquals(Color.blue, tbl.getCell(2, 1).getBorderColor(BorderEdge.top));
+
+            centre.setBorderColor(BorderEdge.right, Color.yellow);
+            assertEquals(Color.yellow, tbl.getCell(1, 2).getBorderColor(BorderEdge.left));
+
+            // cells which don't share the edge are left alone
+            assertNull(tbl.getCell(0, 0).getBorderColor(BorderEdge.bottom));
+            assertNull(tbl.getCell(0, 1).getBorderColor(BorderEdge.top));
+            assertNull(tbl.getCell(2, 2).getBorderColor(BorderEdge.top));
+
+            // the last call for a shared edge wins
+            tbl.getCell(0, 1).setBorderColor(BorderEdge.bottom, Color.black);
+            assertEquals(Color.black, centre.getBorderColor(BorderEdge.top));
+
+            centre.removeBorder(BorderEdge.top);
+            assertNull(centre.getBorderColor(BorderEdge.top));
+            assertNull(tbl.getCell(0, 1).getBorderColor(BorderEdge.bottom));
+        }
+    }
+
+    @Test
+    void borderOnTableEdgeHasNoNeighbour() throws IOException {
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            XSLFTable tbl = ppt.createSlide().createTable(1, 1);
+            for (BorderEdge edge : BorderEdge.values()) {
+                tbl.getCell(0, 0).setBorderColor(edge, Color.red);
+                assertEquals(Color.red, tbl.getCell(0, 0).getBorderColor(edge));
+            }
+        }
+    }
+
+    @Test
+    void mergedCellBorderIsSetOnNeighbours() throws IOException {
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            XSLFTable tbl = ppt.createSlide().createTable(6, 5);
+            tbl.mergeCells(2, 3, 1, 2);
+            XSLFTableCell first = tbl.getCell(2, 1);
+            for (BorderEdge edge : BorderEdge.values()) {
+                first.setBorderColor(edge, Color.blue);
+            }
+
+            for (int col = 1; col <= 2; col++) {
+                assertEquals(Color.blue, tbl.getCell(1, col).getBorderColor(BorderEdge.bottom));
+                assertEquals(Color.blue, tbl.getCell(4, col).getBorderColor(BorderEdge.top));
+            }
+            for (int row = 2; row <= 3; row++) {
+                assertEquals(Color.blue, tbl.getCell(row, 0).getBorderColor(BorderEdge.right));
+                assertEquals(Color.blue, tbl.getCell(row, 3).getBorderColor(BorderEdge.left));
+            }
+            assertNull(tbl.getCell(1, 0).getBorderColor(BorderEdge.bottom));
+            assertNull(tbl.getCell(1, 3).getBorderColor(BorderEdge.bottom));
+            assertNull(tbl.getCell(4, 3).getBorderColor(BorderEdge.left));
+        }
+    }
+
+    @Test
+    void mergedAwayCellBorderIsSetOnFirstCell() throws IOException {
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            XSLFTable tbl = ppt.createSlide().createTable(5, 4);
+            tbl.mergeCells(1, 3, 1, 2);
+            XSLFTableCell first = tbl.getCell(1, 1);
+            XSLFTableCell mergedAway = tbl.getCell(3, 2);
+
+            mergedAway.setBorderColor(BorderEdge.bottom, Color.red);
+            assertEquals(Color.red, mergedAway.getBorderColor(BorderEdge.bottom));
+            assertEquals(Color.red, first.getBorderColor(BorderEdge.bottom));
+            assertEquals(Color.red, tbl.getCell(4, 1).getBorderColor(BorderEdge.top));
+            assertEquals(Color.red, tbl.getCell(4, 2).getBorderColor(BorderEdge.top));
+
+            mergedAway.setBorderColor(BorderEdge.right, Color.green);
+            assertEquals(Color.green, first.getBorderColor(BorderEdge.right));
+            for (int row = 1; row <= 3; row++) {
+                assertEquals(Color.green, tbl.getCell(row, 3).getBorderColor(BorderEdge.left));
+            }
+
+            // an edge inside the merged range stays on the cell
+            mergedAway.setBorderColor(BorderEdge.top, Color.blue);
+            assertEquals(Color.blue, mergedAway.getBorderColor(BorderEdge.top));
+            assertNull(first.getBorderColor(BorderEdge.top));
+            assertNull(tbl.getCell(2, 2).getBorderColor(BorderEdge.bottom));
+
+            mergedAway.removeBorder(BorderEdge.bottom);
+            assertNull(first.getBorderColor(BorderEdge.bottom));
+            assertNull(tbl.getCell(4, 1).getBorderColor(BorderEdge.top));
+        }
+    }
+
+    @Test
+    void sharedEdgeAfterInsertRow() throws IOException {
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            XSLFTable tbl = ppt.createSlide().createTable(2, 2);
+            XSLFTableRow inserted = tbl.insertRow(1);
+
+            inserted.getCells().get(1).setBorderColor(BorderEdge.top, Color.red);
+            assertEquals(Color.red, tbl.getCell(0, 1).getBorderColor(BorderEdge.bottom));
+
+            tbl.getCell(2, 0).setBorderColor(BorderEdge.top, Color.blue);
+            assertEquals(Color.blue, inserted.getCells().get(0).getBorderColor(BorderEdge.bottom));
+        }
+    }
+
+    @Test
     void removeTable() throws IOException {
         XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
         XSLFSlide sl = ss.getSlides().get(0);
@@ -432,5 +567,19 @@ class TestXSLFTable {
                 new Color(255, 0, 0), new Color(21, 96, 130));
 
         ppt.close();
+    }
+
+    @Test
+    void testSpanPastTableEnd() throws IOException {
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            XSLFTable tab = ppt.createSlide().createTable(2, 2);
+            tab.setAnchor(new Rectangle2D.Double(0, 0, 200, 100));
+            // spans that reach past the last column and row of the table
+            tab.getCell(0, 1).setGridSpan(3);
+            tab.getCell(1, 0).setRowSpan(2);
+
+            assertDoesNotThrow(tab::updateCellAnchor);
+            assertNotNull(tab.getCell(0, 1).getAnchor());
+        }
     }
 }

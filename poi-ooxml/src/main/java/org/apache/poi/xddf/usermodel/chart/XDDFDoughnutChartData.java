@@ -33,7 +33,7 @@ public class XDDFDoughnutChartData extends XDDFChartData {
     protected XDDFDoughnutChartData(XDDFChart parent, CTDoughnutChart chart) {
         super(parent);
         this.chart = chart;
-        for (CTPieSer series : chart.getSerList()) {
+        for (CTPieSer series : chart.getSerArray()) {
             this.series.add(new Series(series, series.getCat(), series.getVal()));
         }
     }
@@ -84,9 +84,12 @@ public class XDDFDoughnutChartData extends XDDFChartData {
         }
     }
 
+    /**
+     * @return the size of the hole as a percentage of the chart (10 to 90), or null if not set
+     */
     public Integer getHoleSize() {
         if (chart.isSetHoleSize()) {
-            return POIXMLUnits.parsePercent(chart.getHoleSize().xgetVal());
+            return POIXMLUnits.parsePercent(chart.getHoleSize().xgetVal()) / 1000;
         } else {
             return null;
         }

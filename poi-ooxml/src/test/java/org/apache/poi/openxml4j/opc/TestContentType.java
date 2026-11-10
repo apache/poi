@@ -20,6 +20,7 @@ package org.apache.poi.openxml4j.opc;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -99,6 +100,25 @@ public final class TestContentType {
     }
 
     /**
+     * The single regex this used to be matched with recursed per parameter and threw StackOverflowError
+     */
+    @Test
+    void testContentTypeWithManyParameters() throws InvalidFormatException {
+        StringBuilder sb = new StringBuilder("application/x-test");
+        for (int i = 0; i < 5000; i++) {
+            sb.append(";p").append(i).append("=\"v").append(i).append('"');
+        }
+        ContentType contentType = new ContentType(sb.toString());
+        assertEquals("application", contentType.getType());
+        assertEquals("x-test", contentType.getSubType());
+        assertEquals(5000, contentType.getParameterKeys().length);
+        assertEquals("\"v4999\"", contentType.getParameter("p4999"));
+
+        sb.append(";bad");
+        assertThrows(InvalidFormatException.class, () -> new ContentType(sb.toString()));
+    }
+
+    /**
      * Check rule [O1.2]: Format designers might restrict the usage of
      * parameters for content types.
      */
@@ -111,6 +131,27 @@ public final class TestContentType {
     void testContentTypeParameterFailure(String contentType) {
         assertThrows(InvalidFormatException.class, () -> new ContentType(contentType),
             "Must have fail for content type: '" + contentType + "' !");
+    }
+
+    /**
+     * A content type is only ever equal to another content type, and the
+     * comparison ignores case (RFC 2616 media types are case-insensitive).
+     */
+    @Test
+    void testEqualsAndHashCode() throws InvalidFormatException {
+        ContentType type = new ContentType("text/xml");
+
+        assertEquals(type, new ContentType("text/xml"));
+        assertEquals(type, new ContentType("TEXT/XML"));
+        assertEquals(type.hashCode(), new ContentType("TEXT/XML").hashCode(),
+            "equal content types must have equal hash codes");
+
+        assertNotEquals(type, new ContentType("text/plain"));
+
+        // must not claim equality with unrelated types
+        assertNotEquals(type, "text/xml");
+        assertNotEquals(type, new Object());
+        assertNotEquals(null, type);
     }
 
     /**

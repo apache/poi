@@ -119,9 +119,9 @@ public class XOREncryptor extends Encryptor {
         public void setNextRecordSize(int recordSize, boolean isPlain) {
             if (recordEnd > 0 && !isPlain) {
                 // encrypt last record
-                invokeCipher((int)getPos(), true);
+                invokeCipher(Math.toIntExact(getPos()), true);
             }
-            recordStart = (int)getTotalPos()+4;
+            recordStart = Math.toIntExact(getTotalPos())+4;
             recordEnd = recordStart+recordSize;
         }
 

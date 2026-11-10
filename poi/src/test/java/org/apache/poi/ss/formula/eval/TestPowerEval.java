@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.formula.eval;
 
+import static org.apache.poi.ss.util.Utils.assertDouble;
+import static org.apache.poi.ss.util.Utils.assertError;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -26,6 +28,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -54,12 +57,53 @@ final class TestPowerEval {
 
     @Test
     void testNegativeDecimalValues() {
-        confirm(-3, -27, (1/3.0));
+        // Excel: a negative base with a non-integer exponent is #NUM!, the same as POWER(-27,1/3)
+        // (LibreOffice returns -3 here, which is probably where bug 62121's expectation came from)
+        confirmError(-27, (1/3.0));
+        confirmError(-8, 0.5);
+        confirmError(-8, (2/3.0));
+        confirmError(-8, (4/3.0));
+        confirm(-27, -27, 1);
+        confirm(9, -3, 2);
+        confirm(-27, -3, 3);
+        confirm(0.25, -2, -2);
     }
 
     @Test
     void testErrorValues() {
         confirmError(-1.00001, 1.1);
+    }
+
+    @Test
+    void testZeroBase() {
+        // as in Excel: 0^0 is #NUM! (Math.pow says 1) and 0^negative is #DIV/0! (Math.pow says Infinity)
+        assertEquals(ErrorEval.NUM_ERROR, evaluate(0, 0));
+        assertEquals(ErrorEval.DIV_ZERO, evaluate(0, -1));
+        assertEquals(ErrorEval.DIV_ZERO, evaluate(0, -0.5));
+        confirm(0, 0, 1);
+        confirm(0, 0, 0.5);
+        confirm(1, 1, 0);
+        confirm(1, -1, 0);
+        confirm(1, 1E300, 0);
+    }
+
+    @Test
+    void testInSpreadSheetZeroBase() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+        HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+        assertError(fe, cell, "0^0", FormulaError.NUM);
+        assertError(fe, cell, "POWER(0,0)", FormulaError.NUM);
+        assertError(fe, cell, "0^-1", FormulaError.DIV0);
+        assertError(fe, cell, "POWER(0,-1)", FormulaError.DIV0);
+        assertDouble(fe, cell, "0^1", 0);
+        assertDouble(fe, cell, "2^0", 1);
+        assertDouble(fe, cell, "POWER(0,2)", 0);
+        assertDouble(fe, cell, "POWER(2,0)", 1);
+        // array evaluation goes through the same checks (used to return Infinity / NaN elements)
+        assertError(fe, cell, "SUM({1E200}*{1E200})", FormulaError.NUM);
+        assertError(fe, cell, "SUM({0}^{0})", FormulaError.NUM);
+        assertError(fe, cell, "SUM({0}^{-1})", FormulaError.DIV0);
     }
 
     @Test
@@ -75,8 +119,48 @@ final class TestPowerEval {
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
         CellValue cv = fe.evaluate(cell);
 
-        assertEquals(CellType.NUMERIC, cv.getCellType());
-        assertEquals(-3.0, cv.getNumberValue(), 0);
+        assertEquals(CellType.ERROR, cv.getCellType());
+        assertEquals(FormulaError.NUM.getCode(), cv.getErrorValue());
+    }
+
+    /**
+     * Excel's operator precedence puts negation above '^': -2^2 is (-2)^2 = 4.
+     * The parser used to produce -(2^2).
+     */
+    @Test
+    void testNegationBindsTighterThanPower() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+        cell.getRow().createCell(1).setCellValue(2);
+        HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+        assertDouble(fe, cell, "-2^2", 4);
+        assertDouble(fe, cell, "-B1^2", 4);
+        assertDouble(fe, cell, "-SUM(2)^2", 4);
+        assertDouble(fe, cell, "-(2)^2", 4);
+        assertDouble(fe, cell, "--2^2", 4);
+        assertDouble(fe, cell, "+2^2", 4);
+        assertDouble(fe, cell, "-2^2^3", 64);
+        assertDouble(fe, cell, "-2^3", -8);
+        // but binary minus is below '^', and parentheses do what they say
+        assertDouble(fe, cell, "0-2^2", -4);
+        assertDouble(fe, cell, "-(2^2)", -4);
+        assertDouble(fe, cell, "(-2)^2", 4);
+        assertDouble(fe, cell, "1-2^2", -3);
+        // a sign in the exponent is unaffected
+        assertDouble(fe, cell, "2^-2", 0.25);
+        assertDouble(fe, cell, "2^-2^2", 0.0625);
+        assertDouble(fe, cell, "-2^-2", 0.25);
+        // negation still binds tighter than percent, and percent tighter than '^'
+        assertDouble(fe, cell, "-2%", -0.02);
+        assertDouble(fe, cell, "-2%^2", 0.0004);
+        assertDouble(fe, cell, "2^200%", 4);
+        // so -2^0.5 is (-2)^0.5, which is #NUM! in Excel, not -(2^0.5)
+        assertError(fe, cell, "-2^0.5", FormulaError.NUM);
+        assertError(fe, cell, "(-2)^0.5", FormulaError.NUM);
+        assertError(fe, cell, "-27^(1/3)", FormulaError.NUM);
+        assertDouble(fe, cell, "0-2^0.5", -Math.pow(2, 0.5));
+        assertDouble(fe, cell, "0-27^(1/3)", -3);
+        assertDouble(fe, cell, "-(27^(1/3))", -3);
     }
 
     private void confirm(double expected, double a, double b) {

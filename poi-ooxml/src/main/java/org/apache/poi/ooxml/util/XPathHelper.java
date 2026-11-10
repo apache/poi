@@ -27,6 +27,7 @@ import com.microsoft.schemas.compatibility.AlternateContentDocument;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.StringUtil;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
@@ -159,8 +160,8 @@ public final class XPathHelper {
         // otherwise check first the choice then the fallback content
         XmlObject xo = cur.getObject();
         AlternateContentDocument.AlternateContent alterCont;
-        if (xo instanceof AlternateContentDocument.AlternateContent) {
-            alterCont = (AlternateContentDocument.AlternateContent)xo;
+        if (xo instanceof AlternateContentDocument.AlternateContent ac) {
+            alterCont = ac;
         } else {
             // Pesky XmlBeans bug - see Bugzilla #49934
             // it never happens when using poi-ooxml-full jar but may happen with the abridged poi-ooxml-lite jar
@@ -178,14 +179,12 @@ public final class XPathHelper {
             }
         }
 
-        final int choices = alterCont.sizeOfChoiceArray();
-        for (int i=0; i<choices; i++) {
+        for (AlternateContentDocument.AlternateContent.Choice choice : alterCont.getChoiceArray()) {
             // TODO: check [Requires] attribute of [Choice] element, if we can handle the content
-            AlternateContentDocument.AlternateContent.Choice choice = alterCont.getChoiceArray(i);
             XmlCursor innerCur = null;
             try (XmlCursor cCur = choice.newCursor()) {
                 String requiresNS = cCur.namespaceForPrefix(choice.getRequires());
-                if (MAC_DML_NS.equalsIgnoreCase(requiresNS)) {
+                if (StringUtil.equalsIgnoreCase(MAC_DML_NS, requiresNS)) {
                     // Mac DML usually contains PDFs ...
                     continue;
                 }

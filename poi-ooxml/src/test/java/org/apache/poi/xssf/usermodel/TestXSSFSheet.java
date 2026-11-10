@@ -31,10 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -46,12 +44,16 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import javax.xml.namespace.QName;
+
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.poifs.crypt.agile.AgileEncryptionVerifier;
 import org.apache.poi.ss.tests.usermodel.BaseTestXSheet;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.AreaReference;
@@ -68,6 +70,7 @@ import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
+import org.apache.xmlbeans.XmlCursor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -371,9 +374,9 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             assertEquals(4, sheet.getNumMergedRegions());
             assertEquals(4, ctWorksheet.getMergeCells().getCount());
             // test invalid indexes OOBE
-            Set<Integer> rmIdx = new HashSet<>(Arrays.asList(5, 6));
+            Set<Integer> rmIdx = Set.of(5, 6);
             sheet.removeMergedRegions(rmIdx);
-            rmIdx = new HashSet<>(Arrays.asList(1, 3));
+            rmIdx = Set.of(1, 3);
             sheet.removeMergedRegions(rmIdx);
             assertEquals(2, sheet.getNumMergedRegions());
             assertEquals(2, ctWorksheet.getMergeCells().getCount());
@@ -893,10 +896,9 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     /**
-     * TODO - while this is internally consistent, I'm not
-     *  completely clear in all cases what it's supposed to
-     *  be doing... Someone who understands the goals a little
-     *  better should really review this!
+     * Collapsing the inner group (rows 7-14) hides its rows and marks the row after it as
+     * collapsed; expanding it again shows them, as the enclosing group (rows 5-14) is not
+     * collapsed. The outer rows 5-6 and the separate group at 16-19 are never affected.
      */
     @Test
     void setRowGroupCollapsed() throws IOException {
@@ -924,6 +926,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             //collapsed
             sheet1.setRowGroupCollapsed(7, true);
 
+            assertTrue(sheet1.getRow(15).getCTRow().getCollapsed());
             assertFalse(sheet1.getRow(6).getCTRow().isSetCollapsed());
             assertFalse(sheet1.getRow(6).getCTRow().isSetHidden());
             assertFalse(sheet1.getRow(7).getCTRow().isSetCollapsed());
@@ -943,11 +946,12 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             assertFalse(sheet1.getRow(6).getCTRow().isSetCollapsed());
             assertFalse(sheet1.getRow(6).getCTRow().isSetHidden());
             assertFalse(sheet1.getRow(7).getCTRow().isSetCollapsed());
-            assertTrue(sheet1.getRow(7).getCTRow().isSetHidden());
+            assertFalse(sheet1.getRow(7).getCTRow().isSetHidden());
             assertFalse(sheet1.getRow(9).getCTRow().isSetCollapsed());
-            assertTrue(sheet1.getRow(9).getCTRow().isSetHidden());
+            assertFalse(sheet1.getRow(9).getCTRow().isSetHidden());
             assertFalse(sheet1.getRow(14).getCTRow().isSetCollapsed());
-            assertTrue(sheet1.getRow(14).getCTRow().isSetHidden());
+            assertFalse(sheet1.getRow(14).getCTRow().isSetHidden());
+            assertFalse(sheet1.getRow(15).getCTRow().isSetCollapsed());
             assertFalse(sheet1.getRow(16).getCTRow().isSetCollapsed());
             assertFalse(sheet1.getRow(16).getCTRow().isSetHidden());
             assertFalse(sheet1.getRow(18).getCTRow().isSetCollapsed());
@@ -961,11 +965,11 @@ public final class TestXSSFSheet extends BaseTestXSheet {
                 assertFalse(sheet1.getRow(6).getCTRow().isSetCollapsed());
                 assertFalse(sheet1.getRow(6).getCTRow().isSetHidden());
                 assertFalse(sheet1.getRow(7).getCTRow().isSetCollapsed());
-                assertTrue(sheet1.getRow(7).getCTRow().isSetHidden());
+                assertFalse(sheet1.getRow(7).getCTRow().isSetHidden());
                 assertFalse(sheet1.getRow(9).getCTRow().isSetCollapsed());
-                assertTrue(sheet1.getRow(9).getCTRow().isSetHidden());
+                assertFalse(sheet1.getRow(9).getCTRow().isSetHidden());
                 assertFalse(sheet1.getRow(14).getCTRow().isSetCollapsed());
-                assertTrue(sheet1.getRow(14).getCTRow().isSetHidden());
+                assertFalse(sheet1.getRow(14).getCTRow().isSetHidden());
                 assertFalse(sheet1.getRow(16).getCTRow().isSetCollapsed());
                 assertFalse(sheet1.getRow(16).getCTRow().isSetHidden());
                 assertFalse(sheet1.getRow(18).getCTRow().isSetCollapsed());
@@ -1059,7 +1063,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             //  <col min="5" max="5" customWidth="true" width="30.0" />
             //</cols>
 
-            //now the span is splitted into 5 individual columns
+            //now the span is split into 5 individual columns
             assertEquals(5, cols.sizeOfColArray());
             for (int i = 0; i < 5; i++) {
                 assertEquals(cw[i] * 256L, sheet.getColumnWidth(i));
@@ -1117,7 +1121,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 
             //the check below failed prior to fix of Bug #47804
             ColumnHelper.sortColumns(cols);
-            //the span is now splitted into three parts
+            //the span is now split into three parts
             //<cols>
             //  <col min="2" max="2" customWidth="true" width="12.0" />
             //  <col min="3" max="3" customWidth="true" width="12.0" hidden="true"/>
@@ -1355,6 +1359,39 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         }
     }
 
+    @Test
+    void protectSheet_spinCountTooLarge() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet xs = wb.createSheet();
+            xs.setSheetPassword("test", HashAlgorithm.sha512);
+            xs.getCTWorksheet().getSheetProtection().setSpinCount(AgileEncryptionVerifier.getMaxSpinCount() + 1L);
+            assertThrows(EncryptedDocumentException.class, () -> xs.validateSheetPassword("test"));
+        }
+    }
+
+    @Test
+    void protectSheet_spinCountAboveIntRange() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet xs = wb.createSheet();
+            xs.setSheetPassword("test", HashAlgorithm.sha512);
+            // max xsd:unsignedInt, which Integer.parseInt rejects
+            xs.getCTWorksheet().getSheetProtection().setSpinCount(4294967295L);
+            assertThrows(EncryptedDocumentException.class, () -> xs.validateSheetPassword("test"));
+        }
+    }
+
+    @Test
+    void protectSheet_spinCountNotANumber() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet xs = wb.createSheet();
+            xs.setSheetPassword("test", HashAlgorithm.sha512);
+            try (XmlCursor cur = xs.getCTWorksheet().getSheetProtection().newCursor()) {
+                cur.setAttributeText(new QName("spinCount"), "abc");
+            }
+            assertThrows(EncryptedDocumentException.class, () -> xs.validateSheetPassword("test"));
+        }
+    }
+
 
     @Test
     void bug49966() throws IOException {
@@ -1559,7 +1596,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             XSSFPivotTable pivotTable = sheet.createPivotTable(wb.getCreationHelper().createAreaReference("A1:B2"),
                     new CellReference("H5"));
             assertNotNull(pivotTable);
-            assertTrue(wb.getPivotTables().size() > 0);
+            assertFalse(wb.getPivotTables().isEmpty());
             XSSFPivotTable pivotTable2 = sheet.createPivotTable(wb.getCreationHelper().createAreaReference("A1:B2"),
                     new CellReference("L5"), sheet);
             assertNotNull(pivotTable2);
@@ -1576,13 +1613,13 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             assertNotNull(sheet);
             XSSFPivotTable pivotTable = sheet.createPivotTable(wb.getCreationHelper().createAreaReference("A1:B2"), new CellReference("H5"));
             assertNotNull(pivotTable);
-            assertTrue(wb.getPivotTables().size() > 0);
+            assertFalse(wb.getPivotTables().isEmpty());
             assertNotNull(wb);
             XSSFSheet sheet2 = wb.createSheet();
             XSSFPivotTable pivotTable2 = sheet2.createPivotTable(wb.getCreationHelper().createAreaReference("A1:B2"),
                     new CellReference("H5"), sheet);
             assertNotNull(pivotTable2);
-            assertTrue(wb.getPivotTables().size() > 1);
+            assertFalse(wb.getPivotTables().isEmpty());
         }
     }
 
@@ -1595,7 +1632,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             assertNotNull(sheet);
             XSSFPivotTable pivotTable = sheet.createPivotTable(wb.getCreationHelper().createAreaReference("A1:B2"), new CellReference("H5"));
             assertNotNull(pivotTable);
-            assertTrue(wb.getPivotTables().size() > 0);
+            assertFalse(wb.getPivotTables().isEmpty());
         }
     }
 
@@ -2437,6 +2474,26 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             }
             assertEquals(10, count);
             assertEquals("2-1,2-1,1+2,2-1,2-1,3+3,3+3,3+3,2-1,2-1,", sb.toString());
+        }
+    }
+
+    @Test
+    void removeMergedRegionOutOfRange() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            // without merged regions there is nothing to remove
+            sheet.removeMergedRegion(1);
+
+            sheet.addMergedRegion(CellRangeAddress.valueOf("A1:B2"));
+            IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> sheet.removeMergedRegion(1));
+            assertEquals("Specified merged region index 1 is outside the allowable range (0..0)", ex.getMessage());
+            // the only region was removed for any index before
+            assertEquals(1, sheet.getNumMergedRegions());
+
+            sheet.addMergedRegion(CellRangeAddress.valueOf("C3:D4"));
+            assertThrows(IllegalArgumentException.class, () -> sheet.removeMergedRegion(-1));
+            assertThrows(IllegalArgumentException.class, () -> sheet.removeMergedRegion(2));
+            assertEquals(2, sheet.getNumMergedRegions());
         }
     }
 }

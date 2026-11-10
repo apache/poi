@@ -17,12 +17,6 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -43,6 +37,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for {@link RowRecordsAggregate}
@@ -109,8 +105,7 @@ final class TestRowRecordsAggregate {
             if (rec.getClass() == shfClass) {
                 result++;
                 Record prevRec = recs.get(i-1);
-                assertTrue(prevRec instanceof FormulaRecord,
-                    "Bad record order at index " + i + ": Formula record expected but got (" + prevRec.getClass().getName() + ")");
+                assertInstanceOf(FormulaRecord.class, prevRec, "Bad record order at index " + i + ": Formula record expected but got (" + prevRec.getClass().getName() + ")");
                 verifySharedFormula((FormulaRecord) prevRec, rec);
             }
         }

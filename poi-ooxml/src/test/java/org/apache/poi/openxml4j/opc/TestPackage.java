@@ -17,17 +17,21 @@
 
 package org.apache.poi.openxml4j.opc;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.getOutputFile;
 import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.getSampleFile;
 import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.getSampleFileName;
 import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.openSampleStream;
 import static org.apache.poi.openxml4j.opc.PackagingURIHelper.createPartName;
 import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_WORDPROCESSINGML;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -164,6 +168,37 @@ public final class TestPackage {
                 assertNull(ctm.getContentType(createPartName("/foo.txt")));
             } finally {
                 pkg.revert();
+            }
+        }
+    }
+
+    /**
+     * A part name containing percent-encoded characters must survive a save/open round-trip.
+     * The zip item name is written verbatim and re-read verbatim, so the marshaller has to use the
+     * ASCII part name (getName()) rather than the decoded URI path - otherwise the part is renamed
+     * (and here, being an invalid escape after decoding, silently dropped) on reload.
+     */
+    @Test
+    void percentEncodedPartNameRoundTrips() throws IOException, InvalidFormatException {
+        // "%40" is a valid percent-encoded part-name character (encodes '@', which is an authorized
+        // pchar, so it is neither a separator [M1.7] nor an unreserved character [M1.8]).
+        final PackagePartName partName = createPartName("/foo/a%40b.xml");
+        final String content = "hello";
+
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
+        try (OPCPackage pkg = OPCPackage.create(bos)) {
+            PackagePart part = pkg.createPart(partName, "application/xml");
+            try (OutputStream out = part.getOutputStream()) {
+                out.write(content.getBytes(StandardCharsets.UTF_8));
+            }
+        }
+
+        try (OPCPackage pkg = OPCPackage.open(bos.toInputStream())) {
+            PackagePart part = pkg.getPart(partName);
+            assertNotNull(part, "part with a percent-encoded name should survive a save/open round-trip");
+            assertEquals("/foo/a%40b.xml", part.getPartName().getName());
+            try (InputStream in = part.getInputStream()) {
+                assertEquals(content, new String(IOUtils.toByteArray(in), StandardCharsets.UTF_8));
             }
         }
     }
@@ -627,6 +662,48 @@ public final class TestPackage {
     }
 
     @Test
+    void writeToZipPartThroughOldReference() throws IOException, InvalidFormatException {
+        byte[] data1 = "first".getBytes(StandardCharsets.US_ASCII);
+        byte[] data2 = "second".getBytes(StandardCharsets.US_ASCII);
+        try (InputStream is = openSampleStream("sample.docx");
+             OPCPackage pkg = OPCPackage.open(is)) {
+            PackagePartName name = createPartName("/word/fontTable.xml");
+            PackagePart zipPart = pkg.getPart(name);
+            assertEquals(ZipPackagePart.class, zipPart.getClass());
+            assertEquals(0, zipPart.getModificationCount());
+            int numParts = pkg.getParts().size();
+
+            try (OutputStream os = zipPart.getOutputStream()) {
+                os.write(data1);
+            }
+            PackagePart memoryPart = pkg.getPart(name);
+            assertNotSame(zipPart, memoryPart);
+            assertEquals(1, zipPart.getModificationCount());
+            assertEquals(1, memoryPart.getModificationCount());
+            // the old reference reads the new content
+            try (InputStream partIs = zipPart.getInputStream()) {
+                assertArrayEquals(data1, IOUtils.toByteArray(partIs));
+            }
+            assertEquals(data1.length, zipPart.getSize());
+
+            // writing through the old reference again updates the memory part
+            zipPart.clear();
+            try (OutputStream os = zipPart.getOutputStream()) {
+                os.write(data2);
+            }
+            assertSame(memoryPart, pkg.getPart(name));
+            assertEquals(2, zipPart.getModificationCount());
+            try (InputStream partIs = memoryPart.getInputStream()) {
+                assertArrayEquals(data2, IOUtils.toByteArray(partIs));
+            }
+            try (InputStream partIs = zipPart.getInputStream()) {
+                assertArrayEquals(data2, IOUtils.toByteArray(partIs));
+            }
+            assertEquals(numParts, pkg.getParts().size());
+        }
+    }
+
+    @Test
     void replaceContentType() throws IOException, InvalidFormatException {
         try (InputStream is = openSampleStream("sample.xlsx");
             OPCPackage p = OPCPackage.open(is)) {
@@ -717,7 +794,7 @@ public final class TestPackage {
         }
 
         IOException ex = assertThrows(IOException.class, () -> WorkbookFactory.create(bos.toInputStream()));
-        assertTrue(ex.getMessage().contains("Zip bomb detected!"));
+        assertContains(ex.getMessage(), "Zip bomb detected!");
     }
 
     @Test
@@ -726,7 +803,7 @@ public final class TestPackage {
             IllegalStateException.class,
             () -> openXmlBombFile("poc-shared-strings.xlsx")
         );
-        assertTrue(ex.getMessage().contains("The text would exceed the max allowed overall size of extracted text."));
+        assertContains(ex.getMessage(), "The text would exceed the max allowed overall size of extracted text.");
     }
 
     @Test
@@ -738,7 +815,7 @@ public final class TestPackage {
                 IllegalStateException.class,
                 () -> openXmlBombFile("poc-shared-strings.xlsx")
             );
-            assertTrue(ex.getMessage().contains("The text would exceed the max allowed overall size of extracted text."));
+            assertContains(ex.getMessage(), "The text would exceed the max allowed overall size of extracted text.");
         } finally {
             ExtractorFactory.setThreadPrefersEventExtractors(before);
         }
@@ -754,7 +831,7 @@ public final class TestPackage {
                     IOException.class,
                     () -> openXmlBombFile("poc-xmlbomb.xlsx")
             );
-            assertTrue(ex.getMessage().contains("unable to parse shared strings table"));
+            assertContains(ex.getMessage(), "unable to parse shared strings table");
             assertTrue(matchSAXEx(ex));
         } finally {
             POIXMLTypeLoader.DEFAULT_XML_OPTIONS.setDisallowDocTypeDeclaration(originalFlag);
@@ -770,7 +847,7 @@ public final class TestPackage {
                 IOException.class,
                 () -> openXmlBombFile("poc-xmlbomb-empty.xlsx")
             );
-            assertTrue(ex.getMessage().contains("unable to parse shared strings table"));
+            assertContains(ex.getMessage(), "unable to parse shared strings table");
             assertTrue(matchSAXEx(ex));
         } finally {
             POIXMLTypeLoader.DEFAULT_XML_OPTIONS.setDisallowDocTypeDeclaration(originalFlag);
@@ -818,7 +895,7 @@ public final class TestPackage {
                 ZipSecureFile.setMinInflateRatio(min_ratio+0.002);
             })
         );
-        assertTrue(ex.getMessage().contains("You can adjust this limit via ZipSecureFile.setMinInflateRatio()"));
+        assertContains(ex.getMessage(), "You can adjust this limit via ZipSecureFile.setMinInflateRatio()");
     }
 
     @Test
@@ -831,7 +908,7 @@ public final class TestPackage {
                 ZipSecureFile.setMaxEntrySize(max_size-200);
             })
         );
-        assertTrue(ex.getMessage().contains("You can adjust this limit via ZipSecureFile.setMaxEntrySize()"));
+        assertContains(ex.getMessage(), "You can adjust this limit via ZipSecureFile.setMaxEntrySize()");
     }
 
     private void getZipStatsAndConsume(BiConsumer<Long,Double> ratioCon) throws IOException {

@@ -83,7 +83,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         }
 
         _rows = new ArrayList<>(_table.sizeOfTrArray());
-        for(CTTableRow row : _table.getTrList()) {
+        for(CTTableRow row : _table.getTrArray()) {
             _rows.add(new XSLFTableRow(row, this));
         }
         updateRowColIndexes();
@@ -182,6 +182,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
             row.addCell();
         }
         _rows.add(rowIdx, row);
+        updateRowColIndexes();
         return row;
     }
 
@@ -424,8 +425,10 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
                     continue;
                 }
                 Rectangle2D mergedBounds = tc.getAnchor();
-                for (int col2=col+1; col2<col+tc.getGridSpan(); col2++) {
-                    assert(col2 < cols);
+                if (col+tc.getGridSpan() > cols || row+tc.getRowSpan() > rows) {
+                    LOG.warn("table span past the table end - rendering result is probably wrong");
+                }
+                for (int col2=col+1; col2<Math.min(col+tc.getGridSpan(), cols); col2++) {
                     XSLFTableCell tc2 = getCell(row, col2);
                     if (tc2 == null) {
                         LOG.warn("unavailable table span - rendering result is probably wrong");
@@ -436,8 +439,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
                     }
                     mergedBounds.add(tc2.getAnchor());
                 }
-                for (int row2=row+1; row2<row+tc.getRowSpan(); row2++) {
-                    assert(row2 < rows);
+                for (int row2=row+1; row2<Math.min(row+tc.getRowSpan(), rows); row2++) {
                     XSLFTableCell tc2 = getCell(row2, col);
                     if (tc2 == null) {
                         LOG.warn("unavailable table span - rendering result is probably wrong");

@@ -65,8 +65,7 @@ public final class Switch implements FreeRefFunction {
 
 
                 final ValueEval evaluate = EqualEval.evaluate(new ValueEval[]{expression, value}, ec.getRowIndex(), ec.getColumnIndex());
-                if (evaluate instanceof BoolEval) {
-                    BoolEval boolEval = (BoolEval) evaluate;
+                if (evaluate instanceof BoolEval boolEval) {
                     final boolean booleanValue = boolEval.getBooleanValue();
                     if (booleanValue) {
                         return result;

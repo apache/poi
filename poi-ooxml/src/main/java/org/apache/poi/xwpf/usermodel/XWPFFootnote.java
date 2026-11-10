@@ -71,7 +71,7 @@ public class XWPFFootnote extends XWPFAbstractFootnoteEndnote {
         }
         CTR ctr = r.getCTR();
         boolean foundRef = false;
-        for (CTFtnEdnRef ref : ctr.getFootnoteReferenceList()) {
+        for (CTFtnEdnRef ref : ctr.getFootnoteReferenceArray()) {
             if (getId().equals(ref.getId())) {
                 foundRef = true;
                 break;

@@ -27,16 +27,21 @@ import java.io.IOException;
  * Used by Google's OSS-Fuzz for continuous security testing.
  */
 public class POIRleFuzzer {
-    public static void fuzzerInitialize() {
-    }
-
     public static void fuzzerTestOneInput(byte[] input) {
         try (RLEDecompressingInputStream rleStream =
                      new RLEDecompressingInputStream(new ByteArrayInputStream(input))) {
 
             byte[] buffer = new byte[1024];
-            while (rleStream.read(buffer) != -1) {
+            while (true) {
                 // Trigger decompression logic
+                int ret = rleStream.read(buffer);
+                if (ret == -1) {
+                    break;
+                }
+
+                if (ret < 0) {
+                    throw new RuntimeException("Invalid return value while reading from stream: " + ret);
+                }
             }
         } catch (IOException | IllegalArgumentException | IllegalStateException | IndexOutOfBoundsException e) {
             // Expected exceptions on malformed input

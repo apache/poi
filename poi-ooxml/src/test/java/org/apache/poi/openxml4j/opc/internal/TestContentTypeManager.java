@@ -19,9 +19,9 @@ package org.apache.poi.openxml4j.opc.internal;
 
 import static org.apache.poi.xssf.XSSFTestDataSamples.openSampleWorkbook;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -143,7 +143,7 @@ public final class TestContentTypeManager {
                 List<XSSFShape> shapes = drawingOld.getShapes();
 
                 for (XSSFShape shape : shapes) {
-                    assertTrue(shape instanceof XSSFPicture);
+                    assertInstanceOf(XSSFPicture.class, shape);
                     XSSFPicture pic = (XSSFPicture)shape;
                     XSSFPictureData picData = pic.getPictureData();
                     int pictureIndex = targetWB.addPicture(picData.getData(), picData.getPictureType());

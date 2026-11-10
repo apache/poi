@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
@@ -32,7 +33,16 @@ import org.apache.poi.util.LittleEndian;
  */
 public abstract class AbstractEscherOptRecord extends EscherRecord {
     // arbitrary limit, can be adjusted if it turns out to be too low
-    private static final int MAX_PROPERTY_SIZE = 1_000_000;
+    private static final int DEFAULT_MAX_PROPERTY_SIZE = 1_000_000;
+    private static int MAX_PROPERTY_SIZE = DEFAULT_MAX_PROPERTY_SIZE;
+
+    public static void setMaxPropertySize(int maxPropertySize) {
+        MAX_PROPERTY_SIZE = maxPropertySize;
+    }
+
+    public static int getMaxPropertySize() {
+        return MAX_PROPERTY_SIZE;
+    }
 
     private final List<EscherProperty> properties = new ArrayList<>();
 
@@ -90,10 +100,10 @@ public abstract class AbstractEscherOptRecord extends EscherRecord {
         int totalSize = 0;
         for ( EscherProperty property : properties ) {
             int propertySize = property.getPropertySize();
-            IOUtils.safelyAllocateCheck(propertySize, MAX_PROPERTY_SIZE);
             totalSize += propertySize;
         }
-
+        ArrayUtil.safelyAllocateCheck(totalSize, MAX_PROPERTY_SIZE,
+                "AbstractEscherOptRecord.setMaxPropertySize()");
         return totalSize;
     }
 

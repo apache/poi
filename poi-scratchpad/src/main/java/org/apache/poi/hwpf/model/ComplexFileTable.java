@@ -55,7 +55,8 @@ public class ComplexFileTable {
             offset++;
             int size = LittleEndian.getShort(tableStream, offset);
             offset += LittleEndianConsts.SHORT_SIZE;
-            byte[] bs = IOUtils.safelyClone(tableStream, offset, size, HWPFDocument.getMaxRecordLength());
+            byte[] bs = IOUtils.safelyClone(tableStream, offset, size, HWPFDocument.getMaxRecordLength(),
+                    "HWPFDocument.setMaxRecordLength()");
             offset += size;
 
             SprmBuffer sprmBuffer = new SprmBuffer(bs, false, 0);

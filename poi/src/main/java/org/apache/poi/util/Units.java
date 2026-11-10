@@ -19,6 +19,9 @@ package org.apache.poi.util;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 
+import static org.apache.poi.util.MathUtil.safeDoubleToInt;
+import static org.apache.poi.util.MathUtil.safeFloatToInt;
+
 public class Units {
     /**
      * In Escher absolute distances are specified in
@@ -68,7 +71,7 @@ public class Units {
      * One character is defined as the widest value for the integers 0-9 in the
      * default font.
      */
-    public static final int EMU_PER_CHARACTER = (int) (EMU_PER_PIXEL * DEFAULT_CHARACTER_WIDTH);
+    public static final int EMU_PER_CHARACTER = safeFloatToInt(EMU_PER_PIXEL * DEFAULT_CHARACTER_WIDTH);
 
     /**
      * Converts points to EMUs
@@ -76,7 +79,7 @@ public class Units {
      * @return EMUs
      */
     public static int toEMU(double points){
-        return (int)Math.rint(EMU_PER_POINT*points);
+        return safeDoubleToInt(Math.rint(EMU_PER_POINT*points));
     }
 
     /**
@@ -85,7 +88,7 @@ public class Units {
      * @return EMUs
      */
     public static int pixelToEMU(int pixels) {
-        return pixels*EMU_PER_PIXEL;
+        return Math.multiplyExact(pixels, EMU_PER_PIXEL);
     }
 
     /**
@@ -122,8 +125,8 @@ public class Units {
     public static int doubleToFixedPoint(double floatPoint) {
         double fractionalPart = floatPoint % 1d;
         double integralPart = floatPoint - fractionalPart;
-        int i = (int)Math.floor(integralPart);
-        int f = (int)Math.rint(fractionalPart*65536d);
+        int i = safeDoubleToInt(Math.floor(integralPart));
+        int f = safeDoubleToInt(Math.rint(fractionalPart*65536d));
         return (i << 16) | (f & 0xFFFF);
     }
 
@@ -137,13 +140,13 @@ public class Units {
     public static int pointsToMaster(double points) {
         points *= MASTER_DPI;
         points /= POINT_DPI;
-        return (int)Math.rint(points);
+        return safeDoubleToInt(Math.rint(points));
     }
 
     public static int pointsToPixel(double points) {
         points *= PIXEL_DPI;
         points /= POINT_DPI;
-        return (int)Math.rint(points);
+        return safeDoubleToInt(Math.rint(points));
     }
 
     public static double pixelToPoints(double pixel) {
@@ -182,7 +185,7 @@ public class Units {
     }
 
     public static int charactersToEMU(double characters) {
-        return (int) characters * EMU_PER_CHARACTER;
+        return MathUtil.safeDoubleToInt(characters * EMU_PER_CHARACTER);
     }
 
     /**

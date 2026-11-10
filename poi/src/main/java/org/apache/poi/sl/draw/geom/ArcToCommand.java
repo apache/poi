@@ -140,32 +140,29 @@ public class ArcToCommand implements ArcToCommandIf {
         // because of tangens nature, the values left [90°-270°] and right [270°-90°] of the axis are mirrored/the same
         // and the result of atan2 need to be justified
         switch ((int)(awtAngle2 / 90)) {
-            case -3:
+            case -3 -> {
                 // -270 to -360
                 awtAngle3 -= 360;
                 awtAngle2 += 360;
-                break;
-            case -2:
-            case -1:
+            }
+            case -2, -1 -> {
                 // -90 to -270
                 awtAngle3 -= 180;
                 awtAngle2 += 180;
-                break;
-            default:
-            case 0:
-                // -90 to 90
-                break;
-            case 2:
-            case 1:
+            }
+            case 2, 1 -> {
                 // 90 to 270
                 awtAngle3 += 180;
                 awtAngle2 -= 180;
-                break;
-            case 3:
+            }
+            case 3 -> {
                 // 270 to 360
                 awtAngle3 += 360;
                 awtAngle2 -= 360;
-                break;
+            }
+            default -> {
+                // -90 to 90
+            }
         }
 
         // skew
@@ -177,8 +174,7 @@ public class ArcToCommand implements ArcToCommandIf {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ArcToCommand)) return false;
-        ArcToCommand that = (ArcToCommand) o;
+        if (!(o instanceof ArcToCommand that)) return false;
         return Objects.equals(wr, that.wr) &&
                 Objects.equals(hr, that.hr) &&
                 Objects.equals(stAng, that.stAng) &&

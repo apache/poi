@@ -19,7 +19,7 @@ import java.util.regex.Pattern
 
 sourceSets {
     main {
-        output.dir(JAVA9_OUT, builtBy: 'compileJava9')
+        output.dir(JPMS_OUT, builtBy: 'compileModuleInfo')
     }
 }
 
@@ -47,31 +47,15 @@ final String MODULE_NAME = 'org.apache.poi.examples'
 final Pattern MODULE_REGEX = ~'\\.jar$'
 final List MODULE_COMPILE_PATH = sourceSets.main.compileClasspath.findAll{ it.path =~ MODULE_REGEX }.collect{ it.parent }.unique()
 
-tasks.register('compileJava9', JavaCompile) {
-    dependsOn 'compileJava', ':poi-ooxml:jar', ':poi-scratchpad:jar'
-
-    javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
-    }
-    sourceCompatibility = 11
-    targetCompatibility = 11
-    destinationDirectory = file(JAVA9_OUT + VERSIONS9)
-    source = file(JAVA9_SRC)
-    classpath = files()
-    options.compilerArgs = [
-            '--patch-module', "${MODULE_NAME}=${sourceSets.main.output.classesDirs.asPath}",
-            '--module-path', files(MODULE_COMPILE_PATH).asPath
-    ]
-}
+registerModuleInfoCompile(name: 'compileModuleInfo', dependsOn: ['compileJava', ':poi-ooxml:jar', ':poi-scratchpad:jar'],
+    src: JPMS_SRC, out: JPMS_OUT, module: MODULE_NAME,
+    patch: sourceSets.main.output.classesDirs,
+    modulePath: MODULE_COMPILE_PATH)
 
 jar {
-    dependsOn compileJava9
+    dependsOn compileModuleInfo
 
     destinationDirectory = file("../build/dist/maven/${base.archivesName.get()}")
-
-    manifest {
-        attributes('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')
-    }
 }
 
 javadocJar {
@@ -86,23 +70,4 @@ sourcesJar {
         from("$projectDir/../legal/LICENSE")
         from("$projectDir/../legal/NOTICE")
     }
-}
-
-cyclonedxBom {
-    // includeConfigs is the list of configuration names to include when generating the BOM (leave empty to include every configuration)
-    includeConfigs = ["runtimeClasspath"]
-    // skipConfigs is a list of configuration names to exclude when generating the BOM
-    //skipConfigs = ["compileClasspath", "testCompileClasspath"]
-    // Specified the type of project being built. Defaults to 'library'
-    projectType = "library"
-    // Specified the version of the CycloneDX specification to use. Defaults to 1.4.
-    schemaVersion = "1.4"
-    // Boms destination directory (defaults to build/reports)
-    destination = file("build/reports")
-    // The file name for the generated BOMs (before the file format suffix). Defaults to 'bom'
-    outputName = "poi-examples-${project.version}.bom"
-    // The file format generated, can be xml, json or all for generating both
-    outputFormat = "all"
-    // Exclude BOM Serial Number
-    includeBomSerialNumber = true
 }

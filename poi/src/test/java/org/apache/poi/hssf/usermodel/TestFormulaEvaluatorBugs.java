@@ -469,6 +469,9 @@ final class TestFormulaEvaluatorBugs {
         cell = row.createCell(7);
         cell.setCellFormula("IF(MID(A1,1,2)<>\"\",\"A\",\"B\")");//if(func_expr,val,val)
 
+        cell = row.createCell(8);
+        cell.setCellFormula("IF(ISBLANK(A1),\"blank\",CONCATENATE(A1,\" - %s.\"))");// the formula from bug 55747
+
         // And some MID ones just to check
         row = ws.createRow(1);
         cell = row.createCell(1);
@@ -505,32 +508,37 @@ final class TestFormulaEvaluatorBugs {
         cell = row.getCell(CellReference.convertColStringToIndex("H"));
         assertRefPtgA1('V', getPtgs(cell), 0);
 
+        // I1, A1 is passed to ISBLANK and CONCATENATE, both of which expect values, so V both times
+        cell = row.getCell(CellReference.convertColStringToIndex("I"));
+        assertRefPtgA1('V', getPtgs(cell), 0);
+        assertRefPtgA1('V', getPtgs(cell), 5);
+
         // E1, MID is used in the FALSE route, so:
         //  A1 should be V in the IF check
-        //  A1 should be R in the FALSE route
+        //  A1 should be V in the FALSE route as well - MID expects a value
         cell = row.getCell(CellReference.convertColStringToIndex("E"));
         assertRefPtgA1('V', getPtgs(cell), 0);
-        assertRefPtgA1('R', getPtgs(cell), 6);
+        assertRefPtgA1('V', getPtgs(cell), 6);
 
         // Check that, for B1, D1, F1 and G1, the references to A1
         //  from all of IF check, True and False are V
         cell = row.getCell(CellReference.convertColStringToIndex("B"));
         assertRefPtgA1('V', getPtgs(cell), 0);
-//      assertRefPtgA1('V', getPtgs(cell), 4); // FIXME!
+        assertRefPtgA1('V', getPtgs(cell), 4);
 
         cell = row.getCell(CellReference.convertColStringToIndex("D"));
         assertRefPtgA1('V', getPtgs(cell), 0);
-//      assertRefPtgA1('V', getPtgs(cell), 6); // FIXME!
+        assertRefPtgA1('V', getPtgs(cell), 6);
 
         cell = row.getCell(CellReference.convertColStringToIndex("F"));
         assertRefPtgA1('V', getPtgs(cell), 0);
-//      assertRefPtgA1('V', getPtgs(cell), 4); // FIXME!
-//      assertRefPtgA1('V', getPtgs(cell), 9); // FIXME!
+        assertRefPtgA1('V', getPtgs(cell), 4);
+        assertRefPtgA1('V', getPtgs(cell), 9);
 
         cell = row.getCell(CellReference.convertColStringToIndex("G"));
         assertRefPtgA1('V', getPtgs(cell), 0);
-//      assertRefPtgA1('V', getPtgs(cell), 4); // FIXME!
-//      assertRefPtgA1('V', getPtgs(cell), 9); // FIXME!
+        assertRefPtgA1('V', getPtgs(cell), 4);
+        assertRefPtgA1('V', getPtgs(cell), 9);
 
 
         // Check our cached values were correctly evaluated
@@ -550,6 +558,8 @@ final class TestFormulaEvaluatorBugs {
         assertEquals("ab", cell.getStringCellValue());
         cell = row.getCell(CellReference.convertColStringToIndex("H"));
         assertEquals("A", cell.getStringCellValue());
+        cell = row.getCell(CellReference.convertColStringToIndex("I"));
+        assertEquals("abc - %s.", cell.getStringCellValue());
 
         // Enable this to write out + check in Excel
         if (OUTPUT_TEST_FILES) {

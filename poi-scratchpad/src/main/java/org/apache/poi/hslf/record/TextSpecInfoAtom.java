@@ -72,7 +72,8 @@ public final class TextSpecInfoAtom extends RecordAtom {
         _header = Arrays.copyOfRange(source, start, start+8);
 
         // Get the record data.
-        _data = IOUtils.safelyClone(source, start+8, len-8, getMaxRecordLength());
+        _data = IOUtils.safelyClone(source, start+8, len-8, RecordAtom.getMaxRecordLength(),
+                "RecordAtom.setMaxRecordLength()");
     }
     /**
      * Gets the record type.
@@ -124,9 +125,14 @@ public final class TextSpecInfoAtom extends RecordAtom {
     /**
      * Adapts the size by enlarging the last {@link TextSpecInfoRun}
      * or chopping the runs to the given length
+     *
+     * @param size the new length, which must be positive
+     * @throws IllegalArgumentException if {@code size} isn't positive
      */
     public void setParentSize(int size) {
-        assert(size > 0);
+        if (size <= 0) {
+            throw new IllegalArgumentException("Size must be positive, but was " + size);
+        }
 
         try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             TextSpecInfoRun[] runs = getTextSpecInfoRuns();

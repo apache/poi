@@ -60,16 +60,16 @@ public class XSLFPath implements PathIf {
             for (boolean hasNext = cur.toFirstChild(); hasNext; hasNext = cur.toNextSibling()) {
                 XmlObject xo = cur.getObject();
                 PathCommand pc;
-                if (xo instanceof CTPath2DArcTo) {
-                    pc = new XSLFArcTo((CTPath2DArcTo) xo);
-                } else if (xo instanceof CTPath2DCubicBezierTo) {
-                    pc = new XSLFCurveTo((CTPath2DCubicBezierTo) xo);
-                } else if (xo instanceof CTPath2DMoveTo) {
-                    pc = new XSLFMoveTo((CTPath2DMoveTo) xo);
-                } else if (xo instanceof CTPath2DLineTo) {
-                    pc = new XSLFLineTo((CTPath2DLineTo) xo);
-                } else if (xo instanceof CTPath2DQuadBezierTo) {
-                    pc = new XSLFQuadTo((CTPath2DQuadBezierTo) xo);
+                if (xo instanceof CTPath2DArcTo arcTo) {
+                    pc = new XSLFArcTo(arcTo);
+                } else if (xo instanceof CTPath2DCubicBezierTo cubicBezierTo) {
+                    pc = new XSLFCurveTo(cubicBezierTo);
+                } else if (xo instanceof CTPath2DMoveTo moveTo) {
+                    pc = new XSLFMoveTo(moveTo);
+                } else if (xo instanceof CTPath2DLineTo lineTo) {
+                    pc = new XSLFLineTo(lineTo);
+                } else if (xo instanceof CTPath2DQuadBezierTo quadBezierTo) {
+                    pc = new XSLFQuadTo(quadBezierTo);
                 } else if (xo instanceof CTPath2DClose) {
                     pc = new ClosePathCommand();
                 } else {
@@ -98,47 +98,26 @@ public class XSLFPath implements PathIf {
 
     @Override
     public PaintStyle.PaintModifier getFill() {
-        switch (pathXml.getFill().intValue()) {
-            default:
-            case STPathFillMode.INT_NONE:
-                return PaintStyle.PaintModifier.NONE;
-            case STPathFillMode.INT_NORM:
-                return PaintStyle.PaintModifier.NORM;
-            case STPathFillMode.INT_LIGHTEN:
-                return PaintStyle.PaintModifier.LIGHTEN;
-            case STPathFillMode.INT_LIGHTEN_LESS:
-                return PaintStyle.PaintModifier.LIGHTEN_LESS;
-            case STPathFillMode.INT_DARKEN:
-                return PaintStyle.PaintModifier.DARKEN;
-            case STPathFillMode.INT_DARKEN_LESS:
-                return PaintStyle.PaintModifier.DARKEN_LESS;
-        }
+        return switch (pathXml.getFill().intValue()) {
+            case STPathFillMode.INT_NORM -> PaintStyle.PaintModifier.NORM;
+            case STPathFillMode.INT_LIGHTEN -> PaintStyle.PaintModifier.LIGHTEN;
+            case STPathFillMode.INT_LIGHTEN_LESS -> PaintStyle.PaintModifier.LIGHTEN_LESS;
+            case STPathFillMode.INT_DARKEN -> PaintStyle.PaintModifier.DARKEN;
+            case STPathFillMode.INT_DARKEN_LESS -> PaintStyle.PaintModifier.DARKEN_LESS;
+            default -> PaintStyle.PaintModifier.NONE;
+        };
     }
 
     @Override
     public void setFill(PaintStyle.PaintModifier fill) {
-        STPathFillMode.Enum f;
-        switch (fill) {
-            default:
-            case NONE:
-                f = STPathFillMode.NONE;
-                break;
-            case NORM:
-                f = STPathFillMode.NORM;
-                break;
-            case LIGHTEN:
-                f = STPathFillMode.LIGHTEN;
-                break;
-            case LIGHTEN_LESS:
-                f = STPathFillMode.LIGHTEN_LESS;
-                break;
-            case DARKEN:
-                f = STPathFillMode.DARKEN;
-                break;
-            case DARKEN_LESS:
-                f = STPathFillMode.DARKEN_LESS;
-                break;
-        }
+        STPathFillMode.Enum f = switch (fill) {
+            case NORM -> STPathFillMode.NORM;
+            case LIGHTEN -> STPathFillMode.LIGHTEN;
+            case LIGHTEN_LESS -> STPathFillMode.LIGHTEN_LESS;
+            case DARKEN -> STPathFillMode.DARKEN;
+            case DARKEN_LESS -> STPathFillMode.DARKEN_LESS;
+            default -> STPathFillMode.NONE;
+        };
         pathXml.setFill(f);
     }
 

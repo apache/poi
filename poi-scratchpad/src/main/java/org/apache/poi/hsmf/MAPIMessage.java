@@ -25,8 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
@@ -52,6 +50,7 @@ import org.apache.poi.hsmf.parsers.POIFSChunkParser;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.CodePageUtil;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.StringUtil;
 
@@ -85,9 +84,6 @@ public class MAPIMessage extends POIReadOnlyDocument {
      * For logging problems we spot with the file
      */
     private static final Logger LOG = PoiLogManager.getLogger(MAPIMessage.class);
-
-    private static final Pattern GUESS_7_BIT_ENCODING_PATTERN = Pattern.compile("content-type:.*?charset=[\"']?([^;'\"]+)[\"']?", Pattern.CASE_INSENSITIVE);
-
 
     private Chunks mainChunks;
     private NameIdChunks nameIdChunks;
@@ -153,7 +149,17 @@ public class MAPIMessage extends POIReadOnlyDocument {
      *                          input format
      */
     public MAPIMessage(POIFSFileSystem fs) throws IOException {
-        this(fs.getRoot());
+        super(fs.getRoot());
+
+        // this instance takes ownership of fs - close() closes it via the directory - so
+        // close it here too if parsing fails, otherwise the file handle behind a
+        // MAPIMessage(File) or MAPIMessage(String) would leak on a malformed message
+        try {
+            parseChunks(fs.getRoot());
+        } catch (IOException | RuntimeException e) {
+            IOUtils.closeQuietly(fs);
+            throw e;
+        }
     }
 
     /**
@@ -167,7 +173,18 @@ public class MAPIMessage extends POIReadOnlyDocument {
      */
     public MAPIMessage(DirectoryNode poifsDir) throws IOException {
         super(poifsDir);
+        parseChunks(poifsDir);
+    }
 
+    /**
+     * Reads the chunks out of the given directory and populates this message.
+     *
+     * <p>Split out of {@link #MAPIMessage(DirectoryNode)} so that
+     * {@link #MAPIMessage(POIFSFileSystem)} can close the filesystem it owns if parsing
+     * fails. Note that the {@link DirectoryNode} constructor deliberately does not do
+     * that - it is used for messages embedded in a filesystem owned by someone else.</p>
+     */
+    private void parseChunks(DirectoryNode poifsDir) throws IOException {
         // Grab all the chunks
         ChunkGroup[] chunkGroups = POIFSChunkParser.parse(poifsDir);
 
@@ -176,17 +193,17 @@ public class MAPIMessage extends POIReadOnlyDocument {
         ArrayList<RecipientChunks> recipients = new ArrayList<>();
         for (ChunkGroup group : chunkGroups) {
             // Should only ever be one of each of these
-            if (group instanceof Chunks) {
-                mainChunks = (Chunks) group;
-            } else if (group instanceof NameIdChunks) {
-                nameIdChunks = (NameIdChunks) group;
-            } else if (group instanceof RecipientChunks) {
-                recipients.add((RecipientChunks) group);
+            if (group instanceof Chunks chunks) {
+                mainChunks = chunks;
+            } else if (group instanceof NameIdChunks idChunks) {
+                nameIdChunks = idChunks;
+            } else if (group instanceof RecipientChunks rc) {
+                recipients.add(rc);
             }
 
             // Can be multiple of these - add to list(s)
-            if (group instanceof AttachmentChunks) {
-                attachments.add((AttachmentChunks) group);
+            if (group instanceof AttachmentChunks ac) {
+                attachments.add(ac);
             }
         }
         attachmentChunks = attachments.toArray(new AttachmentChunks[0]);
@@ -475,12 +492,12 @@ public class MAPIMessage extends POIReadOnlyDocument {
         if (generalcodepage == null) {
             try {
                 String[] headers = getHeaders();
-                if (headers != null && headers.length > 0) {
+                if (headers != null) {
                     for (String header : headers) {
                         if (header.toLowerCase(LocaleUtil.getUserLocale()).startsWith("content-type")) {
-                            Matcher m = GUESS_7_BIT_ENCODING_PATTERN.matcher(header);
-                            if (m.matches()) {
-                                generalcodepage = m.group(1);
+                            String charset = getCharsetFromContentType(header);
+                            if (charset != null) {
+                                generalcodepage = charset;
                             }
                         }
                     }
@@ -498,7 +515,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
             try {
                 String encoding = CodePageUtil.codepageToEncoding(codepage, true);
                 htmlbodycodepage = encoding;
-                if (!encoding.equalsIgnoreCase("utf-8")) {
+                if (!StringUtil.equalsIgnoreCase(encoding, "utf-8")) {
                     bodycodepage = encoding;
                 }
             } catch (UnsupportedEncodingException e) {
@@ -528,32 +545,32 @@ public class MAPIMessage extends POIReadOnlyDocument {
 
     public void set7BitEncoding(String generalcharset, String htmlbodycharset, String bodycharset) {
         for (Chunk c : mainChunks.getChunks()) {
-            if (c instanceof StringChunk) {
+            if (c instanceof StringChunk stringChunk) {
                 if (c.getChunkId() == MAPIProperty.BODY_HTML.id) {
                     if (htmlbodycharset != null) {
-                        ((StringChunk) c).set7BitEncoding(htmlbodycharset);
+                        stringChunk.set7BitEncoding(htmlbodycharset);
                     }
                 } else if (c.getChunkId() == MAPIProperty.BODY.id) {
                     if (bodycharset != null) {
-                        ((StringChunk) c).set7BitEncoding(bodycharset);
+                        stringChunk.set7BitEncoding(bodycharset);
                     }
                 } else if (generalcharset != null) {
-                    ((StringChunk) c).set7BitEncoding(generalcharset);
+                    stringChunk.set7BitEncoding(generalcharset);
                 }
             }
         }
         if (generalcharset != null) {
             if (nameIdChunks != null) {
                 for (Chunk c : nameIdChunks.getChunks()) {
-                    if (c instanceof StringChunk) {
-                        ((StringChunk) c).set7BitEncoding(generalcharset);
+                    if (c instanceof StringChunk stringChunk) {
+                        stringChunk.set7BitEncoding(generalcharset);
                     }
                 }
             }
             for (RecipientChunks rc : recipientChunks) {
                 for (Chunk c : rc.getAll()) {
-                    if (c instanceof StringChunk) {
-                        ((StringChunk) c).set7BitEncoding(generalcharset);
+                    if (c instanceof StringChunk stringChunk) {
+                        stringChunk.set7BitEncoding(generalcharset);
                     }
                 }
             }
@@ -630,17 +647,17 @@ public class MAPIMessage extends POIReadOnlyDocument {
         String mc = getStringFromChunk(mainChunks.getMessageClass());
         if (StringUtil.isBlank(mc)) {
             return MESSAGE_CLASS.UNSPECIFIED;
-        } else if (mc.equalsIgnoreCase("IPM.Note")) {
+        } else if (StringUtil.equalsIgnoreCase(mc, "IPM.Note")) {
             return MESSAGE_CLASS.NOTE;
-        } else if (mc.equalsIgnoreCase("IPM.Contact")) {
+        } else if (StringUtil.equalsIgnoreCase(mc, "IPM.Contact")) {
             return MESSAGE_CLASS.CONTACT;
-        } else if (mc.equalsIgnoreCase("IPM.Appointment")) {
+        } else if (StringUtil.equalsIgnoreCase(mc, "IPM.Appointment")) {
             return MESSAGE_CLASS.APPOINTMENT;
-        } else if (mc.equalsIgnoreCase("IPM.StickyNote")) {
+        } else if (StringUtil.equalsIgnoreCase(mc, "IPM.StickyNote")) {
             return MESSAGE_CLASS.STICKY_NOTE;
-        } else if (mc.equalsIgnoreCase("IPM.Task")) {
+        } else if (StringUtil.equalsIgnoreCase(mc, "IPM.Task")) {
             return MESSAGE_CLASS.TASK;
-        } else if (mc.equalsIgnoreCase("IPM.Post")) {
+        } else if (StringUtil.equalsIgnoreCase(mc, "IPM.Post")) {
             return MESSAGE_CLASS.POST;
         } else {
             LOG.atWarn().log("I don't recognize message class '{}'. Please open an issue on POI's bugzilla", mc);
@@ -724,6 +741,70 @@ public class MAPIMessage extends POIReadOnlyDocument {
      */
     public void setReturnNullOnMissingChunk(boolean returnNullOnMissingChunk) {
         this.returnNullOnMissingChunk = returnNullOnMissingChunk;
+    }
+
+    /**
+     * Extracts the charset from a content type header, matching it the same way as
+     * the regular expression {@code content-type:.*?charset=["']?([^;'"]+)["']?}
+     * (ASCII case-insensitive, whole header), which this replaces because it
+     * backtracks quadratically on headers with many {@code charset=} parts.
+     *
+     * @return the charset (group 1 of the expression), or {@code null} if it doesn't match
+     */
+    static String getCharsetFromContentType(String header) {
+        if (!startsWithIgnoreAsciiCase(header, 0, "content-type:")) {
+            return null;
+        }
+        final int len = header.length();
+        // the charset value runs to the end, less an optional closing quote,
+        // and must not contain ';' or a quote
+        final int end = len > 0 && isQuote(header.charAt(len - 1)) ? len - 1 : len;
+        int lastInvalid = -1;
+        for (int i = end - 1; i >= 0; i--) {
+            final char c = header.charAt(i);
+            if (c == ';' || isQuote(c)) {
+                lastInvalid = i;
+                break;
+            }
+        }
+        // ".*?" picks the first "charset=" on the first line whose value is valid
+        for (int i = 13; i < len && !isLineTerminator(header.charAt(i)); i++) {
+            if (startsWithIgnoreAsciiCase(header, i, "charset=")) {
+                int start = i + 8;
+                if (start < len && isQuote(header.charAt(start))) {
+                    start++;
+                }
+                if (start < end && start > lastInvalid) {
+                    return header.substring(start, end);
+                }
+            }
+        }
+        return null;
+    }
+
+    private static boolean startsWithIgnoreAsciiCase(String str, int offset, String lowerCasePrefix) {
+        if (offset + lowerCasePrefix.length() > str.length()) {
+            return false;
+        }
+        for (int i = 0; i < lowerCasePrefix.length(); i++) {
+            char c = str.charAt(offset + i);
+            if (c >= 'A' && c <= 'Z') {
+                c += 'a' - 'A';
+            }
+            if (c != lowerCasePrefix.charAt(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean isQuote(char c) {
+        return c == '"' || c == '\'';
+    }
+
+    /** the characters {@code .} does not match in a regular expression */
+    private static boolean isLineTerminator(char c) {
+        return c == '\n' || c == '\r' || c == '\u0085' || c == '\u2028' || c == '\u2029';
     }
 
 

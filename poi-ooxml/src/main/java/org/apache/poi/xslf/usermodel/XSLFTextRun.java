@@ -36,6 +36,7 @@ import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.model.CharacterPropertyFetcher;
 import org.apache.poi.xslf.model.CharacterPropertyFetcher.CharPropFetcher;
@@ -80,8 +81,8 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
 
     @Override
     public String getRawText(){
-        if (_r instanceof CTTextField) {
-            return ((CTTextField)_r).getT();
+        if (_r instanceof CTTextField tf) {
+            return tf.getT();
         } else if (_r instanceof CTTextLineBreak) {
             return "\n";
         }
@@ -90,8 +91,8 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
 
     @Override
     public void setText(String text){
-        if (_r instanceof CTTextField) {
-            ((CTTextField)_r).setT(text);
+        if (_r instanceof CTTextField tf) {
+            tf.setT(text);
         } else if (!(_r instanceof CTTextLineBreak)) {
             ((CTRegularTextRun)_r).setT(text);
         }
@@ -116,11 +117,10 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
 
     @Override
     public void setFontColor(PaintStyle color) {
-        if (!(color instanceof SolidPaint)) {
+        if (!(color instanceof SolidPaint sp)) {
             LOG.atWarn().log("Currently only SolidPaint is supported!");
             return;
         }
-        SolidPaint sp = (SolidPaint)color;
         Color c = DrawPaint.applyColorTransform(sp.getSolidColor());
 
         CTTextCharacterProperties rPr = getRPr(true);
@@ -189,14 +189,15 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
             return;
         }
 
-        final CTSRgbColor rgbCol = col.getSrgbClr();
-        if (rgbCol == null) {
+        XSLFSheet sheet = shape.getSheet();
+        XSLFTheme theme = sheet.getTheme();
+        XSLFColor xslfCol = new XSLFColor(col, theme, null, sheet);
+        Color javaCol = xslfCol.getColor();
+        if (javaCol == null) {
             return;
         }
 
-        final byte[] cols = rgbCol.getVal();
-        final SolidPaint paint = DrawPaint.createSolidPaint(new Color(0xFF & cols[0], 0xFF & cols[1], 0xFF & cols[2]));
-        highlightColor.accept(paint);
+        highlightColor.accept(DrawPaint.createSolidPaint(javaCol));
     }
 
     /**
@@ -229,11 +230,10 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
             return;
         }
 
-        if (!(color instanceof SolidPaint)) {
+        if (!(color instanceof SolidPaint sp)) {
             throw new IllegalArgumentException("Currently only SolidPaint is supported!");
         }
 
-        final SolidPaint sp = (SolidPaint)color;
         final Color c = DrawPaint.applyColorTransform(sp.getSolidColor());
 
         final CTTextCharacterProperties rPr = getRPr(true);
@@ -258,7 +258,7 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
                 throw new IllegalArgumentException("Minimum font size is 1pt but was " + fontSize);
             }
 
-            rPr.setSz((int)(100*fontSize));
+            rPr.setSz(MathUtil.safeDoubleToInt(100*fontSize));
         }
     }
 
@@ -315,7 +315,7 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
                 rPr.unsetSpc();
             }
         } else {
-            rPr.setSpc((int)(100*spc));
+            rPr.setSpc(MathUtil.safeDoubleToInt(100*spc));
         }
     }
 
@@ -401,7 +401,7 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
      */
     @SuppressWarnings("WeakerAccess")
     public void setBaselineOffset(double baselineOffset){
-       getRPr(true).setBaseline((int) baselineOffset * 1000);
+       getRPr(true).setBaseline(MathUtil.safeDoubleToInt(baselineOffset * 1000));
     }
 
     /**
@@ -503,15 +503,13 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
      */
     @Internal
     public CTTextCharacterProperties getRPr(boolean create) {
-        if (_r instanceof CTTextField) {
-            CTTextField tf = (CTTextField)_r;
+        if (_r instanceof CTTextField tf) {
             if (tf.isSetRPr()) {
                 return tf.getRPr();
             } else if (create) {
                 return tf.addNewRPr();
             }
-        } else if (_r instanceof CTTextLineBreak) {
-            CTTextLineBreak tlb = (CTTextLineBreak)_r;
+        } else if (_r instanceof CTTextLineBreak tlb) {
             if (tlb.isSetRPr()) {
                 return tlb.getRPr();
             } else if (create) {
@@ -615,8 +613,7 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
 
     @Override
     public FieldType getFieldType() {
-        if (_r instanceof CTTextField) {
-            CTTextField tf = (CTTextField)_r;
+        if (_r instanceof CTTextField tf) {
             if ("slidenum".equals(tf.getType())) {
                 return FieldType.SLIDE_NUMBER;
             }
@@ -673,12 +670,6 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
             }
             FontGroup fg = FontGroup.getFontGroupFirst(getRawText());
             switch (fg) {
-            default:
-            case LATIN:
-                if (props.isSetLatin()) {
-                    props.unsetLatin();
-                }
-                break;
             case EAST_ASIAN:
                 if (props.isSetEa()) {
                     props.unsetEa();
@@ -692,6 +683,12 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
             case SYMBOL:
                 if (props.isSetSym()) {
                     props.unsetSym();
+                }
+                break;
+            case LATIN:
+            default:
+                if (props.isSetLatin()) {
+                    props.unsetLatin();
                 }
                 break;
             }
@@ -776,13 +773,6 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
 
             CTTextFont font;
             switch (fontGroup) {
-            default:
-            case LATIN:
-                font = props.getLatin();
-                if (font == null && create) {
-                    font = props.addNewLatin();
-                }
-                break;
             case EAST_ASIAN:
                 font = props.getEa();
                 if (font == null && create) {
@@ -799,6 +789,13 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
                 font = props.getSym();
                 if (font == null && create) {
                     font = props.addNewSym();
+                }
+                break;
+            case LATIN:
+            default:
+                font = props.getLatin();
+                if (font == null && create) {
+                    font = props.addNewLatin();
                 }
                 break;
             }

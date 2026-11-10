@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.io.output.NullPrintStream;
-import org.apache.poi.fuzz.POIFuzzer;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.poi.examples.xssf.eventusermodel.XLSX2CSV;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -42,10 +42,16 @@ public class XLSX2CSVFuzzer {
 			XLSX2CSV xlsx2csv = new XLSX2CSV(p, NullPrintStream.INSTANCE, 5);
 			xlsx2csv.process();
 		} catch (IOException | OpenXML4JException | SAXException |
-				 POIXMLException | RecordFormatException |
-				 IllegalStateException | IllegalArgumentException |
-				 IndexOutOfBoundsException | OpenXML4JRuntimeException e) {
+		         POIXMLException | RecordFormatException |
+		         IllegalStateException | IllegalArgumentException |
+		         IndexOutOfBoundsException | OpenXML4JRuntimeException |
+		         ArithmeticException e) {
 			// expected here
+        } catch (NullPointerException e) {
+            // can be removed when commons-compress is > 1.28.0 and changes from COMPRESS-598 are applied
+            if (!ExceptionUtils.getStackTrace(e).contains("org.apache.commons.compress.archivers.zip.ZipArchiveInputStream.read")) {
+                throw e;
+            }
 		}
 	}
 }

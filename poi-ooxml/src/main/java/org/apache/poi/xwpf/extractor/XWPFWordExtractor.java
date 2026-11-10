@@ -17,8 +17,6 @@
 package org.apache.poi.xwpf.extractor;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.ooxml.extractor.POIXMLTextExtractor;
@@ -45,13 +43,11 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
  * Helper class to extract text from an OOXML Word file
  */
 public class XWPFWordExtractor implements POIXMLTextExtractor {
-    public static final List<XWPFRelation> SUPPORTED_TYPES = Collections.unmodifiableList(
-            Arrays.asList(
-                    XWPFRelation.DOCUMENT,
-                    XWPFRelation.TEMPLATE,
-                    XWPFRelation.MACRO_DOCUMENT,
-                    XWPFRelation.MACRO_TEMPLATE_DOCUMENT
-            )
+    public static final List<XWPFRelation> SUPPORTED_TYPES = List.of(
+            XWPFRelation.DOCUMENT,
+            XWPFRelation.TEMPLATE,
+            XWPFRelation.MACRO_DOCUMENT,
+            XWPFRelation.MACRO_TEMPLATE_DOCUMENT
     );
 
     private final XWPFDocument document;
@@ -104,12 +100,12 @@ public class XWPFWordExtractor implements POIXMLTextExtractor {
     }
 
     public void appendBodyElementText(StringBuilder text, IBodyElement e) {
-        if (e instanceof XWPFParagraph) {
-            appendParagraphText(text, (XWPFParagraph) e);
-        } else if (e instanceof XWPFTable) {
-            appendTableText(text, (XWPFTable) e);
-        } else if (e instanceof XWPFSDT) {
-            text.append(((XWPFSDT) e).getContent().getText());
+        if (e instanceof XWPFParagraph paragraph) {
+            appendParagraphText(text, paragraph);
+        } else if (e instanceof XWPFTable table) {
+            appendTableText(text, table);
+        } else if (e instanceof XWPFSDT sdt) {
+            text.append(sdt.getContent().getText());
         }
     }
 
@@ -127,15 +123,15 @@ public class XWPFWordExtractor implements POIXMLTextExtractor {
         }
 
         for (IRunElement run : paragraph.getIRuns()) {
-            if (run instanceof XWPFSDT) {
-                text.append(((XWPFSDT) run).getContent().getText());
-            } else if (! concatenatePhoneticRuns && run instanceof XWPFRun) {
-                text.append(((XWPFRun)run).text());
+            if (run instanceof XWPFSDT xwpfsdt) {
+                text.append(xwpfsdt.getContent().getText());
+            } else if (!concatenatePhoneticRuns && run instanceof XWPFRun xwpfRun) {
+                text.append(xwpfRun.text());
             } else {
                 text.append(run);
             }
-            if (run instanceof XWPFHyperlinkRun && fetchHyperlinks) {
-                XWPFHyperlink link = ((XWPFHyperlinkRun) run).getHyperlink(document);
+            if (run instanceof XWPFHyperlinkRun xwpfHyperlinkRun && fetchHyperlinks) {
+                XWPFHyperlink link = xwpfHyperlinkRun.getHyperlink(document);
                 if (link != null)
                     text.append(" <").append(link.getURL()).append(">");
             }
@@ -165,10 +161,10 @@ public class XWPFWordExtractor implements POIXMLTextExtractor {
             List<ICell> cells = row.getTableICells();
             for (int i = 0; i < cells.size(); i++) {
                 ICell cell = cells.get(i);
-                if (cell instanceof XWPFTableCell) {
-                    text.append(((XWPFTableCell) cell).getTextRecursively());
-                } else if (cell instanceof XWPFSDTCell) {
-                    text.append(((XWPFSDTCell) cell).getContent().getText());
+                if (cell instanceof XWPFTableCell xwpfTableCell) {
+                    text.append(xwpfTableCell.getTextRecursively());
+                } else if (cell instanceof XWPFSDTCell xwpfSdtCell) {
+                    text.append(xwpfSdtCell.getContent().getText());
                 }
                 if (i < cells.size() - 1) {
                     text.append("\t");

@@ -26,6 +26,7 @@ import java.util.List;
 import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.ooxml.POIXMLTypeLoader;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
@@ -70,7 +71,7 @@ public class XmlVisioDocument extends POIXMLDocument {
         VisioDocumentType document;
 
         try (InputStream stream = getPackagePart().getInputStream()){
-            document = VisioDocumentDocument1.Factory.parse(stream).getVisioDocument();
+            document = VisioDocumentDocument1.Factory.parse(stream, POIXMLTypeLoader.DEFAULT_XML_OPTIONS).getVisioDocument();
         } catch (XmlException | IOException e) {
             throw new POIXMLException(e);
         }
@@ -109,10 +110,10 @@ public class XmlVisioDocument extends POIXMLDocument {
 
         for (POIXMLDocumentPart part : getRelations()) {
             // organize the document pieces
-            if (part instanceof XDGFPages) {
-                _pages = (XDGFPages) part;
-            } else if (part instanceof XDGFMasters) {
-                _masters = (XDGFMasters) part;
+            if (part instanceof XDGFPages pages) {
+                _pages = pages;
+            } else if (part instanceof XDGFMasters masters) {
+                _masters = masters;
             }
         }
 

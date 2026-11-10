@@ -101,11 +101,6 @@ public class HemfGraphics extends HwmfGraphics {
 
     public void draw(HemfRecord r) {
         switch (getRenderState()) {
-            default:
-            case EMF_DCONTEXT:
-            case INITIAL:
-                r.draw(this);
-                break;
             case EMF_ONLY:
                 if (!(r instanceof EmfComment)) {
                     r.draw(this);
@@ -116,6 +111,12 @@ public class HemfGraphics extends HwmfGraphics {
                     r.draw(this);
                 }
                 break;
+            default:
+            case EMF_DCONTEXT:
+            case INITIAL:
+                r.draw(this);
+                break;
+
         }
     }
 

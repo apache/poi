@@ -76,7 +76,7 @@ final class NetworkdaysFunction implements FreeRefFunction {
             holidays = this.evaluator.evaluateDatesArg(holidaysCell, srcCellRow, srcCellCol);
             return new NumberEval(WorkdayCalculator.instance.calculateWorkdays(start, end, holidays));
         } catch (EvaluationException e) {
-            return ErrorEval.VALUE_INVALID;
+            return e.getErrorEval();
         }
     }
 }

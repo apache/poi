@@ -103,31 +103,19 @@ public class XSSFSignatureLine extends SignatureLine {
 
 
     private static POIXMLRelation mapType(PictureType type) throws InvalidFormatException {
-        switch (type) {
-            case BMP:
-                return XSSFRelation.IMAGE_BMP;
-            case DIB:
-                return XSSFRelation.IMAGE_DIB;
-            case EMF:
-                return XSSFRelation.IMAGE_EMF;
-            case EPS:
-                return XSSFRelation.IMAGE_EPS;
-            case GIF:
-                return XSSFRelation.IMAGE_GIF;
-            case JPEG:
-                return XSSFRelation.IMAGE_JPEG;
-            case PICT:
-                return XSSFRelation.IMAGE_PICT;
-            case PNG:
-                return XSSFRelation.IMAGE_PNG;
-            case TIFF:
-                return XSSFRelation.IMAGE_TIFF;
-            case WMF:
-                return XSSFRelation.IMAGE_WMF;
-            case WPG:
-                return XSSFRelation.IMAGE_WPG;
-            default:
-                throw new InvalidFormatException("Unsupported picture format "+type);
-        }
+        return switch (type) {
+            case BMP -> XSSFRelation.IMAGE_BMP;
+            case DIB -> XSSFRelation.IMAGE_DIB;
+            case EMF -> XSSFRelation.IMAGE_EMF;
+            case EPS -> XSSFRelation.IMAGE_EPS;
+            case GIF -> XSSFRelation.IMAGE_GIF;
+            case JPEG -> XSSFRelation.IMAGE_JPEG;
+            case PICT -> XSSFRelation.IMAGE_PICT;
+            case PNG -> XSSFRelation.IMAGE_PNG;
+            case TIFF -> XSSFRelation.IMAGE_TIFF;
+            case WMF -> XSSFRelation.IMAGE_WMF;
+            case WPG -> XSSFRelation.IMAGE_WPG;
+            default -> throw new InvalidFormatException("Unsupported picture format " + type);
+        };
     }
 }

@@ -26,6 +26,8 @@ import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 
+import static org.apache.poi.util.StringUtil.equalsIgnoreCase;
+
 /**
  * Represents a defined named range in a SpreadsheetML workbook.
  * <p>
@@ -240,7 +242,7 @@ public final class XSSFName implements Name {
      */
     @Override
     public int getSheetIndex() {
-        return _ctName.isSetLocalSheetId() ? (int) _ctName.getLocalSheetId() : -1;
+        return _ctName.isSetLocalSheetId() ? Math.toIntExact(_ctName.getLocalSheetId()) : -1;
     }
 
     /**
@@ -283,7 +285,7 @@ public final class XSSFName implements Name {
      * @return the function group index that defines the general category for the function
      */
     public int getFunctionGroupId() {
-        return (int) _ctName.getFunctionGroupId();
+        return Math.toIntExact(_ctName.getFunctionGroupId());
     }
 
     /**
@@ -296,7 +298,7 @@ public final class XSSFName implements Name {
     public String getSheetName() {
         if (_ctName.isSetLocalSheetId()) {
             // Given as explicit sheet id
-            int sheetId = (int)_ctName.getLocalSheetId();
+            int sheetId = Math.toIntExact(_ctName.getLocalSheetId());
             return _workbook.getSheetName(sheetId);
         }
         String ref = getRefersToFormula();
@@ -396,7 +398,7 @@ public final class XSSFName implements Name {
         if (name.length() > 255) {
             throw new IllegalArgumentException("Invalid name: '"+name+"': cannot exceed 255 characters in length");
         }
-        if (name.equalsIgnoreCase("R") || name.equalsIgnoreCase("C")) {
+        if (equalsIgnoreCase(name, "R") || equalsIgnoreCase(name, ("C"))) {
             throw new IllegalArgumentException("Invalid name: '"+name+"': cannot be special shorthand R or C");
         }
 

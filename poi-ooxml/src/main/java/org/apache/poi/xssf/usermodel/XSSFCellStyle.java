@@ -34,6 +34,7 @@ import org.apache.poi.ss.usermodel.ReadingOrder;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellAlignment;
@@ -142,9 +143,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
      */
     @Override
     public void cloneStyleFrom(CellStyle source) {
-        if(source instanceof XSSFCellStyle) {
-            XSSFCellStyle src = (XSSFCellStyle)source;
-
+        if(source instanceof XSSFCellStyle src) {
             // Is it on our Workbook?
             if(src._stylesSource == _stylesSource) {
                // Nice and easy
@@ -369,7 +368,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
         // bug 56295: handle missing applyFill attribute as "true" because Excel does as well
         if(_cellXf.isSetApplyFill() && !_cellXf.getApplyFill()) return null;
 
-        int fillIndex = (int)_cellXf.getFillId();
+        int fillIndex = Math.toIntExact(_cellXf.getFillId());
         XSSFCellFill fg = _stylesSource.getFillAt(fillIndex);
 
         XSSFColor fillBackgroundColor = fg.getFillBackgroundColor();
@@ -408,7 +407,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
         // bug 56295: handle missing applyFill attribute as "true" because Excel does as well
         if(_cellXf.isSetApplyFill() && !_cellXf.getApplyFill()) return null;
 
-        int fillIndex = (int)_cellXf.getFillId();
+        int fillIndex = Math.toIntExact(_cellXf.getFillId());
         XSSFCellFill fg = _stylesSource.getFillAt(fillIndex);
 
         XSSFColor fillForegroundColor = fg.getFillForegroundColor();
@@ -423,7 +422,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
         // bug 56295: handle missing applyFill attribute as "true" because Excel does as well
         if(_cellXf.isSetApplyFill() && !_cellXf.getApplyFill()) return FillPatternType.NO_FILL;
 
-        int fillIndex = (int)_cellXf.getFillId();
+        int fillIndex = MathUtil.safeDoubleToInt(_cellXf.getFillId());
         XSSFCellFill fill = _stylesSource.getFillAt(fillIndex);
 
         STPatternType.Enum ptrn = fill.getPatternType();
@@ -935,7 +934,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
         CTFill ct;
         // bug 56295: handle missing applyFill attribute as "true" because Excel does as well
         if(!_cellXf.isSetApplyFill() || _cellXf.getApplyFill()) {
-            int fillIndex = (int)_cellXf.getFillId();
+            int fillIndex = MathUtil.safeDoubleToInt(_cellXf.getFillId());
             XSSFCellFill cf = _stylesSource.getFillAt(fillIndex);
 
             ct = (CTFill)cf.getCTFill().copy();
@@ -993,11 +992,9 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
     public void setFillPattern(FillPatternType pattern) {
         CTFill ct = getCTFill();
         CTPatternFill ctptrn = ct.isSetPatternFill() ? ct.getPatternFill() : ct.addNewPatternFill();
-        if (pattern == FillPatternType.NO_FILL && ctptrn.isSetPatternType()) {
-            ctptrn.unsetPatternType();
-        } else {
-            ctptrn.setPatternType(STPatternType.Enum.forInt(pattern.getCode() + 1));
-        }
+        // NO_FILL is written as patternType="none", as Excel does for its default fill, so that
+        // the fill is recognised as that default fill instead of being added as a new one (bug 60895)
+        ctptrn.setPatternType(STPatternType.Enum.forInt(pattern.getCode() + 1));
 
         addFill(ct);
         invalidateCachedProperties();
@@ -1233,18 +1230,13 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
      * @return the used color
      */
     public XSSFColor getBorderColor(BorderSide side) {
-        switch(side){
-            case BOTTOM:
-                return getBottomBorderXSSFColor();
-            case RIGHT:
-                return getRightBorderXSSFColor();
-            case TOP:
-                return getTopBorderXSSFColor();
-            case LEFT:
-                return getLeftBorderXSSFColor();
-            default:
-                throw new IllegalArgumentException("Unknown border: " + side);
-        }
+        return switch (side) {
+            case BOTTOM -> getBottomBorderXSSFColor();
+            case RIGHT -> getRightBorderXSSFColor();
+            case TOP -> getTopBorderXSSFColor();
+            case LEFT -> getLeftBorderXSSFColor();
+            default -> throw new IllegalArgumentException("Unknown border: " + side);
+        };
     }
 
     /**
@@ -1254,19 +1246,11 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
      * @param color - the color to use
      */
     public void setBorderColor(BorderSide side, XSSFColor color) {
-        switch(side){
-            case BOTTOM:
-                setBottomBorderColor(color);
-                break;
-            case RIGHT:
-                setRightBorderColor(color);
-                break;
-            case TOP:
-                setTopBorderColor(color);
-                break;
-            case LEFT:
-                setLeftBorderColor(color);
-                break;
+        switch (side) {
+            case BOTTOM -> setBottomBorderColor(color);
+            case RIGHT -> setRightBorderColor(color);
+            case TOP -> setTopBorderColor(color);
+            case LEFT -> setLeftBorderColor(color);
         }
     }
 
@@ -1295,9 +1279,9 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
 
     private int getFontId() {
         if (_cellXf.isSetFontId()) {
-            return (int) _cellXf.getFontId();
+            return Math.toIntExact(_cellXf.getFontId());
         }
-        return (int) _cellStyleXf.getFontId();
+        return Math.toIntExact(_cellStyleXf.getFontId());
     }
 
     /**
@@ -1341,9 +1325,8 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
      */
     @Override
     public boolean equals(Object o){
-        if(!(o instanceof XSSFCellStyle)) return false;
+        if(!(o instanceof XSSFCellStyle cf)) return false;
 
-        XSSFCellStyle cf = (XSSFCellStyle)o;
         return _cellXf.toString().equals(cf.getCoreXf().toString());
     }
 

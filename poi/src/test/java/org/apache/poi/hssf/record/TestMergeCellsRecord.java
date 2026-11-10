@@ -18,8 +18,8 @@
 package org.apache.poi.hssf.record;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 
@@ -64,7 +64,7 @@ final class TestMergeCellsRecord {
         RecordStream rs = new RecordStream(Collections.singletonList(mcr1), 0);
         mct.read(rs);
         mct.visitContainedRecords(r -> {
-            assertTrue(r instanceof MergeCellsRecord);
+            assertInstanceOf(MergeCellsRecord.class, r);
             MergeCellsRecord mcr2 = (MergeCellsRecord)r;
             assertEquals(mcr1.getNumAreas(), mcr2.getNumAreas());
             assertEquals(mcr1.getAreaAt(0), mcr2.getAreaAt(0));

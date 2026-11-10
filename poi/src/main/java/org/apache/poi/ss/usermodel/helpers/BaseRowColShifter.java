@@ -82,8 +82,7 @@ public abstract class BaseRowColShifter {
             return cra;
         }
         Ptg ptg0 = ptgs[0];
-        if (ptg0 instanceof AreaPtg) {
-            AreaPtg bptg = (AreaPtg) ptg0;
+        if (ptg0 instanceof AreaPtg bptg) {
             return new CellRangeAddress(bptg.getFirstRow(), bptg.getLastRow(), bptg.getFirstColumn(), bptg.getLastColumn());
         }
         if (ptg0 instanceof AreaErrPtg) {

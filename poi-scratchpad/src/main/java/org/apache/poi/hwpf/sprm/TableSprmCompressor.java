@@ -81,7 +81,8 @@ public final class TableSprmCompressor {
               1
                 + (LittleEndianConsts.SHORT_SIZE*((long)itcMac + 1))
                 + (TableCellDescriptor.SIZE*(long)itcMac),
-              SprmUtils.MAX_RECORD_LENGTH);
+              SprmUtils.MAX_RECORD_LENGTH,
+              "SprmUtils.setMaxRecordLength()");
       buf[0] = (byte)itcMac;
 
       short[] dxaCenters = newTAP.getRgdxaCenter();

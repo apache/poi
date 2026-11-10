@@ -19,11 +19,15 @@ package org.apache.poi.hwpf.sprm;
 
 import java.util.Arrays;
 
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * This class is used to represent a sprm operation from a Word 97/2000/XP
@@ -32,6 +36,8 @@ import org.apache.poi.util.LittleEndianConsts;
 @Internal(since="3.8 beta 4")
 public final class SprmOperation
 {
+    private static final Logger LOG = PoiLogManager.getLogger(SprmOperation.class);
+
     private static final BitField BITFIELD_OP = BitFieldFactory
             .getInstance( 0x1ff );
     private static final BitField BITFIELD_SIZECODE = BitFieldFactory
@@ -104,13 +110,18 @@ public final class SprmOperation
         case 3:
             return LittleEndian.getInt( _grpprl, _gOffset );
         case 6:
+            if ( _gOffset + 1 >= _grpprl.length )
+            {
+                // truncated SPRM, no operand present
+                return 0;
+            }
             // surely shorter than an int...
-            byte operandLength = _grpprl[_gOffset + 1];
+            int operandLength = Math.min( _grpprl[_gOffset + 1], LittleEndianConsts.INT_SIZE );
 
             // initialized to zeros by JVM
             byte[] codeBytes = new byte[LittleEndianConsts.INT_SIZE];
             for ( int i = 0; i < operandLength; i++ )
-                if ( _gOffset + i < _grpprl.length )
+                if ( _gOffset + 1 + i < _grpprl.length )
                     codeBytes[i] = _grpprl[_gOffset + 1 + i];
 
             return LittleEndian.getInt( codeBytes, 0 );
@@ -169,10 +180,18 @@ public final class SprmOperation
             int offset = _gOffset;
             if ( sprm == SPRM_LONG_TABLE || sprm == SPRM_LONG_PARAGRAPH )
             {
+                if ( offset + LittleEndianConsts.SHORT_SIZE > _grpprl.length )
+                {
+                    return truncatedSize( sprm );
+                }
                 int retVal = ( 0x0000ffff &
                         LittleEndian.getShort( _grpprl, offset ) ) + 3;
                 _gOffset += 2;
                 return retVal;
+            }
+            if ( offset >= _grpprl.length )
+            {
+                return truncatedSize( sprm );
             }
             return ( 0x000000ff & _grpprl[_gOffset++] ) + 3;
         case 7:
@@ -181,6 +200,19 @@ public final class SprmOperation
             throw new IllegalArgumentException(
                     "SPRM contains an invalid size code" );
         }
+    }
+
+    /**
+     * A variable-length SPRM whose operand-length byte(s) lie beyond the end
+     * of the grpprl: the buffer is truncated (or padded with junk), so treat
+     * whatever is left as the size of this SPRM rather than throwing an
+     * {@link ArrayIndexOutOfBoundsException}. The iterator then stops here.
+     */
+    private int truncatedSize( short sprm )
+    {
+        LOG.atWarn().log( "SPRM 0x{} at offset {} is truncated, grpprl length is {}",
+                Integer.toHexString( sprm & 0xffff ), box(_offset), box(_grpprl.length) );
+        return _grpprl.length - _offset;
     }
 
     public int size()

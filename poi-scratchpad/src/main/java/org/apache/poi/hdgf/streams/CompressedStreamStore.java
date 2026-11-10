@@ -65,7 +65,8 @@ public final class CompressedStreamStore extends StreamStore {
      */
     CompressedStreamStore(byte[] data, int offset, int length) throws IOException {
         this(decompress(data,offset,length));
-        compressedContents = IOUtils.safelyClone(data, offset, length, MAX_RECORD_LENGTH);
+        compressedContents = IOUtils.safelyClone(data, offset, length, MAX_RECORD_LENGTH,
+                "CompressedStreamStore.setMaxRecordLength()");
     }
     /**
      * Handles passing the de-compressed data onto our superclass.

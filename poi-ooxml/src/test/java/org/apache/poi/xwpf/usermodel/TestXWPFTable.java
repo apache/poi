@@ -25,9 +25,12 @@ import java.util.List;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFTable.XWPFBorderType;
 import org.junit.jupiter.api.Test;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTCustomXmlRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtContentRow;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblBorders;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblCellMar;
@@ -660,6 +663,470 @@ class TestXWPFTable {
             XWPFTable table1 = doc.getTableArray(0);
             assertEquals(-1,table1.getWidth());
             assertEquals(TableWidthType.AUTO, table1.getWidthType());
+        }
+    }
+
+    @Test
+    void testTableWithSdtRow() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+
+            CTRow normalRow = table.addNewTr();
+            CTTc cell1 = normalRow.addNewTc();
+            CTP p1 = cell1.addNewP();
+            CTR r1 = p1.addNewR();
+            r1.addNewT().setStringValue("Normal Row Cell 1");
+
+            CTTc cell2 = normalRow.addNewTc();
+            CTP p2 = cell2.addNewP();
+            CTR r2 = p2.addNewR();
+            r2.addNewT().setStringValue("Normal Row Cell 2");
+
+            CTSdtRow sdtRow = table.addNewSdt();
+            CTSdtContentRow sdtContent = sdtRow.addNewSdtContent();
+            CTRow innerRow = sdtContent.addNewTr();
+
+            CTTc sdtCell1 = innerRow.addNewTc();
+            CTP sdtP1 = sdtCell1.addNewP();
+            CTR sdtR1 = sdtP1.addNewR();
+            sdtR1.addNewT().setStringValue("SDT Row Cell 1");
+
+            CTTc sdtCell2 = innerRow.addNewTc();
+            CTP sdtP2 = sdtCell2.addNewP();
+            CTR sdtR2 = sdtP2.addNewR();
+            sdtR2.addNewT().setStringValue("SDT Row Cell 2");
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+
+            assertEquals(2, xtab.getNumberOfRows(), "Table should have 2 rows total (1 normal + 1 SDT)");
+
+            String text = xtab.getText();
+            assertTrue(text.contains("Normal Row Cell 1"), "Text should contain normal row cell 1");
+            assertTrue(text.contains("Normal Row Cell 2"), "Text should contain normal row cell 2");
+            assertTrue(text.contains("SDT Row Cell 1"), "Text should contain SDT row cell 1");
+            assertTrue(text.contains("SDT Row Cell 2"), "Text should contain SDT row cell 2");
+        }
+    }
+
+    @Test
+    void testTableWithNestedSdtRows() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+
+            CTSdtRow outerSdtRow = table.addNewSdt();
+            CTSdtContentRow outerContent = outerSdtRow.addNewSdtContent();
+
+            CTSdtRow innerSdtRow = outerContent.addNewSdt();
+            CTSdtContentRow innerContent = innerSdtRow.addNewSdtContent();
+            CTRow row1 = innerContent.addNewTr();
+
+            CTTc cell1 = row1.addNewTc();
+            CTP p1 = cell1.addNewP();
+            CTR r1 = p1.addNewR();
+            r1.addNewT().setStringValue("Nested SDT Row");
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+
+            String text = xtab.getText();
+            assertTrue(text.contains("Nested SDT Row"), "Text should contain nested SDT row content");
+        }
+    }
+
+
+    @Test
+    void testTableWithOnlySdtRow() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+
+            CTSdtRow sdtRow = table.addNewSdt();
+            CTSdtContentRow sdtContent = sdtRow.addNewSdtContent();
+            CTRow innerRow = sdtContent.addNewTr();
+
+            CTTc cell = innerRow.addNewTc();
+            CTP p = cell.addNewP();
+            CTR r = p.addNewR();
+            r.addNewT().setStringValue("Only SDT Row");
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+
+            assertEquals(1, xtab.getNumberOfRows(), "Table has 1 SDT row");
+            assertEquals(1, xtab.getRows().size(), "Table should have 1 SDT row");
+
+            String text = xtab.getText();
+            assertTrue(text.contains("Only SDT Row"), "Text should contain SDT row content");
+        }
+    }
+
+    @Test
+    void testCreateRowInTableWithOnlySdtRows() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+            CTRow innerRow = table.addNewSdt().addNewSdtContent().addNewTr();
+            innerRow.addNewTc().addNewP();
+            innerRow.addNewTc().addNewP();
+            innerRow.addNewTc().addNewP();
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+            XWPFTableRow created = xtab.createRow();
+
+            assertEquals(3, created.getTableCells().size());
+            assertEquals(2, xtab.getNumberOfRows());
+            assertSame(created, xtab.getRow(1));
+        }
+    }
+
+    @Test
+    void testTableWithMultipleSdtRows() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+
+            // First SDT row
+            CTSdtRow sdtRow1 = table.addNewSdt();
+            CTSdtContentRow sdtContent1 = sdtRow1.addNewSdtContent();
+            CTRow row1 = sdtContent1.addNewTr();
+            CTTc cell1 = row1.addNewTc();
+            CTP p1 = cell1.addNewP();
+            CTR r1 = p1.addNewR();
+            r1.addNewT().setStringValue("SDT Row 1");
+
+            // Second SDT row
+            CTSdtRow sdtRow2 = table.addNewSdt();
+            CTSdtContentRow sdtContent2 = sdtRow2.addNewSdtContent();
+            CTRow row2 = sdtContent2.addNewTr();
+            CTTc cell2 = row2.addNewTc();
+            CTP p2 = cell2.addNewP();
+            CTR r2 = p2.addNewR();
+            r2.addNewT().setStringValue("SDT Row 2");
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+
+            assertEquals(2, xtab.getNumberOfRows(), "Table has 2 SDT rows");
+            assertEquals(2, xtab.getRows().size(), "Table should have 2 SDT rows");
+
+            String text = xtab.getText();
+            assertTrue(text.contains("SDT Row 1"), "Text should contain first SDT row");
+            assertTrue(text.contains("SDT Row 2"), "Text should contain second SDT row");
+        }
+    }
+
+    /**
+     * Bug 66263 — Test SDT row support using sample document.
+     * Verifies that SDT rows from sample document are correctly processed.
+     */
+    @Test
+    void testSdtRowFromSampleDocument() throws IOException {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug66263-table.docx")) {
+            XWPFTable table = doc.getTables().get(0);
+
+            // Verify SDT row text extraction
+            String tableText = table.getText();
+            assertTrue(tableText.contains("SDT Cell 1"), "Table should contain SDT cell 1");
+            assertTrue(tableText.contains("SDT Cell 2"), "Table should contain SDT cell 2");
+
+            // Verify SDT row is accessible via getRows()
+            List<XWPFTableRow> rows = table.getRows();
+            assertEquals(1, rows.size(), "Table should have 1 SDT row");
+
+            // Verify paragraph processing in table cells
+            XWPFParagraph cellPara = rows.get(0).getCell(0).getParagraphs().get(0);
+            assertNotNull(cellPara, "Cell paragraph should not be null");
+            String paraText = cellPara.getText();
+            assertTrue(paraText.contains("SDT Cell 1"), "Cell paragraph should contain SDT cell text");
+        }
+    }
+
+    @Test
+    void testGetTableCellInSdtRowFromDocument() throws IOException {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug66263-table.docx")) {
+            XWPFTableCell cell = doc.getTables().get(0).getRow(0).getCell(1);
+            assertSame(cell, doc.getTableCell(cell.getCTTc()));
+        }
+    }
+
+    @Test
+    void testGetTableCellInSdtRowOfNestedTable() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl outer = CTTbl.Factory.newInstance();
+            CTTc outerTc = outer.addNewTr().addNewTc();
+            CTTbl nested = outerTc.addNewTbl();
+            CTSdtContentRow content = nested.addNewSdt().addNewSdtContent().addNewSdt().addNewSdtContent();
+            content.addNewTr().addNewTc().addNewP();
+            outerTc.addNewP();
+
+            XWPFTableCell outerCell = new XWPFTable(outer, doc).getRow(0).getCell(0);
+            XWPFTableCell nestedCell = outerCell.getTables().get(0).getRow(0).getCell(0);
+            assertSame(nestedCell, outerCell.getTableCell(nestedCell.getCTTc()));
+        }
+    }
+
+    @Test
+    void testInsertRowsBeforeSdtRowAndTopLevelRow() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+            table.addNewTr().addNewTc().addNewP();
+            table.addNewSdt().addNewSdtContent().addNewTr().addNewTc().addNewP();
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+            XWPFTableRow beforeSdtRow = xtab.insertNewTableRow(1);
+            XWPFTableRow beforeFirstRow = xtab.insertNewTableRow(0);
+
+            assertEquals(4, xtab.getNumberOfRows());
+            assertSame(beforeFirstRow, xtab.getRow(0));
+            assertSame(beforeSdtRow, xtab.getRow(2));
+            // the row inserted before the SDT row goes inside the SDT
+            assertEquals(2, table.sizeOfTrArray());
+            assertSame(table.getTrArray(0), beforeFirstRow.getCtRow());
+            assertEquals(2, table.getSdtArray(0).getSdtContent().sizeOfTrArray());
+            assertSame(table.getSdtArray(0).getSdtContent().getTrArray(0), beforeSdtRow.getCtRow());
+        }
+    }
+
+    @Test
+    void testTableWithCustomXmlRows() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+            addRowWithText(table.addNewTr(), "A");
+            CTCustomXmlRow customXml = table.addNewCustomXml();
+            customXml.setElement("item");
+            customXml.addNewCustomXmlPr();
+            addRowWithText(customXml.addNewTr(), "B");
+            addRowWithText(table.addNewCustomXml().addNewSdt().addNewSdtContent().addNewTr(), "C");
+            addRowWithText(table.addNewSdt().addNewSdtContent().addNewCustomXml().addNewTr(), "D");
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+
+            assertEquals(4, xtab.getNumberOfRows());
+            assertEquals(List.of("A", "B", "C", "D"),
+                    xtab.getRows().stream().map(r -> r.getCell(0).getText()).toList());
+            assertEquals("A\nB\nC\nD\n", xtab.getText());
+        }
+    }
+
+    @Test
+    void testGetTableCellInCustomXmlRowOfNestedTable() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl outer = CTTbl.Factory.newInstance();
+            CTTc outerTc = outer.addNewTr().addNewTc();
+            outerTc.addNewTbl().addNewCustomXml().addNewTr().addNewTc().addNewP();
+            outerTc.addNewP();
+
+            XWPFTableCell outerCell = new XWPFTable(outer, doc).getRow(0).getCell(0);
+            XWPFTableCell nestedCell = outerCell.getTables().get(0).getRow(0).getCell(0);
+            assertSame(nestedCell, outerCell.getTableCell(nestedCell.getCTTc()));
+        }
+    }
+
+    @Test
+    void testRemoveLastRowOfCustomXmlRemovesWrappers() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+            table.addNewTr().addNewTc().addNewP();
+            CTCustomXmlRow customXml = table.addNewSdt().addNewSdtContent().addNewCustomXml();
+            customXml.setElement("item");
+            customXml.addNewCustomXmlPr();
+            customXml.addNewTr().addNewTc().addNewP();
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+            assertEquals(2, xtab.getNumberOfRows());
+
+            assertTrue(xtab.removeRow(1));
+            assertEquals(1, xtab.getNumberOfRows());
+            assertEquals(1, table.sizeOfTrArray());
+            assertEquals(0, table.sizeOfSdtArray());
+        }
+    }
+
+    @Test
+    void testInsertRowBeforeCustomXmlRow() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+            table.addNewTr().addNewTc().addNewP();
+            CTCustomXmlRow customXml = table.addNewCustomXml();
+            customXml.addNewTr().addNewTc().addNewP();
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+            XWPFTableRow inserted = xtab.insertNewTableRow(1);
+
+            assertEquals(3, xtab.getNumberOfRows());
+            assertSame(inserted, xtab.getRow(1));
+            assertEquals(1, table.sizeOfTrArray());
+            assertEquals(2, customXml.sizeOfTrArray());
+            assertSame(customXml.getTrArray(0), inserted.getCtRow());
+        }
+    }
+
+    @Test
+    void testChangesToRowAfterAddRowAreKept() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFTable xtab = doc.createTable();
+            XWPFTableRow appended = new XWPFTableRow(CTRow.Factory.newInstance(), xtab);
+            appended.createCell();
+            XWPFTableRow first = new XWPFTableRow(CTRow.Factory.newInstance(), xtab);
+            first.createCell();
+
+            xtab.addRow(appended);
+            assertTrue(xtab.addRow(first, 0));
+            appended.getCell(0).setText("appended");
+            first.getCell(0).setText("first");
+
+            CTTbl ctTbl = xtab.getCTTbl();
+            assertEquals(3, ctTbl.sizeOfTrArray());
+            assertSame(ctTbl.getTrArray(0), first.getCtRow());
+            assertSame(ctTbl.getTrArray(2), appended.getCtRow());
+            assertEquals("first", new XWPFTableRow(ctTbl.getTrArray(0), xtab).getCell(0).getText());
+            assertEquals("appended", new XWPFTableRow(ctTbl.getTrArray(2), xtab).getCell(0).getText());
+        }
+    }
+
+    private static void addRowWithText(CTRow row, String text) {
+        row.addNewTc().addNewP().addNewR().addNewT().setStringValue(text);
+    }
+
+    @Test
+    void testAddRowToSdtTable() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+
+            // Add an SDT-wrapped row
+            CTSdtRow sdtRow = table.addNewSdt();
+            CTSdtContentRow sdtContent = sdtRow.addNewSdtContent();
+            CTRow innerRow = sdtContent.addNewTr();
+            CTTc cell = innerRow.addNewTc();
+            CTP p = cell.addNewP();
+            CTR r = p.addNewR();
+            r.addNewT().setStringValue("SDT Row");
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+            assertEquals(1, xtab.getNumberOfRows());
+
+            // Add a normal row
+            CTRow newRow = CTRow.Factory.newInstance();
+            CTTc newCell = newRow.addNewTc();
+            CTP newP = newCell.addNewP();
+            CTR newR = newP.addNewR();
+            newR.addNewT().setStringValue("New Row");
+            XWPFTableRow newTableRow = new XWPFTableRow(newRow, xtab);
+
+            xtab.addRow(newTableRow);
+            assertEquals(2, xtab.getNumberOfRows());
+
+            // Verify structural state
+            assertNotNull(xtab.getRow(0));
+            assertNotNull(xtab.getRow(1));
+            assertEquals(xtab.getRow(1), newTableRow);
+        }
+    }
+
+    @Test
+    void testRemoveLastRowOfSdtRemovesSdt() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+            table.addNewTr().addNewTc().addNewP();
+            table.addNewSdt().addNewSdtContent().addNewTr().addNewTc().addNewP();
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+            assertEquals(2, xtab.getNumberOfRows());
+
+            assertTrue(xtab.removeRow(1));
+            assertEquals(1, xtab.getNumberOfRows());
+            assertEquals(1, table.sizeOfTrArray());
+            assertEquals(0, table.sizeOfSdtArray());
+        }
+    }
+
+    @Test
+    void testRemoveLastRowOfNestedSdtRemovesBothSdts() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+            table.addNewTr().addNewTc().addNewP();
+            CTSdtContentRow outerContent = table.addNewSdt().addNewSdtContent();
+            outerContent.addNewSdt().addNewSdtContent().addNewTr().addNewTc().addNewP();
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+            assertEquals(2, xtab.getNumberOfRows());
+
+            assertTrue(xtab.removeRow(1));
+            assertEquals(1, xtab.getNumberOfRows());
+            assertEquals(0, table.sizeOfSdtArray());
+        }
+    }
+
+    @Test
+    void testRemoveRowKeepsSdtWithOtherRows() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+            CTSdtContentRow content = table.addNewSdt().addNewSdtContent();
+            content.addNewTr().addNewTc().addNewP();
+            content.addNewTr().addNewTc().addNewP();
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+            assertEquals(2, xtab.getNumberOfRows());
+
+            assertTrue(xtab.removeRow(0));
+            assertEquals(1, xtab.getNumberOfRows());
+            assertEquals(1, table.sizeOfSdtArray());
+            assertEquals(1, table.getSdtArray(0).getSdtContent().sizeOfTrArray());
+        }
+    }
+
+    @Test
+    void testRemoveSdtRow() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+
+            // Add a normal row
+            CTRow normalRow = table.addNewTr();
+            CTTc cell1 = normalRow.addNewTc();
+            CTP p1 = cell1.addNewP();
+            CTR r1 = p1.addNewR();
+            r1.addNewT().setStringValue("Normal Row");
+
+            // Add an SDT-wrapped row
+            CTSdtRow sdtRow = table.addNewSdt();
+            CTSdtContentRow sdtContent = sdtRow.addNewSdtContent();
+            CTRow innerRow = sdtContent.addNewTr();
+            CTTc cell2 = innerRow.addNewTc();
+            CTP p2 = cell2.addNewP();
+            CTR r2 = p2.addNewR();
+            r2.addNewT().setStringValue("SDT Row");
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+            assertEquals(2, xtab.getNumberOfRows());
+            assertNotNull(xtab.getRow(0));
+            assertNotNull(xtab.getRow(1));
+
+            // Remove the SDT row (index 1)
+            assertTrue(xtab.removeRow(1));
+            assertEquals(1, xtab.getNumberOfRows());
+            assertNotNull(xtab.getRow(0));
+            assertNull(xtab.getRow(1));
+        }
+    }
+
+    @Test
+    void testInsertNewTableRowInSdtTable() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+
+            // Add an SDT-wrapped row
+            CTSdtRow sdtRow = table.addNewSdt();
+            CTSdtContentRow sdtContent = sdtRow.addNewSdtContent();
+            CTRow innerRow = sdtContent.addNewTr();
+            CTTc cell = innerRow.addNewTc();
+            CTP p = cell.addNewP();
+            CTR r = p.addNewR();
+            r.addNewT().setStringValue("SDT Row");
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+            assertEquals(1, xtab.getNumberOfRows());
+
+            // Insert a new row at position 0
+            XWPFTableRow inserted = xtab.insertNewTableRow(0);
+            assertNotNull(inserted);
+            assertEquals(2, xtab.getNumberOfRows());
+
+            // The inserted row should be at position 0
+            assertEquals(0, xtab.getRows().indexOf(inserted));
         }
     }
 }

@@ -27,6 +27,7 @@ import java.util.NoSuchElementException;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hemf.record.emf.HemfComment;
 import org.apache.poi.hemf.record.emf.HemfComment.EmfComment;
 import org.apache.poi.hemf.record.emf.HemfComment.EmfCommentDataFormat;
@@ -44,13 +45,22 @@ import org.apache.poi.hwmf.record.HwmfBitmapDib;
 import org.apache.poi.hwmf.record.HwmfFill;
 import org.apache.poi.hwmf.usermodel.HwmfEmbedded;
 import org.apache.poi.hwmf.usermodel.HwmfEmbeddedType;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.util.IOUtils;
 
 public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
+    private static final Logger LOG = PoiLogManager.getLogger(HemfEmbeddedIterator.class);
+
     //arbitrarily selected; may need to increase
     private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000_000;
     private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+
+    /**
+     * Upper bound for presizing the buffer from the untrusted totalObjectSize field.
+     * Larger images are still supported, the buffer just grows as the chunks are read.
+     */
+    private static final int MAX_BUFFER_PRESIZE = 4 * 1024 * 1024;
 
     private final Deque<Iterator<?>> iterStack = new ArrayDeque<>();
     private Object current;
@@ -97,8 +107,8 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
             iter = iterStack.peek();
             while (iter.hasNext()) {
                 Object obj = iter.next();
-                if (obj instanceof EmfComment) {
-                    HemfComment.EmfCommentData cd = ((EmfComment)obj).getCommentData();
+                if (obj instanceof EmfComment comment) {
+                    HemfComment.EmfCommentData cd = comment.getCommentData();
                     if (
                         cd instanceof EmfCommentDataWMF ||
                         cd instanceof EmfCommentDataGeneric
@@ -107,16 +117,16 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
                         return true;
                     }
 
-                    if (cd instanceof EmfCommentDataMultiformats) {
-                        Iterator<?> iter2 = ((EmfCommentDataMultiformats)cd).getFormats().iterator();
+                    if (cd instanceof EmfCommentDataMultiformats mf) {
+                        Iterator<?> iter2 = mf.getFormats().iterator();
                         if (iter2.hasNext()) {
                             iterStack.push(iter2);
                             continue;
                         }
                     }
 
-                    if (cd instanceof EmfCommentDataPlus) {
-                        Iterator<?> iter2 = ((EmfCommentDataPlus)cd).getRecords().iterator();
+                    if (cd instanceof EmfCommentDataPlus cdp) {
+                        Iterator<?> iter2 = cdp.getRecords().iterator();
                         if (iter2.hasNext()) {
                             iter = iter2;
                             iterStack.push(iter2);
@@ -130,13 +140,13 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
                     return true;
                 }
 
-                if (obj instanceof EmfPlusObject && ((EmfPlusObject)obj).getObjectType() == EmfPlusObjectType.IMAGE) {
+                if (obj instanceof EmfPlusObject epo && epo.getObjectType() == EmfPlusObjectType.IMAGE) {
                     current = obj;
                     return true;
                 }
 
-                if (obj instanceof HwmfFill.WmfStretchDib) {
-                    HwmfBitmapDib bitmap = ((HwmfFill.WmfStretchDib) obj).getBitmap();
+                if (obj instanceof HwmfFill.WmfStretchDib dib) {
+                    HwmfBitmapDib bitmap = dib.getBitmap();
                     if (bitmap.isValid()) {
                         current = obj;
                         return true;
@@ -172,11 +182,10 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
     }
 
     private HwmfEmbedded checkEmfCommentDataWMF() {
-        if (!(current instanceof EmfComment && ((EmfComment)current).getCommentData() instanceof EmfCommentDataWMF)) {
+        if (!(current instanceof EmfComment comment && comment.getCommentData() instanceof EmfCommentDataWMF wmf)) {
             return null;
         }
 
-        EmfCommentDataWMF wmf = (EmfCommentDataWMF)((EmfComment)current).getCommentData();
         HwmfEmbedded emb = new HwmfEmbedded();
         emb.setEmbeddedType(HwmfEmbeddedType.WMF);
         emb.setData(wmf.getWMFData());
@@ -185,10 +194,9 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
     }
 
     private HwmfEmbedded checkEmfCommentDataGeneric() {
-        if (!(current instanceof EmfComment && ((EmfComment)current).getCommentData() instanceof EmfCommentDataGeneric)) {
+        if (!(current instanceof EmfComment comment && comment.getCommentData() instanceof EmfCommentDataGeneric cdg)) {
             return null;
         }
-        EmfCommentDataGeneric cdg = (EmfCommentDataGeneric)((EmfComment)current).getCommentData();
         HwmfEmbedded emb = new HwmfEmbedded();
         emb.setEmbeddedType(HwmfEmbeddedType.UNKNOWN);
         emb.setData(cdg.getPrivateData());
@@ -197,10 +205,9 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
     }
 
     private HwmfEmbedded checkEmfCommentDataFormat() {
-        if (!(current instanceof EmfCommentDataFormat)) {
+        if (!(current instanceof EmfCommentDataFormat cdf)) {
             return null;
         }
-        EmfCommentDataFormat cdf = (EmfCommentDataFormat)current;
         HwmfEmbedded emb = new HwmfEmbedded();
         boolean isEmf = (cdf.getSignature() == HemfComment.EmfFormatSignature.ENHMETA_SIGNATURE);
         emb.setEmbeddedType(isEmf ? HwmfEmbeddedType.EMF : HwmfEmbeddedType.EPS);
@@ -210,25 +217,23 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
     }
 
     private HwmfEmbedded checkWmfStretchDib() {
-        if (!(current instanceof HwmfFill.WmfStretchDib)) {
+        if (!(current instanceof HwmfFill.WmfStretchDib dib)) {
             return null;
         }
         HwmfEmbedded emb = new HwmfEmbedded();
-        emb.setData(((HwmfFill.WmfStretchDib) current).getBitmap().getBMPData());
+        emb.setData(dib.getBitmap().getBMPData());
         emb.setEmbeddedType(HwmfEmbeddedType.BMP);
         current = null;
         return emb;
     }
 
     private HwmfEmbedded checkEmfPlusObject() {
-        if (!(current instanceof EmfPlusObject)) {
+        if (!(current instanceof EmfPlusObject epo)) {
             return null;
         }
 
-        EmfPlusObject epo = (EmfPlusObject)current;
         assert(epo.getObjectType() == EmfPlusObjectType.IMAGE);
         EmfPlusImage img = epo.getObjectData();
-        assert(img.getImageDataType() != null);
 
         final HwmfEmbedded emb = getEmfPlusImageData();
         if (emb == null) {
@@ -236,51 +241,33 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
         }
 
         final HwmfEmbeddedType et;
+        if (img.getImageDataType() == null) {
+            emb.setEmbeddedType(HwmfEmbeddedType.UNKNOWN);
+            return emb;
+        }
         switch (img.getImageDataType()) {
-            case BITMAP:
+            case BITMAP -> {
                 if (img.getBitmapType() == EmfPlusBitmapDataType.COMPRESSED) {
-                    switch (FileMagic.valueOf(emb.getRawData())) {
-                        case JPEG:
-                            et = HwmfEmbeddedType.JPEG;
-                            break;
-                        case GIF:
-                            et = HwmfEmbeddedType.GIF;
-                            break;
-                        case PNG:
-                            et = HwmfEmbeddedType.PNG;
-                            break;
-                        case TIFF:
-                            et = HwmfEmbeddedType.TIFF;
-                            break;
-                        default:
-                            et = HwmfEmbeddedType.BITMAP;
-                            break;
-                    }
+                    et = switch (FileMagic.valueOf(emb.getRawData())) {
+                        case JPEG -> HwmfEmbeddedType.JPEG;
+                        case GIF -> HwmfEmbeddedType.GIF;
+                        case PNG -> HwmfEmbeddedType.PNG;
+                        case TIFF -> HwmfEmbeddedType.TIFF;
+                        default -> HwmfEmbeddedType.BITMAP;
+                    };
                 } else {
                     et = HwmfEmbeddedType.PNG;
                     compressGDIBitmap(img, emb, et);
                 }
-                break;
-            case METAFILE:
-                assert(img.getMetafileType() != null);
-                switch (img.getMetafileType()) {
-                    case Wmf:
-                    case WmfPlaceable:
-                        et = HwmfEmbeddedType.WMF;
-                        break;
-                    case Emf:
-                    case EmfPlusDual:
-                    case EmfPlusOnly:
-                        et = HwmfEmbeddedType.EMF;
-                        break;
-                    default:
-                        et = HwmfEmbeddedType.UNKNOWN;
-                        break;
-                }
-                break;
-            default:
-                et = HwmfEmbeddedType.UNKNOWN;
-                break;
+            }
+            case METAFILE -> et = (img.getMetafileType() == null)
+                ? HwmfEmbeddedType.UNKNOWN
+                : switch (img.getMetafileType()) {
+                    case Wmf, WmfPlaceable -> HwmfEmbeddedType.WMF;
+                    case Emf, EmfPlusDual, EmfPlusOnly -> HwmfEmbeddedType.EMF;
+                    default -> HwmfEmbeddedType.UNKNOWN;
+                };
+            default -> et = HwmfEmbeddedType.UNKNOWN;
         }
         emb.setEmbeddedType(et);
 
@@ -316,14 +303,16 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
         final int totalSize = epo.getTotalObjectSize() == 0
             ? ((EmfPlusImage)epo.getObjectData()).getImageData().length
             : epo.getTotalObjectSize();
-        IOUtils.safelyAllocateCheck(totalSize, MAX_RECORD_LENGTH);
+        IOUtils.safelyAllocateCheck(totalSize, MAX_RECORD_LENGTH,
+                "HemfEmbeddedIterator.setMaxRecordLength()");
 
-        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(totalSize).get()) {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(Math.min(totalSize, MAX_BUFFER_PRESIZE)).get()) {
             boolean hasNext = false;
             do {
                 EmfPlusImage img = epo.getObjectData();
-                assert(img.getImageDataType() != null);
-                assert(!hasNext || img.getImageDataType() == HemfPlusImage.EmfPlusImageDataType.CONTINUED);
+                if (hasNext && img.getImageDataType() != HemfPlusImage.EmfPlusImageDataType.CONTINUED) {
+                    LOG.atWarn().log("Unexpected image data type of continued emf+ image: {}", img.getImageDataType());
+                }
                 bos.write(img.getImageData());
                 current = null;
                 hasNext = moveNext() &&

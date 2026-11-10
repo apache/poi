@@ -154,7 +154,7 @@ public final class NameIdChunks implements ChunkGroup {
             // fetch property name / stream ID
             final String[] propertyName = { null };
             final long[] propertyNameCRC32 = { -1L };
-            long streamID = getStreamID(propertyKind, (int)nameOffset, guid, guidIndex,
+            long streamID = getStreamID(propertyKind, nameOffset, guid, guidIndex,
                                         n -> propertyName[0] = n, c -> propertyNameCRC32[0] = c);
 
             if (!matchesProperty(propertyKind, nameOffset, name, propertyName[0], id)) {
@@ -208,7 +208,7 @@ public final class NameIdChunks implements ChunkGroup {
             // GUID from guid stream
             byte[] guidStreamBytes = guidStream.getValue();
             int guidIndexOffset = (guidIndex - 3) * 0x10;
-            if (guidStreamBytes.length >= guidIndexOffset + 0x10) {
+            if (guidStreamBytes != null && guidStreamBytes.length >= guidIndexOffset + 0x10) {
                 return new ClassID(guidStreamBytes, guidIndexOffset);
             }
         }
@@ -225,7 +225,7 @@ public final class NameIdChunks implements ChunkGroup {
     }
 
 
-    private long getStreamID(int propertyKind, int nameOffset, ClassID guid, int guidIndex,
+    private long getStreamID(int propertyKind, long nameOffset, ClassID guid, int guidIndex,
         Consumer<String> propertyNameSetter, Consumer<Long> propertyNameCRC32Setter) {
         if (propertyKind == 0) {
             // numerical named property
@@ -235,10 +235,12 @@ public final class NameIdChunks implements ChunkGroup {
         // string named property
         byte[] stringBytes = stringStream.getValue();
         long propertyNameCRC32 = -1;
-        if (stringBytes.length > nameOffset) {
-            long nameLength = LittleEndian.getUInt(stringBytes, nameOffset);
+        // nameOffset is an unsigned 32-bit offset of a 4-byte name length
+        // followed by the name itself
+        if (stringBytes != null && nameOffset + 4 <= stringBytes.length) {
+            long nameLength = LittleEndian.getUInt(stringBytes, (int) nameOffset);
             if (stringBytes.length >= nameOffset + 4 + nameLength) {
-                int nameStart = nameOffset + 4;
+                int nameStart = (int) nameOffset + 4;
                 String propertyName = new String(stringBytes, nameStart, (int) nameLength, StringUtil.UTF16LE);
                 if (PropertySetType.PS_INTERNET_HEADERS.classID.equals(guid)) {
                     byte[] n = propertyName.toLowerCase(Locale.ROOT).getBytes(StringUtil.UTF16LE);

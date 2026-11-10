@@ -21,7 +21,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -121,10 +120,10 @@ public final class PPTXMLDump {
             pos += LittleEndianConsts.SHORT_SIZE;
             int type = LittleEndian.getUShort(data, pos);
             pos += LittleEndianConsts.SHORT_SIZE;
-            int size = (int)LittleEndian.getUInt(data, pos);
+            long size = LittleEndian.getUInt(data, pos);
             pos += LittleEndianConsts.INT_SIZE;
 
-            if (size < 0) {
+            if (size < 0 || size > Integer.MAX_VALUE) {
                 // stop processing of invalid header data
                 continue;
             }
@@ -143,15 +142,15 @@ public final class PPTXMLDump {
             boolean isContainer = (info & 0x000F) == 0x000F;
             if (isContainer) {
                 //continue to dump child records
-                dump(data, pos, size, padding);
+                dump(data, pos, Math.toIntExact(size), padding);
             } else {
                 //dump first 100 bytes of the atom data
-                dump(out, data, pos, Math.min(size, data.length-pos), padding, true);
+                dump(out, data, pos, Math.toIntExact(Math.min(size, data.length-pos)), padding, true);
             }
             padding--;
             write(out, "</"+recname + ">" + CR, padding);
 
-            pos += size;
+            pos += Math.toIntExact(size);
         }
     }
 
@@ -216,13 +215,16 @@ public final class PPTXMLDump {
                 System.out.println("Dumping " + arg);
 
                 if (outFile) {
-                    OutputStream fos = Files.newOutputStream(Path.of(ppt.getName() + ".xml"));
-                    OutputStreamWriter out = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-                    dump.dump(out);
-                    out.close();
+                    try (Writer out = new OutputStreamWriter(
+                            Files.newOutputStream(Path.of(ppt.getName() + ".xml")), StandardCharsets.UTF_8)) {
+                        dump.dump(out);
+                    }
                 } else {
-                    dump.dump(new BufferedWriter(
-                            new OutputStreamWriter(System.out, StandardCharsets.UTF_8)));
+                    Writer out = new BufferedWriter(
+                            new OutputStreamWriter(System.out, StandardCharsets.UTF_8));
+                    dump.dump(out);
+                    // dump() does not flush, and System.out must not be closed here
+                    out.flush();
                 }
             }
         }
@@ -241,12 +243,12 @@ public final class PPTXMLDump {
         String type;
         int meta = LittleEndian.getUShort(header, 0);
 
-        switch(meta){
-            case 0x46A0: type = "jpeg"; break;
-            case 0x2160: type = "wmf"; break;
-            case 0x6E00: type = "png"; break;
-            default: type = "unknown"; break;
-        }
+        type = switch (meta) {
+            case 0x46A0 -> "jpeg";
+            case 0x2160 -> "wmf";
+            case 0x6E00 -> "png";
+            default -> "unknown";
+        };
         return type;
     }
 

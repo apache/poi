@@ -374,8 +374,7 @@ public class DummyGraphics2d extends Graphics2D {
     @Override
     public void setStroke(Stroke s) {
         String l;
-        if (s instanceof BasicStroke) {
-            BasicStroke bs = (BasicStroke)s;
+        if (s instanceof BasicStroke bs) {
             String cap = new String[]{"BUTT","ROUND","SQUARE"}[bs.getEndCap()];
             String join = new String[]{"MITER","ROUND","BEVEL"}[bs.getLineJoin()];
             l = "g.setStroke(new BasicStroke(" + bs.getLineWidth() + "f, BasicStroke.CAP_" + cap + ", BasicStroke.JOIN_" + join + ", " +
@@ -716,17 +715,16 @@ public class DummyGraphics2d extends Graphics2D {
         if (attr == null) {
             return "null";
         }
-        if (attr instanceof Font) {
-            Font f = (Font)attr;
+        if (attr instanceof Font f) {
             final String[] STYLE = { "Font.PLAIN", "Font.BOLD", "Font.ITALIC", "Font.BOLD | Font.ITALIC"  };
             return "new Font(\"" + f.getFamily(Locale.ROOT) + "\"," + STYLE[f.getStyle()] + "," + f.getSize() + ")";
         }
-        if (attr instanceof Color) {
-            return String.format(Locale.ROOT, "new Color(0x%08X)", ((Color)attr).getRGB());
+        if (attr instanceof Color c) {
+            return String.format(Locale.ROOT, "new Color(0x%08X)", c.getRGB());
         }
         for (int i=0; i<ATTRS.length; i+=2) {
             if (attr == ATTRS[i]) {
-                return (String)ATTRS[i+1];
+                return ATTRS[i+1].toString();
             }
         }
         return "\""+ attr +"\"";

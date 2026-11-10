@@ -54,6 +54,7 @@ import org.apache.poi.sl.usermodel.StrokeStyle.LineCap;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCompound;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 
 import static org.apache.poi.hslf.usermodel.HSLFShapePlaceholderDetails.createOEPlaceholderAtom;
@@ -70,7 +71,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
 
     public static final double DEFAULT_LINE_WIDTH = 0.75;
 
-    protected static final EscherPropertyTypes[] ADJUST_VALUES = {
+    private static final EscherPropertyTypes[] ADJUST_VALUE_PROPERTIES = {
             EscherPropertyTypes.GEOMETRY__ADJUSTVALUE,
             EscherPropertyTypes.GEOMETRY__ADJUST2VALUE,
             EscherPropertyTypes.GEOMETRY__ADJUST3VALUE,
@@ -82,6 +83,23 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
             EscherPropertyTypes.GEOMETRY__ADJUST9VALUE,
             EscherPropertyTypes.GEOMETRY__ADJUST10VALUE
     };
+
+    /**
+     * Changing this array has no effect, as POI uses its own copy.
+     *
+     * @deprecated the field will be removed
+     */
+    @Deprecated
+    @Removal(version = "7.0.0")
+    protected static final EscherPropertyTypes[] ADJUST_VALUES = ADJUST_VALUE_PROPERTIES.clone();
+
+    /**
+     * @param idx the 0-based index of the adjust value
+     * @return the escher property holding that adjust value
+     */
+    static EscherPropertyTypes getAdjustValueProperty(int idx) {
+        return ADJUST_VALUE_PROPERTIES[idx];
+    }
 
     /**
      * Hyperlink
@@ -347,7 +365,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         }
 
 
-        EscherPropertyTypes escherProp = ADJUST_VALUES[adjInt-1];
+        EscherPropertyTypes escherProp = getAdjustValueProperty(adjInt-1);
 
         int adjval = getEscherProperty(escherProp, -1);
 
@@ -360,23 +378,13 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         // see https://social.msdn.microsoft.com/Forums/en-US/33e458e6-58df-48fe-9a10-e303ab08991d/preset-shapes-for-ppt?forum=os_binaryfile
 
         // usually we deal with length units and only very few degree units:
-        boolean isDegreeUnit = false;
-        switch (getShapeType()) {
-            case ARC:
-            case BLOCK_ARC:
-            case CHORD:
-            case PIE:
-                isDegreeUnit = (adjInt == 1 || adjInt == 2);
-                break;
-            case CIRCULAR_ARROW:
-            case LEFT_CIRCULAR_ARROW:
-            case LEFT_RIGHT_CIRCULAR_ARROW:
-                isDegreeUnit = (adjInt == 2 || adjInt == 3 || adjInt == 4);
-                break;
-            case MATH_NOT_EQUAL:
-                isDegreeUnit = (adjInt == 2);
-                break;
-        }
+        boolean isDegreeUnit = switch (getShapeType()) {
+            case ARC, BLOCK_ARC, CHORD, PIE -> (adjInt == 1 || adjInt == 2);
+            case CIRCULAR_ARROW, LEFT_CIRCULAR_ARROW, LEFT_RIGHT_CIRCULAR_ARROW ->
+                    (adjInt == 2 || adjInt == 3 || adjInt == 4);
+            case MATH_NOT_EQUAL -> (adjInt == 2);
+            default -> false;
+        };
 
         Guide gd = new Guide();
         gd.setName(name);
@@ -602,12 +610,12 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         OEPlaceholderAtom oep = null;
         RoundTripHFPlaceholder12 rtp = null;
         for (org.apache.poi.hslf.record.Record r : clientData.getHSLFChildRecords()) {
-            if (r instanceof OEPlaceholderAtom) {
-                oep = (OEPlaceholderAtom) r;
+            if (r instanceof OEPlaceholderAtom atom) {
+                oep = atom;
                 break;
             }
-            if (r instanceof RoundTripHFPlaceholder12) {
-                rtp = (RoundTripHFPlaceholder12) r;
+            if (r instanceof RoundTripHFPlaceholder12 hfPlaceholder) {
+                rtp = hfPlaceholder;
                 break;
             }
         }
@@ -622,8 +630,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         final byte phId = getPlaceholderId(getSheet(), placeholder);
 
         switch (placeholder) {
-            case HEADER:
-            case FOOTER:
+            case HEADER, FOOTER -> {
                 if (rtp == null) {
                     rtp = new RoundTripHFPlaceholder12();
                     rtp.setPlaceholderId(phId);
@@ -632,15 +639,15 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
                 if (oep != null) {
                     clientData.removeChild(OEPlaceholderAtom.class);
                 }
-                break;
-            default:
+            }
+            default -> {
                 if (rtp != null) {
                     clientData.removeChild(RoundTripHFPlaceholder12.class);
                 }
                 if (oep == null) {
                     oep = createOEPlaceholderAtom(clientData, phId);
                 }
-                break;
+            }
         }
     }
 
@@ -654,16 +661,16 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
 
         // TODO: handle PaintStyle
         for (Object st : styles) {
-            if (st instanceof Number) {
-                setLineWidth(((Number)st).doubleValue());
-            } else if (st instanceof LineCap) {
-                setLineCap((LineCap)st);
-            } else if (st instanceof LineDash) {
-                setLineDash((LineDash)st);
-            } else if (st instanceof LineCompound) {
-                setLineCompound((LineCompound)st);
-            } else if (st instanceof Color) {
-                setLineColor((Color)st);
+            if (st instanceof Number number) {
+                setLineWidth(number.doubleValue());
+            } else if (st instanceof LineCap cap) {
+                setLineCap(cap);
+            } else if (st instanceof LineDash dash) {
+                setLineDash(dash);
+            } else if (st instanceof LineCompound compound) {
+                setLineCompound(compound);
+            } else if (st instanceof Color color) {
+                setLineColor(color);
             }
         }
     }

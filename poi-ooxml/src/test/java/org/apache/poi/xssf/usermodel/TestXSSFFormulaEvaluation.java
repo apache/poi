@@ -485,4 +485,23 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             assertEquals("Male", value.getStringValue());
         }
     }
+
+    /**
+     * Bug 60848 - SUMPRODUCT with unary minus (--) on an array argument was failing with
+     * "Invalid arg type for SUMPRODUCT:(org.apache.poi.ss.formula.eval.ErrorEval)" when the
+     * referenced range did not intersect the formula cell's row/column.
+     */
+    @Test
+    void testBug60848_sumproductWithUnaryMinusArray() throws IOException {
+        // bad.xlsx contains =SUMPRODUCT(--(B5:B20)) in cell A3, all other cells empty.
+        // Expected result is 0 (empty cells double-negated and summed = 0).
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("bug60848_sumproduct_unary_minus.xlsx")) {
+            FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+            Cell cell = wb.getSheetAt(0).getRow(2).getCell(0);
+            assertNotNull(cell);
+            CellValue result = evaluator.evaluate(cell);
+            assertEquals(0.0, result.getNumberValue(), 0.0,
+                    "SUMPRODUCT(--(B5:B20)) should evaluate to 0 when B5:B20 are all empty");
+        }
+    }
 }

@@ -53,7 +53,7 @@ import org.apache.poi.util.RecordFormatException;
 public class HwmfBitmapDib implements GenericRecord {
     // arbitrarily selected; may need to increase
     private static final int DEFAULT_MAX_HEIGHT_WIDTH = 10_000;
-    protected static int MAX_HEIGHT_WIDTH = DEFAULT_MAX_HEIGHT_WIDTH;
+    private static int MAX_HEIGHT_WIDTH = DEFAULT_MAX_HEIGHT_WIDTH;
 
     private static final Logger LOG = PoiLogManager.getLogger(HwmfBitmapDib.class);
     private static final int BMP_HEADER_SIZE = 14;
@@ -246,29 +246,30 @@ public class HwmfBitmapDib implements GenericRecord {
         // The size and format of this data is determined by information in the DIBHeaderInfo field. If
         // it is a BitmapCoreHeader, the size in bytes MUST be calculated as follows:
 
-        int bodySize = ((((headerWidth * headerPlanes *
-                (headerBitCount == null ? 0 : headerBitCount.flag) + 31) & ~31) / 8) * Math.abs(headerHeight));
+        long bodySize = ((((long)headerWidth * headerPlanes *
+                (headerBitCount == null ? 0 : headerBitCount.flag) + 31L) & ~31L) / 8L) * Math.abs((long)headerHeight);
 
         // This formula SHOULD also be used to calculate the size of aData when DIBHeaderInfo is a
         // BitmapInfoHeader Object, using values from that object, but only if its Compression value is
         // BI_RGB, BI_BITFIELDS, or BI_CMYK.
         // Otherwise, the size of aData MUST be the BitmapInfoHeader Object value ImageSize.
 
-        assert( headerSize != 0x0C || bodySize == headerImageSize);
-
         if (headerSize == 0x0C ||
             headerCompression == Compression.BI_RGB ||
             headerCompression == Compression.BI_BITFIELDS ||
             headerCompression == Compression.BI_CMYK) {
-            int fileSize = Math.min(introSize+bodySize,recordSize);
-            imageData = IOUtils.safelyAllocate(fileSize, HwmfPicture.getMaxRecordLength());
+            int fileSize = Math.toIntExact(
+                    Math.min(introSize + bodySize, recordSize));
+            imageData = IOUtils.safelyAllocate(fileSize, HwmfPicture.getMaxRecordLength(),
+                    "HwmfPicture.setMaxRecordLength()");
             leis.readFully(imageData, 0, introSize);
             leis.skipFully(recordSize-fileSize);
             // emfs are sometimes truncated, read as much as possible
             int readBytes = leis.read(imageData, introSize, fileSize-introSize);
             return introSize+(recordSize-fileSize)+readBytes;
         } else {
-            imageData = IOUtils.safelyAllocate(recordSize, HwmfPicture.getMaxRecordLength());
+            imageData = IOUtils.safelyAllocate(recordSize, HwmfPicture.getMaxRecordLength(),
+                    "HwmfPicture.setMaxRecordLength()");
             leis.readFully(imageData);
             return recordSize;
         }
@@ -299,6 +300,8 @@ public class HwmfBitmapDib implements GenericRecord {
             // A 16-bit unsigned integer that defines the format of each pixel, and the
             // maximum number of colors in the DIB.
             headerBitCount = BitCount.valueOf(leis.readUShort());
+            // a BitmapCoreHeader has no compression field, its bitmaps are uncompressed
+            headerCompression = Compression.BI_RGB;
             size += 4*LittleEndianConsts.SHORT_SIZE;
         } else {
             // fix header size, sometimes this is invalid
@@ -363,14 +366,15 @@ public class HwmfBitmapDib implements GenericRecord {
             return 0;
         case BI_BITCOUNT_1:
             // 2 colors
-            return readRGBQuad(leis, (int)(headerColorUsed == 0 ? 2 : Math.min(headerColorUsed,2)));
+            return readRGBQuad(leis, headerColorUsed == 0 ? 2 : Math.toIntExact(Math.min(headerColorUsed,2)));
         case BI_BITCOUNT_2:
             // 16 colors
-            return readRGBQuad(leis, (int)(headerColorUsed == 0 ? 16 : Math.min(headerColorUsed,16)));
+            return readRGBQuad(leis, headerColorUsed == 0 ? 16 : Math.toIntExact(Math.min(headerColorUsed,16)));
         case BI_BITCOUNT_3:
             // 256 colors
-            return readRGBQuad(leis, (int)(headerColorUsed == 0 ? 256 : Math.min(headerColorUsed,256)));
+            return readRGBQuad(leis, headerColorUsed == 0 ? 256 : Math.toIntExact(Math.min(headerColorUsed,256)));
         case BI_BITCOUNT_4:
+            checkCompression();
             switch (headerCompression) {
             case BI_RGB:
                 colorMaskB = 0x1F;
@@ -387,6 +391,7 @@ public class HwmfBitmapDib implements GenericRecord {
             }
         case BI_BITCOUNT_5:
         case BI_BITCOUNT_6:
+            checkCompression();
             switch (headerCompression) {
             case BI_RGB:
                 colorMaskR=0xFF;
@@ -401,6 +406,13 @@ public class HwmfBitmapDib implements GenericRecord {
             default:
                 throw new IOException("Invalid compression option ("+headerCompression+") for bitcount ("+headerBitCount+").");
             }
+        }
+    }
+
+    private void checkCompression() throws IOException {
+        // an unknown compression value is read as null
+        if (headerCompression == null) {
+            throw new IOException("Invalid compression option (unknown) for bitcount ("+headerBitCount+").");
         }
     }
 
@@ -457,10 +469,12 @@ public class HwmfBitmapDib implements GenericRecord {
         }
 
         // sometimes there are missing bytes after the imageData which will be 0-filled
-        int imageSize = (int)Math.max(imageData.length, introSize+headerImageSize);
+        long imageSizeLong = Math.max(imageData.length, introSize + headerImageSize);
 
         // create the image data and leave the parsing to the ImageIO api
-        byte[] buf = IOUtils.safelyAllocate(BMP_HEADER_SIZE + (long)imageSize, HwmfPicture.getMaxRecordLength());
+        byte[] buf = IOUtils.safelyAllocate(BMP_HEADER_SIZE + imageSizeLong, HwmfPicture.getMaxRecordLength());
+        // the allocation above bounds the size, so it is safe to narrow it now
+        int imageSize = (int)imageSizeLong;
 
         // https://en.wikipedia.org/wiki/BMP_file_format #  Bitmap file header
         buf[0] = (byte)'B';

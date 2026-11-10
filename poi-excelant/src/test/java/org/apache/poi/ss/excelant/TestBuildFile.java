@@ -19,7 +19,7 @@
 package org.apache.poi.ss.excelant;
 
 import static org.apache.poi.POITestCase.assertContains;
-import static org.apache.poi.POITestCase.assertNotContained;
+import static org.apache.poi.POITestCase.assertNotContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.POITestCase;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildListener;
@@ -99,7 +100,7 @@ public class TestBuildFile {
      * Assert that the given substring is not in the log messages.
      */
     void assertLogNotContaining(String substring) {
-        assertNotContained(getLog(), substring);
+        POITestCase.assertNotContains(getLog(), substring);
     }
 
     /**
@@ -256,18 +257,18 @@ public class TestBuildFile {
 
         assertLogContaining("Using input file: " + TestBuildFile.getDataDir() + "/spreadsheet/excelant.xls");
         assertLogContaining("Succeeded when evaluating 'MortgageCalculator'!$B$4.  " +
-            "It evaluated to 2285.5761494145568 when the value of 2285.576149 with precision of 1.0E-4");
+            "It evaluated to 2285.5761494145563 when the value of 2285.576149 with precision of 1.0E-4");
         assertLogContaining("Succeeded when evaluating 'MortgageCalculator'!$B$4.  " +
-            "It evaluated to 2285.5761494145568 when the value of 2285.576149 with precision of 1.0E-5");
+            "It evaluated to 2285.5761494145563 when the value of 2285.576149 with precision of 1.0E-5");
         assertLogContaining("Failed to evaluate cell 'MortgageCalculator'!$B$4.  " +
-            "It evaluated to 2285.5761494145568 when the value of 2285.576149 with precision of 1.0E-10 was expected.");
+            "It evaluated to 2285.5761494145563 when the value of 2285.576149 with precision of 1.0E-10 was expected.");
         assertLogContaining("2/3 tests passed");
     }
 
     @Test
     void testPrecisionFail() {
         expectBuildException("test-precision-fails", "precision not matched",
-             "\tFailed to evaluate cell 'MortgageCalculator'!$B$4.  It evaluated to 2285.5761494145568 " +
+             "\tFailed to evaluate cell 'MortgageCalculator'!$B$4.  It evaluated to 2285.5761494145563 " +
              "when the value of 2285.576149 with precision of 1.0E-10 was expected.");
     }
 

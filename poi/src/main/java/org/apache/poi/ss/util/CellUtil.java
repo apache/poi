@@ -23,12 +23,21 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.logging.PoiLogManager;
+import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.EvaluationWorkbook;
+import org.apache.poi.ss.formula.FormulaParseException;
+import org.apache.poi.ss.formula.FormulaParser;
+import org.apache.poi.ss.formula.FormulaParsingWorkbook;
+import org.apache.poi.ss.formula.FormulaRenderer;
+import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
+import org.apache.poi.ss.formula.FormulaShifter;
+import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellCopyContext;
@@ -41,6 +50,7 @@ import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -423,7 +433,8 @@ public final class CellUtil {
                         destCell.setCellValue(srcCell.getRichStringCellValue());
                         break;
                     case FORMULA:
-                        destCell.setCellFormula(srcCell.getCellFormula());
+                        destCell.setCellFormula(policy.isAdjustFormulaReferences()
+                                ? adjustFormulaReferences(srcCell, destCell) : srcCell.getCellFormula());
                         break;
                     case BLANK:
                         destCell.setBlank();
@@ -465,8 +476,8 @@ public final class CellUtil {
         if (policy.isMergeHyperlink()) {
             // if srcCell doesn't have a hyperlink and destCell has a hyperlink, don't clear destCell's hyperlink
             if (srcHyperlink != null) {
-                if (srcHyperlink instanceof Duplicatable) {
-                    Hyperlink newHyperlink = (Hyperlink) ((Duplicatable) srcHyperlink).copy();
+                if (srcHyperlink instanceof Duplicatable duplicatable) {
+                    Hyperlink newHyperlink = (Hyperlink) duplicatable.copy();
                     destCell.setHyperlink(newHyperlink);
                 } else {
                     throw new IllegalStateException("srcCell hyperlink is not an instance of Duplicatable");
@@ -477,8 +488,8 @@ public final class CellUtil {
             // if srcCell doesn't have a hyperlink, clear the hyperlink (if one exists) at destCell
             if (srcHyperlink == null) {
                 destCell.setHyperlink(null);
-            } else if (srcHyperlink instanceof Duplicatable) {
-                Hyperlink newHyperlink = (Hyperlink) ((Duplicatable) srcHyperlink).copy();
+            } else if (srcHyperlink instanceof Duplicatable duplicatable) {
+                Hyperlink newHyperlink = (Hyperlink) duplicatable.copy();
                 destCell.setHyperlink(newHyperlink);
             } else {
                 throw new IllegalStateException("srcCell hyperlink is not an instance of Duplicatable");
@@ -486,6 +497,50 @@ public final class CellUtil {
         }
     }
 
+
+    /**
+     * Returns the formula of srcCell with its relative references moved by the row and column
+     * offset from srcCell to destCell, as Excel does when a formula is copied and pasted.
+     * The formula is parsed and rendered against the destination workbook. It is returned
+     * unchanged if it cannot be parsed there.
+     */
+    private static String adjustFormulaReferences(Cell srcCell, Cell destCell) {
+        final String formula = srcCell.getCellFormula();
+        final int rowOffset = destCell.getRowIndex() - srcCell.getRowIndex();
+        final int columnOffset = destCell.getColumnIndex() - srcCell.getColumnIndex();
+        if (formula == null || formula.isEmpty() || (rowOffset == 0 && columnOffset == 0)) {
+            return formula;
+        }
+        final Sheet destSheet = destCell.getSheet();
+        final Workbook destWorkbook = destSheet.getWorkbook();
+        final EvaluationWorkbook evaluationWorkbook = destWorkbook.createEvaluationWorkbook();
+        if (!(evaluationWorkbook instanceof FormulaParsingWorkbook parsingWorkbook)
+                || !(evaluationWorkbook instanceof FormulaRenderingWorkbook renderingWorkbook)) {
+            return formula;
+        }
+        final int sheetIndex = destWorkbook.getSheetIndex(destSheet);
+        final String sheetName = destSheet.getSheetName();
+        final SpreadsheetVersion version = destWorkbook.getSpreadsheetVersion();
+        try {
+            final Ptg[] ptgs = FormulaParser.parse(formula, parsingWorkbook, FormulaType.CELL,
+                    sheetIndex, srcCell.getRowIndex());
+            boolean changed = false;
+            if (rowOffset != 0) {
+                final int srcRow = srcCell.getRowIndex();
+                changed = FormulaShifter.createForRowCopy(sheetIndex, sheetName, srcRow, srcRow, rowOffset, version)
+                        .adjustFormula(ptgs, sheetIndex);
+            }
+            if (columnOffset != 0) {
+                final int srcColumn = srcCell.getColumnIndex();
+                changed |= FormulaShifter.createForColumnCopy(sheetIndex, sheetName, srcColumn, srcColumn, columnOffset, version)
+                        .adjustFormula(ptgs, sheetIndex);
+            }
+            return changed ? FormulaRenderer.toFormulaString(renderingWorkbook, ptgs) : formula;
+        } catch (FormulaParseException e) {
+            LOGGER.atWarn().withThrowable(e).log("Copying formula unchanged, as it could not be parsed in the destination workbook");
+            return formula;
+        }
+    }
     /**
      * Take a cell, and align it.
      * <p>
@@ -660,22 +715,51 @@ public final class CellUtil {
         return props == null ? getFormatProperties(style) : props;
     }
 
-    private static boolean styleMapsMatch(final Map<CellPropertyType, Object> newProps,
-                                          final Map<CellPropertyType, Object> storedProps, final boolean disableNullColorCheck) {
-        final EnumMap<CellPropertyType, Object> map1Copy = new EnumMap<>(newProps);
-        final EnumMap<CellPropertyType, Object> map2Copy = new EnumMap<>(storedProps);
+    /**
+     * @param wbProps the properties of a style that exists in the workbook
+     * @param wantedProps the properties the cell should get
+     * @param disableNullColorCheck whether a null wanted fill color must be matched by a null color,
+     *                              rather than by the indexed colors
+     */
+    private static boolean styleMapsMatch(final Map<CellPropertyType, Object> wbProps,
+                                          final Map<CellPropertyType, Object> wantedProps, final boolean disableNullColorCheck) {
+        final EnumMap<CellPropertyType, Object> map1Copy = new EnumMap<>(wbProps);
+        final EnumMap<CellPropertyType, Object> map2Copy = new EnumMap<>(wantedProps);
         final Object backColor1 = map1Copy.remove(CellPropertyType.FILL_BACKGROUND_COLOR_COLOR);
         final Object backColor2 = map2Copy.remove(CellPropertyType.FILL_BACKGROUND_COLOR_COLOR);
         final Object foreColor1 = map1Copy.remove(CellPropertyType.FILL_FOREGROUND_COLOR_COLOR);
         final Object foreColor2 = map2Copy.remove(CellPropertyType.FILL_FOREGROUND_COLOR_COLOR);
-        if (map1Copy.equals(map2Copy)) {
-            final boolean backColorsMatch = (!disableNullColorCheck && backColor2 == null)
-                    || Objects.equals(backColor1, backColor2);
-            final boolean foreColorsMatch = (!disableNullColorCheck && foreColor2 == null)
-                    || Objects.equals(foreColor1, foreColor2);
-            return backColorsMatch && foreColorsMatch;
+        final Object backIndex1 = map1Copy.remove(CellPropertyType.FILL_BACKGROUND_COLOR);
+        final Object backIndex2 = map2Copy.remove(CellPropertyType.FILL_BACKGROUND_COLOR);
+        final Object foreIndex1 = map1Copy.remove(CellPropertyType.FILL_FOREGROUND_COLOR);
+        final Object foreIndex2 = map2Copy.remove(CellPropertyType.FILL_FOREGROUND_COLOR);
+        return map1Copy.equals(map2Copy)
+                && fillColorsMatch(backColor1, backIndex1, backColor2, backIndex2, disableNullColorCheck)
+                && fillColorsMatch(foreColor1, foreIndex1, foreColor2, foreIndex2, disableNullColorCheck);
+    }
+
+    /**
+     * A fill color is held twice in the properties, as a {@link Color} and as an indexed color. The indexed
+     * color is derived from the {@link Color} and is meaningless for an RGB or theme color, so it only counts
+     * when there is no wanted {@link Color}. A missing indexed color means the automatic color (bug 69366).
+     */
+    private static boolean fillColorsMatch(final Object wbColor, final Object wbIndex,
+                                           final Object wantedColor, final Object wantedIndex, final boolean disableNullColorCheck) {
+        if (wantedColor != null) {
+            return wantedColor.equals(wbColor);
         }
-        return false;
+        if (disableNullColorCheck && wbColor != null) {
+            return false;
+        }
+        return colorIndex(wbIndex) == colorIndex(wantedIndex);
+    }
+
+    private static short colorIndex(final Object index) {
+        return index instanceof Number n ? n.shortValue() : IndexedColors.AUTOMATIC.getIndex();
+    }
+
+    private static boolean hasBorder(Map<CellPropertyType, Object> properties, CellPropertyType border) {
+        return getBorderStyle(properties, border) != BorderStyle.NONE;
     }
 
     /**
@@ -834,16 +918,26 @@ public final class CellUtil {
         style.setBorderLeft(getBorderStyle(properties, CellPropertyType.BORDER_LEFT));
         style.setBorderRight(getBorderStyle(properties, CellPropertyType.BORDER_RIGHT));
         style.setBorderTop(getBorderStyle(properties, CellPropertyType.BORDER_TOP));
-        style.setBottomBorderColor(getShort(properties, CellPropertyType.BOTTOM_BORDER_COLOR));
+        // A style reports a default color for a side that has no border and no color. Writing that default
+        // back would turn the workbook's default border into a new one with a color on every side
+        // (bug 60895), so a color is only set when the side has a border or the color is not that default.
+        // A color on a side without a border is kept, it is used once the border is added (RegionUtil).
+        short bottomBorderColor = getShort(properties, CellPropertyType.BOTTOM_BORDER_COLOR);
+        if (hasBorder(properties, CellPropertyType.BORDER_BOTTOM) || bottomBorderColor != style.getBottomBorderColor()) {
+            style.setBottomBorderColor(bottomBorderColor);
+        }
         style.setDataFormat(getShort(properties, CellPropertyType.DATA_FORMAT));
         style.setFillPattern(getFillPattern(properties, CellPropertyType.FILL_PATTERN));
 
+        // An automatic fill color is what a new style has anyway. Setting it explicitly would put
+        // <fgColor indexed="64"/> and <bgColor indexed="64"/> into an XSSF fill that may have no pattern,
+        // which Excel renders as a black cell while it is being edited (bug 69463)
         Short fillForeColorShort = nullableShort(properties, CellPropertyType.FILL_FOREGROUND_COLOR);
-        if (fillForeColorShort != null) {
+        if (fillForeColorShort != null && fillForeColorShort != IndexedColors.AUTOMATIC.getIndex()) {
             style.setFillForegroundColor(fillForeColorShort);
         }
         Short fillBackColorShort = nullableShort(properties, CellPropertyType.FILL_BACKGROUND_COLOR);
-        if (fillBackColorShort != null) {
+        if (fillBackColorShort != null && fillBackColorShort != IndexedColors.AUTOMATIC.getIndex()) {
             style.setFillBackgroundColor(fillBackColorShort);
         }
 
@@ -870,11 +964,20 @@ public final class CellUtil {
         }
         style.setHidden(getBoolean(properties, CellPropertyType.HIDDEN));
         style.setIndention(getShort(properties, CellPropertyType.INDENTION));
-        style.setLeftBorderColor(getShort(properties, CellPropertyType.LEFT_BORDER_COLOR));
+        short leftBorderColor = getShort(properties, CellPropertyType.LEFT_BORDER_COLOR);
+        if (hasBorder(properties, CellPropertyType.BORDER_LEFT) || leftBorderColor != style.getLeftBorderColor()) {
+            style.setLeftBorderColor(leftBorderColor);
+        }
         style.setLocked(getBoolean(properties, CellPropertyType.LOCKED));
-        style.setRightBorderColor(getShort(properties, CellPropertyType.RIGHT_BORDER_COLOR));
+        short rightBorderColor = getShort(properties, CellPropertyType.RIGHT_BORDER_COLOR);
+        if (hasBorder(properties, CellPropertyType.BORDER_RIGHT) || rightBorderColor != style.getRightBorderColor()) {
+            style.setRightBorderColor(rightBorderColor);
+        }
         style.setRotation(getShort(properties, CellPropertyType.ROTATION));
-        style.setTopBorderColor(getShort(properties, CellPropertyType.TOP_BORDER_COLOR));
+        short topBorderColor = getShort(properties, CellPropertyType.TOP_BORDER_COLOR);
+        if (hasBorder(properties, CellPropertyType.BORDER_TOP) || topBorderColor != style.getTopBorderColor()) {
+            style.setTopBorderColor(topBorderColor);
+        }
         style.setWrapText(getBoolean(properties, CellPropertyType.WRAP_TEXT));
         style.setShrinkToFit(getBoolean(properties, CellPropertyType.SHRINK_TO_FIT));
         style.setQuotePrefixed(getBoolean(properties, CellPropertyType.QUOTE_PREFIXED));
@@ -909,19 +1012,19 @@ public final class CellUtil {
      */
     private static short getShort(Map<CellPropertyType, Object> properties, CellPropertyType property) {
         Object value = properties.get(property);
-        if (value instanceof Number) {
-            return ((Number) value).shortValue();
+        if (value instanceof Number n) {
+            return n.shortValue();
         }
         return 0;
     }
 
     private static Short nullableShort(Map<CellPropertyType, Object> properties, CellPropertyType property) {
         Object value = properties.get(property);
-        if (value instanceof Short) {
-            return (Short) value;
+        if (value instanceof Short s) {
+            return s;
         }
-        if (value instanceof Number) {
-            return ((Number) value).shortValue();
+        if (value instanceof Number n) {
+            return n.shortValue();
         }
         return null;
     }
@@ -936,8 +1039,8 @@ public final class CellUtil {
      */
     private static Color getColor(Map<CellPropertyType, Object> properties, CellPropertyType property) {
         Object value = properties.get(property);
-        if (value instanceof Color) {
-            return (Color) value;
+        if (value instanceof Color c) {
+            return c;
         }
         return null;
     }
@@ -953,8 +1056,8 @@ public final class CellUtil {
      */
     private static int getInt(Map<CellPropertyType, Object> properties, CellPropertyType property) {
         Object value = properties.get(property);
-        if (value instanceof Number) {
-            return ((Number) value).intValue();
+        if (value instanceof Number n) {
+            return n.intValue();
         }
         return 0;
     }
@@ -969,13 +1072,12 @@ public final class CellUtil {
     private static BorderStyle getBorderStyle(Map<CellPropertyType, Object> properties, CellPropertyType property) {
         Object value = properties.get(property);
         BorderStyle border;
-        if (value instanceof BorderStyle) {
-            border = (BorderStyle) value;
+        if (value instanceof BorderStyle bs) {
+            border = bs;
         }
         // @deprecated 3.15 beta 2. getBorderStyle will only work on BorderStyle enums instead of codes in the future.
-        else if (value instanceof Short) {
+        else if (value instanceof Short code) {
             LOGGER.atWarn().log("Deprecation warning: CellUtil properties map uses Short values for {}. Should use BorderStyle enums instead.", property);
-            short code = (Short) value;
             border = BorderStyle.valueOf(code);
         } else if (value == null) {
             border = BorderStyle.NONE;
@@ -996,13 +1098,12 @@ public final class CellUtil {
     private static FillPatternType getFillPattern(Map<CellPropertyType, Object> properties, CellPropertyType property) {
         Object value = properties.get(property);
         FillPatternType pattern;
-        if (value instanceof FillPatternType) {
-            pattern = (FillPatternType) value;
+        if (value instanceof FillPatternType fpt) {
+            pattern = fpt;
         }
         // @deprecated 3.15 beta 2. getFillPattern will only work on FillPatternType enums instead of codes in the future.
-        else if (value instanceof Short) {
+        else if (value instanceof Short code) {
             LOGGER.atWarn().log("Deprecation warning: CellUtil properties map uses Short values for {}. Should use FillPatternType enums instead.", property);
-            short code = (Short) value;
             pattern = FillPatternType.forInt(code);
         } else if (value == null) {
             pattern = FillPatternType.NO_FILL;
@@ -1023,13 +1124,12 @@ public final class CellUtil {
     private static HorizontalAlignment getHorizontalAlignment(Map<CellPropertyType, Object> properties, CellPropertyType property) {
         Object value = properties.get(property);
         HorizontalAlignment align;
-        if (value instanceof HorizontalAlignment) {
-            align = (HorizontalAlignment) value;
+        if (value instanceof HorizontalAlignment ha) {
+            align = ha;
         }
         // @deprecated 3.15 beta 2. getHorizontalAlignment will only work on HorizontalAlignment enums instead of codes in the future.
-        else if (value instanceof Short) {
+        else if (value instanceof Short code) {
             LOGGER.atWarn().log("Deprecation warning: CellUtil properties map used a Short value for {}. Should use HorizontalAlignment enums instead.", property);
-            short code = (Short) value;
             align = HorizontalAlignment.forInt(code);
         } else if (value == null) {
             align = HorizontalAlignment.GENERAL;
@@ -1050,13 +1150,12 @@ public final class CellUtil {
     private static VerticalAlignment getVerticalAlignment(Map<CellPropertyType, Object> properties, CellPropertyType property) {
         Object value = properties.get(property);
         VerticalAlignment align;
-        if (value instanceof VerticalAlignment) {
-            align = (VerticalAlignment) value;
+        if (value instanceof VerticalAlignment va) {
+            align = va;
         }
         // @deprecated 3.15 beta 2. getVerticalAlignment will only work on VerticalAlignment enums instead of codes in the future.
-        else if (value instanceof Short) {
+        else if (value instanceof Short code) {
             LOGGER.atWarn().log("Deprecation warning: CellUtil properties map used a Short value for {}. Should use VerticalAlignment enums instead.", property);
-            short code = (Short) value;
             align = VerticalAlignment.forInt(code);
         } else if (value == null) {
             align = VerticalAlignment.BOTTOM;
@@ -1077,8 +1176,8 @@ public final class CellUtil {
     private static boolean getBoolean(Map<CellPropertyType, Object> properties, CellPropertyType property) {
         Object value = properties.get(property);
         //noinspection SimplifiableIfStatement
-        if (value instanceof Boolean) {
-            return (Boolean) value;
+        if (value instanceof Boolean bool) {
+            return bool;
         }
         return false;
     }

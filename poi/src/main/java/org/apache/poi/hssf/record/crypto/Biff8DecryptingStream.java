@@ -25,7 +25,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.crypt.ChunkedCipherInputStream;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
@@ -44,7 +43,7 @@ public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndia
 
     public Biff8DecryptingStream(InputStream in, int initialOffset, EncryptionInfo info) throws RecordFormatException {
         try {
-            byte[] initialBuf = IOUtils.safelyAllocate(initialOffset, HSSFWorkbook.getMaxRecordLength());
+            byte[] initialBuf = HSSFWorkbook.safelyAllocate(initialOffset);
             InputStream stream;
             if (initialOffset == 0) {
                 stream = in;
@@ -112,7 +111,7 @@ public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndia
     @Override
     public void readFully(byte[] buf, int off, int len) {
         if (shouldSkipEncryptionOnCurrentRecord) {
-            readPlain(buf, off, buf.length);
+            readPlain(buf, off, len);
         } else {
             ccis.readFully(buf, off, len);
         }
@@ -181,27 +180,23 @@ public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndia
      * @return {@code true} if record type specified by {@code sid} is never encrypted
      */
     public static boolean isNeverEncryptedRecord(int sid) {
-        switch (sid) {
-            case BOFRecord.sid:
-                // sheet BOFs for sure
-                // TODO - find out about chart BOFs
+        return switch (sid) {
+            // sheet BOFs for sure
+            // TODO - find out about chart BOFs
 
-            case InterfaceHdrRecord.sid:
-                // don't know why this record doesn't seem to get encrypted
+            // don't know why this record doesn't seem to get encrypted
 
-            case FilePassRecord.sid:
+            case BOFRecord.sid, InterfaceHdrRecord.sid, FilePassRecord.sid ->
                 // this only really counts when writing because FILEPASS is read early
 
-            // UsrExcl(0x0194)
-            // FileLock
-            // RRDInfo(0x0196)
-            // RRDHead(0x0138)
+                // UsrExcl(0x0194)
+                // FileLock
+                // RRDInfo(0x0196)
+                // RRDHead(0x0138)
 
-                return true;
-
-            default:
-                return false;
-        }
+                    true;
+            default -> false;
+        };
     }
 
     @Override

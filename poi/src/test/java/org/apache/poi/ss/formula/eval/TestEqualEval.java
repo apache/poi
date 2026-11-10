@@ -18,6 +18,7 @@
 package org.apache.poi.ss.formula.eval;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -43,7 +44,7 @@ final class TestEqualEval {
         };
         ValueEval result = evaluate(EvalInstances.Equal, args, 10, 10);
         assertNotEquals(ErrorEval.VALUE_INVALID, result, "Identified bug in evaluation of 1x1 area");
-        assertTrue(result instanceof BoolEval);
+        assertInstanceOf(BoolEval.class, result);
         assertTrue(((BoolEval)result).getBooleanValue());
     }
 

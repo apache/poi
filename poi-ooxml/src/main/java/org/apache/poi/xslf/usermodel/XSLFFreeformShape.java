@@ -78,27 +78,14 @@ public class XSLFFreeformShape extends XSLFAutoShape
         final double[] vals = new double[6];
         while (!it.isDone()) {
             final int type = it.currentSegment(vals);
-            final CTAdjPoint2D[] points;
-            switch (type) {
-                case PathIterator.SEG_MOVETO:
-                    points = addMoveTo(ctPath);
-                    break;
-                case PathIterator.SEG_LINETO:
-                    points = addLineTo(ctPath);
-                    break;
-                case PathIterator.SEG_QUADTO:
-                    points = addQuadBezierTo(ctPath);
-                    break;
-                case PathIterator.SEG_CUBICTO:
-                    points = addCubicBezierTo(ctPath);
-                    break;
-                case PathIterator.SEG_CLOSE:
-                    points = addClosePath(ctPath);
-                    break;
-                default: {
-                    throw new IllegalStateException("Unrecognized path segment type: " + type);
-                }
-            }
+            final CTAdjPoint2D[] points = switch (type) {
+                case PathIterator.SEG_MOVETO -> addMoveTo(ctPath);
+                case PathIterator.SEG_LINETO -> addLineTo(ctPath);
+                case PathIterator.SEG_QUADTO -> addQuadBezierTo(ctPath);
+                case PathIterator.SEG_CUBICTO -> addCubicBezierTo(ctPath);
+                case PathIterator.SEG_CLOSE -> addClosePath(ctPath);
+                default -> throw new IllegalStateException("Unrecognized path segment type: " + type);
+            };
 
             int i=0;
             for (final CTAdjPoint2D point : points) {
@@ -111,11 +98,11 @@ public class XSLFFreeformShape extends XSLFAutoShape
         }
 
         XmlObject xo = getShapeProperties();
-        if (!(xo instanceof CTShapeProperties)) {
+        if (!(xo instanceof CTShapeProperties spr)) {
             return -1;
         }
 
-        ((CTShapeProperties)xo).getCustGeom().getPathLst().setPathArray(new CTPath2D[]{ctPath});
+        spr.getCustGeom().getPathLst().setPathArray(new CTPath2D[]{ctPath});
         setAnchor(bounds);
         return numPoints;
     }
@@ -126,11 +113,11 @@ public class XSLFFreeformShape extends XSLFAutoShape
     @Override
     public CustomGeometry getGeometry() {
         final XmlObject xo = getShapeProperties();
-        if (!(xo instanceof CTShapeProperties)) {
+        if (!(xo instanceof CTShapeProperties spr)) {
             return null;
         }
 
-        return XSLFCustomGeometry.convertCustomGeometry(((CTShapeProperties)xo).getCustGeom());
+        return XSLFCustomGeometry.convertCustomGeometry(spr.getCustGeom());
     }
 
     @Override
@@ -138,24 +125,24 @@ public class XSLFFreeformShape extends XSLFAutoShape
         final Path2D.Double path = new Path2D.Double();
 
         final XmlObject xo = getShapeProperties();
-        if (!(xo instanceof CTShapeProperties)) {
+        if (!(xo instanceof CTShapeProperties spr)) {
             return null;
         }
 
-        final CTCustomGeometry2D geom = ((CTShapeProperties)xo).getCustGeom();
+        final CTCustomGeometry2D geom = spr.getCustGeom();
         for(CTPath2D spPath : geom.getPathLst().getPathArray()) {
             try (XmlCursor cursor = spPath.newCursor()) {
                 if (cursor.toFirstChild()) {
                     do {
                         final XmlObject ch = cursor.getObject();
-                        if (ch instanceof CTPath2DMoveTo) {
-                            addMoveTo(path, (CTPath2DMoveTo)ch);
-                        } else if (ch instanceof CTPath2DLineTo) {
-                            addLineTo(path, (CTPath2DLineTo)ch);
-                        } else if (ch instanceof CTPath2DQuadBezierTo) {
-                            addQuadBezierTo(path, (CTPath2DQuadBezierTo)ch);
-                        } else if (ch instanceof CTPath2DCubicBezierTo) {
-                            addCubicBezierTo(path, (CTPath2DCubicBezierTo)ch);
+                        if (ch instanceof CTPath2DMoveTo moveTo) {
+                            addMoveTo(path, moveTo);
+                        } else if (ch instanceof CTPath2DLineTo lineTo) {
+                            addLineTo(path, lineTo);
+                        } else if (ch instanceof CTPath2DQuadBezierTo quadBezierTo) {
+                            addQuadBezierTo(path, quadBezierTo);
+                        } else if (ch instanceof CTPath2DCubicBezierTo cubicBezierTo) {
+                            addCubicBezierTo(path, cubicBezierTo);
                         } else if (ch instanceof CTPath2DClose) {
                             addClosePath(path);
                         } else {

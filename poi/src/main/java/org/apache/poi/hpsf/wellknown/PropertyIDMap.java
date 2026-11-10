@@ -330,7 +330,6 @@ public class PropertyIDMap implements Map<Long,String> {
      * associated strings. See the overall HPSF documentation for
      * details!
      */
-    private static PropertyIDMap summaryInformationProperties;
     private static final Object[][] summaryInformationIdValues = {
         { (long)PID_TITLE, "PID_TITLE" },
         { (long)PID_SUBJECT, "PID_SUBJECT" },
@@ -357,7 +356,6 @@ public class PropertyIDMap implements Map<Long,String> {
      * associated strings. See the overall HPSF documentation for
      * details!
      */
-    private static PropertyIDMap documentSummaryInformationProperties;
     private static final Object[][] documentSummaryInformationIdValues = {
         { (long)PID_DICTIONARY, "PID_DICTIONARY" },
         { (long)PID_CODEPAGE, "PID_CODEPAGE" },
@@ -383,7 +381,6 @@ public class PropertyIDMap implements Map<Long,String> {
      * Contains the fallback property ID values and associated strings.
      * This is only used for lookups and not for initializing a property set
      */
-    private static PropertyIDMap fallbackProperties;
     private static final Object[][] fallbackIdValues = {
         { (long)PID_DICTIONARY, "PID_DICTIONARY" },
         { (long)PID_CODEPAGE, "PID_CODEPAGE" },
@@ -439,21 +436,15 @@ public class PropertyIDMap implements Map<Long,String> {
     /**
      * @return the Summary Information properties singleton
      */
-    public static synchronized PropertyIDMap getSummaryInformationProperties() {
-        if (summaryInformationProperties == null) {
-            summaryInformationProperties = new PropertyIDMap(summaryInformationIdValues);
-        }
-        return summaryInformationProperties;
+    public static PropertyIDMap getSummaryInformationProperties() {
+        return SummaryInformationHolder.PROPERTIES;
     }
 
     /**
      * @return The Document Summary Information properties singleton.
      */
-    public static synchronized PropertyIDMap getDocumentSummaryInformationProperties() {
-        if (documentSummaryInformationProperties == null) {
-            documentSummaryInformationProperties = new PropertyIDMap(documentSummaryInformationIdValues);
-        }
-        return documentSummaryInformationProperties;
+    public static PropertyIDMap getDocumentSummaryInformationProperties() {
+        return DocumentSummaryInformationHolder.PROPERTIES;
     }
 
     /**
@@ -462,11 +453,23 @@ public class PropertyIDMap implements Map<Long,String> {
      *
      * @return the resulting property map
      */
-    public static synchronized PropertyIDMap getFallbackProperties() {
-        if (fallbackProperties == null) {
-            fallbackProperties = new PropertyIDMap(fallbackIdValues);
-        }
-        return fallbackProperties;
+    public static PropertyIDMap getFallbackProperties() {
+        return FallbackHolder.PROPERTIES;
+    }
+
+    // The singletons are created on first use by the JVM's class initialisation,
+    // which is thread-safe without locking the PropertyIDMap class
+
+    private static final class SummaryInformationHolder {
+        static final PropertyIDMap PROPERTIES = new PropertyIDMap(summaryInformationIdValues);
+    }
+
+    private static final class DocumentSummaryInformationHolder {
+        static final PropertyIDMap PROPERTIES = new PropertyIDMap(documentSummaryInformationIdValues);
+    }
+
+    private static final class FallbackHolder {
+        static final PropertyIDMap PROPERTIES = new PropertyIDMap(fallbackIdValues);
     }
 
     @Override

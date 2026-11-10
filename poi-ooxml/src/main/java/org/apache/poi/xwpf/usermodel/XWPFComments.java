@@ -86,7 +86,7 @@ public class XWPFComments extends POIXMLDocumentPart {
         try (InputStream is = getPackagePart().getInputStream()) {
             CommentsDocument doc = CommentsDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
             ctComments = doc.getComments();
-            for (CTComment ctComment : ctComments.getCommentList()) {
+            for (CTComment ctComment : ctComments.getCommentArray()) {
                 comments.add(new XWPFComment(ctComment, this));
             }
         } catch (XmlException e) {
@@ -94,8 +94,7 @@ public class XWPFComments extends POIXMLDocumentPart {
         }
 
         for (POIXMLDocumentPart poixmlDocumentPart : getRelations()) {
-            if (poixmlDocumentPart instanceof XWPFPictureData) {
-                XWPFPictureData xwpfPicData = (XWPFPictureData) poixmlDocumentPart;
+            if (poixmlDocumentPart instanceof XWPFPictureData xwpfPicData) {
                 pictures.add(xwpfPicData);
                 document.registerPackagePictureData(xwpfPicData);
             }
@@ -165,7 +164,7 @@ public class XWPFComments extends POIXMLDocumentPart {
             throw new InvalidFormatException("pictureType is not supported");
         }
         XWPFPictureData xwpfPicData = document.findPackagePictureData(pictureData);
-        POIXMLRelation relDesc = XWPFPictureData.RELATIONS[pictureType.ooxmlId];
+        POIXMLRelation relDesc = XWPFPictureData.getRelationForType(pictureType.ooxmlId);
 
         if (xwpfPicData == null) {
             /* Part doesn't exist, create a new one */

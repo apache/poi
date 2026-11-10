@@ -40,11 +40,15 @@ import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 public final class ImageUtils {
+
+    /** the dpi assumed when an image carries no usable resolution metadata */
+    private static final int DEFAULT_DPI = 96;
     private static final Logger LOG = PoiLogManager.getLogger(ImageUtils.class);
 
     private static final int WIDTH_UNITS = 1024;
@@ -118,22 +122,41 @@ public final class ImageUtils {
      * {96, 96} is the default.
      */
     public static int[] getResolution(ImageReader r) throws IOException {
-        int hdpi=96, vdpi=96;
-        double mm2inch = 25.4;
+        int hdpi=DEFAULT_DPI, vdpi=DEFAULT_DPI;
 
         NodeList lst;
         Element node = (Element)r.getImageMetadata(0).getAsTree("javax_imageio_1.0");
         lst = node.getElementsByTagName("HorizontalPixelSize");
         if(lst != null && lst.getLength() == 1) {
-            hdpi = (int)(mm2inch/Float.parseFloat(((Element)lst.item(0)).getAttribute("value")));
+            hdpi = dpiFromPixelSize(((Element)lst.item(0)).getAttribute("value"));
         }
 
         lst = node.getElementsByTagName("VerticalPixelSize");
         if(lst != null && lst.getLength() == 1) {
-            vdpi = (int)(mm2inch/Float.parseFloat(((Element)lst.item(0)).getAttribute("value")));
+            vdpi = dpiFromPixelSize(((Element)lst.item(0)).getAttribute("value"));
         }
 
         return new int[]{hdpi, vdpi};
+    }
+
+    /**
+     * @param pixelSizeMm the size of a pixel in millimeters, as found in the image metadata
+     * @return the dpi that pixel size means, or {@link #DEFAULT_DPI} if the metadata is unusable
+     *  (not a number, zero, negative, or so small that the dpi does not fit an int)
+     */
+    static int dpiFromPixelSize(String pixelSizeMm) {
+        final double mm2inch = 25.4;
+        double pixelSize;
+        try {
+            pixelSize = Double.parseDouble(pixelSizeMm);
+        } catch (NumberFormatException | NullPointerException e) {
+            return DEFAULT_DPI;
+        }
+        double dpi = mm2inch / pixelSize;
+        if (!(dpi > 0 && dpi <= Integer.MAX_VALUE)) {
+            return DEFAULT_DPI;
+        }
+        return (int) dpi;
     }
 
     /**
@@ -179,8 +202,8 @@ public final class ImageUtils {
                   isHSSF ? HEIGHT_UNITS : 0, (row) -> getRowHeightInPixels(sheet, row));
 
         return new Dimension(
-            (int)Math.round(scaledWidth*EMU_PER_PIXEL),
-            (int)Math.round(scaledHeight*EMU_PER_PIXEL)
+            MathUtil.safeDoubleToInt(Math.round(scaledWidth*EMU_PER_PIXEL)),
+            MathUtil.safeDoubleToInt(Math.round(scaledHeight*EMU_PER_PIXEL))
         );
     }
 
@@ -216,6 +239,26 @@ public final class ImageUtils {
         return new Dimension(w, h);
     }
 
+    /**
+     * Calculates the dimensions in EMUs for the given anchor in the context of the given sheet.
+     *
+     * @param anchor the anchor of which we want to calculate the dimensions.
+     * @param sheet the sheet where the anchor is inserted; it's required to obtain the cell width/height necessary to
+     *              calculate the dimensions of the anchor.
+     * @return the dimensions in EMUs
+     * @since 6.0.0
+     */
+    public static Dimension getDimensionFromAnchor(ClientAnchor anchor, Sheet sheet) {
+        boolean isHSSF = (anchor instanceof HSSFClientAnchor);
+
+        int w = getDimFromCell(0, anchor.getCol1(), anchor.getDx1(), anchor.getCol2(), anchor.getDx2(),
+                isHSSF ? WIDTH_UNITS : 0, sheet::getColumnWidthInPixels);
+
+        int h = getDimFromCell(0, anchor.getRow1(), anchor.getDy1(), anchor.getRow2(), anchor.getDy2(),
+                isHSSF ? HEIGHT_UNITS : 0, (row) -> getRowHeightInPixels(sheet, row));
+
+        return new Dimension(w, h);
+    }
 
     public static double getRowHeightInPixels(Sheet sheet, int rowNum) {
         Row r = sheet.getRow(rowNum);
@@ -266,7 +309,7 @@ public final class ImageUtils {
         }
 
         endCell.accept(cellIdx);
-        endD.accept((int)Math.rint(endDval));
+        endD.accept(MathUtil.safeDoubleToInt(Math.rint(endDval)));
     }
 
     private static int getDimFromCell(double imgSize, int startCell, int startD, int endCell, int endD, int hssfUnits,
@@ -295,8 +338,16 @@ public final class ImageUtils {
                 }
                 targetSize += dim - leadSpace - trailSpace;
             }
+
+            // Degenerate same-cell XSSF anchor (typically dx1=dy1=dx2=dy2=0): endD - startD
+            // is zero or negative. Use remaining cell space so resize has a positive base size.
+            if (hssfUnits == 0 && startCell == endCell && targetSize <= 0) {
+                final double dim = nextSize.apply(startCell).doubleValue() * EMU_PER_PIXEL;
+                final double leadSpace = startD;
+                targetSize = (startD == 0 && endD == 0) ? dim : dim - leadSpace;
+            }
         }
 
-        return (int)Math.rint(targetSize);
+        return MathUtil.safeDoubleToInt(Math.rint(targetSize));
     }
 }

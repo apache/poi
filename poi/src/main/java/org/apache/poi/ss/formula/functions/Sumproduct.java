@@ -53,12 +53,13 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  *  )
  *
  * <p>
- *     The current implementation does not support the more advanced use cases of SUMPRODUCT, including
+ *     The current implementation supports array-mode expressions within SUMPRODUCT arguments,
+ *     including boolean coercion patterns like
  *     <code>SUMPRODUCT((B2:B9=B12)*(C2:C9=C12)*D2:D9)</code> (see example 3 in
  *     https://support.microsoft.com/en-us/office/sumproduct-function-16753e75-9f68-4874-94ac-4d2145a2fd2e).
  * </p>
  */
-public final class Sumproduct implements Function {
+public final class Sumproduct implements Function, ArrayMode {
 
 
     @Override
@@ -77,8 +78,7 @@ public final class Sumproduct implements Function {
             if(firstArg instanceof RefEval) {
                 return evaluateSingleProduct(args);
             }
-            if (firstArg instanceof TwoDEval) {
-                TwoDEval ae = (TwoDEval) firstArg;
+            if (firstArg instanceof TwoDEval ae) {
                 if(ae.isRow() && ae.isColumn()) {
                     return evaluateSingleProduct(args);
                 }
@@ -87,8 +87,7 @@ public final class Sumproduct implements Function {
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
-        throw new IllegalStateException("Invalid arg type for SUMPRODUCT: ("
-                + firstArg.getClass().getName() + ")");
+        return ErrorEval.VALUE_INVALID;
     }
 
     private static ValueEval evaluateSingleProduct(ValueEval[] evalArgs) throws EvaluationException {
@@ -99,14 +98,14 @@ public final class Sumproduct implements Function {
             double val = getScalarValue(evalArg);
             term *= val;
         }
+        NumericFunction.checkValue(term);
         return new NumberEval(term);
     }
 
     private static double getScalarValue(ValueEval arg) throws EvaluationException {
 
         ValueEval eval;
-        if (arg instanceof RefEval) {
-            RefEval re = (RefEval) arg;
+        if (arg instanceof RefEval re) {
             if (re.getNumberOfSheets() > 1) {
                 throw new EvaluationException(ErrorEval.VALUE_INVALID);
             }
@@ -118,8 +117,7 @@ public final class Sumproduct implements Function {
         if (eval == null) {
             throw new IllegalStateException("parameter may not be null");
         }
-        if (eval instanceof AreaEval) {
-            AreaEval ae = (AreaEval) eval;
+        if (eval instanceof AreaEval ae) {
             // an area ref can work as a scalar value if it is 1x1
             if(!ae.isColumn() || !ae.isRow()) {
                 throw new EvaluationException(ErrorEval.VALUE_INVALID);
@@ -169,6 +167,8 @@ public final class Sumproduct implements Function {
             }
         }
 
+        // overflow is #NUM!, as for SUM and PRODUCT
+        NumericFunction.checkValue(acc);
         return new NumberEval(acc);
     }
 
@@ -178,8 +178,8 @@ public final class Sumproduct implements Function {
         for (int rrIx=0; rrIx<height; rrIx++) {
             for (int rcIx=0; rcIx<width; rcIx++) {
                 ValueEval ve = areaEval.getValue(rrIx, rcIx);
-                if (ve instanceof ErrorEval) {
-                    throw new EvaluationException((ErrorEval) ve);
+                if (ve instanceof ErrorEval ee) {
+                    throw new EvaluationException(ee);
                 }
             }
         }
@@ -220,8 +220,8 @@ public final class Sumproduct implements Function {
             return 0;
         }
 
-        if(ve instanceof ErrorEval) {
-            throw new EvaluationException((ErrorEval)ve);
+        if(ve instanceof ErrorEval ee) {
+            throw new EvaluationException(ee);
         }
         if(ve instanceof StringEval) {
             if(isScalarProduct) {
@@ -231,8 +231,7 @@ public final class Sumproduct implements Function {
             // even if they would parse as valid numeric values
             return 0;
         }
-        if(ve instanceof NumericValueEval) {
-            NumericValueEval nve = (NumericValueEval) ve;
+        if(ve instanceof NumericValueEval nve) {
             return nve.getNumberValue();
         }
         throw new IllegalStateException("Unexpected value eval class ("

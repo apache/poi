@@ -78,6 +78,16 @@ public abstract class BlockStore {
     protected abstract ChainLoopDetector getChainLoopDetector() throws IOException;
 
     /**
+     * Checks that the blocks may be changed, i.e. that changes to them are kept
+     *
+     * @throws IllegalStateException if the blocks are read-only
+     * @since 6.1.0
+     */
+    protected void checkWriteable() {
+        // writeable by default
+    }
+
+    /**
      * Used to detect if a chain has a loop in it, so
      *  we can bail out with an error rather than
      *  spinning away for ever...
@@ -90,13 +100,16 @@ public abstract class BlockStore {
            }
 
           int blkSize = getBlockStoreBlockSize();
-          int numBlocks = (int)(rawSize / blkSize);
+          int numBlocks = Math.toIntExact(rawSize / blkSize);
           if ((rawSize % blkSize) != 0) {
               numBlocks++;
           }
           used_blocks = new boolean[numBlocks];
        }
        protected void claim(int offset) {
+          if(offset < 0) {
+             throw new IllegalStateException("Invalid block offset " + offset);
+          }
           if(offset >= used_blocks.length) {
              // They're writing, and have had new blocks requested
              //  for the write to proceed. That means they're into

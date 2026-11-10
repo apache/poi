@@ -27,6 +27,7 @@ import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 
 /**
@@ -143,7 +144,9 @@ public class ImageHeaderWMF {
     public Dimension getSize() {
         //coefficient to translate from WMF dpi to 72dpi
         double coeff = ((double)Units.POINT_DPI)/inch;
-        return new Dimension((int)Math.round((right-left)*coeff), (int)Math.round((bottom-top)*coeff));
+        int width = MathUtil.safeDoubleToInt(Math.round((right-left)*coeff));
+        int height = MathUtil.safeDoubleToInt(Math.round((bottom-top)*coeff));
+        return new Dimension(width, height);
     }
 
     public Rectangle getBounds() {

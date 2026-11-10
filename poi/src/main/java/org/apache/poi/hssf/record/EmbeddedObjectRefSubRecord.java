@@ -31,7 +31,6 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Ref3DPtg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.util.GenericRecordUtil;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianInputStream;
@@ -182,13 +181,13 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
         try (LittleEndianInputStream in = new LittleEndianInputStream(
                 UnsynchronizedByteArrayInputStream.builder().setByteArray(formulaRawBytes).get())) {
             byte ptgSid = in.readByte();
-            switch(ptgSid) {
-                case AreaPtg.sid:   return new AreaPtg(in);
-                case Area3DPtg.sid: return new Area3DPtg(in);
-                case RefPtg.sid:    return new RefPtg(in);
-                case Ref3DPtg.sid:  return new Ref3DPtg(in);
-            }
-            return null;
+            return switch (ptgSid) {
+                case AreaPtg.sid -> new AreaPtg(in);
+                case Area3DPtg.sid -> new Area3DPtg(in);
+                case RefPtg.sid -> new RefPtg(in);
+                case Ref3DPtg.sid -> new Ref3DPtg(in);
+                default -> null;
+            };
         } catch (IOException e) {
             throw new IllegalStateException("Unexpected exception in readRefPtg", e);
         }
@@ -201,7 +200,7 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
         if (size == 0) {
             return EMPTY_BYTE_ARRAY;
         }
-        byte[] result = IOUtils.safelyAllocate(size, HSSFWorkbook.getMaxRecordLength());
+        byte[] result = HSSFWorkbook.safelyAllocate(size);
         in.readFully(result);
         return result;
     }

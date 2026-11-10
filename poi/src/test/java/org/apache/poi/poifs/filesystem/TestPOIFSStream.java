@@ -21,6 +21,7 @@ import static org.apache.poi.POIDataSamples.writeOutAndReadBack;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -37,6 +38,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -2601,6 +2604,123 @@ final class TestPOIFSStream {
     }
 
     /**
+     * Free blocks are written out with the file system, so they mustn't keep
+     * the data of deleted or replaced streams
+     */
+    @Test
+    void deletedDataIsNotWrittenOut() throws IOException {
+        byte[] original = createSample();
+        assertTrue(contains(original, MARKER), "the sample contains the marker");
+
+        byte[] modified;
+        try (POIFSFileSystem fs = new POIFSFileSystem(new ByteArrayInputStream(original))) {
+            deleteAndReplace(fs);
+            modified = writeOut(fs);
+        }
+        assertFalse(contains(modified, MARKER), "deleted data must not be written out");
+        try (POIFSFileSystem fs = new POIFSFileSystem(new ByteArrayInputStream(modified))) {
+            assertEquals(1, fs.getRoot().getEntryCount());
+            assertEquals(10, ((DocumentEntry)fs.getRoot().getEntry("Replaced")).getSize());
+        }
+
+        // same when the file is updated in place
+        File file = TempFile.createTempFile("poifs-free-blocks", ".ole2");
+        try {
+            Files.write(file.toPath(), original);
+            try (POIFSFileSystem fs = new POIFSFileSystem(file, false)) {
+                deleteAndReplace(fs);
+                fs.writeFilesystem();
+            }
+            modified = Files.readAllBytes(file.toPath());
+            assertFalse(contains(modified, MARKER), "deleted data must not be written out in place");
+        } finally {
+            Files.deleteIfExists(file.toPath());
+        }
+    }
+
+    /**
+     * A file opened read only is read into copies of its blocks, so stream data
+     * can't be written to it, and changes to its entries can't be written out
+     */
+    @Test
+    void readOnlyFileChangesAreNotLost() throws IOException {
+        byte[] original = createSample();
+        File file = TempFile.createTempFile("poifs-read-only", ".ole2");
+        try {
+            Files.write(file.toPath(), original);
+            try (POIFSFileSystem fs = new POIFSFileSystem(file, true)) {
+                DirectoryNode root = fs.getRoot();
+                ByteArrayInputStream newData = new ByteArrayInputStream(new byte[10]);
+                assertThrows(IllegalStateException.class, () -> fs.createDocument(newData, "New"));
+                assertThrows(IllegalStateException.class, () -> fs.createOrUpdateDocument(newData, "Replaced"));
+                assertThrows(IllegalStateException.class, () -> new DocumentOutputStream(root, "Empty"));
+                assertThrows(IllegalStateException.class, () -> new DocumentOutputStream((DocumentEntry) root.getEntry("Big")));
+
+                // nothing was changed, so the file is written out as it is
+                assertEquals(3, root.getEntryCount());
+                assertArrayEquals(original, writeOut(fs));
+            }
+
+            try (POIFSFileSystem fs = new POIFSFileSystem(file, true)) {
+                // the entries can be changed in memory ...
+                DirectoryNode root = fs.getRoot();
+                assertTrue(root.getEntry("Big").delete(), "Big is deleted");
+                assertTrue(root.getEntry("Small").renameTo("Renamed"), "Small is renamed");
+                assertEquals(2, root.getEntryCount());
+                assertTrue(root.hasEntry("Renamed"), "Renamed is found");
+
+                // ... but those changes can't be written out
+                assertThrows(IllegalStateException.class, () -> writeOut(fs));
+            }
+        } finally {
+            Files.deleteIfExists(file.toPath());
+        }
+    }
+
+    private static final byte[] MARKER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".getBytes(StandardCharsets.US_ASCII);
+
+    /**
+     * Big block streams and one in the mini stream, all of them repeating {@link #MARKER}
+     */
+    private static byte[] createSample() throws IOException {
+        byte[] data = new byte[10_000];
+        for (int i = 0; i < data.length; i++) {
+            data[i] = MARKER[i % MARKER.length];
+        }
+        try (POIFSFileSystem fs = new POIFSFileSystem()) {
+            fs.createDocument(new ByteArrayInputStream(data), "Big");
+            fs.createDocument(new ByteArrayInputStream(data), "Replaced");
+            fs.createDocument(new ByteArrayInputStream(data, 0, 1_000), "Small");
+            return writeOut(fs);
+        }
+    }
+
+    private static void deleteAndReplace(POIFSFileSystem fs) throws IOException {
+        assertTrue(fs.getRoot().getEntry("Big").delete(), "Big is deleted");
+        assertTrue(fs.getRoot().getEntry("Small").delete(), "Small is deleted");
+        fs.createOrUpdateDocument(new ByteArrayInputStream(new byte[10]), "Replaced");
+    }
+
+    private static byte[] writeOut(POIFSFileSystem fs) throws IOException {
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
+        fs.writeFilesystem(bos);
+        return bos.toByteArray();
+    }
+
+    private static boolean contains(byte[] data, byte[] part) {
+        outer:
+        for (int i = 0; i + part.length <= data.length; i++) {
+            for (int j = 0; j < part.length; j++) {
+                if (data[i + j] != part[j]) {
+                    continue outer;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * To ensure we can create a file >2gb in size, as well as to
      * extend existing files past the 2gb boundary.
      * <p>
@@ -2725,7 +2845,7 @@ final class TestPOIFSStream {
         @Override
         public int read(byte[] b, int offset, int len) {
             if (size >= maxSize) return -1;
-            int sz = (int) Math.min(len, maxSize - size);
+            int sz = Math.toIntExact(Math.min(len, maxSize - size));
             for (int i = 0; i < sz; i++) {
                 b[i + offset] = (byte) ((size + i) % 128);
             }

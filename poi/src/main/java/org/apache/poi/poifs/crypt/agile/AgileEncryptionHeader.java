@@ -71,7 +71,7 @@ public class AgileEncryptionHeader extends EncryptionHeader {
 
         Integer hashSizeObj = keyData.getHashSize();
         if (hashSizeObj == null) {
-            throw new EncryptedDocumentException("Invalid hash size: " + hashSizeObj);
+            throw new EncryptedDocumentException("Missing hash size in the key data");
         }
         int hashSize = hashSizeObj;
 

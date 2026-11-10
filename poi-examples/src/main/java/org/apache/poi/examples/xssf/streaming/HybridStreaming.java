@@ -23,7 +23,7 @@ import java.io.InputStream;
 import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler.SheetContentsHandler;
-import org.apache.poi.xssf.usermodel.XSSFComment;
+import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
@@ -71,7 +71,7 @@ public class HybridStreaming {
             }
 
             @Override
-            public void cell(String cellReference, String formattedValue, XSSFComment comment) {
+            public void cell(String cellReference, String formattedValue, Comment comment) {
             }
         };
     }

@@ -35,8 +35,10 @@ import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFRun.FontCharRange;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTAbstractNum;
 
+@Isolated   // this test changes global static limits (ZipArchiveFakeEntry, IOUtils, ZipInputStreamZipEntrySource)
 class TestXWPFBugs {
     @Test
     void bug55802() throws Exception {

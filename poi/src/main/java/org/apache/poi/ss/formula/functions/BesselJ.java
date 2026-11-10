@@ -44,13 +44,20 @@ public final class BesselJ extends Fixed2ArgFunction implements FreeRefFunction 
             if (orderDouble == null) {
                 return ErrorEval.VALUE_INVALID;
             }
-            int order = orderDouble.intValue();
-            if (order < 0) {
+            if (orderDouble < 0 || orderDouble >= Integer.MAX_VALUE) {
                 return ErrorEval.NUM_ERROR;
             }
+            int order = orderDouble.intValue();
 
-            final double result = org.apache.commons.math3.special.BesselJ.value(order, xval);
-
+            final double result;
+            try {
+                result = org.apache.commons.math3.special.BesselJ.value(order, xval);
+            } catch (RuntimeException e) {
+                // commons-math cannot evaluate very large |x| (MathIllegalArgumentException) or orders
+                // (it allocates an array of order+1 elements): report #NUM! rather than throwing
+                return ErrorEval.NUM_ERROR;
+            }
+            NumericFunction.checkValue(result);
             return new NumberEval(result);
         } catch (EvaluationException e) {
             return e.getErrorEval();

@@ -153,6 +153,31 @@ public class TestXLookupFunction {
         }
     }
 
+    // https://bz.apache.org/bugzilla/show_bug.cgi?id=70145
+    // lookup_array given as an array expression - the "multiple criteria" idiom
+    @Test
+    void testBug70145ArrayExpressionLookupArray() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook70145()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(3).createCell(6);
+            assertDouble(fe, cell, "XLOOKUP(1,(B2:B11=G2)*(C2:C11=G3),D2:D11)", 1);
+            assertDouble(fe, cell, "XLOOKUP(1,(B2:B11=\"Duca\")*(C2:C11=\"Tigrine\"),D2:D11)", 2.5);
+            assertError(fe, cell, "XLOOKUP(1,(B2:B11=\"Nala\")*(C2:C11=\"Tigrine\"),D2:D11)", FormulaError.NA);
+            assertDouble(fe, cell, "XLOOKUP(TRUE,(B2:B11=G2)*(C2:C11=G3)=1,D2:D11)", 1);
+        }
+    }
+
+    private HSSFWorkbook initWorkbook70145() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        addRow(sheet, 0, null, "Name", "Color", "Age");
+        addRow(sheet, 1, null, "Nala", "Tricolor", 1, null, null, "Nala");
+        addRow(sheet, 2, null, "Nala", "White and Grey", 2.5, null, null, "Tricolor");
+        addRow(sheet, 3, null, "Nala", "White and Grey", 7);
+        addRow(sheet, 4, null, "Duca", "Tigrine", 2.5);
+        return wb;
+    }
+
     private HSSFWorkbook initWorkbook1() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();

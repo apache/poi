@@ -19,6 +19,7 @@ package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.*;
+import org.apache.poi.ss.util.ExcelArithmetic;
 
 import java.math.BigInteger;
 import java.util.HashMap;
@@ -36,6 +37,7 @@ import java.util.HashMap;
  * <ul>
  * <li>If number is nonnumeric, FACTDOUBLE returns the #VALUE! error value.</li>
  * <li>If number is negative, FACTDOUBLE returns the #NUM! error value.</li>
+ * <li>If the result is too large to represent (number &gt; 300), FACTDOUBLE returns the #NUM! error value.</li>
  * </ul>
  * Use a cache for more speed of previously calculated factorial
  */
@@ -48,18 +50,20 @@ public class FactDouble extends Fixed1ArgFunction implements FreeRefFunction {
 
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval numberVE) {
-        int number;
+        double number;
         try {
-            number = OperandResolver.coerceValueToInt(numberVE);
+            ValueEval ve = OperandResolver.getSingleValue(numberVE, srcRowIndex, srcColumnIndex);
+            number = ExcelArithmetic.truncate(OperandResolver.coerceValueToDouble(ve));
         } catch (EvaluationException e) {
-            return ErrorEval.VALUE_INVALID;
+            return e.getErrorEval();
         }
 
-        if (number < 0) {
+        // 300!! is about 8.2E307; 301!! and 302!! overflow a double
+        if (number < 0 || number > 300) {
             return ErrorEval.NUM_ERROR;
         }
 
-        return new NumberEval(factorial(number).longValue());
+        return new NumberEval(factorial((int) number).doubleValue());
     }
 
     public static BigInteger factorial(int n) {

@@ -45,19 +45,13 @@ public class HSLFPlaceholderDetails implements PlaceholderDetails {
 
         final HeadersFooters headersFooters = sheet.getHeadersFooters();
 
-        switch (ph) {
-            case HEADER:
-            case TITLE:
-                return headersFooters.isHeaderVisible();
-            case FOOTER:
-                return headersFooters.isFooterVisible();
-            case DATETIME:
-                return headersFooters.isDateTimeVisible();
-            case SLIDE_NUMBER:
-                return headersFooters.isSlideNumberVisible();
-            default:
-                return false;
-        }
+        return switch (ph) {
+            case HEADER, TITLE -> headersFooters.isHeaderVisible();
+            case FOOTER -> headersFooters.isFooterVisible();
+            case DATETIME -> headersFooters.isDateTimeVisible();
+            case SLIDE_NUMBER -> headersFooters.isSlideNumberVisible();
+            default -> false;
+        };
     }
 
     @Override
@@ -121,18 +115,12 @@ public class HSLFPlaceholderDetails implements PlaceholderDetails {
 
         final HeadersFooters headersFooters = sheet.getHeadersFooters();
 
-        switch (ph) {
-            case TITLE:
-            case HEADER:
-                return headersFooters.getHeaderText();
-            case FOOTER:
-                return headersFooters.getFooterText();
-            case DATETIME:
-                return headersFooters.getDateTimeText();
-            case SLIDE_NUMBER:
-            default:
-                return null;
-        }
+        return switch (ph) {
+            case TITLE, HEADER -> headersFooters.getHeaderText();
+            case FOOTER -> headersFooters.getFooterText();
+            case DATETIME -> headersFooters.getDateTimeText();
+            default -> null;
+        };
     }
 
     @Override

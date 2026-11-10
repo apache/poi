@@ -16,10 +16,10 @@
 ==================================================================== */
 package org.apache.poi.hmef;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.hmef.TestHMEFMessage.openSample;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -38,7 +38,7 @@ public class TestBugs {
         MAPIAttribute bodyHtml = tnefDat.getMessageMAPIAttribute(MAPIProperty.BODY_HTML);
         assertNotNull(bodyHtml);
         String bodyStr = new String(bodyHtml.getData(), getEncoding(tnefDat));
-        assertTrue(bodyStr.contains("This is the message body."));
+        assertContains(bodyStr, "This is the message body.");
     }
 
     @Test
@@ -47,7 +47,7 @@ public class TestBugs {
         MAPIAttribute bodyHtml = tnefDat.getMessageMAPIAttribute(MAPIProperty.BODY_HTML);
         assertNotNull(bodyHtml);
         String bodyStr = new String(bodyHtml.getData(), getEncoding(tnefDat));
-        assertTrue(bodyStr.contains("There are also two attachments."));
+        assertContains(bodyStr, "There are also two attachments.");
         assertEquals(2, tnefDat.getAttachments().size());
     }
 

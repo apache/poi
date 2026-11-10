@@ -131,23 +131,16 @@ public final class HSLFHyperlink implements Hyperlink<HSLFShape,HSLFTextParagrap
      */
     @Override
     public HyperlinkType getType() {
-        switch (info.getInteractiveInfoAtom().getHyperlinkType()) {
-            case InteractiveInfoAtom.LINK_Url:
-                return (exHyper.getLinkURL().startsWith("mailto:")) ? HyperlinkType.EMAIL : HyperlinkType.URL;
-            case InteractiveInfoAtom.LINK_NextSlide:
-            case InteractiveInfoAtom.LINK_PreviousSlide:
-            case InteractiveInfoAtom.LINK_FirstSlide:
-            case InteractiveInfoAtom.LINK_LastSlide:
-            case InteractiveInfoAtom.LINK_SlideNumber:
-                return HyperlinkType.DOCUMENT;
-            case InteractiveInfoAtom.LINK_CustomShow:
-            case InteractiveInfoAtom.LINK_OtherPresentation:
-            case InteractiveInfoAtom.LINK_OtherFile:
-                return HyperlinkType.FILE;
-            default:
-            case InteractiveInfoAtom.LINK_NULL:
-                return HyperlinkType.NONE;
-        }
+        return switch (info.getInteractiveInfoAtom().getHyperlinkType()) {
+            case InteractiveInfoAtom.LINK_Url ->
+                    (exHyper.getLinkURL().startsWith("mailto:")) ? HyperlinkType.EMAIL : HyperlinkType.URL;
+            case InteractiveInfoAtom.LINK_NextSlide, InteractiveInfoAtom.LINK_PreviousSlide,
+                 InteractiveInfoAtom.LINK_FirstSlide, InteractiveInfoAtom.LINK_LastSlide,
+                 InteractiveInfoAtom.LINK_SlideNumber -> HyperlinkType.DOCUMENT;
+            case InteractiveInfoAtom.LINK_CustomShow, InteractiveInfoAtom.LINK_OtherPresentation,
+                 InteractiveInfoAtom.LINK_OtherFile -> HyperlinkType.FILE;
+            default -> HyperlinkType.NONE;
+        };
     }
 
     @Override
@@ -174,8 +167,9 @@ public final class HSLFHyperlink implements Hyperlink<HSLFShape,HSLFTextParagrap
 
     @Override
     public void linkToSlide(Slide<HSLFShape,HSLFTextParagraph> slide) {
-        assert(slide instanceof HSLFSlide);
-        HSLFSlide sl = (HSLFSlide)slide;
+        if (!(slide instanceof HSLFSlide sl)) {
+            throw new AssertionError("Expected HSLFSlide");
+        }
         int slideNum = slide.getSlideNumber();
         String alias = "Slide "+slideNum;
 
@@ -358,11 +352,10 @@ public final class HSLFHyperlink implements Hyperlink<HSLFShape,HSLFTextParagrap
         while (iter.hasNext()) {
             org.apache.poi.hslf.record.Record r = iter.next();
             // see if we have InteractiveInfo in the textrun's records
-            if (!(r instanceof InteractiveInfo)) {
+            if (!(r instanceof InteractiveInfo hldr)) {
                 continue;
             }
 
-            InteractiveInfo hldr = (InteractiveInfo)r;
             InteractiveInfoAtom info = hldr.getInteractiveInfoAtom();
             if (info == null) {
                 continue;
@@ -378,11 +371,11 @@ public final class HSLFHyperlink implements Hyperlink<HSLFShape,HSLFTextParagrap
 
             if (iter.hasNext()) {
                 r = iter.next();
-                if (!(r instanceof TxInteractiveInfoAtom)) {
+                if (!(r instanceof TxInteractiveInfoAtom txiia)) {
                     iter.previous();
                     continue;
                 }
-                link.setTextRunInfo((TxInteractiveInfoAtom)r);
+                link.setTextRunInfo(txiia);
             }
         }
     }

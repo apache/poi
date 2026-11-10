@@ -181,7 +181,7 @@ public class StandardEncryptor extends Encryptor {
         }
 
         void writeToPOIFS() throws IOException {
-            int oleStreamSize = (int)(fileOut.length()+LittleEndianConsts.LONG_SIZE);
+            int oleStreamSize = Math.toIntExact(fileOut.length()+LittleEndianConsts.LONG_SIZE);
             dir.createDocument(DEFAULT_POIFS_ENTRY, oleStreamSize, this);
             // TODO: any properties???
         }

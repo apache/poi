@@ -29,6 +29,7 @@ import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.openxml4j.opc.internal.InvalidZipException;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
 
@@ -210,7 +211,12 @@ public class ZipSecureFile extends ZipFile {
     public ZipSecureFile(File file) throws IOException {
         super(file);
         this.fileName = file.getAbsolutePath();
-        validateEntryNames();
+        try {
+            validateEntryNames();
+        } catch (IOException | RuntimeException | Error e) {
+            super.close();
+            throw e;
+        }
     }
 
     /**
@@ -220,7 +226,12 @@ public class ZipSecureFile extends ZipFile {
     public ZipSecureFile(String name) throws IOException {
         super(name);
         this.fileName = new File(name).getAbsolutePath();
-        validateEntryNames();
+        try {
+            validateEntryNames();
+        } catch (IOException | RuntimeException | Error e) {
+            super.close();
+            throw e;
+        }
     }
 
     /**
@@ -264,7 +275,7 @@ public class ZipSecureFile extends ZipFile {
             if (name == null || name.isEmpty()) {
                 throw new InvalidZipException("Input file contains an entry with an empty name");
             }
-            name = name.toLowerCase(Locale.ROOT);
+            name = IOUtils.normalizePath(name).toLowerCase(Locale.ROOT);
             if (filenames.contains(name)) {
                 throw new InvalidZipException("Input file contains more than 1 entry with the name " + entry.getName());
             }

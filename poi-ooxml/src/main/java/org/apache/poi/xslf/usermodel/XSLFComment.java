@@ -68,7 +68,9 @@ public class XSLFComment implements Comment {
         final CTCommentAuthor newAuthor = list.addNewCmAuthor();
         newAuthor.setName(author);
         newAuthor.setId(maxId+1);
-        newAuthor.setInitials(author.replaceAll(    "\\s*(\\w)\\S*", "$1").toUpperCase(LocaleUtil.getUserLocale()));
+        // (?<!\s) only lets a match start at the beginning of a whitespace run, which is where the
+        // leftmost match starts anyway - it avoids quadratic backtracking on long runs of whitespace
+        newAuthor.setInitials(author.replaceAll("(?<!\\s)\\s*(\\w)\\S*", "$1").toUpperCase(LocaleUtil.getUserLocale()));
         comment.setAuthorId(maxId+1);
     }
 

@@ -267,39 +267,41 @@ public class GenericRecordJsonWriter implements Closeable {
 
     @SuppressWarnings("java:S3516")
     protected boolean printNumber(String name, Object o) {
-        Number n = (Number)o;
         printName(name);
 
-        if (o instanceof Float) {
-            fw.print(n.floatValue());
+        if (o instanceof Float f) {
+            fw.print(f.floatValue());
             return true;
-        } else if (o instanceof Double) {
-            fw.print(n.doubleValue());
+        } else if (o instanceof Double d) {
+            fw.print(d.doubleValue());
             return true;
         }
 
-        fw.print(n.longValue());
+        if (o instanceof Number n) {
+            fw.print(n.longValue());
 
-        final int size;
-        if (n instanceof Byte) {
-            size = 2;
-        } else if (n instanceof Short) {
-            size = 4;
-        } else if (n instanceof Integer) {
-            size = 8;
-        } else if (n instanceof Long) {
-            size = 16;
-        } else {
-            size = -1;
-        }
+            final int size;
+            if (n instanceof Byte) {
+                size = 2;
+            } else if (n instanceof Short) {
+                size = 4;
+            } else if (n instanceof Integer) {
+                size = 8;
+            } else if (n instanceof Long) {
+                size = 16;
+            } else {
+                size = -1;
+            }
 
-        long l = n.longValue();
-        if (withComments && size > 0 && (l < 0 || l > 9)) {
-            fw.write(" /* 0x");
-            fw.write(trimHex(l, size));
-            fw.write(" */");
+            long l = n.longValue();
+            if (withComments && size > 0 && (l < 0 || l > 9)) {
+                fw.write(" /* 0x");
+                fw.write(trimHex(l, size));
+                fw.write(" */");
+            }
+            return true;
         }
-        return true;
+        return false;
     }
 
     protected boolean printBoolean(String name, Object o) {
@@ -576,8 +578,8 @@ public class GenericRecordJsonWriter implements Closeable {
         @Override
         public void flush() throws IOException {
             Object o = (appender != null) ? appender : writer;
-            if (o instanceof Flushable) {
-                ((Flushable)o).flush();
+            if (o instanceof Flushable flushable) {
+                flushable.flush();
             }
         }
 
@@ -585,8 +587,8 @@ public class GenericRecordJsonWriter implements Closeable {
         public void close() throws IOException {
             flush();
             Object o = (appender != null) ? appender : writer;
-            if (o instanceof Closeable) {
-                ((Closeable)o).close();
+            if (o instanceof Closeable cls) {
+                cls.close();
             }
         }
     }

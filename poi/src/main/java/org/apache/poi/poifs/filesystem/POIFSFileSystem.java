@@ -48,6 +48,7 @@ import org.apache.poi.poifs.property.PropertyTable;
 import org.apache.poi.poifs.storage.BATBlock;
 import org.apache.poi.poifs.storage.BATBlock.BATBlockAndIndex;
 import org.apache.poi.poifs.storage.HeaderBlock;
+import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 
@@ -86,6 +87,8 @@ public class POIFSFileSystem extends BlockStore
     private final List<BATBlock> _bat_blocks;
     private HeaderBlock _header;
     private DirectoryNode _root;
+    // whether the entries were changed, see markChanged()
+    private boolean _changed;
 
     protected DataSource _data;
 
@@ -127,7 +130,9 @@ public class POIFSFileSystem extends BlockStore
         // Data needs to initially hold just the header block,
         //  a single bat block, and an empty properties section
         long blockSize = Math.multiplyExact(bigBlockSize.getBigBlockSize(), 3L);
-        _data = new ByteArrayBackedDataSource(IOUtils.safelyAllocate(blockSize, MAX_RECORD_LENGTH));
+        _data = new ByteArrayBackedDataSource(
+                IOUtils.safelyAllocate(blockSize, MAX_RECORD_LENGTH,
+                        "POIFSFileSystem.getMaxRecordLength()"));
     }
 
     /**
@@ -337,9 +342,9 @@ public class POIFSFileSystem extends BlockStore
             }
 
             // don't allow huge allocations with invalid header-values
-            IOUtils.safelyAllocateCheck(maxSize, MAX_ALLOCATION_SIZE);
+            ArrayUtil.strictAllocateCheck(maxSize, MAX_ALLOCATION_SIZE);
 
-            ByteBuffer data = ByteBuffer.allocate((int) maxSize);
+            ByteBuffer data = ByteBuffer.allocate(Math.toIntExact(maxSize));
 
             // Copy in the header
             headerBuffer.position(0);
@@ -723,7 +728,7 @@ public class POIFSFileSystem extends BlockStore
      * is supported.
      */
     public boolean isInPlaceWriteable() {
-        return (_data instanceof FileBackedDataSource) && ((FileBackedDataSource) _data).isWriteable();
+        return (_data instanceof FileBackedDataSource fbds) && fbds.isWriteable();
     }
 
     /**
@@ -734,13 +739,13 @@ public class POIFSFileSystem extends BlockStore
      * @throws IOException thrown on errors writing to the stream
      */
     public void writeFilesystem() throws IOException {
-        if (!(_data instanceof FileBackedDataSource)) {
+        if (!(_data instanceof FileBackedDataSource fbds)) {
             throw new IllegalArgumentException(
                     "POIFS opened from an inputstream, so writeFilesystem() may " +
                             "not be called. Use writeFilesystem(OutputStream) instead"
             );
         }
-        if (!((FileBackedDataSource) _data).isWriteable()) {
+        if (!fbds.isWriteable()) {
             throw new IllegalArgumentException(
                     "POIFS opened in read only mode, so writeFilesystem() may " +
                             "not be called. Open the FileSystem in read-write mode first"
@@ -755,10 +760,19 @@ public class POIFSFileSystem extends BlockStore
      * @param stream the OutputStream to which the filesystem will be
      *               written
      * @throws IOException thrown on errors writing to the stream
+     * @throws IllegalStateException if the filesystem was opened read only from a file, and its entries were changed
      */
     public void writeFilesystem(final OutputStream stream) throws IOException {
-        // Have the datasource updated
-        syncWithDataSource();
+        // Have the datasource updated - the blocks of a read only file are
+        //  copies which wouldn't take the update, so it can only be copied as it is
+        if (!isReadOnlyFile()) {
+            syncWithDataSource();
+        } else if (_changed) {
+            throw new IllegalStateException(
+                    "POIFS opened in read only mode was changed, and the changes can't be written out. " +
+                            "Open the FileSystem in read-write mode, or from an InputStream, first"
+            );
+        }
 
         // Now copy the contents to the stream
         _data.copyTo(stream);
@@ -984,9 +998,38 @@ public class POIFSFileSystem extends BlockStore
 
     @Override
     protected void releaseBuffer(ByteBuffer buffer) {
-        if (_data instanceof FileBackedDataSource) {
-            ((FileBackedDataSource)_data).releaseBuffer(buffer);
+        if (_data instanceof FileBackedDataSource fbds) {
+            fbds.releaseBuffer(buffer);
         }
+    }
+
+    /**
+     * A file opened in read only mode is read into copies of its blocks,
+     *  so changes to it would be silently dropped
+     */
+    private boolean isReadOnlyFile() {
+        return (_data instanceof FileBackedDataSource fbds) && !fbds.isWriteable();
+    }
+
+    /**
+     * Stream data written to a read only file would be lost straight away
+     */
+    @Override
+    protected void checkWriteable() {
+        if (isReadOnlyFile()) {
+            throw new IllegalStateException(
+                    "POIFS opened in read only mode, so stream data may not be written. " +
+                            "Open the FileSystem in read-write mode, or from an InputStream, first"
+            );
+        }
+    }
+
+    /**
+     * Records a change to the entries, which only lives in memory
+     *  if the file was opened in read only mode
+     */
+    void markChanged() {
+        _changed = true;
     }
 
     private static void sanityCheckBlockCount(int block_count) throws IOException {

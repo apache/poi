@@ -86,8 +86,7 @@ public final class SectionDescriptor implements Duplicatable {
   @Override
   public boolean equals(Object o)
   {
-    if (!(o instanceof SectionDescriptor)) return false;
-    SectionDescriptor sed = (SectionDescriptor)o;
+    if (!(o instanceof SectionDescriptor sed)) return false;
     return sed.fn == fn && sed.fnMpr == fnMpr;
   }
 

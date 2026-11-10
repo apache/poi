@@ -37,6 +37,7 @@ import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.PackageNamespaces;
 import org.apache.poi.util.*;
 import org.apache.poi.wp.usermodel.CharacterRun;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
@@ -74,6 +75,21 @@ import org.xml.sax.SAXException;
  * XWPFRun object defines a region of text with a common set of properties
  */
 public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
+    /**
+     * XPath selecting the {@code w:drawing} elements held in an {@code mc:AlternateContent} choice.
+     * Hoisted out of the constructor so that it is not rebuilt for every run of every document.
+     */
+    private static final String ALTERNATE_CONTENT_DRAWING_PATH =
+            "declare namespace w='" + XSSFRelation.NS_WORDPROCESSINGML + "' " +
+            "declare namespace mc='" + PackageNamespaces.MARKUP_COMPATIBILITY + "' " +
+            "./mc:AlternateContent/mc:Choice/w:drawing";
+
+    /**
+     * XPath selecting all the {@code w:t} elements below a picture or drawing.
+     */
+    private static final String PICTURE_TEXT_PATH =
+            "declare namespace w='" + XSSFRelation.NS_WORDPROCESSINGML + "' .//w:t";
+
     private final CTR run;
     private final String pictureText;
     private final IRunBody parent;
@@ -92,17 +108,29 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
          * reserve already occupied drawing ids, so reserving new ids later will
          * not corrupt the document
          */
-        for (CTDrawing ctDrawing : r.getDrawingArray()) {
-            for (CTAnchor anchor : ctDrawing.getAnchorArray()) {
-                if (anchor.getDocPr() != null) {
-                    getDocument().getDrawingIdManager().reserve(anchor.getDocPr().getId());
+        if (r.sizeOfDrawingArray() > 0) {
+            for (CTDrawing ctDrawing : r.getDrawingArray()) {
+                for (CTAnchor anchor : ctDrawing.getAnchorArray()) {
+                    if (anchor.getDocPr() != null) {
+                        getDocument().getDrawingIdManager().reserve(anchor.getDocPr().getId());
+                    }
+                }
+                for (CTInline inline : ctDrawing.getInlineArray()) {
+                    if (inline.getDocPr() != null) {
+                        getDocument().getDrawingIdManager().reserve(inline.getDocPr().getId());
+                    }
                 }
             }
-            for (CTInline inline : ctDrawing.getInlineArray()) {
-                if (inline.getDocPr() != null) {
-                    getDocument().getDrawingIdManager().reserve(inline.getDocPr().getId());
-                }
-            }
+        }
+
+        pictures = new ArrayList<>();
+        charts = new ArrayList<>();
+
+        // The vast majority of runs are plain text and hold neither a picture nor a drawing,
+        // so check for that cheaply first and skip the XPath queries altogether if we can.
+        if (!mayHavePictureContent(r)) {
+            pictureText = "";
+            return;
         }
 
         // Look for any text in any of our pictures or drawings
@@ -110,13 +138,14 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         List<XmlObject> pictTextObjs = new ArrayList<>();
         pictTextObjs.addAll(Arrays.asList(r.getPictArray()));
         pictTextObjs.addAll(Arrays.asList(r.getDrawingArray()));
+        pictTextObjs.addAll(Arrays.asList(r.selectPath(ALTERNATE_CONTENT_DRAWING_PATH)));
         for (XmlObject o : pictTextObjs) {
-            XmlObject[] ts = o.selectPath("declare namespace w='" + XSSFRelation.NS_WORDPROCESSINGML + "' .//w:t");
+            XmlObject[] ts = o.selectPath(PICTURE_TEXT_PATH);
             for (XmlObject t : ts) {
                 NodeList kids = t.getDomNode().getChildNodes();
                 for (int n = 0; n < kids.getLength(); n++) {
                     if (kids.item(n) instanceof Text) {
-                        if (text.length() > 0) {
+                        if (!text.isEmpty()) {
                             text.append("\n");
                         }
                         text.append(kids.item(n).getNodeValue());
@@ -129,8 +158,6 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         // Do we have any embedded pictures or charts?
         // Pictures are a different CTPicture, under the drawingml namespace.
         // Charts are relations and use the CTRelId type.
-        pictures = new ArrayList<>();
-        charts = new ArrayList<>();
         for (XmlObject o : pictTextObjs) {
             for (CTPicture pict : getCTPictures(o)) {
                 XWPFPicture picture = new XWPFPicture(pict, this);
@@ -138,14 +165,38 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             }
             XmlObject[] chartRels = o.selectPath("declare namespace c='" + CTChart.type.getName().getNamespaceURI() + "' .//*/c:chart");
             for (XmlObject chartRel : chartRels) {
-                if (chartRel instanceof CTRelId) {
-                    POIXMLDocumentPart chart = getDocument().getRelationById(((CTRelId) chartRel).getId());
-                    if (chart instanceof XWPFChart) {
-                        charts.add((XWPFChart) chart);
+                if (chartRel instanceof CTRelId relId) {
+                    POIXMLDocumentPart chart = getDocument().getRelationById(relId.getId());
+                    if (chart instanceof XWPFChart xwpfChart) {
+                        charts.add(xwpfChart);
                     }
                 }
             }
         }
+    }
+
+    /**
+     * Cheap test for whether the run could possibly hold a picture, a drawing or an
+     * {@code mc:AlternateContent} element (which in turn may hold a {@code w:drawing}
+     * in one of its choices). Only if this returns {@code true} is it worth running the
+     * XPath queries that collect the picture text, pictures and charts.
+     *
+     * @param r the run to inspect
+     * @return {@code true} if the run may hold picture/drawing content
+     */
+    private static boolean mayHavePictureContent(CTR r) {
+        if (r.sizeOfPictArray() > 0 || r.sizeOfDrawingArray() > 0) {
+            return true;
+        }
+        // ./mc:AlternateContent - direct children only, matching the XPath below
+        for (Node node = r.getDomNode().getFirstChild(); node != null; node = node.getNextSibling()) {
+            if (node.getNodeType() == Node.ELEMENT_NODE
+                    && "AlternateContent".equals(node.getLocalName())
+                    && PackageNamespaces.MARKUP_COMPATIBILITY.equals(node.getNamespaceURI())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -185,8 +236,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
                     throw new POIXMLException(e);
                 }
             }
-            if (pict instanceof CTPicture) {
-                pics.add((CTPicture) pict);
+            if (pict instanceof CTPicture ctPicture) {
+                pics.add(ctPicture);
             }
         }
         return pics;
@@ -218,8 +269,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     @Deprecated
     public XWPFParagraph getParagraph() {
-        if (parent instanceof XWPFParagraph) {
-            return (XWPFParagraph) parent;
+        if (parent instanceof XWPFParagraph xwpfParagraph) {
+            return xwpfParagraph;
         }
         return null;
     }
@@ -620,8 +671,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         if (underline != null) {
             Object rawValue = underline.getColor();
             if (rawValue != null) {
-                if (rawValue instanceof String) {
-                    colorName = (String) rawValue;
+                if (rawValue instanceof String str) {
+                    colorName = str;
                 } else {
                     byte[] rgbColor = (byte[]) rawValue;
                     colorName = HexDump.toHex(rgbColor[0]) + HexDump.toHex(rgbColor[1]) + HexDump.toHex(rgbColor[2]);
@@ -802,7 +853,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         if (pr == null || pr.sizeOfKernArray() == 0) {
             return 0;
         }
-        return (int)POIXMLUnits.parseLength(pr.getKernArray(0).xgetVal());
+        return Math.toIntExact(POIXMLUnits.parseLength(pr.getKernArray(0).xgetVal()));
     }
 
     @Override
@@ -830,7 +881,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         if (pr == null || pr.sizeOfSpacingArray() == 0) {
             return 0;
         }
-        return (int)Units.toDXA(POIXMLUnits.parseLength(pr.getSpacingArray(0).xgetVal()));
+        return MathUtil.safeDoubleToInt(Units.toDXA(POIXMLUnits.parseLength(pr.getSpacingArray(0).xgetVal())));
     }
 
     @Override
@@ -887,17 +938,12 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         }
 
         CTFonts fonts = pr.getRFontsArray(0);
-        switch (fcr == null ? FontCharRange.ascii : fcr) {
-            default:
-            case ascii:
-                return fonts.getAscii();
-            case cs:
-                return fonts.getCs();
-            case eastAsia:
-                return fonts.getEastAsia();
-            case hAnsi:
-                return fonts.getHAnsi();
-        }
+        return switch (fcr == null ? FontCharRange.ascii : fcr) {
+            case cs -> fonts.getCs();
+            case eastAsia -> fonts.getEastAsia();
+            case hAnsi -> fonts.getHAnsi();
+            default -> fonts.getAscii();
+        };
     }
 
     /**
@@ -926,18 +972,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             }
         } else {
             switch (fcr) {
-                case ascii:
-                    fonts.setAscii(fontFamily);
-                    break;
-                case cs:
-                    fonts.setCs(fontFamily);
-                    break;
-                case eastAsia:
-                    fonts.setEastAsia(fontFamily);
-                    break;
-                case hAnsi:
-                    fonts.setHAnsi(fontFamily);
-                    break;
+                case ascii -> fonts.setAscii(fontFamily);
+                case cs -> fonts.setCs(fontFamily);
+                case eastAsia -> fonts.setEastAsia(fontFamily);
+                case hAnsi -> fonts.setHAnsi(fontFamily);
             }
         }
     }
@@ -1096,7 +1134,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public int getTextPosition() {
         CTRPr pr = getRunProperties(false);
-        return (pr != null && pr.sizeOfPositionArray() > 0) ? (int)(Units.toPoints(POIXMLUnits.parseLength(pr.getPositionArray(0).xgetVal())) / 2.)
+        return (pr != null && pr.sizeOfPositionArray() > 0) ? MathUtil.safeDoubleToInt(Units.toPoints(POIXMLUnits.parseLength(pr.getPositionArray(0).xgetVal())) / 2.)
                 : -1;
     }
 
@@ -1124,7 +1162,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      *            values will lower it.
      */
     public void setTextPosition(int val) {
-        BigInteger bint = new BigInteger(Integer.toString(val));
+        BigInteger bint = BigInteger.valueOf(val);
         CTRPr pr = getRunProperties(true);
         CTSignedHpsMeasure position = pr.sizeOfPositionArray() > 0 ? pr.getPositionArray(0) : pr.addNewPosition();
         position.setVal(bint);
@@ -1270,12 +1308,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         // Work out what to add the picture to, then add both the
         //  picture and the relationship for it
         // TODO Should we have an interface for this sort of thing?
-        if (parent.getPart() instanceof XWPFHeaderFooter) {
-            XWPFHeaderFooter headerFooter = (XWPFHeaderFooter) parent.getPart();
+        if (parent.getPart() instanceof XWPFHeaderFooter headerFooter) {
             relationId = headerFooter.addPictureData(pictureData, pictureType);
             picData = (XWPFPictureData) headerFooter.getRelationById(relationId);
-        } else if (parent.getPart() instanceof XWPFComments) {
-            XWPFComments comments = (XWPFComments) parent.getPart();
+        } else if (parent.getPart() instanceof XWPFComments comments) {
             relationId = comments.addPictureData(pictureData, pictureType);
             picData = (XWPFPictureData) comments.getRelationById(relationId);
         } else {
@@ -1376,17 +1412,22 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public CTInline addChart(String chartRelId) throws InvalidFormatException, IOException {
         try {
             POIXMLDocumentPart chart = getDocument().getRelationById(chartRelId);
-            if (chart instanceof XWPFChart) {
-                charts.add((XWPFChart) chart);
+            if (chart instanceof XWPFChart xwpfChart) {
+                charts.add(xwpfChart);
             }
 
             CTInline inline = run.addNewDrawing().addNewInline();
+
+            // chartRelId is interpolated into an XML attribute value below, so escape it.
+            // A relationship id is an xsd:ID and cannot legitimately contain these characters,
+            // but escaping keeps a malformed id from corrupting or injecting into the fragment.
+            String escapedRelId = XMLHelper.escapeXml(chartRelId);
 
             //xml part of chart in document
             String xml =
                     "<a:graphic xmlns:a=\"" + CTGraphicalObject.type.getName().getNamespaceURI() + "\">" +
                             "<a:graphicData uri=\"" + CTChart.type.getName().getNamespaceURI() + "\">" +
-                            "<c:chart xmlns:c=\"" + CTChart.type.getName().getNamespaceURI() + "\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" r:id=\"" + chartRelId + "\" />" +
+                            "<c:chart xmlns:c=\"" + CTChart.type.getName().getNamespaceURI() + "\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" r:id=\"" + escapedRelId + "\" />" +
                             "</a:graphicData>" +
                             "</a:graphic>";
 
@@ -1556,13 +1597,13 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
     private void _getText(XmlObject o, StringBuilder text) {
 
-        if (o instanceof CTText) {
+        if (o instanceof CTText ctText) {
             final Node node = o.getDomNode();
             // Field Codes (w:instrText, defined in spec sec. 17.16.23 and w:delInstrText, defined in spec sec. 17.16.13)
             //  come up as instances of CTText, but we don't want them
             //  in the normal text output
             if (!(("instrText".equals(node.getLocalName()) || "delInstrText".equals(node.getLocalName())) && XSSFRelation.NS_WORDPROCESSINGML.equals(node.getNamespaceURI()))) {
-                String textValue = ((CTText) o).getStringValue();
+                String textValue = ctText.getStringValue();
                 if (textValue != null) {
                     if (isCapitalized() || isSmallCaps()) {
                         textValue = textValue.toUpperCase(LocaleUtil.getUserLocale());
@@ -1573,11 +1614,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         }
 
         // Complex type evaluation (currently only for extraction of check boxes)
-        if (o instanceof CTFldChar) {
-            CTFldChar ctfldChar = ((CTFldChar) o);
+        if (o instanceof CTFldChar ctfldChar) {
             if (ctfldChar.getFldCharType() == STFldCharType.BEGIN) {
                 if (ctfldChar.getFfData() != null) {
-                    for (CTFFCheckBox checkBox : ctfldChar.getFfData().getCheckBoxList()) {
+                    for (CTFFCheckBox checkBox : ctfldChar.getFfData().getCheckBoxArray()) {
                         String textValue = checkBox.getDefault() != null && POIXMLUnits.parseOnOff(checkBox.getDefault().xgetVal()) ?
                                 "|X|" : "|_|";
                         text.append(textValue);
@@ -1601,21 +1641,13 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             final Node node = o.getDomNode();
             if (XSSFRelation.NS_WORDPROCESSINGML.equals(node.getNamespaceURI())) {
                 switch (node.getLocalName()) {
-                    case "noBreakHyphen":
-                        text.append('‑');
-                        break;
-                    case "tab":
-                        text.append('\t');
-                        break;
-                    case "br":
-                    case "cr":
-                        text.append('\n');
-                        break;
+                    case "noBreakHyphen" -> text.append('‑');
+                    case "tab" -> text.append('\t');
+                    case "br", "cr" -> text.append('\n');
                 }
             }
         }
-        if (o instanceof CTFtnEdnRef) {
-            CTFtnEdnRef ftn = (CTFtnEdnRef) o;
+        if (o instanceof CTFtnEdnRef ftn) {
             final int i = ftn.getId() == null ? -1 : ftn.getId().intValue();
             String footnoteRef = ftn.getDomNode().getLocalName().equals("footnoteReference") ?
                     "[footnoteRef:" + i + "]" : "[endnoteRef:" + i + "]";
@@ -1704,11 +1736,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public STHighlightColor.Enum getTextHighlightColor() {
         CTRPr pr = getRunProperties(false);
-        if (pr == null) {
+        if (pr == null || pr.sizeOfHighlightArray() == 0) {
             return STHighlightColor.NONE;
         }
-        CTHighlight highlight = pr.sizeOfHighlightArray() > 0 ? pr.getHighlightArray(0) : pr.addNewHighlight();
-        STHighlightColor color = highlight.xgetVal();
+        STHighlightColor color = pr.getHighlightArray(0).xgetVal();
         if (color == null) {
             color = STHighlightColor.Factory.newInstance();
             color.setEnumValue(STHighlightColor.NONE);
@@ -1748,11 +1779,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public STVerticalAlignRun.Enum getVerticalAlignment() {
         CTRPr pr = getRunProperties(false);
-        if (pr == null) {
+        if (pr == null || pr.sizeOfVertAlignArray() == 0) {
             return STVerticalAlignRun.BASELINE;
         }
-        CTVerticalAlignRun vertAlign = pr.sizeOfVertAlignArray() > 0 ? pr.getVertAlignArray(0) : pr.addNewVertAlign();
-        STVerticalAlignRun.Enum val = vertAlign.getVal();
+        STVerticalAlignRun.Enum val = pr.getVertAlignArray(0).getVal();
         if (val == null) {
             val = STVerticalAlignRun.BASELINE;
         }
@@ -1790,12 +1820,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public STEm.Enum getEmphasisMark() {
         CTRPr pr = getRunProperties(false);
-        if (pr == null) {
+        if (pr == null || pr.sizeOfEmArray() == 0) {
             return STEm.NONE;
         }
-        CTEm emphasis = pr.sizeOfEmArray() > 0 ? pr.getEmArray(0) : pr.addNewEm();
-
-        STEm.Enum val = emphasis.getVal();
+        STEm.Enum val = pr.getEmArray(0).getVal();
         if (val == null) {
             val = STEm.NONE;
         }
@@ -1846,5 +1874,17 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public List<XWPFChart> getEmbeddedCharts() {
         return Collections.unmodifiableList(charts);
+    }
+
+    /**
+     * Specifies if the reading order is set to right-to-left in the current run
+     * properties.
+     * @return The value of the right-to-left flag for the run. Defaults to false if not present
+     * in the document.
+     * @since 6.0.0
+     */
+    public boolean isRtl() {
+        CTRPr pr = getRunProperties(false);
+        return pr != null && pr.sizeOfRtlArray() > 0 && isCTOnOff(pr.getRtlArray(0));
     }
 }

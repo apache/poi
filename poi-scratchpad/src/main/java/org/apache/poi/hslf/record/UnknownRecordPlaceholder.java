@@ -37,7 +37,16 @@ public final class UnknownRecordPlaceholder extends RecordAtom
 {
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 20_000_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 20_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     private byte[] _contents;
     private long _type;
@@ -51,7 +60,8 @@ public final class UnknownRecordPlaceholder extends RecordAtom
         if(len < 0) { len = 0; }
 
         // Treat as an atom, grab and hold everything
-        _contents = IOUtils.safelyClone(source, start, len, MAX_RECORD_LENGTH);
+        _contents = IOUtils.safelyClone(source, start, len, MAX_RECORD_LENGTH,
+                "UnknownRecordPlaceholder.setMaxRecordLength()");
         _type = LittleEndian.getUShort(_contents,2);
     }
 

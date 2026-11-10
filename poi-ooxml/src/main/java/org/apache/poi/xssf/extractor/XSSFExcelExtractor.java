@@ -169,13 +169,15 @@ public class XSSFExcelExtractor
                     }
 
                     // Output the comment, if requested and exists
-                    Comment comment = cell.getCellComment();
-                    if(includeCellComments && comment != null) {
-                        // Replace any newlines with spaces, otherwise it
-                        //  breaks the output
-                        String commentText = comment.getString().getString().replace('\n', ' ');
-                        checkMaxTextSize(text, commentText);
-                        text.append(" Comment by ").append(comment.getAuthor()).append(": ").append(commentText);
+                    if(includeCellComments) {
+                        Comment comment = cell.getCellComment();
+                        if(comment != null) {
+                            // Replace any newlines with spaces, otherwise it
+                            //  breaks the output
+                            String commentText = comment.getString().getString().replace('\n', ' ');
+                            checkMaxTextSize(text, commentText);
+                            text.append(" Comment by ").append(comment.getAuthor()).append(": ").append(commentText);
+                        }
                     }
 
                     if(ri.hasNext()) {
@@ -189,9 +191,9 @@ public class XSSFExcelExtractor
             if (includeTextBoxes){
                 XSSFDrawing drawing = sheet.getDrawingPatriarch();
                 if (drawing != null) {
-                    for (XSSFShape shape : drawing.getShapes()){
-                        if (shape instanceof XSSFSimpleShape){
-                            String boxText = ((XSSFSimpleShape)shape).getText();
+                    for (XSSFShape shape : drawing.getShapes()) {
+                        if (shape instanceof XSSFSimpleShape simpleShape) {
+                            String boxText = simpleShape.getText();
                             if (!boxText.isEmpty()){
                                 text.append(boxText);
                                 text.append('\n');

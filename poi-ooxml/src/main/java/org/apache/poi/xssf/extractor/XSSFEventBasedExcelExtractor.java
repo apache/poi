@@ -47,7 +47,7 @@ import org.apache.poi.xssf.model.Comments;
 import org.apache.poi.xssf.model.SharedStrings;
 import org.apache.poi.xssf.model.Styles;
 import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.usermodel.XSSFComment;
+import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.apache.poi.xssf.usermodel.XSSFSimpleShape;
 import org.apache.xmlbeans.XmlException;
@@ -300,8 +300,8 @@ public class XSSFEventBasedExcelExtractor
             return;
         }
         for (XSSFShape shape : shapes) {
-            if (shape instanceof XSSFSimpleShape) {
-                String sText = ((XSSFSimpleShape) shape).getText();
+            if (shape instanceof XSSFSimpleShape simpleShape) {
+                String sText = simpleShape.getText();
                 if (sText != null && !sText.isEmpty()) {
                     text.append(sText).append('\n');
                 }
@@ -350,7 +350,7 @@ public class XSSFEventBasedExcelExtractor
         }
 
         @Override
-        public void cell(String cellRef, String formattedValue, XSSFComment comment) {
+        public void cell(String cellRef, String formattedValue, Comment comment) {
             if (firstCellOfRow) {
                 firstCellOfRow = false;
             } else {

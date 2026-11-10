@@ -100,22 +100,15 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
             return null;
         }
 
-        switch (cell.getCellType()) {
-            case BOOLEAN:
-                return CellValue.valueOf(cell.getBooleanCellValue());
-            case ERROR:
-                return CellValue.getError(cell.getErrorCellValue());
-            case FORMULA:
-                return evaluateFormulaCellValue(cell);
-            case NUMERIC:
-                return new CellValue(cell.getNumericCellValue());
-            case STRING:
-                return new CellValue(cell.getRichStringCellValue().getString());
-            case BLANK:
-                return null;
-            default:
-                throw new IllegalStateException("Bad cell type (" + cell.getCellType() + ")");
-        }
+        return switch (cell.getCellType()) {
+            case BOOLEAN -> CellValue.valueOf(cell.getBooleanCellValue());
+            case ERROR -> CellValue.getError(cell.getErrorCellValue());
+            case FORMULA -> evaluateFormulaCellValue(cell);
+            case NUMERIC -> new CellValue(cell.getNumericCellValue());
+            case STRING -> new CellValue(cell.getRichStringCellValue().getString());
+            case BLANK -> null;
+            default -> throw new IllegalStateException("Bad cell type (" + cell.getCellType() + ")");
+        };
     }
 
     /**

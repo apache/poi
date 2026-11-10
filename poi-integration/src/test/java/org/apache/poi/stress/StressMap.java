@@ -25,7 +25,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.collections4.MultiValuedMap;
@@ -33,6 +32,7 @@ import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.input.BOMInputStream;
+import org.apache.poi.util.IOUtils;
 import org.opentest4j.AssertionFailedError;
 
 public class StressMap {
@@ -48,7 +48,7 @@ public class StressMap {
 
     public List<FileHandlerKnown> getHandler(String file) {
         // ... failures/handlers lookup doesn't work on windows otherwise
-        final String uniFile = file.replace('\\', '/');
+        final String uniFile = IOUtils.normalizePath(file);
 
         String firstHandler = handlerMap.entrySet().stream()
             .filter(me -> uniFile.endsWith(me.getKey()))
@@ -57,12 +57,12 @@ public class StressMap {
         return Stream.of(firstHandler, secondHandler(firstHandler))
             .filter(h -> !"NULL".equals(h))
             .map(FileHandlerKnown::valueOf)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     public ExcInfo getExcInfo(String file, String testName, FileHandlerKnown handler) {
         // ... failures/handlers lookup doesn't work on windows otherwise
-        final String uniFile = file.replace('\\', '/');
+        final String uniFile = IOUtils.normalizePath(file);
 
         return exMap.get(uniFile).stream()
             .filter(e -> e.isMatch(testName, handler.name()))
@@ -154,21 +154,10 @@ public class StressMap {
     }
 
     private static String secondHandler(String handlerStr) {
-        switch (handlerStr) {
-            case "XSSF":
-            case "XWPF":
-            case "XSLF":
-            case "XDGF":
-                return "OPC";
-            case "HSSF":
-            case "HWPF":
-            case "HSLF":
-            case "HDGF":
-            case "HSMF":
-            case "HBPF":
-                return "HPSF";
-            default:
-                return "NULL";
-        }
+        return switch (handlerStr) {
+            case "XSSF", "XWPF", "XSLF", "XDGF" -> "OPC";
+            case "HSSF", "HWPF", "HSLF", "HDGF", "HSMF", "HBPF" -> "HPSF";
+            default -> "NULL";
+        };
     }
 }

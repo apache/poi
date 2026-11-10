@@ -95,7 +95,11 @@ public class XSSFFileHandler extends SpreadsheetHandler {
                 is.close();
                 poifs.close();
             }
-            checkXSSFReader(OPCPackage.open(out.toInputStream()));
+            // close the package again before opening the workbook: a package opened from a
+            // stream keeps every (decompressed) part on the heap until it is closed
+            try (OPCPackage pkg = OPCPackage.open(out.toInputStream())) {
+                checkXSSFReader(pkg);
+            }
             wb = new XSSFWorkbook(out.toInputStream());
         }
 

@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.poi.common.usermodel.GenericRecord;
@@ -38,6 +37,7 @@ import org.apache.poi.hemf.record.emfplus.HemfPlusDraw.EmfPlusRelativePosition;
 import org.apache.poi.hemf.record.emfplus.HemfPlusHeader.EmfPlusGraphicsVersion;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectData;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectType;
+import org.apache.poi.hemf.usermodel.HemfPicture;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.GenericRecordUtil;
@@ -119,6 +119,10 @@ public class HemfPlusPath {
                 readPoint = HemfPlusDraw::readPointF;
             }
 
+            // pointCount is an untrusted 32-bit field that is used as the length of both arrays below.
+            // Reject negative and oversized values before allocating, so a malformed path can't trigger
+            // a NegativeArraySizeException or an OutOfMemoryError instead of the usual RecordFormatException.
+            HemfPicture.safelyAllocateCheck(pointCount);
             pathPoints = new Point2D[pointCount];
             for (int i=0; i<pointCount; i++) {
                 pathPoints[i] = new Point2D.Double();
@@ -130,7 +134,7 @@ public class HemfPlusPath {
             if (isRLE) {
                 for (int i=0, rleCount; i<pointCount; i+=rleCount, size+=2) {
                     rleCount = POINT_RLE_COUNT.getValue(leis.readByte());
-                    Arrays.fill(pointTypes, pointCount, pointCount+rleCount, leis.readByte());
+                    Arrays.fill(pointTypes, i, Math.min(i+rleCount, pointCount), leis.readByte());
                 }
             } else {
                 leis.readFully(pointTypes);
@@ -226,7 +230,7 @@ public class HemfPlusPath {
         private List<GenericRecord> getGenericPoints() {
             return IntStream.range(0, pathPoints.length).
                 mapToObj(this::getGenericPoint).
-                collect(Collectors.toList());
+                toList();
         }
 
         private GenericRecord getGenericPoint(final int idx) {

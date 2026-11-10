@@ -36,13 +36,11 @@ public final class InterfaceEndRecord extends StandardRecord {
     }
 
     public static org.apache.poi.hssf.record.Record create(RecordInputStream in) {
-        switch (in.remaining()) {
-            case 0:
-                return instance;
-            case 2:
-                return new InterfaceHdrRecord(in);
-        }
-        throw new RecordFormatException("Invalid record data size: " + in.remaining());
+        return switch (in.remaining()) {
+            case 0 -> instance;
+            case 2 -> new InterfaceHdrRecord(in);
+            default -> throw new RecordFormatException("Invalid record data size: " + in.remaining());
+        };
     }
 
     public void serialize(LittleEndianOutput out) {

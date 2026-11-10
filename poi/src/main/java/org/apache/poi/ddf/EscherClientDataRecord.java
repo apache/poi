@@ -66,7 +66,10 @@ public class EscherClientDataRecord extends EscherRecord {
         int bytesRemaining = readHeader( data, offset );
         int pos            = offset + 8;
 
-        remainingData = (bytesRemaining == 0) ? EMPTY : IOUtils.safelyClone(data, pos, bytesRemaining, MAX_RECORD_LENGTH);
+        remainingData = (bytesRemaining == 0) ?
+                EMPTY :
+                IOUtils.safelyClone(data, pos, bytesRemaining, MAX_RECORD_LENGTH,
+                        "EscherClientDataRecord.setMaxRecordLength()");
 
         return 8 + bytesRemaining;
     }

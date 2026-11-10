@@ -62,7 +62,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
     int MAX_SENSITIVE_SHEET_NAME_LEN = 31;
 
     /**
-     * Convenience method to get the active sheet.  The active sheet is is the sheet
+     * Convenience method to get the active sheet.  The active sheet is the sheet
      * which is currently displayed when the workbook is viewed in Excel.
      * 'Selected' sheet(s) is a distinct concept.
      *
@@ -71,7 +71,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
     int getActiveSheetIndex();
 
     /**
-     * Convenience method to set the active sheet.  The active sheet is is the sheet
+     * Convenience method to set the active sheet.  The active sheet is the sheet
      * which is currently displayed when the workbook is viewed in Excel.
      * 'Selected' sheet(s) is a distinct concept.
      *

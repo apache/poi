@@ -134,7 +134,8 @@ public final class StyleTextPropAtom extends RecordAtom {
 
         // Save the contents of the atom, until we're asked to go and
         //  decode them (via a call to setParentTextSize(int)
-        rawContents = IOUtils.safelyClone(source, start+8, len-8, getMaxRecordLength());
+        rawContents = IOUtils.safelyClone(source, start+8, len-8, RecordAtom.getMaxRecordLength(),
+                "RecordAtom.setMaxRecordLength()");
         reserved = new byte[0];
 
         // Set empty lists, ready for when they call setParentTextSize
@@ -399,7 +400,8 @@ public final class StyleTextPropAtom extends RecordAtom {
 
         out.append("  original byte stream \n");
 
-        byte[] buf = IOUtils.safelyAllocate(rawContents.length + (long)reserved.length, getMaxRecordLength());
+        byte[] buf = IOUtils.safelyAllocate(rawContents.length + (long)reserved.length, RecordAtom.getMaxRecordLength(),
+                "RecordAtom.setMaxRecordLength()");
         System.arraycopy(rawContents, 0, buf, 0, rawContents.length);
         System.arraycopy(reserved, 0, buf, rawContents.length, reserved.length);
         out.append( HexDump.dump(buf, 0, 0) );

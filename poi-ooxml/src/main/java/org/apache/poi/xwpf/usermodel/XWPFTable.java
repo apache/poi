@@ -28,19 +28,24 @@ import java.util.function.Function;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBorder;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTCustomXmlPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTCustomXmlRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJcTable;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtContentRow;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTString;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblBorders;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblCellMar;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblWidth;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJcTable;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblWidth;
@@ -164,27 +169,64 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         this.ctTbl = table;
 
         // is an empty table: I add one row and one column as default
-        if (initRow && table.sizeOfTrArray() == 0) {
+        // Check if table has any row-like content (TR, or rows wrapped in SDT or custom XML)
+        if (initRow && table.sizeOfTrArray() == 0 && table.sizeOfSdtArray() == 0
+                && table.sizeOfCustomXmlArray() == 0) {
             createEmptyTable(table);
         }
 
-        for (CTRow row : table.getTrList()) {
-            StringBuilder rowText = new StringBuilder();
-            XWPFTableRow tabRow = new XWPFTableRow(row, this);
-            tableRows.add(tabRow);
-            for (CTTc cell : row.getTcList()) {
-                for (CTP ctp : cell.getPList()) {
-                    XWPFParagraph p = new XWPFParagraph(ctp, part);
-                    if (rowText.length() > 0) {
-                        rowText.append('\t');
-                    }
-                    rowText.append(p.getText());
+        List<CTRow> rows = new ArrayList<>();
+        collectRows(table, rows);
+        for (CTRow row : rows) {
+            processCTRow(row);
+        }
+    }
+
+    private void processCTRow(CTRow row) {
+        StringBuilder rowText = new StringBuilder();
+        XWPFTableRow tableRow = new XWPFTableRow(row, this);
+        tableRows.add(tableRow);
+        // Reuse the paragraphs that XWPFTableRow has just built for the cells of this row,
+        // rather than parsing every cell a second time into throw-away XWPFParagraph/XWPFRun
+        // objects. The cells are the same CTTc elements in the same order (XWPFTableRow uses
+        // ctRow.getTcArray()) and each cell's paragraphs are its direct w:p children in
+        // document order, so the resulting text is identical.
+        for (XWPFTableCell cell : tableRow.getTableCells()) {
+            for (XWPFParagraph p : cell.getParagraphs()) {
+                if (!rowText.isEmpty()) {
+                    rowText.append('\t');
                 }
+                rowText.append(p.getText());
             }
-            if (rowText.length() > 0) {
-                this.text.append(rowText);
-                this.text.append('\n');
+        }
+        if (!rowText.isEmpty()) {
+            this.text.append(rowText);
+            this.text.append('\n');
+        }
+    }
+
+    /**
+     * Collect the rows in container in document order, including rows wrapped
+     * in SDT rows (w:sdt) or custom XML rows (w:customXml), however deeply nested.
+     */
+    private static void collectRows(XmlObject container, List<CTRow> rows) {
+        try (XmlCursor cursor = container.newCursor()) {
+            if (!cursor.toFirstChild()) {
+                return;
             }
+            do {
+                XmlObject child = cursor.getObject();
+                if (child instanceof CTRow ctRow) {
+                    rows.add(ctRow);
+                } else if (child instanceof CTSdtRow sdtRow) {
+                    CTSdtContentRow sdtContent = sdtRow.getSdtContent();
+                    if (sdtContent != null) {
+                        collectRows(sdtContent, rows);
+                    }
+                } else if (child instanceof CTCustomXmlRow customXmlRow) {
+                    collectRows(customXmlRow, rows);
+                }
+            } while (cursor.toNextSibling());
         }
     }
 
@@ -257,8 +299,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * @return tableRow
      */
     public XWPFTableRow createRow() {
-        int sizeCol = ctTbl.sizeOfTrArray() > 0 ? ctTbl.getTrArray(0)
-                .sizeOfTcArray() : 0;
+        int sizeCol = tableRows.isEmpty() ? 0 : tableRows.get(0).getCtRow().sizeOfTcArray();
         XWPFTableRow tabRow = new XWPFTableRow(ctTbl.addNewTr(), this);
         addColumn(tabRow, sizeCol);
         tableRows.add(tabRow);
@@ -266,13 +307,16 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     }
 
     /**
+     * Returns the row at the specified position, including SDT-wrapped rows.
+     * Note: the returned row may be a direct child of the table or nested
+     * inside an SDT (structured document tag) row element.
+     *
      * @param pos - index of the row
-     * @return the row at the position specified or null if no rows is defined or if the position is greather than the max size of rows array
+     * @return the row at the position specified or null if no rows is defined or if the position is greater than the max size of rows array
      */
     public XWPFTableRow getRow(int pos) {
-        if (pos >= 0 && pos < ctTbl.sizeOfTrArray()) {
-            //return new XWPFTableRow(ctTbl.getTrArray(pos));
-            return getRows().get(pos);
+        if (pos >= 0 && pos < tableRows.size()) {
+            return tableRows.get(pos);
         }
         return null;
     }
@@ -285,7 +329,9 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      */
     public int getWidth() {
         CTTblPr tblPr = getTblPr(false);
-        return tblPr != null && tblPr.isSetTblW() ? (int)Units.toDXA(POIXMLUnits.parseLength(tblPr.getTblW().xgetW())) : -1;
+        return tblPr != null && tblPr.isSetTblW() ?
+                MathUtil.safeDoubleToInt(
+                        Units.toDXA(POIXMLUnits.parseLength(tblPr.getTblW().xgetW()))) : -1;
     }
 
     /**
@@ -300,10 +346,10 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     }
 
     /**
-     * @return number of rows in table
+     * @return number of rows in table (including SDT-wrapped rows)
      */
     public int getNumberOfRows() {
-        return ctTbl.sizeOfTrArray();
+        return tableRows.size();
     }
 
     /**
@@ -327,7 +373,8 @@ public class XWPFTable implements IBodyElement, ISDTContents {
             }
             switch (typeValue.intValue()) {
                 case STTblWidth.INT_DXA:
-                    return (int) Units.toDXA(POIXMLUnits.parseLength(tblPr.getTblInd().xgetW()));
+                    return MathUtil.safeDoubleToInt(
+                            Units.toDXA(POIXMLUnits.parseLength(tblPr.getTblInd().xgetW())));
                 case STTblWidth.INT_NIL:
                     // "§17.18.90: [nil] Specifies that the current width is zero, regardless of
                     // any width value specified on the parent element"
@@ -1066,7 +1113,8 @@ public class XWPFTable implements IBodyElement, ISDTContents {
             if (tcm != null) {
                 CTTblWidth tw = margin.apply(tcm);
                 if (tw != null) {
-                    return (int) Units.toDXA(POIXMLUnits.parseLength(tw.xgetW()));
+                    return MathUtil.safeDoubleToInt(
+                            Units.toDXA(POIXMLUnits.parseLength(tw.xgetW())));
                 }
             }
         }
@@ -1097,25 +1145,41 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * add a new Row to the table
+     * <p>
+     * The row's XML is copied into the table and row is updated to use that copy,
+     * so later changes made through row are kept. Cells fetched from row before
+     * this call no longer belong to it.
      *
      * @param row the row which should be added
      */
     public void addRow(XWPFTableRow row) {
-        ctTbl.addNewTr();
-        ctTbl.setTrArray(getNumberOfRows() - 1, row.getCtRow());
+        // Add to end of table
+        CTRow addedRow = ctTbl.addNewTr();
+        addedRow.set(row.getCtRow());
+        row.setCtRow(addedRow);
         tableRows.add(row);
     }
 
     /**
      * add a new Row to the table
      * at position pos
+     * <p>
+     * If the row currently at pos is inside an SDT row (content control)
+     * or a custom XML row, the new row is added inside that too.
+     * <p>
+     * The row's XML is copied into the table and row is updated to use that copy,
+     * so later changes made through row are kept. Cells fetched from row before
+     * this call no longer belong to it.
      *
      * @param row the row which should be added
      */
     public boolean addRow(XWPFTableRow row, int pos) {
         if (pos >= 0 && pos <= tableRows.size()) {
-            ctTbl.insertNewTr(pos);
-            ctTbl.setTrArray(pos, row.getCtRow());
+            CTRow addedRow = pos == tableRows.size()
+                    ? ctTbl.addNewTr()
+                    : insertNewTrBefore(tableRows.get(pos).getCtRow());
+            addedRow.set(row.getCtRow());
+            row.setCtRow(addedRow);
             tableRows.add(pos, row);
             return true;
         }
@@ -1123,18 +1187,40 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     }
 
     /**
-     * inserts a new tablerow
+     * inserts a new tablerow at position pos
+     * <p>
+     * If the row currently at pos is inside an SDT row (content control)
+     * or a custom XML row, the new row is inserted inside that too.
      *
+     * @param pos the position to insert the new row
      * @return the inserted row
      */
     public XWPFTableRow insertNewTableRow(int pos) {
         if (pos >= 0 && pos <= tableRows.size()) {
-            CTRow row = ctTbl.insertNewTr(pos);
-            XWPFTableRow tableRow = new XWPFTableRow(row, this);
+            CTRow insertedRow = pos == tableRows.size()
+                    ? ctTbl.addNewTr()
+                    : insertNewTrBefore(tableRows.get(pos).getCtRow());
+            XWPFTableRow tableRow = new XWPFTableRow(insertedRow, this);
             tableRows.add(pos, tableRow);
             return tableRow;
         }
         return null;
+    }
+
+    /**
+     * Insert a new w:tr just before next, in whatever holds next: the table itself,
+     * the content of an SDT row or a custom XML row. If next is in none of these,
+     * add the new row at the end of the table.
+     */
+    private CTRow insertNewTrBefore(CTRow next) {
+        if (!isRowContainer(getParent(next))) {
+            return ctTbl.addNewTr();
+        }
+        try (XmlCursor cursor = next.newCursor()) {
+            cursor.beginElement("tr", CTRow.type.getName().getNamespaceURI());
+            cursor.toParent();
+            return (CTRow) cursor.getObject();
+        }
     }
 
     /**
@@ -1144,13 +1230,81 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      */
     public boolean removeRow(int pos) throws IndexOutOfBoundsException {
         if (pos >= 0 && pos < tableRows.size()) {
-            if (ctTbl.sizeOfTrArray() > 0) {
-                ctTbl.removeTr(pos);
+            CTRow ctRow = tableRows.get(pos).getCtRow();
+            // the row is either a direct child of a table or inside an SDT or custom XML row
+            XmlObject parent = getParent(ctRow);
+            if (isRowContainer(parent)) {
+                try (XmlCursor cursor = ctRow.newCursor()) {
+                    cursor.removeXml();
+                }
+                removeEmptyRowWrappers(parent);
             }
             tableRows.remove(pos);
             return true;
         }
         return false;
+    }
+
+    /**
+     * Remove the SDT row or custom XML row that container belongs to once it holds
+     * nothing but its properties, and likewise any enclosing wrappers that end up empty.
+     */
+    private static void removeEmptyRowWrappers(XmlObject container) {
+        while (container instanceof CTSdtContentRow || container instanceof CTCustomXmlRow) {
+            if (hasContent(container)) {
+                return;
+            }
+            // for an SDT row, container is the w:sdtContent, so remove the w:sdt around it
+            XmlObject wrapper = container instanceof CTSdtContentRow ? getParent(container) : container;
+            XmlObject parent = wrapper == null ? null : getParent(wrapper);
+            if (parent == null) {
+                return;
+            }
+            try (XmlCursor cursor = wrapper.newCursor()) {
+                cursor.removeXml();
+            }
+            container = parent;
+        }
+    }
+
+    private static boolean hasContent(XmlObject container) {
+        try (XmlCursor cursor = container.newCursor()) {
+            if (!cursor.toFirstChild()) {
+                return false;
+            }
+            do {
+                if (!(cursor.getObject() instanceof CTCustomXmlPr)) {
+                    return true;
+                }
+            } while (cursor.toNextSibling());
+        }
+        return false;
+    }
+
+    private static boolean isRowContainer(XmlObject xmlObject) {
+        return xmlObject instanceof CTTbl || xmlObject instanceof CTSdtContentRow
+                || xmlObject instanceof CTCustomXmlRow;
+    }
+
+    private static XmlObject getParent(XmlObject xmlObject) {
+        try (XmlCursor cursor = xmlObject.newCursor()) {
+            return cursor.toParent() ? cursor.getObject() : null;
+        }
+    }
+
+    /**
+     * Get the table that holds a row, looking through any SDT rows
+     * (w:sdt/w:sdtContent) and custom XML rows (w:customXml) between the two.
+     *
+     * @return the table, or null if the row is not in a table
+     */
+    static CTTbl getParentTable(CTRow row) {
+        XmlObject parent = getParent(row);
+        while (parent instanceof CTSdtContentRow || parent instanceof CTSdtRow
+                || parent instanceof CTCustomXmlRow) {
+            parent = getParent(parent);
+        }
+        return parent instanceof CTTbl tbl ? tbl : null;
     }
 
     public List<XWPFTableRow> getRows() {
@@ -1271,17 +1425,12 @@ public class XWPFTable implements IBodyElement, ISDTContents {
             typeValue = STTblWidth.NIL;
             ctWidth.setType(typeValue);
         }
-        switch (typeValue.intValue()) {
-        case STTblWidth.INT_NIL:
-            return TableWidthType.NIL;
-        case STTblWidth.INT_DXA:
-            return TableWidthType.DXA;
-        case STTblWidth.INT_PCT:
-            return TableWidthType.PCT;
-        default:
-        case STTblWidth.INT_AUTO:
-            return TableWidthType.AUTO;
-        }
+        return switch (typeValue.intValue()) {
+            case STTblWidth.INT_NIL -> TableWidthType.NIL;
+            case STTblWidth.INT_DXA -> TableWidthType.DXA;
+            case STTblWidth.INT_PCT -> TableWidthType.PCT;
+            default -> TableWidthType.AUTO;
+        };
     }
 
     /**

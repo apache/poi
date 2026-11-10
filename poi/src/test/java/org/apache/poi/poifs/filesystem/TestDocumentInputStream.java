@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.SuppressForbidden;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -400,6 +401,71 @@ final class TestDocumentInputStream {
             assertTrue(two.isDocumentEntry());
             stream = quillSub.createDocumentInputStream(two);
             assertNotEquals(-1, stream.read());
+        }
+    }
+
+    /**
+     * Read primitives at every offset around a block boundary, so values are
+     * decoded both from within a block and across two blocks
+     */
+    @Test
+    void testReadPrimitivesAcrossBlockBoundary() throws IOException {
+        // 512 byte blocks for the big document, 64 byte mini stream blocks for the small one
+        checkPrimitivesAround(_workbook_n, _workbook_data, 512);
+
+        byte[] small = Arrays.copyOf(_workbook_data, 300);
+        POIFSFileSystem poifs = new POIFSFileSystem();
+        DocumentNode smallNode = (DocumentNode) poifs.createDocument(new ByteArrayInputStream(small), "Small");
+        checkPrimitivesAround(smallNode, small, 64);
+    }
+
+    private static void checkPrimitivesAround(DocumentNode node, byte[] data, int blockSize) throws IOException {
+        for (int off = blockSize - 8; off <= blockSize; off++) {
+            try (DocumentInputStream stream = new DocumentInputStream(node)) {
+                assertEquals(off, stream.skip(off));
+                stream.mark(0);
+                assertEquals(LittleEndian.getLong(data, off), stream.readLong(), "long at " + off);
+                stream.reset();
+                assertEquals(Double.longBitsToDouble(LittleEndian.getLong(data, off)), stream.readDouble(), "double at " + off);
+                stream.reset();
+                assertEquals(LittleEndian.getInt(data, off), stream.readInt(), "int at " + off);
+                stream.reset();
+                assertEquals(LittleEndian.getUInt(data, off), stream.readUInt(), "uint at " + off);
+                stream.reset();
+                assertEquals(LittleEndian.getShort(data, off), stream.readShort(), "short at " + off);
+                stream.reset();
+                assertEquals(LittleEndian.getUShort(data, off), stream.readUShort(), "ushort at " + off);
+                stream.reset();
+                assertEquals(data[off], stream.readByte(), "byte at " + off);
+                stream.reset();
+                assertEquals(data[off] & 0xFF, stream.readUByte(), "ubyte at " + off);
+                stream.reset();
+                assertEquals(data[off] & 0xFF, stream.read(), "read at " + off);
+                assertEquals(node.getSize() - off - 1, available(stream));
+            }
+        }
+    }
+
+    /**
+     * skip moves the position without reading the data and stops at the end of the document
+     */
+    @Test
+    void testSkipAcrossBlocks() throws IOException {
+        try (DocumentInputStream stream = new DocumentInputStream(_workbook_n)) {
+            assertEquals(0, stream.skip(-1));
+            assertEquals(0, stream.skip(0));
+            assertEquals(1500, stream.skip(1500));
+            assertEquals(_workbook_data[1500], stream.readByte());
+            assertEquals(1, stream.skip(1));
+            stream.mark(0);
+            assertEquals(LittleEndian.getInt(_workbook_data, 1502), stream.readInt());
+            assertEquals(2000, stream.skip(2000));
+            stream.reset();
+            assertEquals(LittleEndian.getInt(_workbook_data, 1502), stream.readInt());
+            assertEquals(_workbook_size - 1506, stream.skip(Long.MAX_VALUE));
+            assertEquals(0, available(stream));
+            assertEquals(-1, stream.read());
+            assertEquals(0, stream.skip(10));
         }
     }
 

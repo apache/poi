@@ -956,6 +956,28 @@ class TestXSLFTextShape {
         }
     }
 
+    // https://github.com/apache/poi/issues/919
+    @Test
+    void testClearTextLeavesOneEmptyParagraph() throws IOException {
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            XSLFSlide slide = ppt.createSlide();
+            XSLFAutoShape shape = slide.createAutoShape();
+            XSLFTextParagraph p = shape.addNewTextParagraph();
+            XSLFTextRun r = p.addNewTextRun();
+            r.setText("some text");
+
+            shape.clearText();
+
+            assertEquals(1, shape.getTextParagraphs().size());
+            assertTrue(shape.getTextParagraphs().get(0).getTextRuns().isEmpty());
+
+            try (XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+                XSLFTextShape reloaded = (XSLFTextShape) ppt2.getSlides().get(0).getShapes().get(0);
+                assertEquals(1, reloaded.getTextParagraphs().size());
+            }
+        }
+    }
+
     @Test
     void metroBlob() throws IOException, ReflectiveOperationException {
         assumeFalse(xslfOnly);

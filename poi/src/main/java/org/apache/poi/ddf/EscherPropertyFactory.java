@@ -48,27 +48,20 @@ public final class EscherPropertyFactory {
 
             EscherPropertyTypes propertyType = EscherPropertyTypes.forPropertyID(propId);
 
-            final BiFunction<Short,Integer,EscherProperty> con;
-            switch (propertyType.holder) {
-                case BOOLEAN:
-                    con = EscherBoolProperty::new;
-                    break;
-                case RGB:
-                    con = EscherRGBProperty::new;
-                    break;
-                case SHAPE_PATH:
-                    con = EscherShapePathProperty::new;
-                    break;
-                default:
+            final BiFunction<Short,Integer,EscherProperty> con = switch (propertyType.holder) {
+                case BOOLEAN -> EscherBoolProperty::new;
+                case RGB -> EscherRGBProperty::new;
+                case SHAPE_PATH -> EscherShapePathProperty::new;
+                default -> {
                     if ( isComplex ) {
-                        con = (propertyType.holder == EscherPropertyTypesHolder.ARRAY)
+                        yield (propertyType.holder == EscherPropertyTypesHolder.ARRAY)
                             ? EscherArrayProperty::new
                             : EscherComplexProperty::new;
                     } else {
-                        con = EscherSimpleProperty::new;
+                        yield EscherSimpleProperty::new;
                     }
-                    break;
-            }
+                }
+            };
 
             results.add( con.apply(propId,propData) );
             pos += 6;
@@ -76,11 +69,9 @@ public final class EscherPropertyFactory {
 
         // Get complex data
         for (EscherProperty p : results) {
-            if (p instanceof EscherArrayProperty) {
-                EscherArrayProperty eap = (EscherArrayProperty)p;
+            if (p instanceof EscherArrayProperty eap) {
                 pos += eap.setArrayData(data, pos);
-            } else if (p instanceof EscherComplexProperty) {
-                EscherComplexProperty ecp = (EscherComplexProperty)p;
+            } else if (p instanceof EscherComplexProperty ecp) {
                 int cdLen = ecp.getComplexSize();
                 int leftover = data.length - pos;
                 if (leftover < cdLen) {

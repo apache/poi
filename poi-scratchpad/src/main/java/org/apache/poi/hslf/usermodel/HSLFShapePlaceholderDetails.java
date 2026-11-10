@@ -152,17 +152,12 @@ public class HSLFShapePlaceholderDetails extends HSLFPlaceholderDetails {
             return null;
         }
 
-        switch (source) {
-        case slide:
-            return Placeholder.lookupNativeSlide(phId);
-        default:
-        case master:
-            return Placeholder.lookupNativeSlideMaster(phId);
-        case notes:
-            return Placeholder.lookupNativeNotes(phId);
-        case notesMaster:
-            return Placeholder.lookupNativeNotesMaster(phId);
-        }
+        return switch (source) {
+            case slide -> Placeholder.lookupNativeSlide(phId);
+            case notes -> Placeholder.lookupNativeNotes(phId);
+            case notesMaster -> Placeholder.lookupNativeNotesMaster(phId);
+            default -> Placeholder.lookupNativeSlideMaster(phId);
+        };
     }
 
     @Override
@@ -193,15 +188,11 @@ public class HSLFShapePlaceholderDetails extends HSLFPlaceholderDetails {
             ? oePlaceholderAtom.getPlaceholderSize()
             : OEPlaceholderAtom.PLACEHOLDER_HALFSIZE;
 
-        switch (size) {
-        case OEPlaceholderAtom.PLACEHOLDER_FULLSIZE:
-            return PlaceholderSize.full;
-        default:
-        case OEPlaceholderAtom.PLACEHOLDER_HALFSIZE:
-            return PlaceholderSize.half;
-        case OEPlaceholderAtom.PLACEHOLDER_QUARTSIZE:
-            return PlaceholderSize.quarter;
-        }
+        return switch (size) {
+            case OEPlaceholderAtom.PLACEHOLDER_FULLSIZE -> PlaceholderSize.full;
+            case OEPlaceholderAtom.PLACEHOLDER_QUARTSIZE -> PlaceholderSize.quarter;
+            default -> PlaceholderSize.half;
+        };
     }
 
     @Override
@@ -212,19 +203,11 @@ public class HSLFShapePlaceholderDetails extends HSLFPlaceholderDetails {
         }
         updatePlaceholderAtom(ph, true);
 
-        final byte ph_size;
-        switch (size) {
-        case full:
-            ph_size = OEPlaceholderAtom.PLACEHOLDER_FULLSIZE;
-            break;
-        default:
-        case half:
-            ph_size = OEPlaceholderAtom.PLACEHOLDER_HALFSIZE;
-            break;
-        case quarter:
-            ph_size = OEPlaceholderAtom.PLACEHOLDER_QUARTSIZE;
-            break;
-        }
+        final byte ph_size = switch (size) {
+            case full -> OEPlaceholderAtom.PLACEHOLDER_FULLSIZE;
+            case quarter -> OEPlaceholderAtom.PLACEHOLDER_QUARTSIZE;
+            default -> OEPlaceholderAtom.PLACEHOLDER_HALFSIZE;
+        };
         oePlaceholderAtom.setPlaceholderSize(ph_size);
     }
 
@@ -236,22 +219,12 @@ public class HSLFShapePlaceholderDetails extends HSLFPlaceholderDetails {
          * This occurs when the user has moved the placeholder from its original position.
          * In this case the placeholder ID is -1.
          */
-        final byte phId;
-        switch (source) {
-            default:
-            case slide:
-                phId = (byte)placeholder.nativeSlideId;
-                break;
-            case master:
-                phId = (byte)placeholder.nativeSlideMasterId;
-                break;
-            case notes:
-                phId = (byte)placeholder.nativeNotesId;
-                break;
-            case notesMaster:
-                phId = (byte)placeholder.nativeNotesMasterId;
-                break;
-        }
+        final byte phId = switch (source) {
+            case master -> (byte) placeholder.nativeSlideMasterId;
+            case notes -> (byte) placeholder.nativeNotesId;
+            case notesMaster -> (byte) placeholder.nativeNotesMasterId;
+            default -> (byte) placeholder.nativeSlideId;
+        };
 
         if (phId == -2) {
             throw new HSLFException("Placeholder "+placeholder.name()+" not supported for this sheet type ("+shape.getSheet().getClass()+")");
@@ -268,8 +241,8 @@ public class HSLFShapePlaceholderDetails extends HSLFPlaceholderDetails {
 
     private void updatePlaceholderAtom(final Placeholder placeholder, final boolean create) {
         localDateTime = null;
-        if (shape instanceof HSLFTextBox) {
-            EscherTextboxWrapper txtBox = ((HSLFTextBox)shape).getEscherTextboxWrapper();
+        if (shape instanceof HSLFTextBox textBox) {
+            EscherTextboxWrapper txtBox = textBox.getEscherTextboxWrapper();
             if (txtBox != null) {
                 localDateTime = (DateTimeMCAtom)txtBox.findFirstOfType(RecordTypes.DateTimeMCAtom.typeID);
             }
@@ -286,11 +259,11 @@ public class HSLFShapePlaceholderDetails extends HSLFPlaceholderDetails {
         }
 
         for (org.apache.poi.hslf.record.Record r : clientData.getHSLFChildRecords()) {
-            if (r instanceof OEPlaceholderAtom) {
-                oePlaceholderAtom = (OEPlaceholderAtom)r;
-            } else if (r instanceof RoundTripHFPlaceholder12) {
+            if (r instanceof OEPlaceholderAtom atom) {
+                oePlaceholderAtom = atom;
+            } else if (r instanceof RoundTripHFPlaceholder12 hfPlaceholder) {
                 //special case for files saved in Office 2007
-                roundTripHFPlaceholder12 = (RoundTripHFPlaceholder12)r;
+                roundTripHFPlaceholder12 = hfPlaceholder;
             }
         }
 

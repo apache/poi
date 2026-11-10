@@ -29,7 +29,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -52,6 +51,7 @@ import org.apache.poi.openxml4j.util.ZipFileZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -421,7 +421,7 @@ public final class ZipPackage extends OPCPackage {
                         .map(zae -> new EntryTriple(zae, contentTypeManager))
                         .filter(mm -> mm.partName != null)
                         .sorted()
-                        .collect(Collectors.toList());
+                        .toList();
 
         for (final EntryTriple et : entries) {
             et.register(newPartList);
@@ -450,7 +450,7 @@ public final class ZipPackage extends OPCPackage {
                 try {
                     // We get an error when we parse [Content_Types].xml
                     // because it's not a valid URI.
-                    ppn = (CONTENT_TYPES_PART_NAME.equalsIgnoreCase(entryName)) ? null
+                    ppn = StringUtil.equalsIgnoreCase(CONTENT_TYPES_PART_NAME, entryName) ? null
                             : PackagingURIHelper.createPartName(ZipHelper.getOPCNameFromZipItemName(entryName));
                 } catch (Exception e) {
                     // We assume we can continue, even in degraded mode ...
@@ -591,7 +591,7 @@ public final class ZipPackage extends OPCPackage {
             } finally {
                 // Either the save operation succeed or not, we delete the temporary file
                 if (!tempFile.delete()) {
-                    LOG.atWarn().log("The temporary file: '{}' cannot be deleted ! Make sure that no other application use it.", targetFile.getAbsolutePath());
+                    LOG.atWarn().log("The temporary file: '{}' cannot be deleted ! Make sure that no other application use it.", tempFile.getAbsolutePath());
                 }
             }
         }
@@ -643,8 +643,8 @@ public final class ZipPackage extends OPCPackage {
         // Check that the document was open in write mode
         throwExceptionIfReadOnly();
 
-        final ZipArchiveOutputStream zos = (outputStream instanceof ZipArchiveOutputStream)
-            ? (ZipArchiveOutputStream) outputStream : new ZipArchiveOutputStream(outputStream);
+        final ZipArchiveOutputStream zos = (outputStream instanceof ZipArchiveOutputStream zaos)
+            ? zaos : new ZipArchiveOutputStream(outputStream);
 
         try {
             // If the core properties part does not exist in the part list,

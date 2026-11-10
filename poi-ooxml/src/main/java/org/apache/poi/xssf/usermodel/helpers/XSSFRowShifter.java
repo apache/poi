@@ -29,18 +29,21 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 // non-Javadoc: When possible, code should be implemented in the RowShifter abstract class to avoid duplication with
 // {@link org.apache.poi.hssf.usermodel.helpers.HSSFRowShifter}
 public final class XSSFRowShifter extends RowShifter {
+    private final XSSFSheet xssfSheet;
 
     public XSSFRowShifter(XSSFSheet sh) {
         super(sh);
+        xssfSheet = sh;
     }
+
     @Override
     public void updateNamedRanges(FormulaShifter formulaShifter) {
-        XSSFRowColShifter.updateNamedRanges(sheet, formulaShifter);
+        XSSFRowColShifter.updateNamedRanges(xssfSheet, formulaShifter);
     }
 
     @Override
     public void updateFormulas(FormulaShifter formulaShifter) {
-        XSSFRowColShifter.updateFormulas(sheet, formulaShifter);
+        XSSFRowColShifter.updateFormulas(xssfSheet, formulaShifter);
     }
 
     /**
@@ -56,11 +59,25 @@ public final class XSSFRowShifter extends RowShifter {
 
     @Override
     public void updateConditionalFormatting(FormulaShifter formulaShifter) {
-        XSSFRowColShifter.updateConditionalFormatting(sheet, formulaShifter);
+        XSSFRowColShifter.updateConditionalFormatting(xssfSheet, formulaShifter);
     }
 
     @Override
     public void updateHyperlinks(FormulaShifter formulaShifter) {
-        XSSFRowColShifter.updateHyperlinks(sheet, formulaShifter);
+        XSSFRowColShifter.updateHyperlinks(xssfSheet, formulaShifter);
+    }
+
+    /**
+     * Shift the anchors of the shapes (charts, pictures, ...) in the sheet's drawing along with the rows
+     * they are anchored to. A shape is moved when its top-left anchor row is within {@code [startRow, endRow]};
+     * the whole shape is moved so it keeps its size. Shapes with an absolute anchor are not moved.
+     *
+     * @param startRow the row to start shifting
+     * @param endRow the row to end shifting
+     * @param n the number of rows to shift
+     * @since 6.0.0
+     */
+    public void shiftDrawingAnchors(int startRow, int endRow, int n) {
+        XSSFRowColShifter.shiftDrawingAnchorRows(xssfSheet, startRow, endRow, n);
     }
 }

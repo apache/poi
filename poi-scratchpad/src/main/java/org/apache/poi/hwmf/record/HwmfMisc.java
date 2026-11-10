@@ -520,7 +520,7 @@ public class HwmfMisc {
             int colorUsageEnum = leis.readUShort();
             colorUsage = ColorUsage.valueOf(colorUsageEnum);
             if (colorUsage == null) {
-                throw new IllegalArgumentException("Could not read color-usage " + colorUsage);
+                throw new IllegalArgumentException("Could not read color-usage " + colorUsageEnum);
             }
 
             int size = 2*LittleEndianConsts.SHORT_SIZE;
@@ -532,7 +532,7 @@ public class HwmfMisc {
             case BS_HATCHED:
             case BS_PATTERN:
                 patternDib = new HwmfBitmapDib();
-                size += patternDib.init(leis, (int)(recordSize-6-size));
+                size += patternDib.init(leis, Math.toIntExact(recordSize-6-size));
                 break;
             case BS_INDEXED:
             case BS_DIBPATTERN8X8:

@@ -97,14 +97,14 @@ svn update --set-depth infinity dist/release/poi/
 (II) Making release artifacts
   Run these commands from a clean checkout of https://github.com/apache/poi/tree/trunk
 
-  1. Update the version number in these files and commit the changes to svn.
+  1. Update the version number in these files and commit the changes to git.
      - build.xml (version.id)
      - build.gradle
      - osgi/pom.xml (version and poi.version)
 
-  2. Force a new build at https://ci-builds.apache.org/job/POI/job/POI-DSL-1.11
+  2. Force a new build at https://ci-builds.apache.org/job/POI/job/POI-DSL-1.17
      - when build completes, download the built jars from
-       https://ci-builds.apache.org/job/POI/job/POI-DSL-1.11/lastSuccessfulBuild/artifact/
+       https://ci-builds.apache.org/job/POI/job/POI-DSL-1.17/lastSuccessfulBuild/artifact/
 
   3. To produce the source distribution, run
      - ./gradlew srcDistTar
@@ -145,8 +145,8 @@ find . -name "*.asc" -exec gpg --no-secmem-warning --verify {} \;
 (III) Deploy Jars to Maven Staging
 
   1. Ensure that there has been a build with the right svn commit and then download the jars
-     - https://ci-builds.apache.org/job/POI/job/POI-DSL-1.11
-     - https://ci-builds.apache.org/job/POI/job/POI-DSL-1.11/lastSuccessfulBuild/artifact/
+     - https://ci-builds.apache.org/job/POI/job/POI-DSL-1.17
+     - https://ci-builds.apache.org/job/POI/job/POI-DSL-1.17/lastSuccessfulBuild/artifact/
 
   2. Set up a `poi-prep` directory and copy all the jars other than the `test` jars into it.
      - The artifacts in the archive.zip that you can download (see 1 above) are grouped in different dirs

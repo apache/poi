@@ -41,6 +41,7 @@ import org.apache.poi.hwpf.model.PICFAndOfficeArtData;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.sl.image.ImageHeaderPNG;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
 
@@ -88,6 +89,26 @@ public final class Picture {
         return matched;
     }
 
+    // try to keep in synch with EscherMetafileBlip DEFAULT_MAX_RECORD_LENGTH
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+
+    /**
+     * @param length the max record length allowed for HWPF Picture
+     * @since 6.0.0
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for HWPF Picture
+     * @since 6.0.0
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
+
     private PICF _picf;
     private PICFAndOfficeArtData _picfAndOfficeArtData;
     private final List<? extends EscherRecord> _blipRecords;
@@ -109,8 +130,9 @@ public final class Picture {
     }
 
     /**
-     * Builds a Picture object for a Picture stored in the
-     *  DataStream
+     * Builds a Picture object for a Picture stored in the DataStream
+     * @throws RecordFormatException if there is a problem with the size of the decompressed data.
+     * {@link #setMaxRecordLength(int)} can be used to change the limit applied.
      */
     public Picture( int dataBlockStartOfsset, byte[] _dataStream, boolean fillBytes ) { // NOSONAR
         _picfAndOfficeArtData = new PICFAndOfficeArtData( _dataStream, dataBlockStartOfsset );
@@ -145,7 +167,12 @@ public final class Picture {
                  InflaterInputStream in = new InflaterInputStream(bis);
                  UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get()) {
 
-                IOUtils.copy(in, out);
+                final int maxSize = getMaxRecordLength();
+                long copied = IOUtils.copy(in, out, (long) maxSize + 1);
+                if (copied > maxSize) {
+                    throw new RecordFormatException(
+                            "Inflated picture data exceeds maximum allowed size (" + maxSize + ")");
+                }
                 content = out.toByteArray();
             } catch (IOException e) {
                 /*
@@ -246,15 +273,11 @@ public final class Picture {
         // trying to extract width and height from pictures content:
         switch ( pictureType )
         {
-        case JPEG:
-            fillJPGWidthHeight();
-            break;
-        case PNG:
-            fillPNGWidthHeight();
-            break;
-        default:
+        case JPEG -> fillJPGWidthHeight();
+        case PNG -> fillPNGWidthHeight();
+        default -> {
             // unsupported;
-            break;
+        }
         }
     }
 
@@ -360,8 +383,7 @@ public final class Picture {
             EscherOptRecord optRecord = shape.getChildById(EscherRecordTypes.OPT.typeID);
             if (optRecord != null) {
                 EscherProperty property = optRecord.lookup(propType);
-                if (property instanceof EscherSimpleProperty) {
-                    EscherSimpleProperty simpleProperty = (EscherSimpleProperty) property;
+                if (property instanceof EscherSimpleProperty simpleProperty) {
                     return Units.fixedPointToDouble(simpleProperty.getPropertyValue());
                 }
             }
@@ -426,14 +448,14 @@ public final class Picture {
         }
 
         EscherRecord escherRecord = _blipRecords.get( 0 );
-        if ( escherRecord instanceof EscherBlipRecord )
+        if ( escherRecord instanceof EscherBlipRecord blipRecord )
         {
-            return ( (EscherBlipRecord) escherRecord ).getPicturedata();
+            return blipRecord.getPicturedata();
         }
 
-        if ( escherRecord instanceof EscherBSERecord )
+        if ( escherRecord instanceof EscherBSERecord bseRecord )
         {
-            EscherBlipRecord blip = ( (EscherBSERecord) escherRecord ).getBlipRecord();
+            EscherBlipRecord blip = bseRecord.getBlipRecord();
             if (blip != null) {
                 return blip.getPicturedata();
 
@@ -489,8 +511,7 @@ public final class Picture {
     public String getDescription()
     {
        for(EscherRecord escherRecord : _picfAndOfficeArtData.getShape()){
-          if(escherRecord instanceof EscherOptRecord){
-             EscherOptRecord escherOptRecord = (EscherOptRecord) escherRecord;
+          if(escherRecord instanceof EscherOptRecord escherOptRecord){
              for(EscherProperty property : escherOptRecord.getEscherProperties()){
                 if (EscherPropertyTypes.GROUPSHAPE__DESCRIPTION.propNumber == property.getPropertyNumber()){
                    byte[] complexData = ((EscherComplexProperty)property).getComplexData();
@@ -534,54 +555,36 @@ public final class Picture {
         }
 
         EscherRecord escherRecord = _blipRecords.get( 0 );
-        if (escherRecord instanceof EscherBSERecord) {
-            EscherBSERecord bseRecord = (EscherBSERecord) escherRecord;
-            switch ( bseRecord.getBlipTypeWin32() ) {
-                case 0x00:
-                    return PictureType.UNKNOWN;
-                case 0x01:
-                    return PictureType.UNKNOWN;
-                case 0x02:
-                    return PictureType.EMF;
-                case 0x03:
-                    return PictureType.WMF;
-                case 0x04:
-                    return PictureType.PICT;
-                case 0x05:
-                    return PictureType.JPEG;
-                case 0x06:
-                    return PictureType.PNG;
-                case 0x07:
-                    return PictureType.BMP;
-                case 0x11:
-                    return PictureType.TIFF;
-                case 0x12:
-                    return PictureType.JPEG;
-                default:
-                    return PictureType.UNKNOWN;
-            }
+        if (escherRecord instanceof EscherBSERecord bseRecord) {
+            return switch ( bseRecord.getBlipTypeWin32() ) {
+                case 0x00 -> PictureType.UNKNOWN;
+                case 0x01 -> PictureType.UNKNOWN;
+                case 0x02 -> PictureType.EMF;
+                case 0x03 -> PictureType.WMF;
+                case 0x04 -> PictureType.PICT;
+                case 0x05 -> PictureType.JPEG;
+                case 0x06 -> PictureType.PNG;
+                case 0x07 -> PictureType.BMP;
+                case 0x11 -> PictureType.TIFF;
+                case 0x12 -> PictureType.JPEG;
+                default -> PictureType.UNKNOWN;
+            };
         }
 
         Enum<?> recordType = escherRecord.getGenericRecordType();
-        assert (recordType instanceof EscherRecordTypes);
-        switch ((EscherRecordTypes)recordType) {
-            case BLIP_EMF:
-                return PictureType.EMF;
-            case BLIP_WMF:
-                return PictureType.WMF;
-            case BLIP_PICT:
-                return PictureType.PICT;
-            case BLIP_JPEG:
-                return PictureType.JPEG;
-            case BLIP_PNG:
-                return PictureType.PNG;
-            case BLIP_DIB:
-                return PictureType.BMP;
-            case BLIP_TIFF:
-                return PictureType.TIFF;
-            default:
-                return PictureType.UNKNOWN;
+        if (!(recordType instanceof EscherRecordTypes escherRecordType)) {
+            throw new AssertionError("Expected EscherRecordTypes");
         }
+        return switch (escherRecordType) {
+            case BLIP_EMF -> PictureType.EMF;
+            case BLIP_WMF -> PictureType.WMF;
+            case BLIP_PICT -> PictureType.PICT;
+            case BLIP_JPEG -> PictureType.JPEG;
+            case BLIP_PNG -> PictureType.PNG;
+            case BLIP_DIB -> PictureType.BMP;
+            case BLIP_TIFF -> PictureType.TIFF;
+            default -> PictureType.UNKNOWN;
+        };
     }
 
     /**
@@ -592,7 +595,7 @@ public final class Picture {
      * @param out
      *            a stream to write to
      * @throws IOException
-     *             if some exception is occured while writing to specified out
+     *             if some exception is occurred while writing to specified out
      */
     public void writeImageContent( OutputStream out ) throws IOException
     {

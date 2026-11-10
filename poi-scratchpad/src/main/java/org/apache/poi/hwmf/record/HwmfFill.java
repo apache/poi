@@ -29,9 +29,11 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.record.HwmfMisc.WmfSetBkMode.HwmfBkMode;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
@@ -40,6 +42,8 @@ import org.apache.poi.util.LittleEndianInputStream;
 
 @SuppressWarnings("WeakerAccess")
 public class HwmfFill {
+    private static final Logger LOG = PoiLogManager.getLogger(HwmfFill.class);
+
     /** A record which contains an image (to be extracted) */
     public interface HwmfImageRecord {
 
@@ -605,7 +609,7 @@ public class HwmfFill {
             size += readBounds2(leis, srcBounds);
             size += readBounds2(leis, dstBounds);
 
-            size += bitmap.init(leis, (int)(recordSize-6-size));
+            size += bitmap.init(leis, Math.toIntExact(recordSize-6-size));
 
             return size;
         }
@@ -758,7 +762,7 @@ public class HwmfFill {
             size += readBounds2(leis, dstBounds);
 
             dib = new HwmfBitmapDib();
-            size += dib.init(leis, (int)(recordSize-6-size));
+            size += dib.init(leis, Math.toIntExact(recordSize-6-size));
 
             srcBounds.setRect(srcPnt.getX(), srcPnt.getY(), dstBounds.getWidth(), dstBounds.getHeight());
 
@@ -843,7 +847,7 @@ public class HwmfFill {
             size += readBounds2(leis, dstBounds);
             if (hasBitmap) {
                 target = new HwmfBitmapDib();
-                size += target.init(leis, (int)(recordSize-6-size));
+                size += target.init(leis, Math.toIntExact(recordSize-6-size));
             }
 
             // the destination rectangle, having the same dimension as the source rectangle
@@ -905,7 +909,7 @@ public class HwmfFill {
             size += readBounds2(leis, dstBounds);
             if (hasBitmap) {
                 target = new HwmfBitmapDib();
-                size += target.init(leis, (int)(recordSize-6-size));
+                size += target.init(leis, Math.toIntExact(recordSize-6-size));
             }
 
             return size;
@@ -984,8 +988,11 @@ public class HwmfFill {
         int rasterOpCode = leis.readUShort();
         int rasterOpIndex = leis.readUShort();
 
+        // null for an unknown raster operation, which is drawn like SRCCOPY
         HwmfTernaryRasterOp rasterOperation = HwmfTernaryRasterOp.valueOf(rasterOpIndex);
-        assert(rasterOperation != null && rasterOpCode == rasterOperation.getOpCode());
+        if (rasterOperation != null && rasterOpCode != rasterOperation.getOpCode()) {
+            LOG.atWarn().log("Unexpected op code {} for raster operation {} in wmf file", rasterOpCode, rasterOperation);
+        }
         return rasterOperation;
     }
 }

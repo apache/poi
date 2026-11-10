@@ -35,6 +35,7 @@ import org.apache.poi.sl.usermodel.Insets2D;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 
 @Internal
 public class DrawTexturePaint extends java.awt.TexturePaint {
@@ -115,20 +116,20 @@ public class DrawTexturePaint extends java.awt.TexturePaint {
             final int height = bi.getHeight();
 
             bi = bi.getSubimage(
-                (int)(Math.max(insets.left,0)/100_000 * width),
-                (int)(Math.max(insets.top,0)/100_000 * height),
-                (int)((100_000-Math.max(insets.left,0)-Math.max(insets.right,0))/100_000 * width),
-                (int)((100_000-Math.max(insets.top,0)-Math.max(insets.bottom,0))/100_000 * height)
+                    MathUtil.safeDoubleToInt(Math.max(insets.left,0)/100_000 * width),
+                    MathUtil.safeDoubleToInt(Math.max(insets.top,0)/100_000 * height),
+                    MathUtil.safeDoubleToInt((100_000-Math.max(insets.left,0)-Math.max(insets.right,0))/100_000 * width),
+                    MathUtil.safeDoubleToInt((100_000-Math.max(insets.top,0)-Math.max(insets.bottom,0))/100_000 * height)
             );
 
-            int addTop = (int)(Math.max(-insets.top, 0)/100_000 * height);
-            int addLeft = (int)(Math.max(-insets.left, 0)/100_000 * width);
-            int addBottom = (int)(Math.max(-insets.bottom, 0)/100_000 * height);
-            int addRight = (int)(Math.max(-insets.right, 0)/100_000 * width);
+            int addTop = MathUtil.safeDoubleToInt(Math.max(-insets.top, 0)/100_000 * height);
+            int addLeft = MathUtil.safeDoubleToInt(Math.max(-insets.left, 0)/100_000 * width);
+            int addBottom = MathUtil.safeDoubleToInt(Math.max(-insets.bottom, 0)/100_000 * height);
+            int addRight = MathUtil.safeDoubleToInt(Math.max(-insets.right, 0)/100_000 * width);
 
             // handle outsets
             if (addTop > 0 || addLeft > 0 || addBottom > 0 || addRight > 0) {
-                int[] buf = new int[bi.getWidth()*bi.getHeight()];
+                int[] buf = new int[Math.multiplyExact(bi.getWidth(), bi.getHeight())];
                 bi.getRGB(0, 0, bi.getWidth(), bi.getHeight(), buf, 0, bi.getWidth());
                 BufferedImage borderBi = new BufferedImage(bi.getWidth()+addLeft+addRight, bi.getHeight()+addTop+addBottom, bi.getType());
                 borderBi.setRGB(addLeft, addTop, bi.getWidth(), bi.getHeight(), buf, 0, bi.getWidth());
@@ -148,7 +149,10 @@ public class DrawTexturePaint extends java.awt.TexturePaint {
                 (100_000-stretch.top-stretch.bottom)/100_000 * userBounds.getHeight()
             );
 
-            BufferedImage stretchBi = new BufferedImage((int)userBounds.getWidth(), (int)userBounds.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            BufferedImage stretchBi = new BufferedImage(
+                    MathUtil.safeDoubleToInt(userBounds.getWidth()),
+                    MathUtil.safeDoubleToInt(userBounds.getHeight()),
+                    BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = stretchBi.createGraphics();
 
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -187,45 +191,44 @@ public class DrawTexturePaint extends java.awt.TexturePaint {
         PaintStyle.TextureAlignment ta = fill.getAlignment();
         final double alg_x, alg_y;
         final double usr_w = usedBounds.getWidth(), usr_h = usedBounds.getHeight();
-        switch (ta == null ? PaintStyle.TextureAlignment.TOP_LEFT : ta) {
-            case BOTTOM:
-                alg_x = (usr_w-img_w)/2;
-                alg_y = usr_h-img_h;
-                break;
-            case BOTTOM_LEFT:
+        alg_y = switch (ta == null ? PaintStyle.TextureAlignment.TOP_LEFT : ta) {
+            case BOTTOM -> {
+                alg_x = (usr_w - img_w) / 2;
+                yield usr_h - img_h;
+            }
+            case BOTTOM_LEFT -> {
                 alg_x = 0;
-                alg_y = usr_h-img_h;
-                break;
-            case BOTTOM_RIGHT:
-                alg_x = usr_w-img_w;
-                alg_y = usr_h-img_h;
-                break;
-            case CENTER:
-                alg_x = (usr_w-img_w)/2;
-                alg_y = (usr_h-img_h)/2;
-                break;
-            case LEFT:
+                yield usr_h - img_h;
+            }
+            case BOTTOM_RIGHT -> {
+                alg_x = usr_w - img_w;
+                yield usr_h - img_h;
+            }
+            case CENTER -> {
+                alg_x = (usr_w - img_w) / 2;
+                yield (usr_h - img_h) / 2;
+            }
+            case LEFT -> {
                 alg_x = 0;
-                alg_y = (usr_h-img_h)/2;
-                break;
-            case RIGHT:
-                alg_x = usr_w-img_w;
-                alg_y = (usr_h-img_h)/2;
-                break;
-            case TOP:
-                alg_x = (usr_w-img_w)/2;
-                alg_y = 0;
-                break;
-            default:
-            case TOP_LEFT:
+                yield (usr_h - img_h) / 2;
+            }
+            case RIGHT -> {
+                alg_x = usr_w - img_w;
+                yield (usr_h - img_h) / 2;
+            }
+            case TOP -> {
+                alg_x = (usr_w - img_w) / 2;
+                yield 0;
+            }
+            default -> {
                 alg_x = 0;
-                alg_y = 0;
-                break;
-            case TOP_RIGHT:
-                alg_x = usr_w-img_w;
-                alg_y = 0;
-                break;
-        }
+                yield 0;
+            }
+            case TOP_RIGHT -> {
+                alg_x = usr_w - img_w;
+                yield 0;
+            }
+        };
         xform.translate(alg_x, alg_y);
 
         // Apply additional horizontal/vertical offset after alignment.

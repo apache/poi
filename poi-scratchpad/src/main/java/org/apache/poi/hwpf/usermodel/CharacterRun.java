@@ -458,8 +458,8 @@ public final class CharacterRun extends Range implements Duplicatable, org.apach
 
   public String getFontName()
   {
-    if (_doc instanceof HWPFOldDocument) {
-      return ((HWPFOldDocument) _doc).getOldFontTable().getMainFont(_props.getFtcAscii());
+    if (_doc instanceof HWPFOldDocument oldDocument) {
+      return oldDocument.getOldFontTable().getMainFont(_props.getFtcAscii());
     }
 
     if (_doc.getFontTable() == null)
@@ -650,13 +650,13 @@ public final class CharacterRun extends Range implements Duplicatable, org.apach
 
     public String[] getDropDownListValues()
     {
-        if ( getDocument() instanceof HWPFDocument )
+        if ( getDocument() instanceof HWPFDocument document )
         {
             char c = _text.charAt( _start );
             if ( c == 0x01 )
             {
                 NilPICFAndBinData data = new NilPICFAndBinData(
-                        ( (HWPFDocument) getDocument() ).getDataStream(),
+                        document.getDataStream(),
                         getPicOffset() );
                 FFData ffData = new FFData( data.getBinData(), 0 );
 
@@ -668,13 +668,13 @@ public final class CharacterRun extends Range implements Duplicatable, org.apach
 
     public Integer getDropDownListDefaultItemIndex()
     {
-        if ( getDocument() instanceof HWPFDocument )
+        if ( getDocument() instanceof HWPFDocument document )
         {
             char c = _text.charAt( _start );
             if ( c == 0x01 )
             {
                 NilPICFAndBinData data = new NilPICFAndBinData(
-                        ( (HWPFDocument) getDocument() ).getDataStream(),
+                        document.getDataStream(),
                         getPicOffset() );
                 FFData ffData = new FFData( data.getBinData(), 0 );
 

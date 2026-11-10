@@ -580,4 +580,18 @@ public final class TestXSSFRow extends BaseTestXRow {
             wb.write(fileOut);
         }
     }
+
+    @Test
+    void testCopyRowFromWithAdjustFormulaReferencesShiftsOnce() throws IOException {
+        try (Workbook workbook = new XSSFWorkbook()) {
+            final Sheet sheet = workbook.createSheet("Sheet1");
+            final Row srcRow = sheet.createRow(0);
+            srcRow.createCell(0).setCellFormula("B1+$B$1");
+
+            final CellCopyPolicy policy = new CellCopyPolicy.Builder().adjustFormulaReferences(true).build();
+            final XSSFRow destRow = (XSSFRow) sheet.createRow(3);
+            destRow.copyRowFrom(srcRow, policy);
+            assertEquals("B4+$B$1", destRow.getCell(0).getCellFormula());
+        }
+    }
 }

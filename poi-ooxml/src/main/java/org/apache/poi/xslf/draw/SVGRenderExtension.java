@@ -71,6 +71,7 @@ import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.SimpleShape;
 import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -102,20 +103,20 @@ public class SVGRenderExtension extends DefaultExtensionHandler {
 
     @Override
     public SVGPaintDescriptor handlePaint(Paint paint, SVGGeneratorContext generatorContext) {
-        if (paint instanceof LinearGradientPaint) {
-            return getLgpDescriptor((LinearGradientPaint)paint, generatorContext);
+        if (paint instanceof LinearGradientPaint lgp) {
+            return getLgpDescriptor(lgp, generatorContext);
         }
 
-        if (paint instanceof RadialGradientPaint) {
-            return getRgpDescriptor((RadialGradientPaint)paint, generatorContext);
+        if (paint instanceof RadialGradientPaint rgp) {
+            return getRgpDescriptor(rgp, generatorContext);
         }
 
-        if (paint instanceof PathGradientPaint) {
-            return getPathDescriptor((PathGradientPaint)paint, generatorContext);
+        if (paint instanceof PathGradientPaint pgp) {
+            return getPathDescriptor(pgp, generatorContext);
         }
 
-        if (paint instanceof DrawTexturePaint) {
-            return getDtpDescriptor((DrawTexturePaint)paint, generatorContext);
+        if (paint instanceof DrawTexturePaint dtp) {
+            return getDtpDescriptor(dtp, generatorContext);
         }
 
         return super.handlePaint(paint, generatorContext);
@@ -176,19 +177,11 @@ public class SVGRenderExtension extends DefaultExtensionHandler {
         gradElem.setAttribute(SVG_GRADIENT_UNITS_ATTRIBUTE, SVG_USER_SPACE_ON_USE_VALUE);
 
         // Set cycle method
-        final String cycleVal;
-        switch (gradient.getCycleMethod()) {
-            case REFLECT:
-                cycleVal = SVG_REFLECT_VALUE;
-                break;
-            case REPEAT:
-                cycleVal = SVG_REPEAT_VALUE;
-                break;
-            case NO_CYCLE:
-            default:
-                cycleVal = SVG_PAD_VALUE;
-                break;
-        }
+        final String cycleVal = switch (gradient.getCycleMethod()) {
+            case REFLECT -> SVG_REFLECT_VALUE;
+            case REPEAT -> SVG_REPEAT_VALUE;
+            default -> SVG_PAD_VALUE;
+        };
         gradElem.setAttribute(SVG_SPREAD_METHOD_ATTRIBUTE, cycleVal);
 
         // Set color space
@@ -212,7 +205,7 @@ public class SVGRenderExtension extends DefaultExtensionHandler {
             Element stop = genCtx.getDOMFactory().createElementNS(SVG_NAMESPACE_URI, SVG_STOP_TAG);
             SVGPaintDescriptor pd = SVGColor.toSVG(colors[i], genCtx);
 
-            stop.setAttribute(SVG_OFFSET_ATTRIBUTE, (int) (fracs[i] * 100.0f) + "%");
+            stop.setAttribute(SVG_OFFSET_ATTRIBUTE, MathUtil.safeFloatToInt(fracs[i] * 100.0f) + "%");
             stop.setAttribute(SVG_STOP_COLOR_ATTRIBUTE, pd.getPaintValue());
 
             if (colors[i].getAlpha() != 255) {
@@ -277,8 +270,8 @@ public class SVGRenderExtension extends DefaultExtensionHandler {
 
         // TODO: the rotation handling is incomplete and the scale handling is missing
         //  see DrawTexturePaint on how to do it for AWT
-        if (!fill.isRotatedWithShape() && slShape instanceof SimpleShape) {
-            double rot = ((SimpleShape<?,?>)slShape).getRotation();
+        if (!fill.isRotatedWithShape() && slShape instanceof SimpleShape<?,?> simpleShape) {
+            double rot = simpleShape.getRotation();
             if (rot != 0) {
                 setAttribute(genCtx, patternDef,
                     null, SVG_PATTERN_TRANSFORM_ATTRIBUTE, "rotate(" + genCtx.doubleString(-rot) + ")");
@@ -298,8 +291,7 @@ public class SVGRenderExtension extends DefaultExtensionHandler {
 
         byte[] imgData = null;
         String contentType = null;
-        if (imgRdr instanceof BitmapImageRenderer) {
-            BitmapImageRenderer bir = (BitmapImageRenderer)imgRdr;
+        if (imgRdr instanceof BitmapImageRenderer bir) {
             String ct = bir.getCachedContentType();
             if (PNG.contentType.equals(ct) ||
                 JPEG.contentType.equals(ct) ||
@@ -367,10 +359,10 @@ public class SVGRenderExtension extends DefaultExtensionHandler {
             String name = (String)params[i+1];
             Object oval = params[i+2];
             String val;
-            if (oval instanceof String) {
-                val = (String)oval;
-            } else if (oval instanceof Number) {
-                val = genCtx.doubleString(((Number) oval).doubleValue());
+            if (oval instanceof String str) {
+                val = str;
+            } else if (oval instanceof Number number) {
+                val = genCtx.doubleString(number.doubleValue());
             } else if (oval == null) {
                 val = "";
             } else {

@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.poi.openxml4j.opc.internal.InvalidZipException;
+import org.apache.poi.util.IOUtils;
 
 /**
  * Provides a way to get at all the ZipEntries
@@ -42,7 +43,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
     private static boolean encryptTempFiles = false;
     private final Map<String, ZipArchiveFakeEntry> zipEntries = new HashMap<>();
 
-    private InputStream streamToClose;
+    private final InputStream streamToClose;
 
     /**
      * Set the threshold at which a zip entry is regarded as too large for holding in memory
@@ -97,21 +98,33 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
      */
     public ZipInputStreamZipEntrySource(ZipArchiveThresholdInputStream inp) throws IOException {
         final Set<String> filenames = new HashSet<>();
-        for (;;) {
-            final ZipArchiveEntry zipEntry = inp.getNextEntry();
-            if (zipEntry == null) {
-                break;
+        try {
+            for (;;) {
+                final ZipArchiveEntry zipEntry = inp.getNextEntry();
+                if (zipEntry == null) {
+                    break;
+                }
+                String name = zipEntry.getName();
+                if (name == null || name.isEmpty()) {
+                    throw new InvalidZipException("Input file contains an entry with an empty name");
+                }
+                name = IOUtils.normalizePath(name).toLowerCase(Locale.ROOT);
+                if (filenames.contains(name)) {
+                    throw new InvalidZipException("Input file contains more than 1 entry with the name " + zipEntry.getName());
+                }
+                filenames.add(name);
+                zipEntries.put(name, new ZipArchiveFakeEntry(zipEntry, inp));
             }
-            String name = zipEntry.getName();
-            if (name == null || name.isEmpty()) {
-                throw new InvalidZipException("Input file contains an entry with an empty name");
+        } catch (IOException | RuntimeException | Error e) {
+            for (ZipArchiveFakeEntry entry : zipEntries.values()) {
+                try {
+                    entry.close();
+                } catch (IOException ioex) {
+                    // ignore
+                }
             }
-            name = name.toLowerCase(Locale.ROOT);
-            if (filenames.contains(name)) {
-                throw new InvalidZipException("Input file contains more than 1 entry with the name " + zipEntry.getName());
-            }
-            filenames.add(name);
-            zipEntries.put(name, new ZipArchiveFakeEntry(zipEntry, inp));
+            zipEntries.clear();
+            throw e;
         }
 
         streamToClose = inp;
@@ -124,8 +137,10 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
 
     @Override
     public InputStream getInputStream(ZipArchiveEntry zipEntry) throws IOException {
-        assert (zipEntry instanceof ZipArchiveFakeEntry);
-        return ((ZipArchiveFakeEntry)zipEntry).getInputStream();
+        if (zipEntry instanceof ZipArchiveFakeEntry zipFakeEntry) {
+            return zipFakeEntry.getInputStream();
+        }
+        throw new IllegalArgumentException("This implementation only supports ZipArchiveFakeEntry");
     }
 
     @Override
@@ -147,18 +162,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
 
     @Override
     public ZipArchiveEntry getEntry(final String path) {
-        final String normalizedPath = path.replace('\\', '/');
-        final ZipArchiveEntry ze = zipEntries.get(normalizedPath);
-        if (ze != null) {
-            return ze;
-        }
-
-        for (final Map.Entry<String, ZipArchiveFakeEntry> fze : zipEntries.entrySet()) {
-            if (normalizedPath.equalsIgnoreCase(fze.getKey())) {
-                return fze.getValue();
-            }
-        }
-
-        return null;
+        final String normalizedPath = IOUtils.normalizePath(path);
+        return zipEntries.get(normalizedPath.toLowerCase(Locale.ROOT));
     }
 }

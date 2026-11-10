@@ -20,7 +20,7 @@ import java.util.Arrays;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
-import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 
@@ -49,8 +49,8 @@ public class NilPICFAndBinData {
         }
 
         // make sure these do not cause OOM if passed as invalid or extremely large values
-        IOUtils.safelyAllocateCheck(lcb, MAX_SIZE);
-        IOUtils.safelyAllocateCheck(cbHeader, MAX_SIZE);
+        ArrayUtil.strictAllocateCheck(lcb, MAX_SIZE);
+        ArrayUtil.strictAllocateCheck(cbHeader, MAX_SIZE);
 
         // skip the 62 ignored bytes
         int binaryLength = lcb - cbHeader;

@@ -24,6 +24,8 @@ import org.apache.poi.xwpf.usermodel.XWPFHeader;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHdrFtrRef;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHdrFtr;
 
 import java.io.IOException;
 
@@ -203,5 +205,30 @@ class TestXWPFHeaderFooterPolicy {
                 "[THIS IS AN EVEN PAGE, WITH A HEADER]\n\n",
                 policy.getEvenPageHeader().getText()
         );
+    }
+
+    /**
+     * A section may state several references of one type; the last one wins. Pins the order in which the
+     * references of a section are read.
+     */
+    @Test
+    void testLastReferenceOfATypeWins() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFHeaderFooterPolicy policy = doc.createHeaderFooterPolicy();
+            policy.createHeader(STHdrFtr.DEFAULT).createParagraph().createRun().setText("default");
+            XWPFHeader first = policy.createHeader(STHdrFtr.FIRST);
+            first.createParagraph().createRun().setText("first");
+            // a second default reference, to the header created for the first page
+            CTHdrFtrRef ref = doc.getDocument().getBody().getSectPr().addNewHeaderReference();
+            ref.setType(STHdrFtr.DEFAULT);
+            ref.setId(doc.getRelationId(first));
+
+            try (XWPFDocument back = XWPFTestDataSamples.writeOutAndReadBack(doc)) {
+                XWPFHeaderFooterPolicy read = back.getHeaderFooterPolicy();
+                assertNotNull(read);
+                assertEquals("first", read.getDefaultHeader().getText().trim());
+                assertEquals("first", read.getFirstPageHeader().getText().trim());
+            }
+        }
     }
 }

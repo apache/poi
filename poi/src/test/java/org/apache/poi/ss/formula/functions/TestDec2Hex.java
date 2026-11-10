@@ -72,7 +72,7 @@ final class TestDec2Hex {
 
     @Test
     void testBasic() {
-        confirmValue("Converts decimal 100 to hexadecimal with 0 characters (64)", "100","0", "64");
+        confirmValue("Converts decimal 100 to hexadecimal with 2 characters (64)", "100","2", "64");
         confirmValue("Converts decimal 100 to hexadecimal with 4 characters (0064)", "100","4", "0064");
         confirmValue("Converts decimal 100 to hexadecimal with 5 characters (0064)", "100","5", "00064");
         confirmValue("Converts decimal 100 to hexadecimal with 10 (default) characters", "100","10", "0000000064");
@@ -101,7 +101,13 @@ final class TestDec2Hex {
 
         String minLong = Long.toString(-549755813888L);
         assertEquals("-549755813888", minLong);
-        confirmValue("Converts the min supported value to hexadecimal", minLong, "FF80000000");
+        confirmValue("Converts the min supported value to hexadecimal", minLong, "8000000000");
+        confirmValue("Converts the max supported value with 10 places", maxLong, "10", "7FFFFFFFFF");
+        confirmValue("A non-integer number is truncated", "100.9", "64");
+        confirmValue("A non-integer number is truncated toward zero", "-0.9", "0");
+        confirmValue("A non-integer number is truncated", "-54.9", "FFFFFFFFCA");
+        confirmValue("Converts -1 to hexadecimal", "-1", "FFFFFFFFFF");
+        confirmValue("Converts -2147483649 to hexadecimal", "-2147483649", "FF7FFFFFFF");
     }
 
     @Test
@@ -111,6 +117,13 @@ final class TestDec2Hex {
 
         confirmValueError("negative places not allowed","549755813888","-10", ErrorEval.NUM_ERROR);
         confirmValueError("non number places not allowed","ABCDEF","0", ErrorEval.VALUE_INVALID);
+        confirmValueError("zero places not allowed","100","0", ErrorEval.NUM_ERROR);
+        confirmValueError("more than 10 places not allowed","255","11", ErrorEval.NUM_ERROR);
+        confirmValueError("huge places used to exhaust memory","255","1E10", ErrorEval.NUM_ERROR);
+        confirmValueError("more characters needed than places","255","1", ErrorEval.NUM_ERROR);
+        confirmValueError("more characters needed than places","65536","4", ErrorEval.NUM_ERROR);
+        confirmValueError("Out of range min number, non-integer","-549755813889.5","0", ErrorEval.NUM_ERROR);
+        confirmValueError("Out of range max number, non-integer","549755813888.5","0", ErrorEval.NUM_ERROR);
     }
 
     @Test

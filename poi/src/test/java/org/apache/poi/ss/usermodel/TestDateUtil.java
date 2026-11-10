@@ -29,11 +29,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
@@ -152,6 +154,17 @@ class TestDateUtil {
         assertEquals(date, DateUtil.getLocalDateTime(dateValue));
         assertEquals(date, DateUtil.getLocalDateTime(dateValue, use1904windowing));
         assertEquals(date, DateUtil.getLocalDateTime(dateValue, use1904windowing, roundSeconds));
+    }
+
+    @Test
+    void isADateFormatWithLongRun() {
+        // '/' is allowed both in the date part and in the AM/PM part, which used to backtrack quadratically
+        String format = "y" + "/".repeat(50_000) + "x";
+        boolean result = assertTimeoutPreemptively(Duration.ofSeconds(10),
+                () -> DateUtil.isADateFormat(-1, format));
+        assertFalse(result);
+        assertTrue(DateUtil.isADateFormat(-1, "y" + "/".repeat(50_000) + "AM/PM"));
+        assertTrue(DateUtil.isADateFormat(-1, "mm/dd/yy m/"));
     }
 
     @Test
@@ -730,5 +743,30 @@ class TestDateUtil {
 
         final double d1 = DateUtil.getExcelDate(date1904, true);
         assertEquals(d, d1, 1E-10);
+    }
+
+    /**
+     * Excel's dates run from serial 0 to 2958465 (9999-12-31); beyond that a serial is not a date,
+     * and the conversions return null rather than throwing (or, for getLocalDateTime, silently
+     * truncating the serial to an int)
+     */
+    @Test
+    void testDateSerialRange() {
+        assertTrue(DateUtil.isValidExcelDate(0));
+        assertTrue(DateUtil.isValidExcelDate(DateUtil.MAX_EXCEL_DATE_SERIAL));
+        assertTrue(DateUtil.isValidExcelDate(DateUtil.MAX_EXCEL_DATE_SERIAL + 0.99999));
+        assertFalse(DateUtil.isValidExcelDate(-1));
+        assertFalse(DateUtil.isValidExcelDate(DateUtil.MAX_EXCEL_DATE_SERIAL + 1));
+        assertFalse(DateUtil.isValidExcelDate(1E10));
+        assertFalse(DateUtil.isValidExcelDate(1E308));
+
+        assertEquals(LocalDateTime.of(9999, 12, 31, 0, 0), DateUtil.getLocalDateTime(DateUtil.MAX_EXCEL_DATE_SERIAL));
+        assertEquals(LocalDateTime.of(9999, 12, 31, 0, 0), DateUtil.getJavaDate(DateUtil.MAX_EXCEL_DATE_SERIAL).toInstant()
+                .atZone(LocaleUtil.getUserTimeZone().toZoneId()).toLocalDateTime());
+        for (double serial : new double[]{-1, DateUtil.MAX_EXCEL_DATE_SERIAL + 1, 1E10, 1E19, 1E308}) {
+            assertNull(DateUtil.getJavaDate(serial), Double.toString(serial));
+            assertNull(DateUtil.getJavaCalendar(serial), Double.toString(serial));
+            assertNull(DateUtil.getLocalDateTime(serial), Double.toString(serial));
+        }
     }
 }

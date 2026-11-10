@@ -19,6 +19,11 @@ package org.apache.poi.xslf.usermodel;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.clearInvocations;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
@@ -83,6 +88,24 @@ class TestXSLFGroupShape {
             group.removeShape(shape1);
             group.removeShape(shape4);
             assertTrue(group.getShapes().isEmpty());
+        }
+    }
+
+    // https://github.com/apache/poi/issues/924
+    @Test
+    void testCreatingShapeInGroupDoesNotReregisterShapeIds() throws Exception {
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            XSLFSlide slide = spy(ppt.createSlide());
+            slide.createTextBox();
+            slide.createTextBox();
+            XSLFGroupShape group = slide.createGroup();
+
+            clearInvocations(slide);
+
+            // This is the trigger: the first shape created directly on the group.
+            group.createTextBox();
+
+            verify(slide, never()).registerShapeId(anyInt());
         }
     }
 

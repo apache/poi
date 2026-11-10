@@ -23,7 +23,6 @@ import java.util.NoSuchElementException;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.apache.poi.util.GenericRecordUtil;
@@ -150,7 +149,8 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
 
     public byte[] getElement(int index) {
         int actualSize = getActualSizeOfElements(getSizeOfElements());
-        return IOUtils.safelyClone(getComplexData(), FIXED_SIZE + index * actualSize, actualSize, MAX_RECORD_LENGTH);
+        return IOUtils.safelyClone(getComplexData(), FIXED_SIZE + index * actualSize,
+                actualSize, MAX_RECORD_LENGTH, "EscherArrayProperty.setMaxRecordLength()");
     }
 
     public void setElement(int index, byte[] element) {
@@ -175,7 +175,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
         if (emptyComplexPart) {
             resizeComplexData(0);
         } else {
-            short numElements = LittleEndian.getShort(data, offset);
+            int numElements = LittleEndian.getUShort(data, offset);
             // LittleEndian.getShort(data, offset + 2); // numReserved
             short sizeOfElements = LittleEndian.getShort(data, offset + 4);
 
@@ -260,7 +260,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
             "numElements", this::getNumberOfElementsInArray,
             "numElementsInMemory", this::getNumberOfElementsInMemory,
             "sizeOfElements", this::getSizeOfElements,
-            "elements", () -> StreamSupport.stream(spliterator(), false).collect(Collectors.toList())
+            "elements", () -> StreamSupport.stream(spliterator(), false).toList()
         );
     }
 }

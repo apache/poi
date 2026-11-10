@@ -18,7 +18,7 @@
 package org.apache.poi.xssf.eventusermodel;
 
 import static org.apache.poi.POITestCase.assertContains;
-import static org.apache.poi.POITestCase.assertNotContained;
+import static org.apache.poi.POITestCase.assertNotContains;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
@@ -36,8 +36,11 @@ import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
@@ -47,7 +50,7 @@ import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFComment;
+import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.apache.poi.xssf.usermodel.XSSFSimpleShape;
 import org.junit.jupiter.api.Disabled;
@@ -75,14 +78,14 @@ public final class TestXSSFReader {
 
             SharedStrings sst1 = r.getSharedStringsTable();
             assertNotNull(sst1);
-            assertTrue(sst1 instanceof SharedStringsTable, "instanceof SharedStringsTable");
+            assertInstanceOf(SharedStringsTable.class, sst1, "instanceof SharedStringsTable");
 
             assertFalse(r.useReadOnlySharedStringsTable(), "useReadOnlySharedStringsTable defaults to false");
             r.setUseReadOnlySharedStringsTable(true);
             assertTrue(r.useReadOnlySharedStringsTable(), "useReadOnlySharedStringsTable changed to true");
             SharedStrings sst2 = r.getSharedStringsTable();
             assertNotNull(sst2);
-            assertTrue(sst2 instanceof ReadOnlySharedStringsTable, "instanceof ReadOnlySharedStringsTable");
+            assertInstanceOf(ReadOnlySharedStringsTable.class, sst2, "instanceof ReadOnlySharedStringsTable");
         }
     }
 
@@ -322,7 +325,7 @@ public final class TestXSSFReader {
             while (iter.hasNext()) {
                 InputStream stream = iter.next();
                 String sheetName = iter.getSheetName();
-                assertNotContained(seen, sheetName);
+                assertNotContains(seen, sheetName);
                 seen.add(sheetName);
                 stream.close();
             }
@@ -379,6 +382,95 @@ public final class TestXSSFReader {
     }
 
     @Test
+    void testStrictOoxmlSheetIterator() throws Exception {
+        try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("sample.strict.xlsx"))) {
+            XSSFReader reader = new XSSFReader(pkg, true);
+            XSSFReader.SheetIterator it = reader.getSheetIterator();
+            String[] sheetNames = {"Sheet1", "rich test", "Sheet3"};
+            int count = 0;
+            while (it.hasNext()) {
+                try (InputStream is = it.next()) {
+                    assertNotNull(is);
+                }
+                assertEquals(sheetNames[count], it.getSheetName());
+                count++;
+            }
+            assertEquals(3, count);
+        }
+    }
+
+    @Test
+    void testSheetRefsRandomAccess() throws Exception {
+        try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("reordered_sheets.xlsx"))) {
+            XSSFReader r = new XSSFReader(pkg);
+            XSSFReader.SheetIterator it = r.getSheetIterator();
+            List<XSSFReader.XSSFSheetRef> refs = it.getSheetRefs();
+            assertEquals(4, refs.size());
+            assertEquals("Sheet4", refs.get(0).getName());
+            assertEquals("Sheet1", refs.get(3).getName());
+
+            // random access does not depend on, or move, the iterator position
+            PackagePart last = it.getSheetPart(refs.get(3));
+            assertNotNull(last);
+            assertEquals(r.getSheetPart(refs.get(3).getId()), last);
+            assertTrue(it.hasNext());
+            it.next().close();
+            assertEquals("Sheet4", it.getSheetName());
+            assertEquals(4, it.getSheetRefs().size());
+        }
+    }
+
+    @Test
+    void testGetSheetCommentsPart() throws Exception {
+        try (OPCPackage pkg = XSSFTestDataSamples.openSamplePackage("comments.xlsx")) {
+            XSSFReader r = new XSSFReader(pkg);
+            List<XSSFReader.XSSFSheetRef> refs = r.getSheetIterator().getSheetRefs();
+            PackagePart sheet1 = r.getSheetPart(refs.get(0).getId());
+            PackagePart commentsPart = XSSFReader.getSheetCommentsPart(sheet1, false);
+            assertNotNull(commentsPart);
+            assertEquals(3, new CommentsTable(commentsPart).getNumberOfComments());
+            assertNull(XSSFReader.getSheetCommentsPart(r.getSheetPart(refs.get(1).getId()), true));
+
+            // switch the relationship to the strict OOXML type
+            PackageRelationship rel = sheet1.getRelationshipsByType(
+                    XSSFRelation.SHEET_COMMENTS.getRelation()).getRelationship(0);
+            sheet1.removeRelationship(rel.getId());
+            sheet1.addRelationship(rel.getTargetURI(), rel.getTargetMode(),
+                    XSSFRelation.SHEET_COMMENTS.getStrictRelation());
+            assertNull(XSSFReader.getSheetCommentsPart(sheet1, false));
+            assertEquals(commentsPart, XSSFReader.getSheetCommentsPart(sheet1, true));
+        }
+    }
+
+    @Test
+    void testGetSheetDrawingParts() throws Exception {
+        try (OPCPackage pkg = XSSFTestDataSamples.openSamplePackage("WithTextBox.xlsx")) {
+            XSSFReader r = new XSSFReader(pkg);
+            PackagePart sheet = r.getSheetPart(r.getSheetIterator().getSheetRefs().get(0).getId());
+            List<PackagePart> drawings = XSSFReader.getSheetDrawingParts(sheet, false);
+            assertEquals(1, drawings.size());
+
+            // switch the relationship to the strict OOXML type
+            PackageRelationship rel = sheet.getRelationshipsByType(
+                    XSSFRelation.DRAWINGS.getRelation()).getRelationship(0);
+            sheet.removeRelationship(rel.getId());
+            sheet.addRelationship(rel.getTargetURI(), rel.getTargetMode(),
+                    XSSFRelation.DRAWINGS.getStrictRelation());
+            assertTrue(XSSFReader.getSheetDrawingParts(sheet, false).isEmpty());
+            assertEquals(drawings, XSSFReader.getSheetDrawingParts(sheet, true));
+        }
+    }
+
+    @Test
+    void testStrictRelation() {
+        assertEquals("http://purl.oclc.org/ooxml/officeDocument/relationships/worksheet",
+                XSSFRelation.WORKSHEET.getStrictRelation());
+        assertEquals("http://purl.oclc.org/ooxml/officeDocument/relationships/styles",
+                XSSFRelation.STYLES.getStrictRelation());
+        assertNull(XSSFRelation.MACRO_SHEET_XML.getStrictRelation());
+    }
+
+    @Test
     void testBug65676() throws Exception {
         try (UnsynchronizedByteArrayOutputStream output = UnsynchronizedByteArrayOutputStream.builder().get()) {
             try(Workbook wb = new SXSSFWorkbook()) {
@@ -392,7 +484,7 @@ public final class TestXSSFReader {
                 @Override public void startRow(int rowNum) {}
                 @Override public void endRow(int rowNum) {}
                 @Override public void cell(String cellReference,
-                                           String formattedValue, XSSFComment comment) {
+                                           String formattedValue, Comment comment) {
                     if (cellReference.equals("A1")) {
                         assertEquals("1.2", formattedValue);
                     } else if (cellReference.equals("B1")) {

@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.apache.poi.hmef.Attachment;
 import org.apache.poi.hmef.HMEFMessage;
@@ -30,6 +31,7 @@ import org.apache.poi.hmef.attribute.MAPIRtfAttribute;
 import org.apache.poi.hmef.attribute.MAPIStringAttribute;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.hsmf.datatypes.Types;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -95,9 +97,9 @@ public final class HMEFContentsExtractor {
         }
 
         try (OutputStream fout = Files.newOutputStream(dest.toPath())) {
-            if (body instanceof MAPIStringAttribute) {
+            if (body instanceof MAPIStringAttribute stringAttribute) {
                 // Save in a predictable encoding, not raw bytes
-                String text = ((MAPIStringAttribute) body).getDataString();
+                String text = stringAttribute.getDataString();
                 fout.write(text.getBytes(StringUtil.UTF8));
             } else {
                 // Save the raw bytes, should be raw RTF
@@ -152,10 +154,14 @@ public final class HMEFContentsExtractor {
             }
             
             // Save it
-            File file = new File(dir, filename);
+            File file = getOutputFile(dir, filename);
             try (OutputStream fout = Files.newOutputStream(file.toPath())) {
                 fout.write(att.getContents());
             }
         }
+    }
+
+    private static File getOutputFile(File dir, String filename) throws IOException {
+        return IOUtils.newFile(dir, filename);
     }
 }

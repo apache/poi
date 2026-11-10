@@ -20,8 +20,8 @@ package org.apache.poi.ddf;
 import static org.apache.poi.ddf.EscherRecordTypes.BLIP_PICT;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.sl.usermodel.PictureData;
@@ -154,7 +154,7 @@ final class TestEscherBlipRecord {
         bse.fillFields(data, 0, new DefaultEscherRecordFactory());
         //assert that toString() works
         assertNotNull(bse.toString());
-        assertTrue(bse.getBlipRecord() instanceof EscherMetafileBlip);
+        assertInstanceOf(EscherMetafileBlip.class, bse.getBlipRecord());
 
         EscherMetafileBlip blip = (EscherMetafileBlip)bse.getBlipRecord();
         //assert that toString() works

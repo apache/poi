@@ -35,8 +35,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.text.AttributedCharacterIterator;
 import java.text.AttributedCharacterIterator.Attribute;
+import java.text.AttributedCharacterIterator;
 import java.text.CharacterIterator;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,7 +45,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.output.NullOutputStream;
@@ -54,8 +53,8 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.ooxml.HyperlinkRelationship;
-import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.ReferenceRelationship;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -65,11 +64,11 @@ import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.sl.usermodel.Hyperlink;
-import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
-import org.apache.poi.sl.usermodel.PictureData;
+import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
+import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.PictureShape;
 import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.ShapeType;
@@ -245,7 +244,7 @@ class TestXSLFBugs {
                 // relative url will be resolved to an absolute url, therefore this doesn't equals to "slide2.xml"
                 assertEquals("/ppt/slides/slide2.xml", h2.getAddress());
                 RelationPart sldRef = slide3.getRelationPartById(h2.getXmlObject().getId());
-                assertTrue(sldRef.getDocumentPart() instanceof XSLFSlide);
+                assertInstanceOf(XSLFSlide.class, sldRef.getDocumentPart());
             }
         }
 
@@ -330,7 +329,7 @@ class TestXSLFBugs {
             XSLFSlide slide3 = ppt3.getSlides().get(0);
             slide3.getShapes().stream()
                     .filter(s -> s instanceof XSLFPictureShape)
-                    .collect(Collectors.toList())
+                    .toList()
                     .forEach(slide3::removeShape);
             assertNull(ppt3.getPackage().getPart(ppn));
         }
@@ -734,7 +733,7 @@ class TestXSLFBugs {
     }
 
     private static void checkColor(Color expected, PaintStyle actualStyle) {
-        assertTrue(actualStyle instanceof SolidPaint);
+        assertInstanceOf(SolidPaint.class, actualStyle);
         SolidPaint ps = (SolidPaint) actualStyle;
         Color actual = DrawPaint.applyColorTransform(ps.getSolidColor());
         float[] expRGB = expected.getRGBComponents(null);
@@ -760,7 +759,7 @@ class TestXSLFBugs {
             newSlide.importContent(srcSlide);
             try (XMLSlideShow rwPptx = writeOutAndReadBack(newPptx)) {
                 PaintStyle ps = rwPptx.getSlides().get(0).getBackground().getFillStyle().getPaint();
-                assertTrue(ps instanceof TexturePaint);
+                assertInstanceOf(TexturePaint.class, ps);
             }
         }
     }
@@ -1023,7 +1022,7 @@ class TestXSLFBugs {
             int idx = 0;
             @Override
             public void clip(java.awt.Shape s) {
-                assertTrue(s instanceof Rectangle2D);
+                assertInstanceOf(Rectangle2D.class, s);
                 Rectangle2D r = (Rectangle2D)s;
 
                 double[] clip = clips[idx++];
@@ -1087,7 +1086,7 @@ class TestXSLFBugs {
             assertEquals(TextParagraph.TextAlign.RIGHT, tp.getTextAlign());
             XSLFTextRun tr = tp.getTextRuns().get(0);
             PaintStyle fc = tr.getFontColor();
-            assertTrue(fc instanceof SolidPaint);
+            assertInstanceOf(SolidPaint.class, fc);
             SolidPaint sp = (SolidPaint)fc;
             assertEquals(Color.RED, sp.getSolidColor().getColor());
         }

@@ -147,4 +147,16 @@ class TestDrawPictureShape {
         assertEquals(Transparency.TRANSLUCENT, img.getTransparency());
         assertEquals(color, new Color(img.getRGB(0, 0), true));
     }
+
+    @Test
+    void testCroppedTo0PictureShape() throws IOException {
+        SlideShow<?, ?> ss = openSampleDocument("crop-to-0.pptx");
+
+        // shape in slide 0 is cropped with `<a:srcRect l="60000" t="70000" r="40000" b="30000"/>`
+        verifySlideFirstPixelColor(ss.getSlides().get(0), new Color(0, 0, 0, 0));
+        // shape in slide 1 is cropped with anchor `<a:ext cx="0" cy="0"/>`
+        verifySlideFirstPixelColor(ss.getSlides().get(1), new Color(0, 0, 0, 0));
+        // shape in slide 2 is uncropped
+        verifySlideFirstPixelColor(ss.getSlides().get(2), new Color(0, 38, 255, 255));
+    }
 }

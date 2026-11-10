@@ -41,6 +41,7 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
+import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 
@@ -283,17 +284,15 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         // Performance optimization for bug 57840: explicit boxing is slightly faster than auto-unboxing, though may use more memory
         final Integer colI = Integer.valueOf(cellnum); // NOSONAR
         XSSFCell cell = _cells.get(colI);
-        switch (policy) {
-            case RETURN_NULL_AND_BLANK:
-                return cell;
-            case RETURN_BLANK_AS_NULL:
+        return switch (policy) {
+            case RETURN_NULL_AND_BLANK -> cell;
+            case RETURN_BLANK_AS_NULL -> {
                 boolean isBlank = (cell != null && cell.getCellType() == CellType.BLANK);
-                return (isBlank) ? null : cell;
-            case CREATE_NULL_AS_BLANK:
-                return (cell == null) ? createCell(cellnum, CellType.BLANK) : cell;
-            default:
-                throw new IllegalArgumentException("Illegal policy " + policy);
-        }
+                yield (isBlank) ? null : cell;
+            }
+            case CREATE_NULL_AS_BLANK -> (cell == null) ? createCell(cellnum, CellType.BLANK) : cell;
+            default -> throw new IllegalArgumentException("Illegal policy " + policy);
+        };
     }
 
     /**
@@ -531,6 +530,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         for (CTCell ctCell : _row.getCArray()) {
             if(ctCell == removed.getCTCell()) {
                 _row.removeC(i);
+                break;
             }
             i++;
         }
@@ -583,33 +583,67 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     }
 
     private void fixupCTCells(CTCell[] cArrayOrig) {
-        // copy all values to 2nd array and a map for lookup of index
-        CTCell[] cArrayCopy = new CTCell[cArrayOrig.length];
-        IdentityHashMap<CTCell, Integer> map = new IdentityHashMap<>(_cells.size());
+        // build a map for lookup of the index of a CTCell in the row
+        IdentityHashMap<CTCell, Integer> map = new IdentityHashMap<>(cArrayOrig.length);
         int i = 0;
         for (CTCell ctCell : cArrayOrig) {
-            cArrayCopy[i] = (CTCell) ctCell.copy();
             map.put(ctCell, i);
             i++;
         }
 
-        // populate _row.cArray correctly
+        // collect the CTCells in the order in which they need to appear in the XML
+        CTCell[] cArrayNew = new CTCell[_cells.size()];
+        boolean[] stillUsed = new boolean[cArrayOrig.length];
         i = 0;
         for (XSSFCell cell : _cells.values()) {
-            // no need to change anything if position is correct
             Integer correctPosition = map.get(cell.getCTCell());
             Objects.requireNonNull(correctPosition, "Should find CTCell in _row");
-            if(correctPosition != i) {
-                // we need to re-populate this CTCell
-                _row.setCArray(i, cArrayCopy[correctPosition]);
-                cell.setCTCell(_row.getCArray(i));
-            }
+            stillUsed[correctPosition] = true;
+            cArrayNew[i] = cArrayOrig[correctPosition];
             i++;
         }
 
-        // remove any remaining illegal references in _rows.cArray
-        while(_row.sizeOfCArray() > _cells.size()) {
-            _row.removeC(_cells.size());
+        // remove any remaining illegal references in _row.cArray
+        for (i = 0; i < cArrayOrig.length; i++) {
+            if (!stillUsed[i]) {
+                try (XmlCursor cursor = cArrayOrig[i].newCursor()) {
+                    cursor.removeXml();
+                }
+            }
+        }
+
+        // the CTCells at the start which are already in the correct order do not need to be moved
+        int matching = 0;
+        for (i = 0; i < cArrayOrig.length; i++) {
+            if (stillUsed[i]) {
+                if (matching < cArrayNew.length && cArrayNew[matching] == cArrayOrig[i]) {
+                    matching++;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        // move the remaining CTCells in front of the last one, in the order in which
+        // they need to appear - moving the XML via cursors avoids the indexed XmlBeans
+        // accessors, which walk the list of elements from the start on every call
+        if (matching < cArrayNew.length - 1) {
+            try (XmlCursor dest = cArrayNew[cArrayNew.length - 1].newCursor()) {
+                for (int j = matching; j < cArrayNew.length - 1; j++) {
+                    try (XmlCursor src = cArrayNew[j].newCursor()) {
+                        src.moveXml(dest);
+                    }
+                }
+            }
+        }
+
+        // moving the XML replaces the CTCell instances, so the cells need to be
+        // re-attached to the CTCells which are now stored in the row
+        CTCell[] cArrayUpdated = _row.getCArray();
+        i = 0;
+        for (XSSFCell cell : _cells.values()) {
+            cell.setCTCell(cArrayUpdated[i]);
+            i++;
         }
     }
 
@@ -671,10 +705,13 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     @Beta
     public void copyRowFrom(Row srcRow, CellCopyPolicy policy, CellCopyContext context) {
+        // formula references are shifted for the whole row below, so don't also adjust them per cell
+        final CellCopyPolicy cellPolicy = policy.isAdjustFormulaReferences()
+                ? policy.createBuilder().adjustFormulaReferences(false).build() : policy;
         if (srcRow == null) {
             // srcRow is blank. Overwrite cells with blank values, blank styles, etc per cell copy policy
             for (Cell destCell : this) {
-                CellUtil.copyCell(null, destCell, policy, context);
+                CellUtil.copyCell(null, destCell, cellPolicy, context);
             }
 
             if (policy.isCopyMergedRegions()) {
@@ -699,7 +736,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         } else {
             for (final Cell c : srcRow) {
                 final XSSFCell destCell = createCell(c.getColumnIndex());
-                CellUtil.copyCell(c, destCell, policy, context);
+                CellUtil.copyCell(c, destCell, cellPolicy, context);
             }
 
             final int sheetIndex = _sheet.getWorkbook().getSheetIndex(_sheet);

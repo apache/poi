@@ -52,8 +52,8 @@ public interface HemfRecord extends GenericRecord {
      * @param ctx the drawing context
      */
     default void draw(HemfGraphics ctx) {
-        if (this instanceof HwmfRecord) {
-            ((HwmfRecord) this).draw(ctx);
+        if (this instanceof HwmfRecord hwmfRecord) {
+            hwmfRecord.draw(ctx);
         }
     }
 

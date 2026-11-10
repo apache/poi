@@ -17,12 +17,12 @@
 
 package org.apache.poi.hpbf.model;
 
-import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.apache.poi.POITestCase.assertEndsWith;
+import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -98,9 +98,9 @@ public final class TestQuillContents {
         QuillContents qc = doc.getQuillContents();
         assertEquals(20, qc.getBits().length);
 
-        assertTrue(qc.getBits()[9] instanceof Type4);
-        assertTrue(qc.getBits()[10] instanceof Type4);
-        assertTrue(qc.getBits()[12] instanceof Type8);
+        assertInstanceOf(Type4.class, qc.getBits()[9]);
+        assertInstanceOf(Type4.class, qc.getBits()[10]);
+        assertInstanceOf(Type8.class, qc.getBits()[12]);
 
         Type4 plc9 = (Type4)qc.getBits()[9];
         Type4 plc10 = (Type4)qc.getBits()[10];
@@ -162,12 +162,12 @@ public final class TestQuillContents {
         QuillContents qc = doc.getQuillContents();
         assertEquals(20, qc.getBits().length);
 
-        assertTrue(qc.getBits()[10] instanceof Type4);
-        assertTrue(qc.getBits()[11] instanceof Type4);
-        assertTrue(qc.getBits()[13] instanceof Type0);
-        assertTrue(qc.getBits()[14] instanceof Type12);
-        assertTrue(qc.getBits()[15] instanceof Type12);
-        assertTrue(qc.getBits()[16] instanceof Type8);
+        assertInstanceOf(Type4.class, qc.getBits()[10]);
+        assertInstanceOf(Type4.class, qc.getBits()[11]);
+        assertInstanceOf(Type0.class, qc.getBits()[13]);
+        assertInstanceOf(Type12.class, qc.getBits()[14]);
+        assertInstanceOf(Type12.class, qc.getBits()[15]);
+        assertInstanceOf(Type8.class, qc.getBits()[16]);
 
         Type4 plc10 = (Type4)qc.getBits()[10];
         Type4 plc11 = (Type4)qc.getBits()[11];

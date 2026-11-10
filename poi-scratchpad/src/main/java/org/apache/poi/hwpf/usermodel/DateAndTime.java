@@ -69,8 +69,7 @@ public final class DateAndTime implements Duplicatable {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof DateAndTime)) return false;
-        DateAndTime dttm = (DateAndTime) o;
+        if (!(o instanceof DateAndTime dttm)) return false;
         return _info == dttm._info && _info2 == dttm._info2;
     }
 

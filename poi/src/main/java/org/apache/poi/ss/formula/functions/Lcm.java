@@ -23,6 +23,7 @@ import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.util.ExcelArithmetic;
 
 import java.util.ArrayList;
 
@@ -56,7 +57,7 @@ public class Lcm implements FreeRefFunction {
                 if (isInvalidInput(d)) {
                     return ErrorEval.NUM_ERROR;
                 }
-                return new NumberEval((long)d);
+                return new NumberEval(ExcelArithmetic.truncate(d));
             } catch (EvaluationException ee) {
                 return ErrorEval.VALUE_INVALID;
             }
@@ -69,7 +70,7 @@ public class Lcm implements FreeRefFunction {
                     if (isInvalidInput(d)) {
                         return ErrorEval.NUM_ERROR;
                     }
-                    evals.add((long) d);
+                    evals.add((long) ExcelArithmetic.truncate(d));
                 }
                 long result = evals.get(0);
                 for (int i = 1; i < evals.size(); i++) {

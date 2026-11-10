@@ -40,6 +40,7 @@ import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextShape;
+import org.apache.poi.util.IOUtils;
 import org.junit.platform.commons.util.ExceptionUtils;
 
 public abstract class SlideShowHandler extends POIFSFileHandler {
@@ -129,6 +130,10 @@ public abstract class SlideShowHandler extends POIFSFileHandler {
         Dimension pgSize = ss.getPageSize();
 
         for (Slide<?,?> s : ss.getSlides()) {
+            // by default allow up to 4K UHD: 3840 × 2160
+            IOUtils.safelyAllocateCheck(pgSize.width, 3840);
+            IOUtils.safelyAllocateCheck(pgSize.height, 2160);
+
             BufferedImage img = new BufferedImage(pgSize.width, pgSize.height, BufferedImage.TYPE_INT_ARGB);
             Graphics2D graphics = img.createGraphics();
 

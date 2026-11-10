@@ -293,12 +293,11 @@ public final class HWPFLister {
     }
 
     private void dumpBookmarks() {
-        if ( !( _doc instanceof HWPFDocument ) ) {
+        if ( !( _doc instanceof HWPFDocument document ) ) {
             System.out.println( "Word 95 not supported so far" );
             return;
         }
 
-        HWPFDocument document = (HWPFDocument) _doc;
         Bookmarks bookmarks = document.getBookmarks();
         for ( int b = 0; b < bookmarks.getBookmarksCount(); b++ ) {
             Bookmark bookmark = bookmarks.getBookmark( b );
@@ -342,12 +341,12 @@ public final class HWPFLister {
     }
 
     private void dumpDop() {
-        if ( !( _doc instanceof HWPFDocument ) ) {
+        if ( !( _doc instanceof HWPFDocument document ) ) {
             System.out.println( "Word 95 not supported so far" );
             return;
         }
 
-        System.out.println( ( (HWPFDocument) _doc ).getDocProperties() );
+        System.out.println( document.getDocProperties() );
     }
 
     private void dumpEscher() {
@@ -366,12 +365,10 @@ public final class HWPFLister {
     }
 
     private void dumpFields() {
-        if ( !( _doc instanceof HWPFDocument ) ) {
+        if ( !( _doc instanceof HWPFDocument document ) ) {
             System.out.println( "Word 95 not supported so far" );
             return;
         }
-
-        HWPFDocument document = (HWPFDocument) _doc;
 
         for ( FieldsDocumentPart part : FieldsDocumentPart.values() ) {
             System.out.println( "=== Document part: " + part + " ===" );
@@ -401,19 +398,17 @@ public final class HWPFLister {
     }
 
     private String dumpFileSystem( Entry entry ) {
-        if ( entry instanceof DirectoryEntry )
-            return dumpFileSystem( (DirectoryEntry) entry );
+        if ( entry instanceof DirectoryEntry directory )
+            return dumpFileSystem( directory );
 
         return entry.getName();
     }
 
     private void dumpOfficeDrawings() {
-        if ( !( _doc instanceof HWPFDocument ) ) {
+        if ( !( _doc instanceof HWPFDocument document ) ) {
             System.out.println( "Word 95 not supported so far" );
             return;
         }
-
-        HWPFDocument document = (HWPFDocument) _doc;
 
         if ( document.getOfficeDrawingsHeaders() != null ) {
             System.out.println( "=== Document part: HEADER ===" );
@@ -433,10 +428,8 @@ public final class HWPFLister {
     }
 
     public void dumpPapx( boolean withProperties, boolean withSprms ) {
-        if ( _doc instanceof HWPFDocument ) {
+        if ( _doc instanceof HWPFDocument doc ) {
             System.out.println( "binary PAP pages " );
-
-            HWPFDocument doc = (HWPFDocument) _doc;
 
             byte[] mainStream = _doc.getMainStream();
 

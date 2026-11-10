@@ -119,7 +119,7 @@ class TestXWPFFootnote {
 
         assertEquals(3, footnote.getBodyElements().size(), "Expected 3 body elements");
         IBodyElement testP1 = footnote.getBodyElements().get(0);
-        assertTrue(testP1 instanceof XWPFParagraph, "Expected a paragraph, got " + testP1.getClass().getSimpleName());
+        assertInstanceOf(XWPFParagraph.class, testP1, "Expected a paragraph, got " + testP1.getClass().getSimpleName());
         XWPFRun r1 = ((XWPFParagraph)testP1).getRuns().get(0);
         assertNotNull(r1);
         assertTrue(r1.getCTR().getFootnoteRefList().size() > 0, "No footnote reference in testP1");

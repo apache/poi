@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.format;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -131,9 +132,17 @@ public class CellFormat {
         };
     }
 
-    /** Maps a format string to its parsed version for efficiencies sake. */
-    private static final Map<Locale, Map<String, CellFormat>> formatCache =
+    /**
+     * Maps a format string to its parsed version for efficiencies sake.
+     * <p>
+     * The parsed version is held by a weak reference: a {@code CellFormat} refers to its own format string,
+     * so holding it strongly would keep the weak key, and with it the entry, reachable forever.
+     */
+    private static final Map<Locale, Map<String, WeakReference<CellFormat>>> formatCache =
             new WeakHashMap<>();
+
+    /** Guards {@link #formatCache}. A private lock, so other code can't block it by locking the class */
+    private static final Object FORMAT_CACHE_LOCK = new Object();
 
     /**
      * Returns a CellFormat that applies the given format.  Two calls
@@ -156,17 +165,39 @@ public class CellFormat {
      *
      * @return A CellFormat that applies the given format.
      */
-    public static synchronized CellFormat getInstance(Locale locale, String format) {
-        Map<String, CellFormat> formatMap = formatCache.computeIfAbsent(locale, k -> new WeakHashMap<>());
-        CellFormat fmt = formatMap.get(format);
-        if (fmt == null) {
-            if (format.equals("General") || format.equals("@"))
-                fmt = createGeneralFormat(locale);
-            else
-                fmt = new CellFormat(locale, format);
-            formatMap.put(format, fmt);
+    public static CellFormat getInstance(Locale locale, String format) {
+        CellFormat fmt = getCachedInstance(locale, format);
+        if (fmt != null) {
+            return fmt;
+        }
+
+        // parse outside the lock, so that threads formatting with other formats are not held up
+        CellFormat parsed;
+        if (format.equals("General") || format.equals("@"))
+            parsed = createGeneralFormat(locale);
+        else
+            parsed = new CellFormat(locale, format);
+
+        synchronized (FORMAT_CACHE_LOCK) {
+            Map<String, WeakReference<CellFormat>> formatMap =
+                    formatCache.computeIfAbsent(locale, k -> new WeakHashMap<>());
+            // another thread may have cached the same format in the meantime
+            WeakReference<CellFormat> cached = formatMap.get(format);
+            fmt = cached == null ? null : cached.get();
+            if (fmt == null) {
+                fmt = parsed;
+                formatMap.put(format, new WeakReference<>(fmt));
+            }
         }
         return fmt;
+    }
+
+    private static CellFormat getCachedInstance(Locale locale, String format) {
+        synchronized (FORMAT_CACHE_LOCK) {
+            Map<String, WeakReference<CellFormat>> formatMap = formatCache.get(locale);
+            WeakReference<CellFormat> cached = formatMap == null ? null : formatMap.get(format);
+            return cached == null ? null : cached.get();
+        }
     }
 
     /**
@@ -246,9 +277,17 @@ public class CellFormat {
      * @return The result, in a {@link CellFormatResult}.
      */
     public CellFormatResult apply(Object value) {
-        if (value instanceof Number) {
-            Number num = (Number) value;
+        if (value instanceof Number num) {
             double val = num.doubleValue();
+
+            // check if one of the conditions below would fail with NPE
+            if (val < 0 && (
+                    (formatPartCount == 2 && posNumFmt == null) ||
+                    (formatPartCount > 1 && negNumFmt == null))) {
+                throw new IllegalStateException("Cannot apply format " + format + " on object " + value + " with empty posNumFmt : "
+                    + posNumFmt + " or negNumFmt " + negNumFmt + ", formatPartCount: " + formatPartCount);
+            }
+
             if (val < 0 &&
                     ((formatPartCount == 2
                             && !posNumFmt.hasCondition() && !negNumFmt.hasCondition())
@@ -259,18 +298,27 @@ public class CellFormat {
                 // the default leading minus sign is not also output
                 return negNumFmt.apply(-val);
             } else {
-                return getApplicableFormatPart(val).apply(val);
+                CellFormatPart applicableFormatPart = getApplicableFormatPart(val);
+                if (applicableFormatPart == null) {
+                    throw new IllegalStateException("Cannot apply format " + format + " on object " + value + ", no applicable format part found ("
+                            + "posNumFmt: " + posNumFmt + ", negNumFmt: " + negNumFmt + ", zeroNumFmt: " + zeroNumFmt);
+                }
+                return applicableFormatPart.apply(val);
             }
-        } else if (value instanceof java.util.Date) {
+        } else if (value instanceof java.util.Date d) {
             // Don't know (and can't get) the workbook date windowing (1900 or 1904)
             // so assume 1900 date windowing
-            double numericValue = DateUtil.getExcelDate((Date) value);
+            double numericValue = DateUtil.getExcelDate(d);
             if (DateUtil.isValidExcelDate(numericValue)) {
                 return getApplicableFormatPart(numericValue).apply(value);
             } else {
                 throw new IllegalArgumentException("value " + numericValue + " of date " + value + " is not a valid Excel date");
             }
         } else {
+            if (textFmt == null) {
+                throw new IllegalStateException("Cannot apply format " + format + " on object " + value + " with empty format");
+            }
+
             return textFmt.apply(value);
         }
     }
@@ -400,9 +448,14 @@ public class CellFormat {
      */
     private CellFormatPart getApplicableFormatPart(Object value) {
 
-        if (value instanceof Number) {
+        if (value instanceof Number num) {
 
-            double val = ((Number) value).doubleValue();
+            double val = num.doubleValue();
+
+            if (posNumFmt == null) {
+                throw new IllegalStateException(
+                        "Cannot apply cell format, check for warning logs during creation of format: " + format);
+            }
 
             if (formatPartCount == 1) {
                 if (!posNumFmt.hasCondition()
@@ -415,23 +468,37 @@ public class CellFormat {
                 if ((!posNumFmt.hasCondition() && val >= 0)
                         || (posNumFmt.hasCondition() && posNumFmt.applies(val))) {
                     return posNumFmt;
-                } else if (!negNumFmt.hasCondition()
-                        || (negNumFmt.hasCondition() && negNumFmt.applies(val))) {
-                    return negNumFmt;
                 } else {
-                    // Return ###...### (255 #s) to match Excel 2007 behaviour
-                    return new CellFormatPart(QUOTE + INVALID_VALUE_FOR_FORMAT + QUOTE);
+                    if (negNumFmt == null) {
+                        throw new IllegalStateException(
+                                "Cannot apply cell format, check for warning logs during creation of format: " + format);
+                    }
+
+                    if (!negNumFmt.hasCondition()
+                            || (negNumFmt.hasCondition() && negNumFmt.applies(val))) {
+                        return negNumFmt;
+                    } else {
+                        // Return ###...### (255 #s) to match Excel 2007 behaviour
+                        return new CellFormatPart(QUOTE + INVALID_VALUE_FOR_FORMAT + QUOTE);
+                    }
                 }
             } else {
                 if ((!posNumFmt.hasCondition() && val > 0)
                         || (posNumFmt.hasCondition() && posNumFmt.applies(val))) {
                     return posNumFmt;
-                } else if ((!negNumFmt.hasCondition() && val < 0)
-                        || (negNumFmt.hasCondition() && negNumFmt.applies(val))) {
-                    return negNumFmt;
-                // Only the first two format parts can have conditions
                 } else {
-                    return zeroNumFmt;
+                    if (negNumFmt == null) {
+                        throw new IllegalStateException(
+                                "Cannot apply cell format, check for warning logs during creation of format: " + format);
+                    }
+
+                    if ((!negNumFmt.hasCondition() && val < 0)
+                            || (negNumFmt.hasCondition() && negNumFmt.applies(val))) {
+                        return negNumFmt;
+                        // Only the first two format parts can have conditions
+                    } else {
+                        return zeroNumFmt;
+                    }
                 }
             }
         } else {
@@ -470,8 +537,7 @@ public class CellFormat {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj instanceof CellFormat) {
-            CellFormat that = (CellFormat) obj;
+        if (obj instanceof CellFormat that) {
             return format.equals(that.format);
         }
         return false;

@@ -126,4 +126,14 @@ class TestXSSFBEventBasedExcelExtractor {
             }
         }
     }
+
+    @Test
+    void testHandleHyperlinksInCells() throws Exception {
+        try (XSSFBEventBasedExcelExtractor extractor = (XSSFBEventBasedExcelExtractor) getExtractor("hyperlink.xlsb")) {
+            assertEquals("Sheet1\nhttp://tika.apache.org\n", extractor.getText());
+
+            extractor.setHandleHyperlinksInCells(true);
+            assertEquals("Sheet1\nhttp://tika.apache.org <http://tika.apache.org/>\n", extractor.getText());
+        }
+    }
 }

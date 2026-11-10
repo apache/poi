@@ -105,13 +105,14 @@ public class XWPFHeaderFooterPolicy {
         this.doc = doc;
         this.sectPr = sectPr;
 
-        for (int i = 0; i < sectPr.sizeOfHeaderReferenceArray(); i++) {
+        // Iterate over the array: XmlBeans counts or walks the children on every indexed access,
+        // which made an index loop quadratic in the number of references
+        for (CTHdrFtrRef ref : sectPr.getHeaderReferenceArray()) {
             // Get the header
-            CTHdrFtrRef ref = sectPr.getHeaderReferenceArray(i);
             POIXMLDocumentPart relatedPart = doc.getRelationById(ref.getId());
             XWPFHeader hdr = null;
-            if (relatedPart instanceof XWPFHeader) {
-                hdr = (XWPFHeader) relatedPart;
+            if (relatedPart instanceof XWPFHeader header) {
+                hdr = header;
             }
             // Assign it; treat invalid options as "default" POI-60293
             Enum type;
@@ -123,13 +124,12 @@ public class XWPFHeaderFooterPolicy {
 
             assignHeader(hdr, type);
         }
-        for (int i = 0; i < sectPr.sizeOfFooterReferenceArray(); i++) {
+        for (CTHdrFtrRef ref : sectPr.getFooterReferenceArray()) {
             // Get the footer
-            CTHdrFtrRef ref = sectPr.getFooterReferenceArray(i);
             POIXMLDocumentPart relatedPart = doc.getRelationById(ref.getId());
             XWPFFooter ftr = null;
-            if (relatedPart instanceof XWPFFooter) {
-                ftr = (XWPFFooter) relatedPart;
+            if (relatedPart instanceof XWPFFooter footer) {
+                ftr = footer;
             }
             // Assign it; treat invalid options as "default" POI-60293
             Enum type;

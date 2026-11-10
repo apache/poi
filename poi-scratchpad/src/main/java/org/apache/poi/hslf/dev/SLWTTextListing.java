@@ -48,14 +48,13 @@ public final class SLWTTextListing {
                 Record docRecord = records[i];
                 Record[] docChildren = docRecord.getChildRecords();
                 for(int j=0; j<docChildren.length; j++) {
-                    if(docChildren[j] instanceof SlideListWithText) {
+                    if(docChildren[j] instanceof SlideListWithText slwt) {
                         System.out.println("Found SLWT at pos " + j + " in the Document at " + i);
                         System.out.println("  Has " + docChildren[j].getChildRecords().length + " children");
 
                         // Grab the SlideAtomSet's, which contain
                         //  a SlidePersistAtom and then a bunch of text
                         //  + related records
-                        SlideListWithText slwt = (SlideListWithText)docChildren[j];
                         SlideListWithText.SlideAtomsSet[] thisSets = slwt.getSlideAtomsSets();
                         System.out.println("  Has " + thisSets.length + " AtomSets in it");
 
@@ -69,12 +68,10 @@ public final class SLWTTextListing {
                             Record[] slwtc = thisSets[k].getSlideRecords();
                             for (Record record : slwtc) {
                                 String text = null;
-                                if (record instanceof TextBytesAtom) {
-                                    TextBytesAtom tba = (TextBytesAtom) record;
+                                if (record instanceof TextBytesAtom tba) {
                                     text = tba.getText();
                                 }
-                                if (record instanceof TextCharsAtom) {
-                                    TextCharsAtom tca = (TextCharsAtom) record;
+                                if (record instanceof TextCharsAtom tca) {
                                     text = tca.getText();
                                 }
 

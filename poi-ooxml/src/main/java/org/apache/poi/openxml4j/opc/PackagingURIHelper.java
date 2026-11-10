@@ -27,6 +27,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
+import org.apache.poi.util.IOUtils;
 
 /**
  * Helper for part and pack URI.
@@ -166,10 +167,37 @@ public final class PackagingURIHelper {
             throw new IllegalArgumentException("partUri");
 
         final String path = partUri.getPath();
+        if (path == null || hasLineTerminator(path)) {
+            return false;
+        }
 
-        return path != null && path.matches(
-                ".*" + RELATIONSHIP_PART_SEGMENT_NAME + ".*"
-                        + RELATIONSHIP_PART_EXTENSION_NAME + "$");
+        // same result as path.matches(".*_rels.*.rels$") - the '.' before "rels" is any
+        // character - but without the regex, which backtracks quadratically on "_rels" repeated
+        final int segment = path.indexOf(RELATIONSHIP_PART_SEGMENT_NAME);
+        final int extension = path.length() - RELATIONSHIP_PART_EXTENSION_NAME.length();
+        return segment >= 0
+                && segment + RELATIONSHIP_PART_SEGMENT_NAME.length() <= extension
+                && path.startsWith(RELATIONSHIP_PART_EXTENSION_NAME.substring(1), extension + 1);
+    }
+
+    /**
+     * Whether the string contains a line terminator, i.e. a character that the
+     * regex {@code .} does not match by default (see {@link Pattern}).
+     */
+    static boolean hasLineTerminator(String s) {
+        for (int i = 0; i < s.length(); i++) {
+            switch (s.charAt(i)) {
+                case '\n':
+                case '\r':
+                case '\u0085':
+                case '\u2028':
+                case '\u2029':
+                    return true;
+                default:
+                    break;
+            }
+        }
+        return false;
     }
 
     /**
@@ -454,15 +482,21 @@ public final class PackagingURIHelper {
         if (relationshipPartUri.compareTo(PACKAGE_RELATIONSHIPS_ROOT_URI) == 0)
             return PACKAGE_ROOT_URI;
 
-        String filename = relationshipPartUri.getPath();
-        String filenameWithoutExtension = getFilenameWithoutExtension(relationshipPartUri);
-        filename = filename
-                .substring(0, ((filename.length() - filenameWithoutExtension
-                        .length()) - RELATIONSHIP_PART_EXTENSION_NAME.length()));
-        filename = filename.substring(0, filename.length()
+        // Use the raw path so percent-encoded characters (e.g. %20) are not
+        // decoded into bytes that later fail URI syntax in getURIFromPath.
+        String fullPath = relationshipPartUri.getRawPath();
+        int lastSlash = fullPath.lastIndexOf(FORWARD_SLASH_CHAR);
+        String filename = (lastSlash >= 0) ? fullPath.substring(lastSlash + 1) : fullPath;
+        if (filename.endsWith(RELATIONSHIP_PART_EXTENSION_NAME)) {
+            filename = filename.substring(0, filename.length()
+                    - RELATIONSHIP_PART_EXTENSION_NAME.length());
+        }
+        fullPath = fullPath.substring(0, fullPath.length() - filename.length()
+                - RELATIONSHIP_PART_EXTENSION_NAME.length());
+        fullPath = fullPath.substring(0, fullPath.length()
                 - RELATIONSHIP_PART_SEGMENT_NAME.length() - 1);
-        filename = combine(filename, filenameWithoutExtension);
-        return getURIFromPath(filename);
+        fullPath = combine(fullPath, filename);
+        return getURIFromPath(fullPath);
     }
 
     /**
@@ -641,8 +675,11 @@ public final class PackagingURIHelper {
         if (partName.isRelationshipPartURI())
             throw new InvalidOperationException("Can't be a relationship part");
 
-        String fullPath = partName.getURI().getPath();
-        String filename = getFilename(partName.getURI());
+        // Use the raw path so percent-encoded characters (e.g. %20) are not
+        // decoded into bytes that later fail URI syntax in createPartName.
+        String fullPath = partName.getURI().getRawPath();
+        int lastSlash = fullPath.lastIndexOf(FORWARD_SLASH_CHAR);
+        String filename = (lastSlash >= 0) ? fullPath.substring(lastSlash + 1) : fullPath;
         fullPath = fullPath.substring(0, fullPath.length() - filename.length());
         fullPath = combine(fullPath,
                 PackagingURIHelper.RELATIONSHIP_PART_SEGMENT_NAME);
@@ -686,9 +723,7 @@ public final class PackagingURIHelper {
      */
     public static URI toURI(String value) throws URISyntaxException  {
         //5. Convert all back slashes to forward slashes
-        if (value.contains("\\")) {
-             value = value.replace('\\', '/');
-        }
+        value = IOUtils.normalizePath(value);
 
         // URI fragments (those starting with '#') are not encoded
         // and may contain white spaces and raw unicode characters
@@ -704,7 +739,7 @@ public final class PackagingURIHelper {
         if(!value.isEmpty()){
             StringBuilder b = new StringBuilder();
             int idx = value.length() - 1;
-            for(; idx >= 0; idx--){
+            for(; idx >= 0; idx--) {
                 char c = value.charAt(idx);
                 if(Character.isWhitespace(c) || c == '\u00A0') {
                     b.append(c);

@@ -20,7 +20,9 @@ package org.apache.poi.xssf.usermodel;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.stream.IntStream;
@@ -37,7 +39,12 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.Test;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTOneCellAnchor;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 
 public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
 
@@ -525,6 +532,125 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         wb.close();
     }
 
+    // bug 70139: shifting rows rebuilt every row and cell from the XML, which was slow and
+    // invalidated the XSSFRow/XSSFCell instances the caller holds
+    @Test
+    void testShiftRowsKeepsRowAndCellInstances() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            for (int r = 0; r < 10; r++) {
+                XSSFRow row = sheet.createRow(r);
+                row.createCell(0).setCellValue("r" + r);
+                row.setHeightInPoints(12 + r);
+            }
+            XSSFRow row3 = sheet.getRow(3);
+            XSSFCell cell3 = row3.getCell(0);
+            XSSFRow row9 = sheet.getRow(9);
+
+            sheet.shiftRows(3, 9, 2);
+
+            assertNull(sheet.getRow(3));
+            assertNull(sheet.getRow(4));
+            assertSame(row3, sheet.getRow(5));
+            assertSame(cell3, sheet.getRow(5).getCell(0));
+            assertEquals("r3", cell3.getStringCellValue());
+            assertEquals(5, cell3.getRowIndex());
+            assertEquals(15, row3.getHeightInPoints(), 0);
+            assertSame(row9, sheet.getRow(11));
+            assertEquals(11, sheet.getLastRowNum());
+            assertRowsInOrder(sheet);
+
+            // the shifted row can be used further
+            row3.createCell(1).setCellValue("added");
+            XSSFRow inserted = sheet.createRow(3);
+            inserted.createCell(0).setCellValue("inserted");
+            assertRowsInOrder(sheet);
+
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                XSSFSheet sheet2 = wb2.getSheetAt(0);
+                assertEquals("inserted", sheet2.getRow(3).getCell(0).getStringCellValue());
+                assertNull(sheet2.getRow(4));
+                assertEquals("r3", sheet2.getRow(5).getCell(0).getStringCellValue());
+                assertEquals("added", sheet2.getRow(5).getCell(1).getStringCellValue());
+                assertEquals(15, sheet2.getRow(5).getHeightInPoints(), 0);
+                assertEquals("r9", sheet2.getRow(11).getCell(0).getStringCellValue());
+                assertRowsInOrder(sheet2);
+            }
+        }
+    }
+
+    // rows jumping over other rows (bug 64516) still need the XML rows to be reordered
+    @Test
+    void testShiftRowsOverOtherRowsKeepsSheetDataInOrder() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            for (int r = 0; r < 6; r++) {
+                sheet.createRow(r).createCell(0).setCellValue("r" + r);
+            }
+
+            // move row 5 on top of row 0, rows 1-4 are jumped over
+            sheet.shiftRows(5, 5, -5);
+
+            assertRowsInOrder(sheet);
+            assertEquals("r5", sheet.getRow(0).getCell(0).getStringCellValue());
+            assertEquals("r1", sheet.getRow(1).getCell(0).getStringCellValue());
+            assertNull(sheet.getRow(5));
+            sheet.removeRow(sheet.getRow(0));
+            assertEquals("r1", sheet.getRow(1).getCell(0).getStringCellValue());
+
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                XSSFSheet sheet2 = wb2.getSheetAt(0);
+                assertNull(sheet2.getRow(0));
+                assertEquals("r1", sheet2.getRow(1).getCell(0).getStringCellValue());
+                assertEquals("r4", sheet2.getRow(4).getCell(0).getStringCellValue());
+                assertRowsInOrder(sheet2);
+            }
+        }
+    }
+
+    @Test
+    void testShiftSharedFormulasTwice() throws Exception {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("TestShiftRowSharedFormula.xlsx")) {
+            XSSFSheet sheet = wb.getSheetAt(0);
+            XSSFRow row5 = sheet.getRow(4);
+
+            sheet.shiftRows(3, sheet.getLastRowNum(), 1);
+            assertSame(row5, sheet.getRow(5));
+            assertEquals("SUM(C2:C5)", getCellFormula(sheet, "C6"));
+            assertEquals("SUM(E3:E6)", getCellFormula(sheet, "E7"));
+
+            sheet.shiftRows(3, sheet.getLastRowNum(), 2);
+            assertSame(row5, sheet.getRow(7));
+            assertEquals("SUM(C2:C7)", getCellFormula(sheet, "C8"));
+            assertEquals("SUM(D2:D7)", getCellFormula(sheet, "D8"));
+            assertEquals("SUM(E3:E8)", getCellFormula(sheet, "E9"));
+            assertRowsInOrder(sheet);
+
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                XSSFSheet sheet2 = wb2.getSheetAt(0);
+                assertEquals("SUM(C2:C7)", getCellFormula(sheet2, "C8"));
+                assertEquals("SUM(E3:E8)", getCellFormula(sheet2, "E9"));
+            }
+        }
+    }
+
+    private static void assertRowsInOrder(XSSFSheet sheet) {
+        long prev = 0;
+        int count = 0;
+        for (CTRow ctRow : sheet.getCTWorksheet().getSheetData().getRowList()) {
+            assertTrue(ctRow.getR() > prev, "row " + ctRow.getR() + " after row " + prev);
+            prev = ctRow.getR();
+            count++;
+        }
+        assertEquals(sheet.getPhysicalNumberOfRows(), count);
+        int i = 0;
+        for (Row row : sheet) {
+            assertSame(sheet.getRow(row.getRowNum()), row);
+            i++;
+        }
+        assertEquals(count, i);
+    }
+
     @Test
     public void testBug69154() throws Exception {
         // this does not appear to work for HSSF but let's get it working for XSSF anyway
@@ -551,5 +677,68 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
             CellRangeAddress expectedMR = new CellRangeAddress(3, 3, secondCol - 1, thirdCol - 1);
             assertEquals(expectedMR, mr);
         }
+    }
+
+    @Test
+    void bug60072ShiftRowsMovesDrawingAnchors() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            for (int i = 0; i < 30; i++) {
+                sheet.createRow(i).createCell(0).setCellValue(i);
+            }
+            XSSFDrawing drawing = sheet.createDrawingPatriarch();
+            int picIdx = wb.addPicture("test jpeg data".getBytes(LocaleUtil.CHARSET_1252), XSSFWorkbook.PICTURE_TYPE_JPEG);
+
+            // shape above the shifted area: rows 0-1
+            XSSFSimpleShape shape = drawing.createSimpleShape(new XSSFClientAnchor(0, 0, 0, 0, 0, 0, 3, 1));
+            // chart at the start of the shifted area: rows 2-10
+            XSSFChart chart = drawing.createChart(new XSSFClientAnchor(0, 0, 0, 0, 1, 2, 8, 10));
+            // picture further down: rows 12-15
+            XSSFPicture picture = drawing.createPicture(new XSSFClientAnchor(0, 0, 0, 0, 1, 12, 4, 15), picIdx);
+            // a one-cell anchor at row 20 and an absolute anchor, added on the XML level as the API only creates two-cell anchors
+            CTDrawing ctDrawing = drawing.getCTDrawing();
+            CTOneCellAnchor oneCell = ctDrawing.addNewOneCellAnchor();
+            oneCell.addNewFrom().setRow(20);
+            oneCell.getFrom().setCol(2);
+            oneCell.addNewExt().setCx(100);
+            oneCell.getExt().setCy(100);
+            oneCell.addNewClientData();
+            ctDrawing.addNewAbsoluteAnchor().addNewPos().setX(10);
+            ctDrawing.getAbsoluteAnchorArray(0).getPos().setY(10);
+            ctDrawing.getAbsoluteAnchorArray(0).addNewExt().setCx(100);
+            ctDrawing.getAbsoluteAnchorArray(0).getExt().setCy(100);
+            ctDrawing.getAbsoluteAnchorArray(0).addNewClientData();
+
+            // insert 3 rows at row 2
+            sheet.shiftRows(2, sheet.getLastRowNum(), 3);
+
+            assertAnchorRows(0, 1, shape.getAnchor());
+            assertAnchorRows(5, 13, chart.getGraphicFrame().getAnchor());
+            assertAnchorRows(15, 18, picture.getAnchor());
+            assertEquals(23, oneCell.getFrom().getRow());
+            assertEquals(10L, ctDrawing.getAbsoluteAnchorArray(0).getPos().getY());
+
+            // move rows 15-18 (the picture) up by 10; the chart's top-left row is not in the range and stays
+            sheet.shiftRows(15, 18, -10);
+
+            assertAnchorRows(5, 13, chart.getGraphicFrame().getAnchor());
+            assertAnchorRows(5, 8, picture.getAnchor());
+            assertEquals(23, oneCell.getFrom().getRow());
+
+            try (XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                XSSFDrawing drawingBack = wbBack.getSheetAt(0).getDrawingPatriarch();
+                assertNotNull(drawingBack);
+                assertAnchorRows(0, 1, drawingBack.getShapes().get(0).getAnchor());
+                assertAnchorRows(5, 13, drawingBack.getShapes().get(1).getAnchor());
+                assertAnchorRows(5, 8, drawingBack.getShapes().get(2).getAnchor());
+                assertEquals(23, drawingBack.getCTDrawing().getOneCellAnchorArray(0).getFrom().getRow());
+            }
+        }
+    }
+
+    private static void assertAnchorRows(int row1, int row2, XSSFAnchor anchor) {
+        ClientAnchor clientAnchor = (ClientAnchor) anchor;
+        assertEquals(row1, clientAnchor.getRow1(), "row1");
+        assertEquals(row2, clientAnchor.getRow2(), "row2");
     }
 }

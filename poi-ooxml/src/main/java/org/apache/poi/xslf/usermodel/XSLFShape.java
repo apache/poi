@@ -370,17 +370,12 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
             return STPlaceholderType.INT_BODY;
         }
 
-        switch (ph.getType().intValue()) {
-            case STPlaceholderType.INT_TITLE:
-            case STPlaceholderType.INT_CTR_TITLE:
-                return STPlaceholderType.INT_TITLE;
-            case STPlaceholderType.INT_FTR:
-            case STPlaceholderType.INT_SLD_NUM:
-            case STPlaceholderType.INT_DT:
-                return ph.getType().intValue();
-            default:
-                return STPlaceholderType.INT_BODY;
-        }
+        return switch (ph.getType().intValue()) {
+            case STPlaceholderType.INT_TITLE, STPlaceholderType.INT_CTR_TITLE -> STPlaceholderType.INT_TITLE;
+            case STPlaceholderType.INT_FTR, STPlaceholderType.INT_SLD_NUM, STPlaceholderType.INT_DT ->
+                    ph.getType().intValue();
+            default -> STPlaceholderType.INT_BODY;
+        };
     }
 
     /**

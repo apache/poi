@@ -23,7 +23,6 @@ import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.XML_DIGSIG_N
 import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.XML_NS;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -52,8 +51,7 @@ public class SignatureMarshalDefaultListener implements SignatureMarshalListener
     private static final String OBJECT_TAG = "Object";
     private static final Set<String> IGNORE_NS = new HashSet<>(Arrays.asList(null, XML_NS, XML_DIGSIG_NS));
 
-    private static final List<String> DIRECT_NS = Collections.unmodifiableList(
-        Arrays.asList(OO_DIGSIG_NS, MS_DIGSIG_NS));
+    private static final List<String> DIRECT_NS = List.of(OO_DIGSIG_NS, MS_DIGSIG_NS);
 
     @Override
     public void handleElement(SignatureInfo signatureInfo, Document doc, EventTarget target, EventListener parentListener) {
@@ -76,8 +74,8 @@ public class SignatureMarshalDefaultListener implements SignatureMarshalListener
         int len = nl.getLength();
         for(int i=0; i<len; i++) {
             Node n = nl.item(i);
-            if (n instanceof Element) {
-                consumer.accept((Element)n);
+            if (n instanceof Element element) {
+                consumer.accept(element);
             }
         }
     }
@@ -116,8 +114,8 @@ public class SignatureMarshalDefaultListener implements SignatureMarshalListener
     }
 
     private static void setXmlns(Node node, String prefix, String ns) {
-        if (node instanceof Element && !ns.equals(node.getParentNode().getNamespaceURI())) {
-            ((Element)node).setAttributeNS(XML_NS, XMLConstants.XMLNS_ATTRIBUTE + (prefix == null ? "" : ":"+prefix), ns);
+        if (node instanceof Element element && !ns.equals(node.getParentNode().getNamespaceURI())) {
+            element.setAttributeNS(XML_NS, XMLConstants.XMLNS_ATTRIBUTE + (prefix == null ? "" : ":"+prefix), ns);
         }
     }
 }

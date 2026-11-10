@@ -23,6 +23,7 @@ import java.util.function.Supplier;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.xddf.usermodel.XDDFColor;
 import org.apache.poi.xddf.usermodel.XDDFEffectContainer;
 import org.apache.poi.xddf.usermodel.XDDFEffectList;
@@ -94,7 +95,7 @@ public class XDDFRunProperties {
             throw new IllegalArgumentException("Minimum inclusive = 1. Maximum inclusive = 400.");
         }
 
-        update(props::isSetSz, props::unsetSz, props::setSz, size == null ? null : (int)(100 * size));
+        update(props::isSetSz, props::unsetSz, props::setSz, size == null ? null : MathUtil.safeDoubleToInt(100 * size));
     }
 
     public void setFillProperties(XDDFFillProperties properties) {
@@ -119,18 +120,18 @@ public class XDDFRunProperties {
         if (properties == null) {
             return;
         }
-        if (properties instanceof XDDFGradientFillProperties) {
-            props.setGradFill(((XDDFGradientFillProperties) properties).getXmlObject());
-        } else if (properties instanceof XDDFGroupFillProperties) {
-            props.setGrpFill(((XDDFGroupFillProperties) properties).getXmlObject());
-        } else if (properties instanceof XDDFNoFillProperties) {
-            props.setNoFill(((XDDFNoFillProperties) properties).getXmlObject());
-        } else if (properties instanceof XDDFPatternFillProperties) {
-            props.setPattFill(((XDDFPatternFillProperties) properties).getXmlObject());
-        } else if (properties instanceof XDDFPictureFillProperties) {
-            props.setBlipFill(((XDDFPictureFillProperties) properties).getXmlObject());
-        } else if (properties instanceof XDDFSolidFillProperties) {
-            props.setSolidFill(((XDDFSolidFillProperties) properties).getXmlObject());
+        if (properties instanceof XDDFGradientFillProperties xprops) {
+            props.setGradFill(xprops.getXmlObject());
+        } else if (properties instanceof XDDFGroupFillProperties xprops) {
+            props.setGrpFill(xprops.getXmlObject());
+        } else if (properties instanceof XDDFNoFillProperties xprops) {
+            props.setNoFill(xprops.getXmlObject());
+        } else if (properties instanceof XDDFPatternFillProperties xprops) {
+            props.setPattFill(xprops.getXmlObject());
+        } else if (properties instanceof XDDFPictureFillProperties xprops) {
+            props.setBlipFill(xprops.getXmlObject());
+        } else if (properties instanceof XDDFSolidFillProperties xprops) {
+            props.setSolidFill(xprops.getXmlObject());
         }
     }
 
@@ -139,7 +140,7 @@ public class XDDFRunProperties {
             throw new IllegalArgumentException("Minimum inclusive = 0. Maximum inclusive = 4000.");
         }
 
-        update(props::isSetKern, props::unsetKern, props::setKern, kerning == null ? null : (int)(100 * kerning));
+        update(props::isSetKern, props::unsetKern, props::setKern, kerning == null ? null : MathUtil.safeDoubleToInt(100 * kerning));
     }
 
     public void setCharacterSpacing(Double spacing) {
@@ -147,7 +148,7 @@ public class XDDFRunProperties {
             throw new IllegalArgumentException("Minimum inclusive = -4000. Maximum inclusive = 4000.");
         }
 
-        update(props::isSetSpc, props::unsetSpc, props::setSpc, spacing == null ? null : (int)(100 * spacing));
+        update(props::isSetSpc, props::unsetSpc, props::setSpc, spacing == null ? null : MathUtil.safeDoubleToInt(100 * spacing));
     }
 
     public void setFonts(XDDFFont[] fonts) {

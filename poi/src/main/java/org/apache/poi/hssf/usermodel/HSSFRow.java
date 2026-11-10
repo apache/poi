@@ -378,17 +378,15 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
     @Override
     public HSSFCell getCell(int cellnum, MissingCellPolicy policy) {
         HSSFCell cell = retrieveCell(cellnum);
-        switch (policy) {
-            case RETURN_NULL_AND_BLANK:
-                return cell;
-            case RETURN_BLANK_AS_NULL:
+        return switch (policy) {
+            case RETURN_NULL_AND_BLANK -> cell;
+            case RETURN_BLANK_AS_NULL -> {
                 boolean isBlank = (cell != null && cell.getCellType() == CellType.BLANK);
-                return (isBlank) ? null : cell;
-            case CREATE_NULL_AS_BLANK:
-                return (cell == null) ? createCell(cellnum, CellType.BLANK) : cell;
-            default:
-                throw new IllegalArgumentException("Illegal policy " + policy);
-        }
+                yield (isBlank) ? null : cell;
+            }
+            case CREATE_NULL_AS_BLANK -> (cell == null) ? createCell(cellnum, CellType.BLANK) : cell;
+            default -> throw new IllegalArgumentException("Illegal policy " + policy);
+        };
     }
 
     /**
@@ -711,10 +709,9 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof HSSFRow)) {
+        if (!(obj instanceof HSSFRow other)) {
             return false;
         }
-        HSSFRow other = (HSSFRow) obj;
 
         return (this.getRowNum() == other.getRowNum()) &&
                (this.getSheet() == other.getSheet());
@@ -811,10 +808,13 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      */
     @Beta
     public void copyRowFrom(Row srcRow, CellCopyPolicy policy, CellCopyContext context) {
+        // formula references are shifted for the whole row below, so don't also adjust them per cell
+        final CellCopyPolicy cellPolicy = policy.isAdjustFormulaReferences()
+                ? policy.createBuilder().adjustFormulaReferences(false).build() : policy;
         if (srcRow == null) {
             // srcRow is blank. Overwrite cells with blank values, blank styles, etc per cell copy policy
             for (Cell destCell : this) {
-                CellUtil.copyCell(null, destCell, policy, context);
+                CellUtil.copyCell(null, destCell, cellPolicy, context);
             }
 
             if (policy.isCopyMergedRegions()) {
@@ -839,7 +839,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
         } else {
             for (final Cell c : srcRow) {
                 final HSSFCell destCell = createCell(c.getColumnIndex());
-                CellUtil.copyCell(c, destCell, policy, context);
+                CellUtil.copyCell(c, destCell, cellPolicy, context);
             }
 
             final int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
@@ -848,7 +848,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
             final int destRowNum = getRowNum();
             final int rowDifference = destRowNum - srcRowNum;
 
-            final FormulaShifter formulaShifter = FormulaShifter.createForRowCopy(sheetIndex, sheetName, srcRowNum, srcRowNum, rowDifference, SpreadsheetVersion.EXCEL2007);
+            final FormulaShifter formulaShifter = FormulaShifter.createForRowCopy(sheetIndex, sheetName, srcRowNum, srcRowNum, rowDifference, SpreadsheetVersion.EXCEL97);
             final HSSFRowShifter rowShifter = new HSSFRowShifter(sheet);
             rowShifter.updateRowFormulas(this, formulaShifter);
 

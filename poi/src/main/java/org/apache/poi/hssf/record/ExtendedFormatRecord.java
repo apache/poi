@@ -1725,8 +1725,7 @@ public final class ExtendedFormatRecord extends StandardRecord {
             return true;
         if (obj == null)
             return false;
-        if (obj instanceof ExtendedFormatRecord) {
-            final ExtendedFormatRecord other = (ExtendedFormatRecord) obj;
+        if (obj instanceof ExtendedFormatRecord other) {
             return Arrays.equals(stateSummary(), other.stateSummary());
         }
         return false;

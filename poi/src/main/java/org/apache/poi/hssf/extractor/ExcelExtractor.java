@@ -38,6 +38,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.usermodel.HeaderFooter;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.apache.poi.util.StringUtil;
 
 /**
  * A text extractor for Excel files.
@@ -114,7 +115,7 @@ public class ExcelExtractor implements POIOLE2TextExtractor, org.apache.poi.ss.e
             boolean headersFooters = true;
             for (int i=0; i<nArgs; i++) {
                 String arg = args[i];
-                if ("-help".equalsIgnoreCase(arg)) {
+                if (StringUtil.equalsIgnoreCase("-help", arg)) {
                     requestHelp = true;
                     break;
                 }

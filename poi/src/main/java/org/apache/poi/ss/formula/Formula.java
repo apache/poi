@@ -26,6 +26,7 @@ import org.apache.poi.ss.formula.ptg.ExpPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.TblPtg;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
@@ -79,7 +80,8 @@ public class Formula implements GenericRecord {
      * @return A new formula object as read from the stream.  Possibly empty, never {@code null}.
      */
     public static Formula read(int encodedTokenLen, LittleEndianInput in, int totalEncodedLen) {
-        byte[] byteEncoding = IOUtils.safelyAllocate(totalEncodedLen, MAX_ENCODED_LEN);
+        ArrayUtil.strictAllocateCheck(totalEncodedLen, MAX_ENCODED_LEN);
+        byte[] byteEncoding = new byte[totalEncodedLen];
         in.readFully(byteEncoding);
         return new Formula(byteEncoding, encodedTokenLen);
     }

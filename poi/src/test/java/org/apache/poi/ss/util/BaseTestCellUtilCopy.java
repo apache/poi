@@ -215,4 +215,59 @@ public abstract class BaseTestCellUtilCopy {
     protected boolean compareRichText(RichTextString rts1, RichTextString rts2) {
         return rts1.getString().equals(rts2.getString());
     }
+
+    @Test
+    public final void testCopyCellFrom_CellCopyPolicy_adjustFormulaReferences() {
+        setUp_testCopyCellFrom_CellCopyPolicy();
+        final Sheet sheet = srcCell.getSheet();
+        sheet.getWorkbook().createSheet("Other");
+        srcCell = sheet.createRow(1).createCell(1); // B2
+        srcCell.setCellFormula("A1+$A$1+A$1+$A1+SUM(A1:B2)+Other!A1");
+
+        final CellCopyPolicy policy = new CellCopyPolicy.Builder().adjustFormulaReferences(true).build();
+        assertTrue(policy.isAdjustFormulaReferences());
+        assertTrue(policy.createBuilder().build().isAdjustFormulaReferences());
+        assertTrue(new CellCopyPolicy(policy).isAdjustFormulaReferences());
+
+        // 3 rows down and 2 columns right
+        destCell = sheet.createRow(4).createCell(3); // D5
+        CellUtil.copyCell(srcCell, destCell, policy, new CellCopyContext());
+        assertEquals("C4+$A$1+C$1+$A4+SUM(C4:D5)+Other!C4", stringWithoutSpaces(destCell.getCellFormula()));
+
+        // same row, so only columns move
+        destCell = sheet.getRow(1).createCell(2); // C2
+        CellUtil.copyCell(srcCell, destCell, policy, new CellCopyContext());
+        assertEquals("B1+$A$1+B$1+$A1+SUM(B1:C2)+Other!B1", stringWithoutSpaces(destCell.getCellFormula()));
+
+        // source cell unchanged
+        assertEquals("A1+$A$1+A$1+$A1+SUM(A1:B2)+Other!A1", stringWithoutSpaces(srcCell.getCellFormula()));
+    }
+
+    @Test
+    public final void testCopyCellFrom_CellCopyPolicy_adjustFormulaReferencesOffSheet() {
+        setUp_testCopyCellFrom_CellCopyPolicy();
+        final Sheet sheet = srcCell.getSheet();
+        srcCell = sheet.createRow(1).createCell(1); // B2
+        srcCell.setCellFormula("A1+$A$1");
+
+        // moving A1 up one row would go past the top of the sheet
+        destCell = sheet.getRow(0).createCell(1); // B1
+        final CellCopyPolicy policy = new CellCopyPolicy.Builder().adjustFormulaReferences(true).build();
+        CellUtil.copyCell(srcCell, destCell, policy, new CellCopyContext());
+        assertEquals("#REF!+$A$1", stringWithoutSpaces(destCell.getCellFormula()));
+    }
+
+    @Test
+    public final void testCopyCellFrom_CellCopyPolicy_noAdjustFormulaReferencesByDefault() {
+        setUp_testCopyCellFrom_CellCopyPolicy();
+        final Sheet sheet = srcCell.getSheet();
+        srcCell = sheet.createRow(1).createCell(1); // B2
+        srcCell.setCellFormula("A1+$A$1");
+        destCell = sheet.createRow(4).createCell(3); // D5
+
+        final CellCopyPolicy policy = new CellCopyPolicy();
+        assertFalse(policy.isAdjustFormulaReferences());
+        CellUtil.copyCell(srcCell, destCell, policy, new CellCopyContext());
+        assertEquals("A1+$A$1", stringWithoutSpaces(destCell.getCellFormula()));
+    }
 }

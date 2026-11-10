@@ -110,10 +110,9 @@ public final class PackageRelationship {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof PackageRelationship)) {
+        if (!(obj instanceof PackageRelationship rel)) {
             return false;
         }
-        PackageRelationship rel = (PackageRelationship) obj;
         return (this.id.equals(rel.id)
                 && this.relationshipType.equals(rel.relationshipType)
                 && (rel.source == null || rel.source.equals(this.source))

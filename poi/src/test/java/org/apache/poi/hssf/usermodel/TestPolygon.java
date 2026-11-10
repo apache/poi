@@ -20,7 +20,7 @@ package org.apache.poi.hssf.usermodel;
 import static org.apache.poi.poifs.storage.RawDataUtil.decompress;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.io.IOException;
 
@@ -269,8 +269,8 @@ class TestPolygon {
                     patriarch = sh.getDrawingPatriarch();
 
                     assertEquals(2, patriarch.getChildren().size());
-                    assertTrue(patriarch.getChildren().get(0) instanceof HSSFPolygon);
-                    assertTrue(patriarch.getChildren().get(1) instanceof HSSFPolygon);
+                    assertInstanceOf(HSSFPolygon.class, patriarch.getChildren().get(0));
+                    assertInstanceOf(HSSFPolygon.class, patriarch.getChildren().get(1));
                 }
             }
         }

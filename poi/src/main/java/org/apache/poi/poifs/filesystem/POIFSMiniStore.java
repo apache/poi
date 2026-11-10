@@ -279,4 +279,9 @@ public class POIFSMiniStore extends BlockStore {
     protected void releaseBuffer(ByteBuffer buffer) {
         _filesystem.releaseBuffer(buffer);
     }
+
+    @Override
+    protected void checkWriteable() {
+        _filesystem.checkWriteable();
+    }
 }

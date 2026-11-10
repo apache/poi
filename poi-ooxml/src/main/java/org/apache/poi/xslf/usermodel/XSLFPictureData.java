@@ -23,6 +23,7 @@ import java.awt.Dimension;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
@@ -63,6 +64,8 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
     }
 
     private Long checksum;
+    // modification count of the package part when checksum and origSize were cached
+    private long cachedModificationCount;
 
     // original image dimensions (for formats supported by BufferedImage)
     private Dimension origSize;
@@ -154,9 +157,47 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
     }
     
     /**
+     * Checks whether this picture holds the given data. The checksum is only a CRC32,
+     * so a matching checksum is confirmed by comparing the data. The part is read at
+     * most once.
+     *
+     * @param data the picture data to compare with
+     * @param dataChecksum the checksum of {@code data}
+     * @return true, if this picture holds the same bytes as {@code data}
+     */
+    boolean hasData(byte[] data, long dataChecksum) {
+        dropStaleProperties();
+        byte[] ownData = null;
+        if (checksum == null) {
+            ownData = getData();
+            checksum = IOUtils.calculateChecksum(ownData);
+        }
+        if (checksum != dataChecksum) {
+            return false;
+        }
+        if (ownData == null) {
+            ownData = getData();
+        }
+        return Arrays.equals(ownData, data);
+    }
+
+    /**
+     * Forget the cached image properties, if the part was written to outside of setData
+     */
+    private void dropStaleProperties() {
+        long modificationCount = getPackagePart().getModificationCount();
+        if (modificationCount != cachedModificationCount) {
+            checksum = null;
+            origSize = null;
+            cachedModificationCount = modificationCount;
+        }
+    }
+
+    /**
      * Determine and cache image properties
      */
     protected void cacheProperties() {
+        dropStaleProperties();
         if (origSize == null || checksum == null) {
             byte[] data = getData();
             checksum = IOUtils.calculateChecksum(data);
@@ -201,11 +242,14 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
     }
 
     public void setData(byte[] data) throws IOException {
+        // in-memory parts append to their content, so remove the old data first
+        getPackagePart().clear();
         try (OutputStream os = getPackagePart().getOutputStream()) {
             os.write(data);
         }
         // recalculate now since we already have the data bytes available anyhow
         checksum = IOUtils.calculateChecksum(data);
+        cachedModificationCount = getPackagePart().getModificationCount();
 
         origSize = null; // need to recalculate image size
     }
@@ -245,22 +289,22 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
     }
     
     /* package */ static XSLFRelation getRelationForType(PictureType pt) {
-        switch (pt) {
-            case EMF: return XSLFRelation.IMAGE_EMF;
-            case WMF: return XSLFRelation.IMAGE_WMF;
-            case PICT: return XSLFRelation.IMAGE_PICT;
-            case JPEG: return XSLFRelation.IMAGE_JPEG;
-            case PNG: return XSLFRelation.IMAGE_PNG;
-            case DIB: return XSLFRelation.IMAGE_DIB;
-            case GIF: return XSLFRelation.IMAGE_GIF;
-            case EPS: return XSLFRelation.IMAGE_EPS;
-            case BMP: return XSLFRelation.IMAGE_BMP;
-            case WPG: return XSLFRelation.IMAGE_WPG;
-            case WDP: return XSLFRelation.HDPHOTO_WDP;
-            case TIFF: return XSLFRelation.IMAGE_TIFF;
-            case SVG: return XSLFRelation.IMAGE_SVG;
-            default: return null;
-        }
+        return switch (pt) {
+            case EMF -> XSLFRelation.IMAGE_EMF;
+            case WMF -> XSLFRelation.IMAGE_WMF;
+            case PICT -> XSLFRelation.IMAGE_PICT;
+            case JPEG -> XSLFRelation.IMAGE_JPEG;
+            case PNG -> XSLFRelation.IMAGE_PNG;
+            case DIB -> XSLFRelation.IMAGE_DIB;
+            case GIF -> XSLFRelation.IMAGE_GIF;
+            case EPS -> XSLFRelation.IMAGE_EPS;
+            case BMP -> XSLFRelation.IMAGE_BMP;
+            case WPG -> XSLFRelation.IMAGE_WPG;
+            case WDP -> XSLFRelation.HDPHOTO_WDP;
+            case TIFF -> XSLFRelation.IMAGE_TIFF;
+            case SVG -> XSLFRelation.IMAGE_SVG;
+            default -> null;
+        };
     }
 
     /**

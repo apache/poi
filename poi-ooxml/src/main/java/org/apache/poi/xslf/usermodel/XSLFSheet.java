@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.IntConsumer;
 
 import javax.xml.namespace.QName;
 
@@ -74,7 +75,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
 @Beta
 public abstract class XSLFSheet extends POIXMLDocumentPart
-implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
+        implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     private static final Logger LOG = PoiLogManager.getLogger(XSLFSheet.class);
 
     private XSLFDrawing _drawing;
@@ -83,7 +84,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     private XSLFTheme _theme;
 
     private List<XSLFTextShape>_placeholders;
-    private Map<Integer, XSLFSimpleShape> _placeholderByIdMap;
+    private Map<Long, XSLFSimpleShape> _placeholderByIdMap;
     private Map<Integer, XSLFSimpleShape> _placeholderByTypeMap;
 
     private final SparseBitSet shapeIds = new SparseBitSet();
@@ -106,8 +107,8 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     public XMLSlideShow getSlideShow() {
         POIXMLDocumentPart p = getParent();
         while(p != null) {
-            if(p instanceof XMLSlideShow){
-                return (XMLSlideShow)p;
+            if(p instanceof XMLSlideShow slideShow){
+                return slideShow;
             }
             p = p.getParent();
         }
@@ -139,24 +140,24 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
 
     @SuppressWarnings("WeakerAccess")
     protected static List<XSLFShape> buildShapes(CTGroupShape spTree, XSLFShapeContainer parent){
-        final XSLFSheet sheet = (parent instanceof XSLFSheet) ? (XSLFSheet)parent : ((XSLFShape)parent).getSheet();
+        final XSLFSheet sheet = (parent instanceof XSLFSheet s) ? s : ((XSLFShape)parent).getSheet();
 
         List<XSLFShape> shapes = new ArrayList<>();
         try (XmlCursor cur = spTree.newCursor()) {
             for (boolean b = cur.toFirstChild(); b; b = cur.toNextSibling()) {
                 XmlObject ch = cur.getObject();
-                if(ch instanceof CTShape){
+                if(ch instanceof CTShape sp){
                     // simple shape
-                    XSLFAutoShape shape = XSLFAutoShape.create((CTShape)ch, sheet);
+                    XSLFAutoShape shape = XSLFAutoShape.create(sp, sheet);
                     shapes.add(shape);
-                } else if (ch instanceof CTGroupShape){
-                    shapes.add(new XSLFGroupShape((CTGroupShape)ch, sheet));
-                } else if (ch instanceof CTConnector){
-                    shapes.add(new XSLFConnectorShape((CTConnector)ch, sheet));
-                } else if (ch instanceof CTPicture){
-                    shapes.add(new XSLFPictureShape((CTPicture)ch, sheet));
-                } else if (ch instanceof CTGraphicalObjectFrame){
-                    XSLFGraphicFrame shape = XSLFGraphicFrame.create((CTGraphicalObjectFrame)ch, sheet);
+                } else if (ch instanceof CTGroupShape grpSp){
+                    shapes.add(new XSLFGroupShape(grpSp, sheet));
+                } else if (ch instanceof CTConnector cxnSp){
+                    shapes.add(new XSLFConnectorShape(cxnSp, sheet));
+                } else if (ch instanceof CTPicture pic){
+                    shapes.add(new XSLFPictureShape(pic, sheet));
+                } else if (ch instanceof CTGraphicalObjectFrame frame){
+                    XSLFGraphicFrame shape = XSLFGraphicFrame.create(frame, sheet);
                     shapes.add(shape);
                 } else if (ch instanceof XmlAnyTypeImpl) {
                     // TODO: the link of the XLSF classes to the xml beans objects will
@@ -197,7 +198,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     /**
      * Returns an array containing all of the shapes in this sheet
      *
-     * @return an array of all shapes in this sheet
+     * @return a list of all shapes in this sheet
      */
     @Override
     public List<XSLFShape> getShapes(){
@@ -265,11 +266,11 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
 
     @Override
     public XSLFPictureShape createPicture(PictureData pictureData){
-        if (!(pictureData instanceof XSLFPictureData)) {
+        if (!(pictureData instanceof XSLFPictureData xPictureData)) {
             throw new IllegalArgumentException("pictureData needs to be of type XSLFPictureData");
         }
 
-        RelationPart rp = addRelation(null, XSLFRelation.IMAGES, (XSLFPictureData)pictureData);
+        RelationPart rp = addRelation(null, XSLFRelation.IMAGES, xPictureData);
 
         XSLFPictureShape sh = getDrawing().createPicture(rp.getRelationship().getId());
         new DrawPictureShape(sh).resize();
@@ -305,10 +306,10 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
 
     @Override
     public XSLFObjectShape createOleShape(PictureData pictureData) {
-        if (!(pictureData instanceof XSLFPictureData)) {
+        if (!(pictureData instanceof XSLFPictureData xPictureData)) {
             throw new IllegalArgumentException("pictureData needs to be of type XSLFPictureData");
         }
-        RelationPart rp = addRelation(null, XSLFRelation.IMAGES, (XSLFPictureData)pictureData);
+        RelationPart rp = addRelation(null, XSLFRelation.IMAGES, xPictureData);
 
         XSLFObjectShape sh = getDrawing().createOleShape(rp.getRelationship().getId());
         CTOleObject oleObj = sh.getCTOleObject();
@@ -340,8 +341,8 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     @Override
     public void addShape(XSLFShape shape) {
         throw new UnsupportedOperationException(
-            "Adding a shape from a different container is not supported -"
-            + " create it from scratch with the XSLFSheet.create* methods");
+                "Adding a shape from a different container is not supported -"
+                        + " create it from scratch with the XSLFSheet.create* methods");
     }
 
     /**
@@ -354,25 +355,38 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
      * @throws IllegalArgumentException if the type of the specified shape
      *         is incompatible with this sheet (optional)
      */
+    /**
+     * Removes {@code obj} via {@code remover}, looking up its index in {@code elements}.
+     * This avoids {@code List.remove(Object)} on an xmlbeans list, which looks up each element by index.
+     */
+    static void removeElement(XmlObject[] elements, XmlObject obj, IntConsumer remover) {
+        for (int i = 0; i < elements.length; i++) {
+            if (elements[i] == obj) {
+                remover.accept(i);
+                return;
+            }
+        }
+    }
+
     @Override
     public boolean removeShape(XSLFShape xShape) {
         XmlObject obj = xShape.getXmlObject();
         CTGroupShape spTree = getSpTree();
         deregisterShapeId(xShape.getShapeId());
         if(obj instanceof CTShape){
-            spTree.getSpList().remove(obj);
+            removeElement(spTree.getSpArray(), obj, spTree::removeSp);
         } else if (obj instanceof CTGroupShape) {
             XSLFGroupShape gs = (XSLFGroupShape)xShape;
             new ArrayList<>(gs.getShapes()).forEach(gs::removeShape);
-            spTree.getGrpSpList().remove(obj);
+            removeElement(spTree.getGrpSpArray(), obj, spTree::removeGrpSp);
         } else if (obj instanceof CTConnector) {
-            spTree.getCxnSpList().remove(obj);
+            removeElement(spTree.getCxnSpArray(), obj, spTree::removeCxnSp);
         } else if (obj instanceof CTGraphicalObjectFrame) {
-            spTree.getGraphicFrameList().remove(obj);
+            removeElement(spTree.getGraphicFrameArray(), obj, spTree::removeGraphicFrame);
         } else if (obj instanceof CTPicture) {
             XSLFPictureShape ps = (XSLFPictureShape)xShape;
             removePictureRelation(ps);
-            spTree.getPicList().remove(obj);
+            removeElement(spTree.getPicArray(), obj, spTree::removePic);
         } else {
             throw new IllegalArgumentException("Unsupported shape: " + xShape);
         }
@@ -403,10 +417,10 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
                 throw new IllegalStateException("CTGroupShape was not found");
             }
             XmlObject xmlObject = sp[0];
-            if (!(xmlObject instanceof CTGroupShape)) {
+            if (!(xmlObject instanceof CTGroupShape groupShape)) {
                 throw new IllegalArgumentException("Had unexpected type of entry: " + xmlObject.getClass());
             }
-            _spTree = (CTGroupShape) xmlObject;
+            _spTree = groupShape;
         }
         return _spTree;
     }
@@ -496,7 +510,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         return this;
     }
 
-   /**
+    /**
      * @return theme (shared styles) associated with this theme.
      *  By default returns {@code null} which means that this sheet is theme-less.
      *  Sheets that support the notion of themes (slides, masters, layouts, etc.) should override this
@@ -508,9 +522,9 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         }
 
         getRelations().stream()
-            .filter(p -> p instanceof XSLFTheme)
-            .findAny()
-            .ifPresent(p -> _theme = (XSLFTheme)p);
+                .filter(p -> p instanceof XSLFTheme)
+                .findAny()
+                .ifPresent(p -> _theme = (XSLFTheme)p);
 
         return _theme;
     }
@@ -534,8 +548,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     @SuppressWarnings("WeakerAccess")
     protected XSLFTextShape getTextShapeByType(Placeholder type){
         for(XSLFShape shape : this.getShapes()){
-            if(shape instanceof XSLFTextShape) {
-               XSLFTextShape txt = (XSLFTextShape)shape;
+            if(shape instanceof XSLFTextShape txt) {
                 if(txt.getTextType() == type) {
                     return txt;
                 }
@@ -553,7 +566,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     public XSLFSimpleShape getPlaceholder(CTPlaceholder ph) {
         XSLFSimpleShape shape = null;
         if(ph.isSetIdx()) {
-            shape = getPlaceholderById((int)ph.getIdx());
+            shape = getPlaceholderById(ph.getIdx());
         }
 
         if (shape == null && ph.isSetType()) {
@@ -569,17 +582,24 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
             _placeholderByTypeMap = new HashMap<>();
 
             for(final XSLFShape sh : getShapes()){
-                if(sh instanceof XSLFTextShape){
-                    final XSLFTextShape sShape = (XSLFTextShape)sh;
+                if(sh instanceof XSLFTextShape sShape){
                     final CTPlaceholder ph = sShape.getPlaceholderDetails().getCTPlaceholder(false);
                     if(ph != null) {
                         _placeholders.add(sShape);
                         if(ph.isSetIdx()) {
-                            int idx = (int)ph.getIdx();
-                            _placeholderByIdMap.put(idx, sShape);
+                            _placeholderByIdMap.put(ph.getIdx(), sShape);
                         }
                         if(ph.isSetType()){
-                            _placeholderByTypeMap.put(ph.getType().intValue(), sShape);
+                            int typeInt = ph.getType().intValue();
+                            // Prefer the canonical (unindexed or idx=0) placeholder as the
+                            // representative for its type. A placeholder with an explicit non-zero
+                            // idx is a secondary variant (e.g. a second title box in a layout) and
+                            // must not displace the canonical entry, otherwise type-based lookups
+                            // will resolve to the wrong shape and inherit incorrect styles.
+                            boolean isCanonical = !ph.isSetIdx() || ph.getIdx() == 0;
+                            if (isCanonical || !_placeholderByTypeMap.containsKey(typeInt)) {
+                                _placeholderByTypeMap.put(typeInt, sShape);
+                            }
                         }
                     }
                 }
@@ -587,7 +607,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         }
     }
 
-    private XSLFSimpleShape getPlaceholderById(int id) {
+    private XSLFSimpleShape getPlaceholderById(long id) {
         initPlaceholders();
         return _placeholderByIdMap.get(id);
     }
@@ -677,7 +697,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         PackagePart part = pkg.createPart(srcPPName, srcPart.getContentType());
         try(
                 OutputStream out = part.getOutputStream();
-                InputStream is = srcPart.getInputStream();
+                InputStream is = srcPart.getInputStream()
         ) {
             IOUtils.copy(is, out);
         } catch (IOException e){
@@ -695,8 +715,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         int numberOfRelations = 0;
         String targetBlipId = pictureShape.getBlipId();
         for (XSLFShape shape : pictureShape.getSheet().getShapes()) {
-            if (shape instanceof XSLFPictureShape) {
-                XSLFPictureShape currentPictureShape = ((XSLFPictureShape) shape);
+            if (shape instanceof XSLFPictureShape currentPictureShape) {
                 String currentBlipId = currentPictureShape.getBlipId();
                 if (currentBlipId != null && currentBlipId.equals(targetBlipId)) {
                     numberOfRelations++;
@@ -740,58 +759,33 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     }
 
     protected String mapSchemeColor(CTColorMappingOverride cmapOver, String schemeColor) {
-            String slideColor = mapSchemeColor((cmapOver == null) ? null : cmapOver.getOverrideClrMapping(), schemeColor);
-            if (slideColor != null) {
-                return slideColor;
-            }
-            XSLFSheet master = (XSLFSheet)getMasterSheet();
-            String masterColor = (master == null) ? null : master.mapSchemeColor(schemeColor);
-            return (masterColor == null) ? schemeColor : masterColor;
+        String slideColor = mapSchemeColor((cmapOver == null) ? null : cmapOver.getOverrideClrMapping(), schemeColor);
+        if (slideColor != null) {
+            return slideColor;
+        }
+        XSLFSheet master = (XSLFSheet)getMasterSheet();
+        String masterColor = (master == null) ? null : master.mapSchemeColor(schemeColor);
+        return (masterColor == null) ? schemeColor : masterColor;
     }
 
     protected String mapSchemeColor(CTColorMapping cmap, String schemeColor) {
         STColorSchemeIndex.Enum schemeMap = null;
         if (cmap != null && schemeColor != null) {
-            switch (schemeColor) {
-                case "accent1":
-                    schemeMap = cmap.getAccent1();
-                    break;
-                case "accent2":
-                    schemeMap = cmap.getAccent2();
-                    break;
-                case "accent3":
-                    schemeMap = cmap.getAccent3();
-                    break;
-                case "accent4":
-                    schemeMap = cmap.getAccent4();
-                    break;
-                case "accent5":
-                    schemeMap = cmap.getAccent5();
-                    break;
-                case "accent6":
-                    schemeMap = cmap.getAccent6();
-                    break;
-                case "bg1":
-                    schemeMap = cmap.getBg1();
-                    break;
-                case "bg2":
-                    schemeMap = cmap.getBg2();
-                    break;
-                case "folHlink":
-                    schemeMap = cmap.getFolHlink();
-                    break;
-                case "hlink":
-                    schemeMap = cmap.getHlink();
-                    break;
-                case "tx1":
-                    schemeMap = cmap.getTx1();
-                    break;
-                case "tx2":
-                    schemeMap = cmap.getTx2();
-                    break;
-                default:
-                    break;
-            }
+            schemeMap = switch (schemeColor) {
+                case "accent1" -> cmap.getAccent1();
+                case "accent2" -> cmap.getAccent2();
+                case "accent3" -> cmap.getAccent3();
+                case "accent4" -> cmap.getAccent4();
+                case "accent5" -> cmap.getAccent5();
+                case "accent6" -> cmap.getAccent6();
+                case "bg1" -> cmap.getBg1();
+                case "bg2" -> cmap.getBg2();
+                case "folHlink" -> cmap.getFolHlink();
+                case "hlink" -> cmap.getHlink();
+                case "tx1" -> cmap.getTx1();
+                case "tx2" -> cmap.getTx2();
+                default -> null;
+            };
         }
         return (schemeMap == null) ? null : schemeMap.toString();
     }

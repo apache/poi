@@ -25,7 +25,6 @@ import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hssf.record.crypto.Biff8DecryptingStream;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInput;
@@ -126,9 +125,9 @@ public final class RecordInputStream implements LittleEndianInput {
 
     public RecordInputStream(InputStream in, EncryptionInfo key, int initialOffset) throws RecordFormatException {
         if (key == null) {
-            _dataInput = (in instanceof LittleEndianInput)
+            _dataInput = (in instanceof LittleEndianInput lei)
                 // accessing directly is an optimisation
-                ? (LittleEndianInput)in
+                ? lei
                 // less optimal, but should work OK just the same. Often occurs in junit tests.
                 : new LittleEndianInputStream(in);
             _bhi = new SimpleHeaderInput(_dataInput);
@@ -302,7 +301,7 @@ public final class RecordInputStream implements LittleEndianInput {
 
     @Override
     public void readPlain(byte[] buf, int off, int len) {
-        readFully(buf, 0, buf.length, true);
+        readFully(buf, off, len, true);
     }
 
     @Override
@@ -437,7 +436,7 @@ public final class RecordInputStream implements LittleEndianInput {
         if (size ==0) {
             return EMPTY_BYTE_ARRAY;
         }
-        byte[] result = IOUtils.safelyAllocate(size, HSSFWorkbook.getMaxRecordLength());
+        byte[] result = HSSFWorkbook.safelyAllocate(size);
         readFully(result);
         return result;
     }
@@ -517,10 +516,10 @@ public final class RecordInputStream implements LittleEndianInput {
      */
     @Internal
     public void mark(int readlimit) {
-        if (!(_dataInput instanceof InputStream)) {
+        if (!(_dataInput instanceof InputStream stream)) {
             throw new IllegalStateException("Cannot use mark for dataInput of type " + _dataInput.getClass() + ", need an InputStream");
         }
-        ((InputStream)_dataInput).mark(readlimit);
+        stream.mark(readlimit);
         _markedDataOffset = _currentDataOffset;
     }
 
@@ -540,6 +539,6 @@ public final class RecordInputStream implements LittleEndianInput {
 
     @Internal
     public boolean isEncrypted() {
-        return _dataInput instanceof Biff8DecryptingStream && ((Biff8DecryptingStream)_dataInput).isCurrentRecordEncrypted();
+        return _dataInput instanceof Biff8DecryptingStream bds && bds.isCurrentRecordEncrypted();
     }
 }

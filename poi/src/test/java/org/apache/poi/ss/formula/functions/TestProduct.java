@@ -32,13 +32,13 @@ import java.io.IOException;
 
 import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 class TestProduct {
     @Test
     void missingArgsAreIgnored() {
         ValueEval result = getInstance().evaluate(new ValueEval[]{new NumberEval(2.0), MissingArgEval.instance}, 0, 0);
-        assertTrue(result instanceof NumberEval);
+        assertInstanceOf(NumberEval.class, result);
         assertEquals(2, ((NumberEval)result).getNumberValue(), 0);
     }
 
@@ -50,14 +50,14 @@ class TestProduct {
     @Test
     void missingArgEvalReturns0() {
         ValueEval result = getInstance().evaluate(new ValueEval[0], 0, 0);
-        assertTrue(result instanceof NumberEval);
+        assertInstanceOf(NumberEval.class, result);
         assertEquals(0, ((NumberEval)result).getNumberValue(), 0);
     }
 
     @Test
     void twoMissingArgEvalsReturn0() {
         ValueEval result = getInstance().evaluate(new ValueEval[]{MissingArgEval.instance, MissingArgEval.instance}, 0, 0);
-        assertTrue(result instanceof NumberEval);
+        assertInstanceOf(NumberEval.class, result);
         assertEquals(0, ((NumberEval)result).getNumberValue(), 0);
     }
 
@@ -69,7 +69,7 @@ class TestProduct {
                 new StringEval("6"),
                 BoolEval.TRUE};
         ValueEval result = getInstance().evaluate(args, 0, 0);
-        assertTrue(result instanceof NumberEval);
+        assertInstanceOf(NumberEval.class, result);
         assertEquals(12, ((NumberEval)result).getNumberValue(), 0);
     }
 

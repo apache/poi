@@ -54,10 +54,12 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
         this.pos = initialPos;
         this.chunkSize = chunkSize;
         int cs = chunkSize == -1 ? 4096 : chunkSize;
-        this.chunk = IOUtils.safelyAllocate(cs, CryptoFunctions.MAX_RECORD_LENGTH);
-        this.plain = IOUtils.safelyAllocate(cs, CryptoFunctions.MAX_RECORD_LENGTH);
+        this.chunk = IOUtils.safelyAllocate(cs, CryptoFunctions.getMaxRecordLength(),
+                "CryptoFunctions.setMaxRecordLength()");
+        this.plain = IOUtils.safelyAllocate(cs, CryptoFunctions.getMaxRecordLength(),
+                "CryptoFunctions.setMaxRecordLength()");
         this.chunkBits = Integer.bitCount(chunk.length-1);
-        this.lastIndex = (int)(pos >> chunkBits);
+        this.lastIndex = Math.toIntExact(pos >> chunkBits);
         this.cipher = initCipherForBlock(null, lastIndex);
     }
 
@@ -75,8 +77,24 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
 
     @Override
     public int read() throws IOException {
-        byte[] b = { 0 };
-        return (read(b) == 1) ? (b[0] & 0xFF) : -1;
+        if (remainingBytes() <= 0) {
+            return -1;
+        }
+        if (!chunkIsValid) {
+            try {
+                nextChunk();
+                chunkIsValid = true;
+            } catch (GeneralSecurityException e) {
+                throw new EncryptedDocumentException(e.getMessage(), e);
+            }
+        }
+        final int chunkMask = getChunkMask();
+        int b = chunk[Math.toIntExact(pos & chunkMask)] & 0xFF;
+        pos++;
+        if ((pos & chunkMask) == 0) {
+            chunkIsValid = false;
+        }
+        return b;
     }
 
     // do not implement! -> recursion
@@ -104,14 +122,14 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
                     throw new EncryptedDocumentException(e.getMessage(), e);
                 }
             }
-            int count = (int)(chunk.length - (pos & chunkMask));
+            int count = Math.toIntExact(chunk.length - (pos & chunkMask));
             int avail = remainingBytes();
             if (avail == 0) {
                 return total;
             }
             count = Math.min(avail, Math.min(count, len));
 
-            System.arraycopy(readPlain ? plain : chunk, (int)(pos & chunkMask), b, off, count);
+            System.arraycopy(readPlain ? plain : chunk, Math.toIntExact(pos & chunkMask), b, off, count);
 
             off += count;
             len -= count;
@@ -137,6 +155,21 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
         return skip;
     }
 
+    /**
+     * Skips by moving the position, as the size of the stream is known.
+     * The skipped chunks are not decrypted.
+     */
+    @Override
+    public void skipFully(long len) throws IOException {
+        if (len < 0) {
+            throw new IllegalArgumentException("Skip count must be non-negative, actual: " + len);
+        }
+        if (len > remainingBytes()) {
+            throw new IllegalStateException("Unexpected end-of-file");
+        }
+        skip(len);
+    }
+
     @Override
     public int available() {
         return remainingBytes();
@@ -148,7 +181,7 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
      * @return the remaining byte until EOF
      */
     private int remainingBytes() {
-        return (int)(size - pos);
+        return Math.toIntExact(size - pos);
     }
 
     @Override
@@ -157,12 +190,12 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
     }
 
     @Override
-    public synchronized void mark(int readlimit) {
+    public void mark(int readlimit) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public synchronized void reset() {
+    public void reset() {
         throw new UnsupportedOperationException();
     }
 
@@ -172,7 +205,7 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
 
     private void nextChunk() throws GeneralSecurityException, IOException {
         if (chunkSize != -1) {
-            int index = (int) (pos >> chunkBits);
+            int index = Math.toIntExact(pos >> chunkBits);
             initCipherForBlock(cipher, index);
 
             if (lastIndex != index) {
@@ -185,7 +218,7 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
             lastIndex = index + 1;
         }
 
-        final int todo = (int)Math.min(size, chunk.length);
+        final int todo = Math.toIntExact(Math.min(size, chunk.length));
         int readBytes, totalBytes = 0;
         do {
             readBytes = super.read(plain, totalBytes, todo-totalBytes);

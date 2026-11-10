@@ -111,10 +111,10 @@ public class GeometrySection extends XDGFSection {
         // special cases
         GeometryRow first = rows.hasNext() ? rows.next() : null;
 
-        if (first instanceof Ellipse) {
-            return ((Ellipse)first).getPath();
-        } else if (first instanceof InfiniteLine) {
-            return ((InfiniteLine)first).getPath();
+        if (first instanceof Ellipse ellipse) {
+            return ellipse.getPath();
+        } else if (first instanceof InfiniteLine infiniteLine) {
+            return infiniteLine.getPath();
         } else if (first instanceof SplineStart) {
             throw new POIXMLException("SplineStart must be preceded by another type");
         } else {
@@ -137,14 +137,14 @@ public class GeometrySection extends XDGFSection {
                     row = rows.next();
                 }
 
-                if (row instanceof SplineStart) {
+                if (row instanceof SplineStart splineStart) {
                     if (renderer != null)
                         throw new POIXMLException("SplineStart found multiple times!");
-                    renderer = new SplineCollector((SplineStart) row);
-                } else if (row instanceof SplineKnot) {
+                    renderer = new SplineCollector(splineStart);
+                } else if (row instanceof SplineKnot splineKnot) {
                     if (renderer == null)
                         throw new POIXMLException("SplineKnot found without SplineStart!");
-                    renderer.addKnot((SplineKnot) row);
+                    renderer.addKnot(splineKnot);
                 } else {
                     if (renderer != null) {
                         renderer.addToPath(path, parent);

@@ -163,8 +163,10 @@ public final class DateFormatConverter  {
     }
 
     public static String convert( Locale locale, DateFormat df ) {
-        String ptrn = ((SimpleDateFormat)df).toPattern();
-        return convert(locale, ptrn);
+        if (df instanceof SimpleDateFormat sdf) {
+            return convert(locale, sdf.toPattern());
+        }
+        throw new IllegalArgumentException("Unsupported DateFormat class: " + df.getClass().getName());
     }
 
     public static String convert( Locale locale, String format ) {
@@ -190,56 +192,41 @@ public final class DateFormatConverter  {
 
     public static String getJavaDatePattern(int style, Locale locale) {
         DateFormat df = DateFormat.getDateInstance(style, locale);
-        if( df instanceof SimpleDateFormat ) {
-            return ((SimpleDateFormat)df).toPattern();
+        if(df instanceof SimpleDateFormat sdf) {
+            return sdf.toPattern();
         } else {
-            switch( style ) {
-            case DateFormat.SHORT:
-                return "d/MM/yy";
-            case DateFormat.LONG:
-                return "MMMM d, yyyy";
-            case DateFormat.FULL:
-                return "dddd, MMMM d, yyyy";
-            default:
-            case DateFormat.MEDIUM:
-                return "MMM d, yyyy";
-            }
+            return switch (style) {
+                case DateFormat.SHORT -> "d/MM/yy";
+                case DateFormat.LONG -> "MMMM d, yyyy";
+                case DateFormat.FULL -> "dddd, MMMM d, yyyy";
+                default -> "MMM d, yyyy";
+            };
         }
     }
 
     public static String getJavaTimePattern(int style, Locale locale) {
         DateFormat df = DateFormat.getTimeInstance(style, locale);
-        if( df instanceof SimpleDateFormat ) {
-            return ((SimpleDateFormat)df).toPattern();
+        if(df instanceof SimpleDateFormat sdf) {
+            return sdf.toPattern();
         } else {
-            switch( style ) {
-            case DateFormat.SHORT:
-                return "h:mm a";
-            default:
-            case DateFormat.MEDIUM:
-            case DateFormat.LONG:
-            case DateFormat.FULL:
-                return "h:mm:ss a";
-            }
+            return switch (style) {
+                case DateFormat.SHORT -> "h:mm a";
+                default -> "h:mm:ss a";
+            };
         }
     }
 
     public static String getJavaDateTimePattern(int style, Locale locale) {
         DateFormat df = DateFormat.getDateTimeInstance(style, style, locale);
-        if( df instanceof SimpleDateFormat ) {
-            return ((SimpleDateFormat)df).toPattern();
+        if(df instanceof SimpleDateFormat sdf) {
+            return sdf.toPattern();
         } else {
-            switch( style ) {
-            case DateFormat.SHORT:
-                return "M/d/yy h:mm a";
-            case DateFormat.LONG:
-                return "MMMM d, yyyy h:mm:ss a";
-            case DateFormat.FULL:
-                return "dddd, MMMM d, yyyy h:mm:ss a";
-            default:
-            case DateFormat.MEDIUM:
-                return "MMM d, yyyy h:mm:ss a";
-            }
+            return switch (style) {
+                case DateFormat.SHORT -> "M/d/yy h:mm a";
+                case DateFormat.LONG -> "MMMM d, yyyy h:mm:ss a";
+                case DateFormat.FULL -> "dddd, MMMM d, yyyy h:mm:ss a";
+                default -> "MMM d, yyyy h:mm:ss a";
+            };
         }
     }
 

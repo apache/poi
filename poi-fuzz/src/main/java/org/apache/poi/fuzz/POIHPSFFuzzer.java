@@ -23,7 +23,6 @@ import java.nio.BufferUnderflowException;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.io.output.NullOutputStream;
-import org.apache.poi.fuzz.POIFuzzer;
 import org.apache.poi.hpsf.HPSFPropertiesOnlyDocument;
 import org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;

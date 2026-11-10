@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -142,13 +143,13 @@ public final class TestXSSFRichTextString {
         rt.applyFont(0, 0, (short)1);
         IllegalArgumentException e;
         e = assertThrows(IllegalArgumentException.class, () -> rt.applyFont(11, 10, (short)1));
-        assertTrue(e.getMessage().contains("11"));
+        assertContains(e.getMessage(), "11");
 
         e = assertThrows(IllegalArgumentException.class, () -> rt.applyFont(-1, 10, (short)1));
-        assertTrue(e.getMessage().contains("-1"));
+        assertContains(e.getMessage(), "-1");
 
         e = assertThrows(IllegalArgumentException.class, () -> rt.applyFont(0, 555, (short)1));
-        assertTrue(e.getMessage().contains("555"));
+        assertContains(e.getMessage(), "555");
     }
 
     @Test
@@ -241,6 +242,37 @@ public final class TestXSSFRichTextString {
         st2.setT("abc_x000d_2ef_x000d_");
         XSSFRichTextString rt2 = new XSSFRichTextString(st2);
         assertEquals("abc\r2ef\r", rt2.getString());
+    }
+
+    @Test
+    void testUtfEncode() {
+        assertNull(XSSFRichTextString.utfEncode(null));
+        assertEquals("", XSSFRichTextString.utfEncode(""));
+        assertEquals("abc_x", XSSFRichTextString.utfEncode("abc_x"));
+        assertEquals("_x00G1_", XSSFRichTextString.utfEncode("_x00G1_"));
+        assertEquals("\t\n\r", XSSFRichTextString.utfEncode("\t\n\r"));
+        assertEquals("a_x0001_b_x001F__xFFFF_", XSSFRichTextString.utfEncode("a\u0001b\u001F\uFFFF"));
+        // the control character's escape would close the _xABCD sequence before it
+        assertEquals("_x005F_xABCD_x0001_", XSSFRichTextString.utfEncode("_xABCD\u0001"));
+        assertEquals("_xAB_x0001_", XSSFRichTextString.utfEncode("_xAB\u0001"));
+        assertEquals("_x\uFF10\uFF10\uFF10\uFF10_", XSSFRichTextString.utfEncode("_x\uFF10\uFF10\uFF10\uFF10_"));
+        assertEquals("_x005F_x0041_ col", XSSFRichTextString.utfEncode("_x0041_ col"));
+        assertEquals("a_x005F_x000d_b", XSSFRichTextString.utfEncode("a_x000d_b"));
+        assertEquals("_x005F_x005F_x005F_x0041_", XSSFRichTextString.utfEncode("_x005F_x0041_"));
+        // overlapping sequences: the second one would be decoded once the first is escaped
+        assertEquals("_x005F_x0041_x005F_x0042_", XSSFRichTextString.utfEncode("_x0041_x0042_"));
+    }
+
+    @Test
+    void testUtfEncodeRoundTrip() {
+        String[] values = {
+                "plain", "_x0041_", "_x0041_ col", "_x0041__x0042_", "_x0041_x0042_",
+                "_x005F_", "_x005F_x0041_", "__x0041_", "_x00_x0041_", "_x_x0041_", "_x000D_\r",
+                "a\u0001b", "\u0000", "_xABCD\u0001", "_x0041\u001F_", "\uFFFE\uFFFF", "_x0041_\u0002"
+        };
+        for (String value : values) {
+            assertEquals(value, XSSFRichTextString.utfDecode(XSSFRichTextString.utfEncode(value)), value);
+        }
     }
 
     @Test

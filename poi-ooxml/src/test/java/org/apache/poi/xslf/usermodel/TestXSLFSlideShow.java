@@ -20,6 +20,8 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -30,11 +32,15 @@ import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TestXSLFSlideShow {
     @Test
@@ -269,6 +275,53 @@ class TestXSLFSlideShow {
         }
     }
 
+    /**
+     * This test ensures that the parts used by a removed slide's chart and SmartArt,
+     * i.e. the embedded workbook and the diagram data, are not left orphaned.
+     */
+    @Test
+    void testRemoveSlideThatHasChartAndSmartArt() throws IOException {
+        try (XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("pie-chart.pptx")) {
+            ppt.removeSlide(0);
+            try (XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+                assertEquals(0, ppt2.getPackage().getPartsByName(Pattern.compile("/ppt/(charts|embeddings)/.*")).size());
+            }
+        }
+
+        try (XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("smartart-simple.pptx")) {
+            ppt.removeSlide(0);
+            try (XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+                assertEquals(0, ppt2.getPackage().getPartsByName(Pattern.compile("/ppt/(diagrams|media)/.*")).size());
+            }
+        }
+    }
+
+    /**
+     * The picture data of the slideshow must not list the pictures removed together with a slide,
+     * whether they were used through a SmartArt diagram or directly by the slide.
+     */
+    @Test
+    void testRemoveSlideUpdatesPictureData() throws IOException {
+        try (XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("smartart-simple.pptx")) {
+            // the SmartArt image is the only picture of the deck
+            byte[] data = ppt.getPictureData().get(0).getData();
+            ppt.removeSlide(0);
+            assertTrue(ppt.getPictureData().isEmpty());
+
+            // adding the same image again creates a new part instead of returning the removed one
+            XSLFPictureData pd = ppt.addPicture(data, PictureData.PictureType.JPEG);
+            ppt.createSlide().createPicture(pd);
+            try (XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+                XSLFPictureShape pic = (XSLFPictureShape) ppt2.getSlides().get(0).getShapes().get(0);
+                assertArrayEquals(data, pic.getPictureData().getData());
+
+                assertEquals(1, ppt2.getPictureData().size());
+                ppt2.removeSlide(0);
+                assertTrue(ppt2.getPictureData().isEmpty());
+            }
+        }
+    }
+
     @Test
     void testDimension() throws IOException {
         try (XMLSlideShow  ppt = new XMLSlideShow()) {
@@ -419,6 +472,71 @@ class TestXSLFSlideShow {
 
             // Ensure the value hasn't changed from the default after failed attempts
             assertEquals(1, ppt.getFirstSlideNumber());
+        }
+    }
+
+    @Test
+    void addPictureWithCollidingChecksum() throws IOException {
+        // "plumless" and "buckeroo" have the same CRC32
+        byte[] data1 = "plumless".getBytes(StandardCharsets.US_ASCII);
+        byte[] data2 = "buckeroo".getBytes(StandardCharsets.US_ASCII);
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            XSLFPictureData pic1 = ppt.addPicture(data1, PictureData.PictureType.PNG);
+            assertSame(pic1, ppt.findPictureData(data1));
+            assertNull(ppt.findPictureData(data2));
+
+            XSLFPictureData pic2 = ppt.addPicture(data2, PictureData.PictureType.PNG);
+            assertNotSame(pic1, pic2);
+            assertArrayEquals(data2, pic2.getData());
+            assertEquals(2, ppt.getPictureData().size());
+
+            // real duplicates are still reused, also past a colliding entry
+            assertSame(pic1, ppt.addPicture(data1, PictureData.PictureType.PNG));
+            assertSame(pic2, ppt.addPicture(data2, PictureData.PictureType.PNG));
+            assertEquals(2, ppt.getPictureData().size());
+
+            // pictures loaded from a file have no cached checksum yet
+            try (XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+                XSLFPictureData readPic1 = ppt2.findPictureData(data1);
+                XSLFPictureData readPic2 = ppt2.findPictureData(data2);
+                assertNotNull(readPic1);
+                assertNotNull(readPic2);
+                assertNotSame(readPic1, readPic2);
+                assertArrayEquals(data1, readPic1.getData());
+                assertArrayEquals(data2, readPic2.getData());
+            }
+        }
+    }
+
+    @Test
+    void changePictureDataOfLoadedSlideShow() throws IOException {
+        byte[] data1 = "first".getBytes(StandardCharsets.US_ASCII);
+        byte[] data2 = "second".getBytes(StandardCharsets.US_ASCII);
+        byte[] data3 = "third".getBytes(StandardCharsets.US_ASCII);
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            XSLFPictureData newPic = ppt.addPicture(data3, PictureData.PictureType.PNG);
+            newPic.setData(data1);
+            assertArrayEquals(data1, newPic.getData());
+            assertSame(newPic, ppt.findPictureData(data1));
+            try (XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+                XSLFPictureData pic = ppt2.findPictureData(data1);
+                assertNotNull(pic);
+
+                pic.setData(data2);
+                assertArrayEquals(data2, pic.getData());
+                assertNull(ppt2.findPictureData(data1));
+                assertSame(pic, ppt2.findPictureData(data2));
+
+                // writing to the part directly must not leave a stale checksum behind
+                pic.getPackagePart().clear();
+                try (OutputStream os = pic.getPackagePart().getOutputStream()) {
+                    os.write(data3);
+                }
+                assertArrayEquals(data3, pic.getData());
+                assertNull(ppt2.findPictureData(data2));
+                assertSame(pic, ppt2.findPictureData(data3));
+                assertEquals(1, ppt2.getPictureData().size());
+            }
         }
     }
 }

@@ -134,8 +134,7 @@ public final class ActiveXShape extends HSLFPictureShape {
         }
 
         for (Record ch : lst.getChildRecords()) {
-            if(ch instanceof ExControl){
-                ExControl c = (ExControl)ch;
+            if(ch instanceof ExControl c){
                 if(c.getExOleObjAtom().getObjID() == idx){
                     return c;
                 }

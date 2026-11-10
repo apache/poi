@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.util;
 
+import static org.apache.poi.POITestCase.assertEndsWith;
+import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -94,8 +96,8 @@ class TestTempFile {
         fos.close();
         assertTrue(tempFile.exists());
         assertTrue(tempFile.isFile());
-        assertTrue(tempFile.getName().startsWith("test"));
-        assertTrue(tempFile.getName().endsWith(".txt"));
+        assertStartsWith(tempFile.getName(), "test");
+        assertEndsWith(tempFile.getName(), ".txt");
         assertEquals(DefaultTempFileCreationStrategy.POIFILES, tempFile.getParentFile().getName());
 
         // Can't think of a good way to check whether a file is actually deleted since it would require the VM to stop.
@@ -106,7 +108,7 @@ class TestTempFile {
     @Test
     void createTempFileWithDefaultSuffix() throws IOException {
         File tempFile = TempFile.createTempFile("test", null);
-        assertTrue(tempFile.getName().endsWith(".tmp"));
+        assertEndsWith(tempFile.getName(), ".tmp");
     }
 
     @Test
@@ -115,7 +117,7 @@ class TestTempFile {
         File tempDir = TempFile.createTempDirectory("testDir");
         assertTrue(tempDir.exists());
         assertTrue(tempDir.isDirectory());
-        assertTrue(tempDir.getName().startsWith("testDir"));
+        assertStartsWith(tempDir.getName(), "testDir");
         assertEquals(DefaultTempFileCreationStrategy.POIFILES, tempDir.getParentFile().getName());
 
         // Can't think of a good way to check whether a directory is actually deleted since it would require the VM to stop.

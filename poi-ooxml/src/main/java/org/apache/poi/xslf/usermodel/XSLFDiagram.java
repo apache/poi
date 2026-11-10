@@ -25,7 +25,6 @@ import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.diagram.CTRelIds;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObjectData;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupShapeProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTApplicationNonVisualDrawingProps;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShapeNonVisual;
@@ -34,6 +33,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShapeNonVisual;
 import javax.xml.namespace.QName;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -88,9 +88,8 @@ public class XSLFDiagram extends XSLFGraphicFrame {
             return false;
         }
         // A shape has text content when there is at least 1 paragraph with 1 paragraph run list
-        List<CTTextParagraph> paragraphs = msShapeCt.getTxBody().getPList();
-        return paragraphs.stream()
-                .flatMap(p -> p.getRList().stream())
+        return Arrays.stream(msShapeCt.getTxBody().getPArray())
+                .flatMap(p -> Arrays.stream(p.getRArray()))
                 .anyMatch(run -> run.getT() != null && !run.getT().trim().isEmpty());
     }
 
@@ -230,7 +229,7 @@ public class XSLFDiagram extends XSLFGraphicFrame {
         }
         groupShapeNonVisualCt.setNvPr(CTApplicationNonVisualDrawingProps.Factory.newInstance());
 
-        for (CTShape msShapeCt : msGroupShapeCt.getSpList()) {
+        for (CTShape msShapeCt : msGroupShapeCt.getSpArray()) {
             List<org.openxmlformats.schemas.presentationml.x2006.main.CTShape> shapes = convertShape(msShapeCt);
             groupShapeCt.getSpList().addAll(shapes);
         }

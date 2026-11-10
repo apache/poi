@@ -18,6 +18,7 @@
 package org.apache.poi.poifs.crypt;
 
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.util.StringUtil;
 
 public enum HashAlgorithm {
     none     (         "", 0x0000,           "",  0,               "", false, ""),
@@ -83,7 +84,7 @@ public enum HashAlgorithm {
     
     public static HashAlgorithm fromString(String string) {
         for (HashAlgorithm ha : values()) {
-            if (ha.ecmaString.equalsIgnoreCase(string) || ha.jceId.equalsIgnoreCase(string)) {
+            if (StringUtil.equalsIgnoreCase(ha.ecmaString, string) || StringUtil.equalsIgnoreCase(ha.jceId, string)) {
                 return ha;
             }
         }

@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel.helpers;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;
@@ -30,6 +31,10 @@ import org.apache.poi.ss.usermodel.helpers.BaseRowColShifter;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.usermodel.*;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTOneCellAnchor;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTTwoCellAnchor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 import java.util.ArrayList;
@@ -52,9 +57,9 @@ import static org.apache.logging.log4j.util.Unbox.box;
      * Updated named ranges
      */
     /*package*/
-    static void updateNamedRanges(Sheet sheet, FormulaShifter formulaShifter) {
-        Workbook wb = sheet.getWorkbook();
-        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create((XSSFWorkbook) wb);
+    static void updateNamedRanges(XSSFSheet sheet, FormulaShifter formulaShifter) {
+        XSSFWorkbook wb = sheet.getWorkbook();
+        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         for (Name name : wb.getAllNames()) {
             String formula = name.getRefersToFormula();
             int sheetIndex = name.getSheetIndex();
@@ -71,20 +76,20 @@ import static org.apache.logging.log4j.util.Unbox.box;
     /**
      * Update formulas.
      */
-    /*package*/ static void updateFormulas(Sheet sheet, FormulaShifter formulaShifter) {
+    /*package*/ static void updateFormulas(XSSFSheet sheet, FormulaShifter formulaShifter) {
         //update formulas on the parent sheet
-        updateSheetFormulas(sheet,formulaShifter);
+        updateSheetFormulas(sheet, formulaShifter);
 
         //update formulas on other sheets
-        Workbook wb = sheet.getWorkbook();
+        XSSFWorkbook wb = sheet.getWorkbook();
         for(Sheet sh : wb)
         {
             if (sheet == sh) continue;
-            updateSheetFormulas(sh, formulaShifter);
+            updateSheetFormulas((XSSFSheet) sh, formulaShifter);
         }
     }
 
-    /*package*/ static void updateSheetFormulas(Sheet sh, FormulaShifter formulashifter) {
+    /*package*/ static void updateSheetFormulas(XSSFSheet sh, FormulaShifter formulashifter) {
         for (Row r : sh) {
             XSSFRow row = (XSSFRow) r;
             updateRowFormulas(row, formulashifter);
@@ -106,15 +111,18 @@ import static org.apache.logging.log4j.util.Unbox.box;
             if (ctCell.isSetF()) {
                 CTCellFormula f = ctCell.getF();
                 String formula = f.getStringValue();
-                if (formula.length() > 0) {
+                if (!formula.isEmpty()) {
                     String shiftedFormula = shiftFormula(row, formula, formulaShifter);
                     if (shiftedFormula != null) {
                         f.setStringValue(shiftedFormula);
                         if(f.getT() == STCellFormulaType.SHARED){
                             int si = Math.toIntExact(f.getSi());
                             CTCellFormula sf = sheet.getSharedFormula(si);
-                            sf.setStringValue(shiftedFormula);
-                            updateRefInCTCellFormula(row, formulaShifter, sf);
+                            // the sheet holds a detached copy of the master formula
+                            if (sf != null && sf != f) {
+                                sf.setStringValue(shiftedFormula);
+                                updateRefInCTCellFormula(row, formulaShifter, sf);
+                            }
                         }
                     }
 
@@ -137,12 +145,12 @@ import static org.apache.logging.log4j.util.Unbox.box;
      * <code>null</code> if the formula wasn't modified
      */
     /*package*/
-    static String shiftFormula(Row row, String formula, FormulaShifter formulaShifter) {
-        Sheet sheet = row.getSheet();
-        Workbook wb = sheet.getWorkbook();
-        int sheetIndex = wb.getSheetIndex(sheet);
+    static String shiftFormula(XSSFRow row, String formula, FormulaShifter formulaShifter) {
+        XSSFSheet sheet = row.getSheet();
+        XSSFWorkbook wb = sheet.getWorkbook();
+        final int sheetIndex = wb.getSheetIndex(sheet);
         final int rowIndex = row.getRowNum();
-        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create((XSSFWorkbook) wb);
+        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
 
         try {
             Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex, rowIndex);
@@ -159,7 +167,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
     }
 
     /*package*/
-    static void updateRefInCTCellFormula(Row row, FormulaShifter formulaShifter, CTCellFormula f) {
+    static void updateRefInCTCellFormula(XSSFRow row, FormulaShifter formulaShifter, CTCellFormula f) {
         if (f.isSetRef()) { //Range of cells which the formula applies to.
             String ref = f.getRef();
             String shiftedRef = shiftFormula(row, ref, formulaShifter);
@@ -167,16 +175,13 @@ import static org.apache.logging.log4j.util.Unbox.box;
         }
     }
 
-
-
-    /*package*/ static void updateConditionalFormatting(Sheet sheet, FormulaShifter formulaShifter) {
-        XSSFSheet xsheet = (XSSFSheet) sheet;
-        XSSFWorkbook wb = xsheet.getWorkbook();
+    /*package*/ static void updateConditionalFormatting(XSSFSheet sheet, FormulaShifter formulaShifter) {
+        XSSFWorkbook wb = sheet.getWorkbook();
         int sheetIndex = wb.getSheetIndex(sheet);
         final int rowIndex = -1; //don't care, structured references not allowed in conditional formatting
 
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
-        CTWorksheet ctWorksheet = xsheet.getCTWorksheet();
+        CTWorksheet ctWorksheet = sheet.getCTWorksheet();
         CTConditionalFormatting[] conditionalFormattingArray = ctWorksheet.getConditionalFormattingArray();
         // iterate backwards due to possible calls to ctWorksheet.removeConditionalFormatting(j)
         for (int j = conditionalFormattingArray.length - 1; j >= 0; j--) {
@@ -230,22 +235,79 @@ import static org.apache.logging.log4j.util.Unbox.box;
     }
 
 
-    /*package*/ static void updateHyperlinks(Sheet sheet, FormulaShifter formulaShifter) {
+    /*package*/ static void updateHyperlinks(XSSFSheet sheet, FormulaShifter formulaShifter) {
         final int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
 
-        for (Hyperlink hyperlink : sheet.getHyperlinkList()) {
-            XSSFHyperlink xhyperlink = (XSSFHyperlink) hyperlink;
-            String cellRef = xhyperlink.getCellRef();
+        for (XSSFHyperlink hyperlink : sheet.getHyperlinkList()) {
+            String cellRef = hyperlink.getCellRef();
             CellRangeAddress cra = CellRangeAddress.valueOf(cellRef);
             CellRangeAddress shiftedRange = BaseRowColShifter.shiftRange(formulaShifter, cra, sheetIndex);
             if (shiftedRange != null && shiftedRange != cra) {
                 // shiftedRange should not be null. If shiftedRange is null, that means
                 // that a hyperlink wasn't deleted at the beginning of shiftRows when
                 // identifying rows that should be removed because they will be overwritten
-                xhyperlink.setCellReference(shiftedRange.formatAsString());
+                hyperlink.setCellReference(shiftedRange.formatAsString());
             }
         }
     }
 
+    /**
+     * Shift the anchors of the shapes (charts, pictures, ...) in the sheet's drawing along with the rows
+     * they are anchored to. A shape is moved when its top-left anchor row is within {@code [startRow, endRow]};
+     * the whole shape is moved so it keeps its size (Excel's "move but don't size with cells").
+     * Shapes with an absolute anchor are not moved.
+     */
+    /*package*/ static void shiftDrawingAnchorRows(XSSFSheet sheet, int startRow, int endRow, int n) {
+        shiftDrawingAnchors(sheet, startRow, endRow, n, true);
+    }
 
+    /**
+     * Shift the anchors of the shapes (charts, pictures, ...) in the sheet's drawing along with the columns
+     * they are anchored to. A shape is moved when its top-left anchor column is within
+     * {@code [startColumn, endColumn]}; the whole shape is moved so it keeps its size.
+     * Shapes with an absolute anchor are not moved.
+     */
+    /*package*/ static void shiftDrawingAnchorColumns(XSSFSheet sheet, int startColumn, int endColumn, int n) {
+        shiftDrawingAnchors(sheet, startColumn, endColumn, n, false);
+    }
+
+    private static void shiftDrawingAnchors(XSSFSheet sheet, int start, int end, int n, boolean rows) {
+        if (n == 0) {
+            return;
+        }
+        XSSFDrawing drawing = sheet.getDrawingPatriarch();
+        if (drawing == null) {
+            return;
+        }
+        CTDrawing ctDrawing = drawing.getCTDrawing();
+        for (CTTwoCellAnchor anchor : ctDrawing.getTwoCellAnchorArray()) {
+            if (isInRange(anchor.getFrom(), start, end, rows)) {
+                shiftMarker(anchor.getFrom(), n, rows);
+                shiftMarker(anchor.getTo(), n, rows);
+            }
+        }
+        for (CTOneCellAnchor anchor : ctDrawing.getOneCellAnchorArray()) {
+            if (isInRange(anchor.getFrom(), start, end, rows)) {
+                shiftMarker(anchor.getFrom(), n, rows);
+            }
+        }
+        // absolute anchors are positioned in EMUs, not cells, so they don't move with rows or columns
+    }
+
+    private static boolean isInRange(CTMarker marker, int start, int end, boolean rows) {
+        int idx = rows ? marker.getRow() : marker.getCol();
+        return idx >= start && idx <= end;
+    }
+
+    private static void shiftMarker(CTMarker marker, int n, boolean rows) {
+        if (rows) {
+            marker.setRow(clip(marker.getRow() + n, SpreadsheetVersion.EXCEL2007.getLastRowIndex()));
+        } else {
+            marker.setCol(clip(marker.getCol() + n, SpreadsheetVersion.EXCEL2007.getLastColumnIndex()));
+        }
+    }
+
+    private static int clip(int idx, int max) {
+        return Math.min(Math.max(0, idx), max);
+    }
 }

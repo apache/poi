@@ -25,6 +25,7 @@ import java.util.function.Function;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 import org.apache.poi.wp.usermodel.Paragraph;
 import org.apache.xmlbeans.XmlCursor;
@@ -70,14 +71,20 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         for (XWPFRun run : runs) {
             CTR r = run.getCTR();
 
+            // Footnote/endnote references are rare - only pay for the cursor walk below
+            // when the run actually holds at least one of them. CTFtnEdnRef can only occur
+            // as a w:footnoteReference or a w:endnoteReference child of the run.
+            if (r.sizeOfFootnoteReferenceArray() == 0 && r.sizeOfEndnoteReferenceArray() == 0) {
+                continue;
+            }
+
             // Check for bits that only apply when attached to a core document
             // TODO Make this nicer by tracking the XWPFFootnotes directly
             try (XmlCursor c = r.newCursor()) {
                 c.selectPath("child::*");
                 while (c.toNextSelection()) {
                     XmlObject o = c.getObject();
-                    if (o instanceof CTFtnEdnRef) {
-                        CTFtnEdnRef ftn = (CTFtnEdnRef) o;
+                    if (o instanceof CTFtnEdnRef ftn) {
                         final BigInteger id = ftn.getId();
                         footnoteText.append(" [").append(id).append(": ");
                         XWPFAbstractFootnoteEndnote footnote =
@@ -114,37 +121,34 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
             c.selectPath("child::*");
             while (c.toNextSelection()) {
                 XmlObject o = c.getObject();
-                if (o instanceof CTR) {
-                    XWPFRun r = new XWPFRun((CTR) o, (IRunBody) this);
+                if (o instanceof CTR ctr) {
+                    XWPFRun r = new XWPFRun(ctr, (IRunBody) this);
                     runs.add(r);
                     iruns.add(r);
                 }
-                if (o instanceof CTHyperlink) {
-                    CTHyperlink link = (CTHyperlink)o;
+                if (o instanceof CTHyperlink link) {
                     for (CTR r : link.getRArray()) {
                         XWPFHyperlinkRun hr = new XWPFHyperlinkRun(link, r, this);
                         runs.add(hr);
                         iruns.add(hr);
                     }
                 }
-                if (o instanceof CTSimpleField) {
-                    CTSimpleField field = (CTSimpleField)o;
+                if (o instanceof CTSimpleField field) {
                     for (CTR r : field.getRArray()) {
                         XWPFFieldRun fr = new XWPFFieldRun(field, r, this);
                         runs.add(fr);
                         iruns.add(fr);
                     }
                 }
-                if (o instanceof CTSdtBlock) {
-                    XWPFSDT cc = new XWPFSDT((CTSdtBlock) o, part);
+                if (o instanceof CTSdtBlock block) {
+                    XWPFSDT cc = new XWPFSDT(block, part);
                     iruns.add(cc);
                 }
-                if (o instanceof CTSdtRun) {
-                    XWPFSDT cc = new XWPFSDT((CTSdtRun) o, part);
+                if (o instanceof CTSdtRun run) {
+                    XWPFSDT cc = new XWPFSDT(run, part);
                     iruns.add(cc);
                 }
-                if (o instanceof CTRunTrackChange) {
-                    final CTRunTrackChange parentRecord = (CTRunTrackChange) o;
+                if (o instanceof CTRunTrackChange parentRecord) {
                     for (CTR r : parentRecord.getRArray()) {
                         XWPFRun cr = new XWPFRun(r, (IRunBody) this);
                         runs.add(cr);
@@ -200,14 +204,13 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     public String getText() {
         StringBuilder out = new StringBuilder(64);
         for (IRunElement run : iruns) {
-            if (run instanceof XWPFRun) {
-                XWPFRun xRun = (XWPFRun) run;
+            if (run instanceof XWPFRun xRun) {
                 // don't include the text if reviewing is enabled and this is a deleted run
                 if (xRun.getCTR().sizeOfDelTextArray() == 0) {
                     out.append(xRun);
                 }
-            } else if (run instanceof XWPFSDT) {
-                out.append(((XWPFSDT) run).getContent().getText());
+            } else if (run instanceof XWPFSDT xSdt) {
+                out.append(xSdt.getContent().getText());
             } else {
                 out.append(run);
             }
@@ -317,8 +320,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                 BigInteger abstractNumId = num.getCTNum().getAbstractNumId().getVal();
                 CTAbstractNum anum = numbering.getAbstractNum(abstractNumId).getAbstractNum();
                 CTLvl level = null;
-                for (int i = 0; i < anum.sizeOfLvlArray(); i++) {
-                    CTLvl lvl = anum.getLvlArray(i);
+                for (CTLvl lvl : anum.getLvlArray()) {
                     if (lvl.getIlvl().equals(ilvl)) {
                         level = lvl;
                         break;
@@ -373,8 +375,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                 }
 
                 CTLvl level = null;
-                for (int i = 0; i < anum.sizeOfLvlArray(); i++) {
-                    CTLvl lvl = anum.getLvlArray(i);
+                for (CTLvl lvl : anum.getLvlArray()) {
                     if (lvl != null && lvl.getIlvl() != null && lvl.getIlvl().equals(ilvl)) {
                         level = lvl;
                         break;
@@ -407,8 +408,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                 }
                 BigInteger ilvl = getNumIlvl();
                 CTNumLvl level = null;
-                for (int i = 0; i < ctNum.sizeOfLvlOverrideArray(); i++) {
-                    CTNumLvl ctNumLvl = ctNum.getLvlOverrideArray(i);
+                for (CTNumLvl ctNumLvl : ctNum.getLvlOverrideArray()) {
                     if (ctNumLvl != null && ctNumLvl.getIlvl() != null &&
                             ctNumLvl.getIlvl().equals(ilvl)) {
                         level = ctNumLvl;
@@ -464,7 +464,11 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     public String getPictureText() {
         StringBuilder out = new StringBuilder(64);
         for (XWPFRun run : runs) {
-            out.append(run.getPictureText());
+            String pictureText = run.getPictureText();
+            if (!out.isEmpty() && !pictureText.isEmpty()) {
+                out.append("\n");
+            }
+            out.append(pictureText);
         }
         return out.toString();
     }
@@ -928,7 +932,8 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public int getSpacingAfter() {
         CTSpacing spacing = getCTSpacing(false);
-        return (spacing != null && spacing.isSetAfter()) ? (int)Units.toDXA(POIXMLUnits.parseLength(spacing.xgetAfter())) : -1;
+        return (spacing != null && spacing.isSetAfter()) ?
+                MathUtil.safeDoubleToInt(Units.toDXA(POIXMLUnits.parseLength(spacing.xgetAfter()))) : -1;
     }
 
     /**
@@ -945,7 +950,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     public void setSpacingAfter(int spaces) {
         CTSpacing spacing = getCTSpacing(true);
         if (spacing != null) {
-            BigInteger bi = new BigInteger(Integer.toString(spaces));
+            BigInteger bi = BigInteger.valueOf(spaces);
             spacing.setAfter(bi);
         }
 
@@ -981,7 +986,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public void setSpacingAfterLines(int spaces) {
         CTSpacing spacing = getCTSpacing(true);
-        BigInteger bi = new BigInteger(Integer.toString(spaces));
+        BigInteger bi = BigInteger.valueOf(spaces);
         spacing.setAfterLines(bi);
     }
 
@@ -994,7 +999,8 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public int getSpacingBefore() {
         CTSpacing spacing = getCTSpacing(false);
-        return (spacing != null && spacing.isSetBefore()) ? (int)Units.toDXA(POIXMLUnits.parseLength(spacing.xgetBefore())) : -1;
+        return (spacing != null && spacing.isSetBefore()) ?
+                MathUtil.safeDoubleToInt(Units.toDXA(POIXMLUnits.parseLength(spacing.xgetBefore()))) : -1;
     }
 
     /**
@@ -1010,7 +1016,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public void setSpacingBefore(int spaces) {
         CTSpacing spacing = getCTSpacing(true);
-        BigInteger bi = new BigInteger(Integer.toString(spaces));
+        BigInteger bi = BigInteger.valueOf(spaces);
         spacing.setBefore(bi);
     }
 
@@ -1042,7 +1048,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public void setSpacingBeforeLines(int spaces) {
         CTSpacing spacing = getCTSpacing(true);
-        BigInteger bi = new BigInteger(Integer.toString(spaces));
+        BigInteger bi = BigInteger.valueOf(spaces);
         spacing.setBeforeLines(bi);
     }
 
@@ -1142,7 +1148,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     public int getIndentationLeft() {
         CTInd indentation = getCTInd(false);
         return (indentation != null && indentation.isSetLeft())
-            ? (int)Units.toDXA(POIXMLUnits.parseLength(indentation.xgetLeft()))
+            ? MathUtil.safeDoubleToInt(Units.toDXA(POIXMLUnits.parseLength(indentation.xgetLeft())))
             : -1;
     }
 
@@ -1161,7 +1167,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public void setIndentationLeft(int indentation) {
         CTInd indent = getCTInd(true);
-        BigInteger bi = new BigInteger(Integer.toString(indentation));
+        BigInteger bi = BigInteger.valueOf(indentation);
         indent.setLeft(bi);
     }
 
@@ -1187,7 +1193,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public void setIndentationLeftChars(int indentation) {
         CTInd indent = getCTInd(true);
-        BigInteger bi = new BigInteger(Integer.toString(indentation));
+        BigInteger bi = BigInteger.valueOf(indentation);
         indent.setLeftChars(bi);
     }
 
@@ -1208,7 +1214,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     public int getIndentationRight() {
         CTInd indentation = getCTInd(false);
         return (indentation != null && indentation.isSetRight())
-            ? (int)Units.toDXA(POIXMLUnits.parseLength(indentation.xgetRight()))
+            ? MathUtil.safeDoubleToInt(Units.toDXA(POIXMLUnits.parseLength(indentation.xgetRight())))
             : -1;
     }
 
@@ -1227,7 +1233,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public void setIndentationRight(int indentation) {
         CTInd indent = getCTInd(true);
-        BigInteger bi = new BigInteger(Integer.toString(indentation));
+        BigInteger bi = BigInteger.valueOf(indentation);
         indent.setRight(bi);
     }
 
@@ -1253,7 +1259,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public void setIndentationRightChars(int indentation) {
         CTInd indent = getCTInd(true);
-        BigInteger bi = new BigInteger(Integer.toString(indentation));
+        BigInteger bi = BigInteger.valueOf(indentation);
         indent.setRightChars(bi);
     }
 
@@ -1273,7 +1279,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     public int getIndentationHanging() {
         CTInd indentation = getCTInd(false);
         return (indentation != null && indentation.isSetHanging())
-            ? (int)Units.toDXA(POIXMLUnits.parseLength(indentation.xgetHanging())) : -1;
+            ? MathUtil.safeDoubleToInt(Units.toDXA(POIXMLUnits.parseLength(indentation.xgetHanging()))) : -1;
     }
 
     /**
@@ -1292,7 +1298,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
 
     public void setIndentationHanging(int indentation) {
         CTInd indent = getCTInd(true);
-        BigInteger bi = new BigInteger(Integer.toString(indentation));
+        BigInteger bi = BigInteger.valueOf(indentation);
         indent.setHanging(bi);
     }
 
@@ -1314,7 +1320,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     public int getIndentationFirstLine() {
         CTInd indentation = getCTInd(false);
         return (indentation != null && indentation.isSetFirstLine())
-            ? (int)Units.toDXA(POIXMLUnits.parseLength(indentation.xgetFirstLine()))
+            ? MathUtil.safeDoubleToInt(Units.toDXA(POIXMLUnits.parseLength(indentation.xgetFirstLine())))
             : -1;
     }
 
@@ -1334,7 +1340,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public void setIndentationFirstLine(int indentation) {
         CTInd indent = getCTInd(true);
-        BigInteger bi = new BigInteger(Integer.toString(indentation));
+        BigInteger bi = BigInteger.valueOf(indentation);
         indent.setFirstLine(bi);
     }
 
@@ -1711,9 +1717,9 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                 c.selectPath("./*");
                 while (c.toNextSelection()) {
                     XmlObject o = c.getObject();
-                    if (o instanceof CTText) {
+                    if (o instanceof CTText ctText) {
                         if (textPos >= startText) {
-                            String candidate = ((CTText) o).getStringValue();
+                            String candidate = ctText.getStringValue();
                             if (runPos == startRun) {
                                 charPos = startChar;
                             } else {
@@ -1804,9 +1810,9 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         if (pos >= 0 && pos < runs.size()) {
             XWPFRun run = runs.get(pos);
             // CTP -> CTHyperlink -> R array
-            if (run instanceof XWPFHyperlinkRun
-                    && isTheOnlyCTHyperlinkInRuns((XWPFHyperlinkRun) run)) {
-                try (XmlCursor c = ((XWPFHyperlinkRun) run).getCTHyperlink().newCursor()) {
+            if (run instanceof XWPFHyperlinkRun hyperlinkRun
+                    && isTheOnlyCTHyperlinkInRuns(hyperlinkRun)) {
+                try (XmlCursor c = hyperlinkRun.getCTHyperlink().newCursor()) {
                     c.removeXml();
                 }
                 runs.remove(pos);
@@ -1814,9 +1820,9 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                 return true;
             }
             // CTP -> CTField -> R array
-            if (run instanceof XWPFFieldRun
-                    && isTheOnlyCTFieldInRuns((XWPFFieldRun) run)) {
-                try (XmlCursor c = ((XWPFFieldRun) run).getCTField().newCursor()) {
+            if (run instanceof XWPFFieldRun fieldRun
+                    && isTheOnlyCTFieldInRuns(fieldRun)) {
+                try (XmlCursor c = fieldRun.getCTField().newCursor()) {
                     c.removeXml();
                 }
                 runs.remove(pos);
@@ -1840,8 +1846,8 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     private boolean isTheOnlyCTHyperlinkInRuns(XWPFHyperlinkRun run) {
         CTHyperlink ctHyperlink = run.getCTHyperlink();
-        long count = runs.stream().filter(r -> (r instanceof XWPFHyperlinkRun
-                && ctHyperlink == ((XWPFHyperlinkRun) r).getCTHyperlink()))
+        long count = runs.stream().filter(r -> (r instanceof XWPFHyperlinkRun hyperlinkRun
+                && ctHyperlink == hyperlinkRun.getCTHyperlink()))
                 .count();
         return count <= 1;
     }
@@ -1853,8 +1859,8 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     private boolean isTheOnlyCTFieldInRuns(XWPFFieldRun run) {
         CTSimpleField ctField = run.getCTField();
-        long count = runs.stream().filter(r -> (r instanceof XWPFFieldRun
-                && ctField == ((XWPFFieldRun) r).getCTField())).count();
+        long count = runs.stream().filter(r -> (r instanceof XWPFFieldRun fieldRun
+                && ctField == fieldRun.getCTField())).count();
         return count <= 1;
     }
 
@@ -1927,10 +1933,10 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         XWPFRun run = createRun();
         CTR ctRun = run.getCTR();
         ctRun.addNewRPr().addNewRStyle().setVal("FootnoteReference");
-        if (footnote instanceof XWPFEndnote) {
-            ctRun.addNewEndnoteReference().setId(footnote.getId());
-        } else {
-            ctRun.addNewFootnoteReference().setId(footnote.getId());
+        if (footnote instanceof XWPFEndnote endnote) {
+            ctRun.addNewEndnoteReference().setId(endnote.getId());
+        } else if (footnote instanceof XWPFFootnote footnoteRef) {
+            ctRun.addNewFootnoteReference().setId(footnoteRef.getId());
         }
     }
 }

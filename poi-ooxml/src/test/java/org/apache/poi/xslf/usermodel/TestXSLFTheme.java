@@ -19,16 +19,17 @@ package org.apache.poi.xslf.usermodel;
 import static org.apache.poi.sl.usermodel.BaseTestSlideShow.getColor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
 import java.util.List;
 
-import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.GradientPaint;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
+import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
@@ -72,7 +73,7 @@ class TestXSLFTheme {
         XSLFTextRun run1 = sh1.getTextParagraphs().get(0).getTextRuns().get(0);
         assertEquals(Color.white, getColor(run1.getFontColor()));
         assertEquals(new Color(79, 129, 189), sh1.getFillColor());
-        assertTrue(sh1.getFillStyle().getPaint() instanceof SolidPaint) ;   // solid fill
+        assertInstanceOf(SolidPaint.class, sh1.getFillStyle().getPaint()) ;   // solid fill
 
     }
 
@@ -84,18 +85,18 @@ class TestXSLFTheme {
 
     void slide3(XSLFSlide slide){
         PaintStyle fs = slide.getBackground().getFillStyle().getPaint();
-        assertTrue(fs instanceof GradientPaint);
+        assertInstanceOf(GradientPaint.class, fs);
     }
 
     void slide4(XSLFSlide slide){
         PaintStyle fs = slide.getBackground().getFillStyle().getPaint();
-        assertTrue(fs instanceof GradientPaint);
+        assertInstanceOf(GradientPaint.class, fs);
 
         XSLFTextShape sh1 = (XSLFTextShape)getShape(slide, "Rectangle 4");
         XSLFTextRun run1 = sh1.getTextParagraphs().get(0).getTextRuns().get(0);
         assertEquals(Color.white, getColor(run1.getFontColor()));
         assertEquals(new Color(148, 198, 0), sh1.getFillColor());
-        assertTrue(sh1.getFillStyle().getPaint() instanceof SolidPaint) ;   // solid fill
+        assertInstanceOf(SolidPaint.class, sh1.getFillStyle().getPaint()) ;   // solid fill
 
         XSLFTextShape sh2 = (XSLFTextShape)getShape(slide, "Title 3");
         XSLFTextRun run2 = sh2.getTextParagraphs().get(0).getTextRuns().get(0);
@@ -107,7 +108,7 @@ class TestXSLFTheme {
 
     void slide5(XSLFSlide slide){
         PaintStyle fs = slide.getBackground().getFillStyle().getPaint();
-        assertTrue(fs instanceof TexturePaint);
+        assertInstanceOf(TexturePaint.class, fs);
 
         XSLFTextShape sh2 = (XSLFTextShape)getShape(slide, "Title 1");
         XSLFTextRun run2 = sh2.getTextParagraphs().get(0).getTextRuns().get(0);
@@ -144,17 +145,17 @@ class TestXSLFTheme {
 
     void slide8(XSLFSlide slide){
         PaintStyle fs = slide.getBackground().getFillStyle().getPaint();
-        assertTrue(fs instanceof TexturePaint);
+        assertInstanceOf(TexturePaint.class, fs);
     }
 
     void slide9(XSLFSlide slide){
         PaintStyle fs = slide.getBackground().getFillStyle().getPaint();
-        assertTrue(fs instanceof TexturePaint);
+        assertInstanceOf(TexturePaint.class, fs);
     }
 
     void slide10(XSLFSlide slide){
         PaintStyle fs = slide.getBackground().getFillStyle().getPaint();
-        assertTrue(fs instanceof GradientPaint);
+        assertInstanceOf(GradientPaint.class, fs);
 
         XSLFTextShape sh1 = (XSLFTextShape)getShape(slide, "Title 3");
         XSLFTextRun run1 = sh1.getTextParagraphs().get(0).getTextRuns().get(0);

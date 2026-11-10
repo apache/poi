@@ -38,7 +38,8 @@ public class ImageHeaderEMF {
 
     public ImageHeaderEMF(final byte[] data, final int off) {
         int offset = off;
-        int type = (int)LittleEndian.getUInt(data, offset); offset += 4;
+        int type = Math.toIntExact(LittleEndian.getUInt(data, offset));
+        offset += 4;
         if (type != 1) {
             LOG.atWarn().log("Invalid EMF picture - invalid type");
             deviceBounds = new Rectangle(0,0,200,200);

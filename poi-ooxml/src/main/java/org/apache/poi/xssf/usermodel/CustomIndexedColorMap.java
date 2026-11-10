@@ -16,8 +16,6 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import java.util.List;
-
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColors;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRgbColor;
 
@@ -55,10 +53,10 @@ public class CustomIndexedColorMap implements IndexedColorMap {
     public static CustomIndexedColorMap fromColors(CTColors colors) {
         if (colors == null || ! colors.isSetIndexedColors()) return null;
 
-        List<CTRgbColor> rgbColorList = colors.getIndexedColors().getRgbColorList();
-        byte[][] customColorIndex = new byte[rgbColorList.size()][3];
-        for (int i=0; i < rgbColorList.size(); i++) {
-            customColorIndex[i] = rgbColorList.get(i).getRgb();
+        CTRgbColor[] rgbColors = colors.getIndexedColors().getRgbColorArray();
+        byte[][] customColorIndex = new byte[rgbColors.length][3];
+        for (int i=0; i < rgbColors.length; i++) {
+            customColorIndex[i] = rgbColors[i].getRgb();
         }
         return new CustomIndexedColorMap(customColorIndex);
     }

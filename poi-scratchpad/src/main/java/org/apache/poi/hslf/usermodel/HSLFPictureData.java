@@ -258,22 +258,15 @@ public abstract class HSLFPictureData implements PictureData, GenericRecord {
             EscherContainerRecord recordContainer,
             EscherBSERecord bse
     ) {
-        switch (type) {
-            case EMF:
-                return new EMF(recordContainer, bse);
-            case WMF:
-                return new WMF(recordContainer, bse);
-            case PICT:
-                return new PICT(recordContainer, bse);
-            case JPEG:
-                return new JPEG(recordContainer, bse);
-            case PNG:
-                return new PNG(recordContainer, bse);
-            case DIB:
-                return new DIB(recordContainer, bse);
-            default:
-                throw new IllegalArgumentException("Unsupported picture type: " + type);
-        }
+        return switch (type) {
+            case EMF -> new EMF(recordContainer, bse);
+            case WMF -> new WMF(recordContainer, bse);
+            case PICT -> new PICT(recordContainer, bse);
+            case JPEG -> new JPEG(recordContainer, bse);
+            case PNG -> new PNG(recordContainer, bse);
+            case DIB -> new DIB(recordContainer, bse);
+            default -> throw new IllegalArgumentException("Unsupported picture type: " + type);
+        };
     }
 
     /**

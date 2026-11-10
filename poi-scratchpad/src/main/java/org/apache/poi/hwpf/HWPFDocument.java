@@ -702,7 +702,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
 
         // preserve space for the FileInformationBlock because we will be writing
         // it after we write everything else.
-        byte[] placeHolder = IOUtils.safelyAllocate(fibSize, MAX_RECORD_LENGTH);
+        byte[] placeHolder = IOUtils.safelyAllocate(fibSize, MAX_RECORD_LENGTH, "HWPFDocument.setMaxRecordLength()");
         wordDocumentStream.write(placeHolder);
         int mainOffset = wordDocumentStream.size();
         int tableOffset = 0;

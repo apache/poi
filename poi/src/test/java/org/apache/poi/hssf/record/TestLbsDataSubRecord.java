@@ -21,8 +21,8 @@ package org.apache.poi.hssf.record;
 import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -60,11 +60,11 @@ final class TestLbsDataSubRecord {
         ObjRecord record = new ObjRecord(in);
         assertEquals(3, record.getSubRecords().size());
         SubRecord sr = record.getSubRecords().get(2);
-        assertTrue(sr instanceof LbsDataSubRecord);
+        assertInstanceOf(LbsDataSubRecord.class, sr);
         LbsDataSubRecord lbs = (LbsDataSubRecord)sr;
         assertEquals(4, lbs.getNumberOfItems());
 
-        assertTrue(lbs.getFormula() instanceof AreaPtg);
+        assertInstanceOf(AreaPtg.class, lbs.getFormula());
         AreaPtg ptg = (AreaPtg)lbs.getFormula();
         CellRangeAddress range = new CellRangeAddress(
                 ptg.getFirstRow(), ptg.getLastRow(), ptg.getFirstColumn(), ptg.getLastColumn());
@@ -103,7 +103,7 @@ final class TestLbsDataSubRecord {
         ObjRecord record = new ObjRecord(in);
 
         SubRecord sr = record.getSubRecords().get(2);
-        assertTrue(sr instanceof LbsDataSubRecord);
+        assertInstanceOf(LbsDataSubRecord.class, sr);
         LbsDataSubRecord lbs = (LbsDataSubRecord)sr;
         assertEquals(8, lbs.getNumberOfItems());
         assertNull(lbs.getFormula());

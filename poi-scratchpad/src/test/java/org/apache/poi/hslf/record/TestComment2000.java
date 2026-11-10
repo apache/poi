@@ -21,8 +21,8 @@ package org.apache.poi.hslf.record;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -225,11 +225,11 @@ public final class TestComment2000 {
         Record[] ch = ca.getChildRecords();
         assertEquals(3, ch.length);
 
-        assertTrue(ch[0] instanceof CString);
+        assertInstanceOf(CString.class, ch[0]);
         assertEquals(0, ((CString)ch[0]).getOptions() >> 4);
-        assertTrue(ch[1] instanceof CString);
+        assertInstanceOf(CString.class, ch[1]);
         assertEquals(2, ((CString)ch[1]).getOptions() >> 4);
-        assertTrue(ch[2] instanceof Comment2000Atom);
+        assertInstanceOf(Comment2000Atom.class, ch[2]);
 
         assertEquals("NESS", ca.getAuthor());
         assertEquals("N", ca.getAuthorInitials());

@@ -145,11 +145,10 @@ public class CellAddress implements Comparable<CellAddress> {
         if (this == o) {
             return true;
         }
-        if(!(o instanceof CellAddress)) {
+        if(!(o instanceof CellAddress other)) {
             return false;
         }
 
-        CellAddress other = (CellAddress) o;
         return _row == other._row &&
                _col == other._col;
     }

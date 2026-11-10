@@ -23,6 +23,7 @@ import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -216,7 +217,7 @@ public final class TestStylesTable {
             }
             IllegalStateException e = assertThrows(IllegalStateException.class,
                 () -> styles.putNumberFormat("\"anotherformat \"0"));
-            assertTrue(e.getMessage().startsWith("The maximum number of Data Formats was exceeded."));
+            assertStartsWith(e.getMessage(), "The maximum number of Data Formats was exceeded.");
         }
     }
 
@@ -299,7 +300,7 @@ public final class TestStylesTable {
             // Check negative (illegal) limits
             IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> styles.setMaxNumberOfDataFormats(-1),
                 "Expected to get an IllegalArgumentException(\"Maximum Number of Data Formats must be greater than or equal to 0\")");
-            assertTrue(e.getMessage().startsWith("Maximum Number of Data Formats must be greater than or equal to 0"));
+            assertStartsWith(e.getMessage(), "Maximum Number of Data Formats must be greater than or equal to 0");
         }
     }
 
@@ -311,7 +312,7 @@ public final class TestStylesTable {
 
             // Try adding a format beyond the upper limit
             IllegalStateException e = assertThrows(IllegalStateException.class, () -> styles.putNumberFormat("\"test \"0"));
-            assertTrue(e.getMessage().startsWith("The maximum number of Data Formats was exceeded."));
+            assertStartsWith(e.getMessage(), "The maximum number of Data Formats was exceeded.");
         }
     }
 
@@ -323,7 +324,7 @@ public final class TestStylesTable {
 
             // Try decreasing the upper limit below the current number of formats
             IllegalStateException e = assertThrows(IllegalStateException.class, () -> styles.setMaxNumberOfDataFormats(0));
-            assertTrue(e.getMessage().startsWith("Cannot set the maximum number of data formats less than the current quantity."));
+            assertStartsWith(e.getMessage(), "Cannot set the maximum number of data formats less than the current quantity.");
         }
     }
 

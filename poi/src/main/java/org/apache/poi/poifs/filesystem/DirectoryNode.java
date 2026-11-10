@@ -158,6 +158,7 @@ public class DirectoryNode
      */
     DocumentEntry createDocument(final POIFSDocument document)
             throws IOException {
+        _filesystem.markChanged();
         DocumentProperty property = document.getDocumentProperty();
         DocumentNode rval = new DocumentNode(property, this);
 
@@ -179,6 +180,7 @@ public class DirectoryNode
      * @return true if the operation succeeded, else false
      */
     boolean changeName(final String oldName, final String newName) {
+        _filesystem.markChanged();
         boolean rval = false;
         EntryNode child = ( EntryNode ) _byUCName.get(oldName.toUpperCase(Locale.ROOT));
 
@@ -204,6 +206,7 @@ public class DirectoryNode
      */
 
     boolean deleteEntry(final EntryNode entry) {
+        _filesystem.markChanged();
         boolean rval =
                 (( DirectoryProperty ) getProperty())
                         .deleteChild(entry.getProperty());
@@ -418,6 +421,7 @@ public class DirectoryNode
      */
     @Override
     public DirectoryEntry createDirectory(final String name) throws IOException {
+        _filesystem.markChanged();
         DirectoryProperty property = new DirectoryProperty(name);
 
         DirectoryNode rval = new DirectoryNode(property, _filesystem, this);
@@ -471,6 +475,7 @@ public class DirectoryNode
      */
     @Override
     public void setStorageClsid(ClassID clsidStorage) {
+        _filesystem.markChanged();
         getProperty().setStorageClsid(clsidStorage);
     }
 

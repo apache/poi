@@ -63,17 +63,11 @@ public final class FilePassRecord extends StandardRecord {
     public FilePassRecord(RecordInputStream in) {
         encryptionType = in.readUShort();
 
-        EncryptionMode preferredMode;
-        switch (encryptionType) {
-            case ENCRYPTION_XOR:
-                preferredMode = EncryptionMode.xor;
-                break;
-            case ENCRYPTION_OTHER:
-                preferredMode = EncryptionMode.cryptoAPI;
-                break;
-            default:
-                throw new EncryptedDocumentException("invalid encryption type");
-        }
+        EncryptionMode preferredMode = switch (encryptionType) {
+            case ENCRYPTION_XOR -> EncryptionMode.xor;
+            case ENCRYPTION_OTHER -> EncryptionMode.cryptoAPI;
+            default -> throw new EncryptedDocumentException("invalid encryption type");
+        };
 
         try {
             encryptionInfo = new EncryptionInfo(in, preferredMode);

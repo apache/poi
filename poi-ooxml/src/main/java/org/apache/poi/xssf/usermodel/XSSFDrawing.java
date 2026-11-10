@@ -45,6 +45,7 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.model.Comments;
 import org.apache.xmlbeans.XmlCursor;
@@ -514,8 +515,8 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
     public List<XSSFChart> getCharts() {
         List<XSSFChart> charts = new ArrayList<>();
         for (POIXMLDocumentPart part : getRelations()) {
-            if (part instanceof XSSFChart) {
-                charts.add((XSSFChart) part);
+            if (part instanceof XSSFChart chart) {
+                charts.add(chart);
             }
         }
         return charts;
@@ -534,20 +535,12 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
         ctAnchor.addNewClientData();
         anchor.setTo(ctAnchor.getTo());
         anchor.setFrom(ctAnchor.getFrom());
-        STEditAs.Enum editAs;
-        switch (anchor.getAnchorType()) {
-        case DONT_MOVE_AND_RESIZE:
-            editAs = STEditAs.ABSOLUTE;
-            break;
-        case MOVE_AND_RESIZE:
-            editAs = STEditAs.TWO_CELL;
-            break;
-        case MOVE_DONT_RESIZE:
-            editAs = STEditAs.ONE_CELL;
-            break;
-        default:
-            editAs = STEditAs.ONE_CELL;
-        }
+        STEditAs.Enum editAs = switch (anchor.getAnchorType()) {
+            case DONT_MOVE_AND_RESIZE -> STEditAs.ABSOLUTE;
+            case MOVE_AND_RESIZE -> STEditAs.TWO_CELL;
+            case MOVE_DONT_RESIZE -> STEditAs.ONE_CELL;
+            default -> STEditAs.ONE_CELL;
+        };
         ctAnchor.setEditAs(editAs);
         return ctAnchor;
     }
@@ -566,8 +559,8 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
         for (int row = anchor.getRow1(); row < anchor.getRow2(); row++) {
             heightPx += ImageUtils.getRowHeightInPixels(sheet, row);
         }
-        long width = Units.pixelToEMU((int) widthPx);
-        long height = Units.pixelToEMU((int) heightPx);
+        long width = Units.pixelToEMU(MathUtil.safeDoubleToInt(widthPx));
+        long height = Units.pixelToEMU(MathUtil.safeDoubleToInt(heightPx));
         CTPositiveSize2D ext = xfrm.addNewExt();
         ext.setCx(width - anchor.getDx1() + anchor.getDx2());
         ext.setCy(height - anchor.getDy1() + anchor.getDy2());
@@ -616,17 +609,17 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
                     if (obj instanceof CTMarker) {
                         // ignore anchor elements
                         continue;
-                    } else if (obj instanceof CTPicture) {
-                        shape = new XSSFPicture(this, (CTPicture) obj);
-                    } else if (obj instanceof CTConnector) {
-                        shape = new XSSFConnector(this, (CTConnector) obj);
-                    } else if (obj instanceof CTShape) {
-                        shape = hasOleLink(obj) ? new XSSFObjectData(this, (CTShape) obj)
-                            : new XSSFSimpleShape(this, (CTShape) obj);
-                    } else if (obj instanceof CTGraphicalObjectFrame) {
-                        shape = new XSSFGraphicFrame(this, (CTGraphicalObjectFrame) obj);
-                    } else if (obj instanceof CTGroupShape) {
-                        shape = new XSSFShapeGroup(this, (CTGroupShape) obj);
+                    } else if (obj instanceof CTPicture ctPicture) {
+                        shape = new XSSFPicture(this, ctPicture);
+                    } else if (obj instanceof CTConnector ctConnector) {
+                        shape = new XSSFConnector(this, ctConnector);
+                    } else if (obj instanceof CTShape ctShape) {
+                        shape = hasOleLink(obj) ? new XSSFObjectData(this, ctShape)
+                            : new XSSFSimpleShape(this, ctShape);
+                    } else if (obj instanceof CTGraphicalObjectFrame ctFrame) {
+                        shape = new XSSFGraphicFrame(this, ctFrame);
+                    } else if (obj instanceof CTGroupShape ctGroup) {
+                        shape = new XSSFShapeGroup(this, ctGroup);
                     } else if (obj instanceof XmlAnyTypeImpl) {
                         LOG.atWarn().log("trying to parse AlternateContent, this unlinks the returned Shapes from the underlying xml content, so those shapes can't be used to modify the drawing, i.e. modifications will be ignored!");
 
@@ -690,14 +683,11 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
             }
         }
         if (parentXbean != null) {
-            if (parentXbean instanceof CTTwoCellAnchor) {
-                CTTwoCellAnchor ct = (CTTwoCellAnchor) parentXbean;
+            if (parentXbean instanceof CTTwoCellAnchor ct) {
                 anchor = new XSSFClientAnchor(ct.getFrom(), ct.getTo());
-            } else if (parentXbean instanceof CTOneCellAnchor) {
-                CTOneCellAnchor ct = (CTOneCellAnchor) parentXbean;
+            } else if (parentXbean instanceof CTOneCellAnchor ct) {
                 anchor = new XSSFClientAnchor(getSheet(), ct.getFrom(), ct.getExt());
-            } else if (parentXbean instanceof CTAbsoluteAnchor) {
-                CTAbsoluteAnchor ct = (CTAbsoluteAnchor) parentXbean;
+            } else if (parentXbean instanceof CTAbsoluteAnchor ct) {
                 anchor = new XSSFClientAnchor(getSheet(), ct.getPos(), ct.getExt());
             }
         }

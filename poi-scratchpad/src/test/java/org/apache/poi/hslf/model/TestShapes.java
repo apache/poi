@@ -23,6 +23,7 @@ import static org.apache.poi.hslf.HSLFTestDataSamples.writeOutAndReadBack;
 import static org.apache.poi.sl.usermodel.BaseTestSlideShow.getColor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -93,10 +94,10 @@ public final class TestShapes {
                 List<HSLFShape> shape = slide.getShapes();
                 assertEquals(2, shape.size());
 
-                assertTrue(shape.get(0) instanceof HSLFLine); //group shape
+                assertInstanceOf(HSLFLine.class, shape.get(0)); //group shape
                 assertEquals(lineAnchor, shape.get(0).getAnchor()); //group shape
 
-                assertTrue(shape.get(1) instanceof HSLFAutoShape); //group shape
+                assertInstanceOf(HSLFAutoShape.class, shape.get(1)); //group shape
                 assertEquals(ellipseAnchor, shape.get(1).getAnchor()); //group shape
 
             }
@@ -111,7 +112,7 @@ public final class TestShapes {
         try (HSLFSlideShow ppt = getSlideShow("with_textbox.ppt")) {
             HSLFSlide sl = ppt.getSlides().get(0);
             for (HSLFShape sh : sl.getShapes()) {
-                assertTrue(sh instanceof HSLFTextBox);
+                assertInstanceOf(HSLFTextBox.class, sh);
                 HSLFTextBox txtbox = (HSLFTextBox) sh;
                 String text = txtbox.getText();
                 assertNotNull(text);
@@ -332,13 +333,13 @@ public final class TestShapes {
 
                 List<HSLFShape> shape = slide.getShapes();
                 assertEquals(1, shape.size());
-                assertTrue(shape.get(0) instanceof HSLFGroupShape);
+                assertInstanceOf(HSLFGroupShape.class, shape.get(0));
 
                 group = (HSLFGroupShape) shape.get(0);
                 List<HSLFShape> grshape = group.getShapes();
                 assertEquals(2, grshape.size());
-                assertTrue(grshape.get(0) instanceof HSLFPictureShape);
-                assertTrue(grshape.get(1) instanceof HSLFLine);
+                assertInstanceOf(HSLFPictureShape.class, grshape.get(0));
+                assertInstanceOf(HSLFLine.class, grshape.get(1));
 
                 pict = (HSLFPictureShape) grshape.get(0);
                 assertEquals(new Rectangle2D.Double(0, 0, 200, 200), pict.getAnchor());

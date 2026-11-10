@@ -26,7 +26,9 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.util.Removal;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.xssf.model.*;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -370,7 +372,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
         String thisStr = null;
 
         // Process the value contents as required, now we have it all
-        if (formulasNotResults && formula.length() > 0) {
+        if (formulasNotResults && !formula.isEmpty()) {
             thisStr = formula.toString();
         } else {
             switch (nextDataType) {
@@ -411,8 +413,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
 
                 case INLINE_STRING:
                     // TODO: Can these ever have formatting on them?
-                    XSSFRichTextString rtsi = new XSSFRichTextString(value.toString());
-                    thisStr = rtsi.toString();
+                    thisStr = decodeText(value.toString());
                     break;
 
                 case SST_STRING:
@@ -420,8 +421,14 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
                     if (!sstIndex.isEmpty()) {
                         try {
                             int idx = parseInt(sstIndex);
-                            RichTextString rtss = sharedStringsTable.getItemAt(idx);
-                            thisStr = rtss.toString();
+                            if (sharedStringsTable instanceof ReadOnlySharedStringsTable roSst) {
+                                // this table holds plain strings anyway, so we can skip creating
+                                // a RichTextString (and its XmlBeans backing object) per cell
+                                thisStr = decodeText(roSst.getRawItemAt(idx));
+                            } else {
+                                RichTextString rtss = sharedStringsTable.getItemAt(idx);
+                                thisStr = rtss.toString();
+                            }
                         } catch (NumberFormatException ex) {
                             LOG.atError().withThrowable(ex).log("Failed to parse SST index '{}'", sstIndex);
                         }
@@ -458,6 +465,24 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
 
         // Output
         output.cell(cellRef, thisStr, comment);
+    }
+
+    /**
+     * Returns the same text as <code>new XSSFRichTextString(text).toString()</code> would,
+     * but without building the XmlBeans object backing the rich text string.
+     * <p>
+     * The only transformation that such a round-trip applies to a plain string is the decoding
+     * of the <code>_xHHHH_</code> escape sequences, so the (rare) strings that may contain such
+     * a sequence are still handled by {@link XSSFRichTextString}.
+     */
+    private static String decodeText(String text) {
+        if (text == null) {
+            return "";
+        }
+        if (!text.contains("_x")) {
+            return text;
+        }
+        return new XSSFRichTextString(text).toString();
     }
 
     /**
@@ -565,8 +590,27 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
          * sparse calls to <code>cell</code>. See the code in
          * <code>poi-examples/src/main/java/org/apache/poi/xssf/eventusermodel/XLSX2CSV.java</code>
          * for an example of how to handle this scenario.
+         *
+         * @deprecated use {@link #cell(String, String, Comment)}
          */
-        void cell(String cellReference, String formattedValue, XSSFComment comment);
+        @Deprecated
+        @Removal(version = "7.0.0")
+        default void cell(String cellReference, String formattedValue, XSSFComment comment) {
+            cell(cellReference, formattedValue, (Comment) comment);
+        }
+
+        /**
+         * A cell, with the given formatted value (may be null),
+         * and possibly a comment (may be null), was encountered.
+         * <p>
+         * Sheets that have missing or empty cells may result in
+         * sparse calls to <code>cell</code>. See the code in
+         * <code>poi-examples/src/main/java/org/apache/poi/xssf/eventusermodel/XLSX2CSV.java</code>
+         * for an example of how to handle this scenario.
+         *
+         * @since 6.0.0
+         */
+        void cell(String cellReference, String formattedValue, Comment comment);
 
         /**
          * A header or footer has been encountered

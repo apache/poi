@@ -197,6 +197,49 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
     }
 
     /**
+     * Setting an array formula over the range of an existing one replaces it, as re-entering
+     * the formula does in Excel: the cells report the new formula, the file holds only the new
+     * one and a single removal clears the range.
+     */
+    @Test
+    public final void testSetArrayFormula_replaceOnSameRange() throws IOException {
+        try (Workbook workbook1 = _testDataProvider.createWorkbook()) {
+            Sheet sheet1 = workbook1.createSheet();
+            CellRangeAddress range = CellRangeAddress.valueOf("C4:C6");
+            sheet1.setArrayFormula("SUM(A1:A3*B1:B3)", range);
+            CellRange<? extends Cell> cells = sheet1.setArrayFormula("MAX(A1:A3*B1:B3)", range);
+            assertEquals(3, cells.size());
+            for (Cell acell : cells) {
+                assertTrue(acell.isPartOfArrayFormulaGroup());
+                assertEquals("MAX(A1:A3*B1:B3)", acell.getCellFormula());
+                assertEquals(range, acell.getArrayFormulaRange());
+            }
+
+            try (Workbook workbook2 = _testDataProvider.writeOutAndReadBack(workbook1)) {
+                Sheet sheet2 = workbook2.getSheetAt(0);
+                for (int rownum = 3; rownum <= 5; rownum++) {
+                    Cell acell = sheet2.getRow(rownum).getCell(2);
+                    assertTrue(acell.isPartOfArrayFormulaGroup());
+                    assertEquals("MAX(A1:A3*B1:B3)", acell.getCellFormula());
+                    assertEquals(range, acell.getArrayFormulaRange());
+                }
+            }
+
+            // one removal is enough, there is no second array formula left behind in memory
+            for (Cell acell : sheet1.removeArrayFormula(sheet1.getRow(4).getCell(2))) {
+                assertFalse(acell.isPartOfArrayFormulaGroup());
+                assertEquals(CellType.BLANK, acell.getCellType());
+            }
+            Cell reused = sheet1.getRow(3).getCell(2);
+            IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> sheet1.removeArrayFormula(reused));
+            assertEquals("Cell " + new CellReference(reused).formatAsString() + " is not part of an array formula.", e.getMessage());
+            // and the cells can be used again
+            reused.setCellValue(42);
+            assertEquals(CellType.NUMERIC, reused.getCellType());
+        }
+    }
+
+    /**
      * Test that when reading a workbook from input stream, array formulas are recognized
      */
     @Test

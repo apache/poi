@@ -28,8 +28,9 @@ import java.util.TimeZone;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
-
+@Isolated // modifies the default locale and we don't want to affect other tests running in parallel
 class TestLocaleUtil {
     // This unit test assumes that the user's locale isn't ja-JP and timezone isn't Asia/Tokyo
     // If this is the case, change the values to something else

@@ -112,4 +112,53 @@ import static org.apache.logging.log4j.util.Unbox.box;
         }
     }
 
+    /**
+     * Shift the anchors of the shapes (pictures, charts, ...) in the sheet's drawing along with the rows
+     * they are anchored to. A shape is moved when its top-left anchor row is within {@code [startRow, endRow]};
+     * the whole shape is moved so it keeps its size (Excel's "move but don't size with cells").
+     * Comments are not touched here, {@link HSSFSheet#shiftRows} moves them along with their cells.
+     */
+    /*package*/ static void shiftDrawingAnchorRows(HSSFSheet sheet, int startRow, int endRow, int n) {
+        shiftDrawingAnchors(sheet, startRow, endRow, n, true);
+    }
+
+    /**
+     * Shift the anchors of the shapes (pictures, charts, ...) in the sheet's drawing along with the columns
+     * they are anchored to. A shape is moved when its top-left anchor column is within
+     * {@code [startColumn, endColumn]}; the whole shape is moved so it keeps its size.
+     */
+    /*package*/ static void shiftDrawingAnchorColumns(HSSFSheet sheet, int startColumn, int endColumn, int n) {
+        shiftDrawingAnchors(sheet, startColumn, endColumn, n, false);
+    }
+
+    private static void shiftDrawingAnchors(HSSFSheet sheet, int start, int end, int n, boolean rows) {
+        if (n == 0) {
+            return;
+        }
+        HSSFPatriarch patriarch = sheet.getDrawingPatriarch();
+        if (patriarch == null) {
+            return;
+        }
+        for (HSSFShape shape : patriarch.getChildren()) {
+            // comments are anchored to their cell and moved with it by HSSFSheet.shiftRows
+            if (shape instanceof HSSFComment || !(shape.getAnchor() instanceof HSSFClientAnchor anchor)) {
+                continue;
+            }
+            if (rows) {
+                if (anchor.getRow1() >= start && anchor.getRow1() <= end) {
+                    anchor.setRow1(clip(anchor.getRow1() + n, HSSFClientAnchor.MAX_ROW));
+                    anchor.setRow2(clip(anchor.getRow2() + n, HSSFClientAnchor.MAX_ROW));
+                }
+            } else {
+                if (anchor.getCol1() >= start && anchor.getCol1() <= end) {
+                    anchor.setCol1(clip(anchor.getCol1() + n, HSSFClientAnchor.MAX_COL));
+                    anchor.setCol2(clip(anchor.getCol2() + n, HSSFClientAnchor.MAX_COL));
+                }
+            }
+        }
+    }
+
+    private static int clip(int idx, int max) {
+        return Math.min(Math.max(0, idx), max);
+    }
 }

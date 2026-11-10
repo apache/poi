@@ -72,8 +72,7 @@ final class TestMinusZeroResult {
     @Test
     void testTextRendering() {
         confirmTextRendering(MINUS_ZERO);
-        // sub-normal negative numbers also display as '-0'
-        confirmTextRendering(Double.longBitsToDouble(0x8000100020003000L));
+        // (a sub-normal negative number no longer reaches the renderer: NumberEval flushes it to +0)
     }
 
     /**

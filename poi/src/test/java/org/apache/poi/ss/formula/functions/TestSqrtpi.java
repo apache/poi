@@ -22,6 +22,7 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.util.NumberToTextConverter;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -42,6 +43,16 @@ final class TestSqrtpi {
         //the expected values were observed in my copy of Excel
         confirmValue(Arrays.asList(1), 1.77245385090552);
         confirmValue(Arrays.asList(2), 2.506628274631);
+    }
+
+    @Test
+    void testResultIsNotRoundedToFifteenDigits() {
+        // Excel stores the full IEEE 754 result and only displays 15 significant digits
+        ValueEval result = invokeValue(Arrays.asList(2));
+        assertEquals(NumberEval.class, result.getClass());
+        assertEquals(Math.sqrt(2 * Math.PI), ((NumberEval) result).getNumberValue());
+        assertEquals(2.5066282746310002, ((NumberEval) result).getNumberValue());
+        assertEquals("2.506628274631", NumberToTextConverter.toText(((NumberEval) result).getNumberValue()));
     }
 
     @Test

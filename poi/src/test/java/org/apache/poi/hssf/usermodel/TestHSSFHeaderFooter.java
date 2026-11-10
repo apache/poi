@@ -19,8 +19,10 @@ package org.apache.poi.hssf.usermodel;
 
 import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleWorkbook;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 
 import java.io.IOException;
+import java.time.Duration;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
@@ -54,6 +56,25 @@ final class TestHSSFHeaderFooter {
 
         assertEquals("&22", HSSFFooter.fontSize((short)22));
         assertEquals("&\"Arial,bold\"", HSSFFooter.font("Arial", "bold"));
+    }
+
+    @Test
+    void testStripFieldsFontNames() {
+        assertEquals("ab", HSSFHeader.stripFields("a&\"Arial,Bold\"b"));
+        assertEquals("a,\"b", HSSFHeader.stripFields("a&\"x&\"y,z\",\"b"));
+        // the comma and the closing quote have to be on the same line as the opening &"
+        assertEquals("a&\"Arial\n,Bold\"b", HSSFHeader.stripFields("a&\"Arial\n,Bold\"b"));
+        assertEquals("a&\"Arial,\nBold\"b", HSSFHeader.stripFields("a&\"Arial,\nBold\"b"));
+        assertEquals("a&\"Arial,\nc", HSSFHeader.stripFields("a&\"Arial,\n&\"x,y\"c"));
+    }
+
+    @Test
+    void testStripFieldsUnclosedFontName() {
+        // the old "&\".*?,.*?\"" regex backtracked quadratically on an unclosed font name
+        String commas = "&\"" + ",".repeat(50_000);
+        assertEquals(commas, assertTimeoutPreemptively(Duration.ofSeconds(10), () -> HSSFHeader.stripFields(commas)));
+        String quotes = "&\"".repeat(50_000);
+        assertEquals(quotes, assertTimeoutPreemptively(Duration.ofSeconds(10), () -> HSSFHeader.stripFields(quotes)));
     }
 
     @Test

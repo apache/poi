@@ -106,8 +106,7 @@ public class OldTextPiece extends TextPiece {
 
     @Override
     public int hashCode() {
-        assert false : "hashCode not designed";
-        return 42; // any arbitrary constant will do
+        return Arrays.hashCode(rawBytes);
     }
 
     @Override

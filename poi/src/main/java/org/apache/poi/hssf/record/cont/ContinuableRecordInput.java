@@ -67,7 +67,7 @@ public class ContinuableRecordInput implements LittleEndianInput {
 
     @Override
     public short readShort(){
-        return _in.readShort();
+        return (short) readUShort();
     }
 
     @Override
@@ -108,7 +108,7 @@ public class ContinuableRecordInput implements LittleEndianInput {
 
     @Override
     public double readDouble(){
-        return _in.readDouble();
+        return Double.longBitsToDouble(readLong());
     }
 
     @Override

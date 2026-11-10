@@ -183,8 +183,7 @@ public final class HSLFObjectShape extends HSLFPictureShape implements ObjectSha
 
             int id = getObjectID();
             for (Record ch : lst.getChildRecords()) {
-                if(ch instanceof ExEmbed){
-                    ExEmbed embd = (ExEmbed)ch;
+                if(ch instanceof ExEmbed embd){
                     if( embd.getExOleObjAtom().getObjID() == id) {
                         _exEmbed = embd;
                     }

@@ -250,7 +250,7 @@ public interface Cell {
      *
      * If cell was blank, leaves it as is.
      * If it is a part of an array formula group, blanks the cell.
-     * If has a regular formula, removes the formula preserving the "cached" value.
+     * If it has a regular formula, removes the formula preserving the "cached" value.
      * @throws IllegalStateException if cell is a part of an array formula group containing other cells
      */
     void removeFormula() throws IllegalStateException;
@@ -372,7 +372,7 @@ public interface Cell {
      * use {@link org.apache.poi.ss.util.CellUtil#setCellStylePropertiesEnum(Cell, Map)}</p>
      *
      * @param style  reference contained in the workbook.
-     * If the value is null then the style information is removed causing the cell to used the default workbook style.
+     * If the value is null then the style information is removed causing the cell to use the default workbook style.
      * @see org.apache.poi.ss.usermodel.Workbook#createCellStyle()
      */
     void setCellStyle(CellStyle style);

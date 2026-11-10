@@ -18,6 +18,7 @@
 package org.apache.poi.xwpf.usermodel;
 
 import org.apache.poi.ooxml.util.POIXMLUnits;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPrGeneral;
 
@@ -42,6 +43,8 @@ public class XWPFDefaultParagraphStyle {
     }
 
     public int getSpacingAfter() {
-        return ppr.isSetSpacing() ? (int) Units.toDXA(POIXMLUnits.parseLength(ppr.getSpacing().xgetAfter())) : -1;
+        return ppr.isSetSpacing() ?
+                MathUtil.safeDoubleToInt(
+                        Units.toDXA(POIXMLUnits.parseLength(ppr.getSpacing().xgetAfter()))) : -1;
     }
 }

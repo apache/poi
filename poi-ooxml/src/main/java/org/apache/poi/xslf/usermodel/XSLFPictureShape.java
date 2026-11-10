@@ -45,6 +45,7 @@ import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.PictureShape;
 import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.draw.SVGImageRenderer;
 import org.apache.xmlbeans.XmlCursor;
@@ -337,9 +338,8 @@ public class XSLFPictureShape extends XSLFSimpleShape
             return null;
         }
 
-        int size = extLst.sizeOfExtArray();
-        for (int i = 0; i < size; i++) {
-            try (XmlCursor cur = extLst.getExtArray(i).newCursor()) {
+        for (CTOfficeArtExtension ext : extLst.getExtArray()) {
+            try (XmlCursor cur = ext.newCursor()) {
                 if (cur.toChild(MS_SVG_NS, "svgBlip")) {
                     String svgRelId = cur.getAttributeText(EMBED_TAG);
                     return (svgRelId != null) ? (XSLFPictureData) getSheet().getRelationById(svgRelId) : null;
@@ -372,7 +372,9 @@ public class XSLFPictureShape extends XSLFSimpleShape
 
         Dimension2D dim = renderer.getDimension();
         Rectangle2D anc = (anchor != null) ? anchor
-            : new Rectangle2D.Double(0,0, Units.pixelToPoints((int)dim.getWidth()), Units.pixelToPoints((int)dim.getHeight()));
+            : new Rectangle2D.Double(0,0,
+                Units.pixelToPoints(MathUtil.safeDoubleToInt(dim.getWidth())),
+                Units.pixelToPoints(MathUtil.safeDoubleToInt(dim.getHeight())));
 
         PictureType pt = (previewType != null) ? previewType : PictureType.PNG;
         if (pt != PictureType.JPEG && pt != PictureType.GIF && pt != PictureType.PNG) {
@@ -395,9 +397,9 @@ public class XSLFPictureShape extends XSLFSimpleShape
 
 
     private int getExt(CTOfficeArtExtensionList extLst, String uri) {
-        final int size = extLst.sizeOfExtArray();
-        for (int i=0; i<size; i++) {
-            CTOfficeArtExtension ext = extLst.getExtArray(i);
+        final CTOfficeArtExtension[] exts = extLst.getExtArray();
+        for (int i=0; i<exts.length; i++) {
+            CTOfficeArtExtension ext = exts[i];
             if (uri.equals(ext.getUri())) {
                 return i;
             }

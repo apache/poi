@@ -143,7 +143,8 @@ public final class Ffn {
     // changed protected to public
     public byte[] toByteArray() {
         int offset = 0;
-        byte[] buf = IOUtils.safelyAllocate(this.getSize(), HWPFDocument.getMaxRecordLength());
+        byte[] buf = IOUtils.safelyAllocate(this.getSize(), HWPFDocument.getMaxRecordLength(),
+                "HWPFDocument.setMaxRecordLength()");
 
         buf[offset] = (byte) _cbFfnM1;
         offset += LittleEndianConsts.BYTE_SIZE;
@@ -172,8 +173,7 @@ public final class Ffn {
 
     @Override
     public boolean equals(Object other) {
-        if (!(other instanceof Ffn)) return false;
-        Ffn o = (Ffn) other;
+        if (!(other instanceof Ffn o)) return false;
 
         return (
                 o._cbFfnM1 == this._cbFfnM1

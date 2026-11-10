@@ -26,8 +26,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.POITestCase.assertNotContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -136,7 +136,7 @@ public final class TestXMLPropertiesTextExtractor {
                 POIXMLPropertiesTextExtractor ext = new POIXMLPropertiesTextExtractor(sl)
         ) {
             String text = ext.getText();
-            assertFalse(text.contains("Created =")); // With date is null
+            assertNotContains(text, "Created ="); // With date is null
             assertContains(text, "CreatedString = "); // Via string is blank
             assertContains(text, "LastModifiedBy = IT Client Services");
         }

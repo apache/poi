@@ -280,7 +280,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         // check if name is unique and calculate unique column id
         long nextColumnId = 0;
         for (XSSFTableColumn tableColumn : getColumns()) {
-            if (columnName != null && columnName.equalsIgnoreCase(tableColumn.getName())) {
+            if (columnName != null && StringUtil.equalsIgnoreCase(columnName, tableColumn.getName())) {
                 throw new IllegalArgumentException("Column '" + columnName
                         + "' already exists. Column names must be unique per table.");
             }
@@ -789,9 +789,10 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         if(tableColumns == null) {
             return 0;
         }
-        // Casting to int should be safe here - tables larger than the
+        // Reject oversized workbook-controlled table metadata instead of
+        // silently truncating during long-to-int conversion.
         // sheet (which holds the actual data of the table) can't exists.
-        return (int) tableColumns.getCount();
+        return Math.toIntExact(tableColumns.getCount());
     }
 
     /**
@@ -876,10 +877,15 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
             }
         }
         // Table column names with special characters need a single quote escape
-        // but the escape is not present in the column definition
+        // but the escape is not present in the column definition.
+        // Also replace newline and carriage return characters with their _x000a_
+        // and _x000d_ escape sequences to match the encoding applied by
+        // updateHeaders(), which uses the OOXML _xXXXX_ escape convention.
         String unescapedString = columnHeader
                 .replace("''", "'")
-                .replace("'#", "#");
+                .replace("'#", "#")
+                .replace("\n", "_x000a_")
+                .replace("\r", "_x000d_");
         Integer idx = columnMap.get(unescapedString);
         return idx == null ? -1 : idx;
     }
@@ -912,7 +918,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      */
     @Override
     public int getTotalsRowCount() {
-        return (int) ctTable.getTotalsRowCount();
+        return Math.toIntExact(ctTable.getTotalsRowCount());
     }
 
     /**
@@ -922,7 +928,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      */
     @Override
     public int getHeaderRowCount() {
-        return (int) ctTable.getHeaderRowCount();
+        return Math.toIntExact(ctTable.getHeaderRowCount());
     }
 
     /**

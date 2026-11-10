@@ -18,6 +18,7 @@ package org.apache.poi.ss.formula;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -111,7 +112,7 @@ public abstract class BaseTestExternalFunctions {
             cell2.setCellFormula("MYFUNC(\"B1\")");
             NotImplementedException e = assertThrows(NotImplementedException.class, () -> evaluator.evaluate(cell2),
                 "Expected NotImplementedFunctionException/NotImplementedException");
-            assertTrue(e.getCause() instanceof NotImplementedFunctionException);
+            assertInstanceOf(NotImplementedFunctionException.class, e.getCause());
             // Alternatively, a future implementation of evaluate could return #NAME? error to align behavior with Excel
             // assertEquals(ErrorEval.NAME_INVALID, ErrorEval.valueOf(evaluator.evaluate(cell2).getErrorValue()));
 

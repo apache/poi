@@ -65,13 +65,21 @@ public class CellNumberStringMod implements Comparable<CellNumberStringMod> {
 
     @Override
     public int compareTo(CellNumberStringMod that) {
+        if (special == null) {
+            if (that.special == null) {
+                return 0;
+            }
+
+            return 1;
+        }
+
         int diff = special.pos - that.special.pos;
         return (diff != 0) ? diff : (op - that.op);
     }
 
     @Override
     public boolean equals(Object that) {
-        return (that instanceof CellNumberStringMod) && compareTo((CellNumberStringMod) that) == 0;
+        return (that instanceof CellNumberStringMod mod) && compareTo(mod) == 0;
     }
 
     @Override

@@ -23,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.StringUtil;
 
@@ -58,7 +59,7 @@ public final class OldFfn {
             return null;
         }
         //first byte
-        short fontDescriptionLength = buf[offset];
+        int fontDescriptionLength = LittleEndian.getUByte(buf, offset);
         offset += 1;
         if (offset + fontDescriptionLength > fontTableEnd) {
             LOG.atWarn().log("Asked to read beyond font table end. Skipping font");

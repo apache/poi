@@ -20,6 +20,7 @@ package org.apache.poi.xddf.usermodel.chart;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.ooxml.POIXMLFactory;
@@ -45,6 +46,47 @@ class TestXDDFChart {
 
         assertNotNull(xddfChart.getCTChartSpace());
         assertNotNull(xddfChart.getCTPlotArea());
+    }
+
+    @Test
+    void testView3DPercentRoundTripBug69977() {
+        XDDFChart chart = newXDDFChart();
+        XDDFView3D view3D = chart.getOrAddView3D();
+        assertNull(view3D.getDepthPercent());
+        assertNull(view3D.getHPercent());
+
+        view3D.setDepthPercent(50);
+        assertEquals(50, view3D.getDepthPercent());
+        view3D.setHPercent(150);
+        assertEquals(150, view3D.getHPercent());
+
+        // Office also writes these with a trailing percent sign
+        chart.getCTChart().getView3D().getDepthPercent().xgetVal().setStringValue("75%");
+        assertEquals(75, view3D.getDepthPercent());
+        chart.getCTChart().getView3D().getHPercent().xgetVal().setStringValue("20%");
+        assertEquals(20, view3D.getHPercent());
+
+        view3D.setDepthPercent(null);
+        assertNull(view3D.getDepthPercent());
+        view3D.setHPercent(null);
+        assertNull(view3D.getHPercent());
+    }
+
+    @Test
+    void testDoughnutHoleSizeRoundTrip() {
+        XDDFChart chart = newXDDFChart();
+        XDDFDoughnutChartData data = (XDDFDoughnutChartData) chart.createData(ChartTypes.DOUGHNUT, null, null);
+        assertNull(data.getHoleSize());
+
+        data.setHoleSize(50);
+        assertEquals(50, data.getHoleSize());
+
+        // Office also writes this with a trailing percent sign
+        chart.getCTPlotArea().getDoughnutChartArray(0).getHoleSize().xgetVal().setStringValue("75%");
+        assertEquals(75, data.getHoleSize());
+
+        data.setHoleSize(null);
+        assertNull(data.getHoleSize());
     }
 
     @Test

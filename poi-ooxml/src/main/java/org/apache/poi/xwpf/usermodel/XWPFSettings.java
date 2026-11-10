@@ -32,6 +32,7 @@ import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.poifs.crypt.agile.AgileEncryptionVerifier;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.RandomSingleton;
 import org.apache.xmlbeans.XmlOptions;
@@ -234,39 +235,38 @@ public class XWPFSettings extends POIXMLDocumentPart {
                 hashAlgo = HashAlgorithm.sha1;
             }
 
-            switch (hashAlgo) {
-                case md2:
+            sid = switch (hashAlgo) {
+                case md2 -> {
                     providerType = STCryptProv.RSA_FULL;
-                    sid = 1;
-                    break;
-                case md4:
+                    yield 1;
+                }
+                case md4 -> {
                     providerType = STCryptProv.RSA_FULL;
-                    sid = 2;
-                    break;
-                case md5:
+                    yield 2;
+                }
+                case md5 -> {
                     providerType = STCryptProv.RSA_FULL;
-                    sid = 3;
-                    break;
-                case sha1:
+                    yield 3;
+                }
+                case sha1 -> {
                     providerType = STCryptProv.RSA_FULL;
-                    sid = 4;
-                    break;
-                case sha256:
+                    yield 4;
+                }
+                case sha256 -> {
                     providerType = STCryptProv.RSA_AES;
-                    sid = 12;
-                    break;
-                case sha384:
+                    yield 12;
+                }
+                case sha384 -> {
                     providerType = STCryptProv.RSA_AES;
-                    sid = 13;
-                    break;
-                case sha512:
+                    yield 13;
+                }
+                case sha512 -> {
                     providerType = STCryptProv.RSA_AES;
-                    sid = 14;
-                    break;
-                default:
-                    throw new EncryptedDocumentException
-                            ("Hash algorithm '" + hashAlgo + "' is not supported for document write protection.");
-            }
+                    yield 14;
+                }
+                default -> throw new EncryptedDocumentException
+                        ("Hash algorithm '" + hashAlgo + "' is not supported for document write protection.");
+            };
 
 
             byte[] salt = RandomSingleton.getInstance().generateSeed(16);
@@ -296,6 +296,8 @@ public class XWPFSettings extends POIXMLDocumentPart {
      *
      * @param password the password
      * @return true, only if password was set and equals, false otherwise
+     * @throws EncryptedDocumentException if the stored spin count is outside the range allowed by
+     *  {@link AgileEncryptionVerifier#getMaxSpinCount()}
      */
     public boolean validateProtectionPassword(String password) {
         BigInteger sid = safeGetDocumentProtection().getCryptAlgorithmSid();
@@ -304,6 +306,11 @@ public class XWPFSettings extends POIXMLDocumentPart {
         BigInteger spinCount = safeGetDocumentProtection().getCryptSpinCount();
 
         if (sid == null || hash == null || salt == null || spinCount == null) return false;
+
+        if (spinCount.signum() < 0 || spinCount.compareTo(BigInteger.valueOf(AgileEncryptionVerifier.getMaxSpinCount())) > 0) {
+            throw new EncryptedDocumentException("SpinCount " + spinCount +
+                    " is out of the allowed range [0, " + AgileEncryptionVerifier.getMaxSpinCount() + "]");
+        }
 
         HashAlgorithm hashAlgo;
         switch (sid.intValue()) {

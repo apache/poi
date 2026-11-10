@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.ss.usermodel;
 
+import org.apache.poi.util.StringUtil;
+
 /**
  * Utility to identify built-in formats.  The following is a list of the formats as
  * returned by this class.
@@ -151,7 +153,7 @@ public final class BuiltinFormats {
      * @return index of format or -1 if undefined.
      */
     public static int getBuiltinFormat(String pFmt) {
-        String fmt = "TEXT".equalsIgnoreCase(pFmt) ? "@" : pFmt;
+        String fmt = StringUtil.equalsIgnoreCase("TEXT", pFmt) ? "@" : pFmt;
 
         int i = -1;
         for (String f : _formats) {

@@ -29,9 +29,9 @@ import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static org.apache.poi.ss.format.CellFormatter.quote;
+import static org.apache.poi.util.StringUtil.equalsIgnoreCase;
 
 /**
  * Objects of this class represent a single part of a cell format expression.
@@ -102,7 +102,7 @@ public class CellFormatPart {
         INDEXED_COLORS = Collections.unmodifiableList(
             Arrays.asList(indexedColors)
             .stream().map(Color::new)
-            .collect(Collectors.toList()));
+            .toList());
 
         // Build initial named color map
         Map<String, Color> namedColors = new TreeMap<>(
@@ -253,12 +253,11 @@ public class CellFormatPart {
      * @return {@code true} if this format part applies to the given value.
      */
     public boolean applies(Object valueObject) {
-        if (condition == null || !(valueObject instanceof Number)) {
+        if (condition == null || !(valueObject instanceof Number num)) {
             if (valueObject == null)
                 throw new NullPointerException("valueObject");
             return true;
         } else {
-            Number num = (Number) valueObject;
             return condition.pass(num.doubleValue());
         }
     }
@@ -390,7 +389,7 @@ public class CellFormatPart {
      */
     private CellFormatType formatType(String fdesc) {
         fdesc = fdesc.trim();
-        if (fdesc.isEmpty() || fdesc.equalsIgnoreCase("General"))
+        if (fdesc.isEmpty() || equalsIgnoreCase(fdesc, "General"))
             return CellFormatType.GENERAL;
 
         Matcher m = SPECIFICATION_PAT.matcher(fdesc);
@@ -572,24 +571,15 @@ public class CellFormatPart {
             if (!part.isEmpty()) {
                 String repl = partHandler.handlePart(m, part, type, fmt);
                 if (repl == null) {
-                    switch (part.charAt(0)) {
-                    case '\"':
-                        repl = quoteSpecial(part.substring(1,
+                    repl = switch (part.charAt(0)) {
+                        case '\"' -> quoteSpecial(part.substring(1,
                                 part.length() - 1), type);
-                        break;
-                    case '\\':
-                        repl = quoteSpecial(part.substring(1), type);
-                        break;
-                    case '_':
-                        repl = " ";
-                        break;
-                    case '*': //!! We don't do this for real, we just put in 3 of them
-                        repl = expandChar(part);
-                        break;
-                    default:
-                        repl = part;
-                        break;
-                    }
+                        case '\\' -> quoteSpecial(part.substring(1), type);
+                        case '_' -> " ";
+                        case '*' -> //!! We don't do this for real, we just put in 3 of them
+                                expandChar(part);
+                        default -> part;
+                    };
                 }
                 m.appendReplacement(fmt, Matcher.quoteReplacement(repl));
             }
@@ -601,8 +591,7 @@ public class CellFormatPart {
             int pos = 0;
             while ((pos = fmt.indexOf("''", pos)) >= 0) {
                 fmt.delete(pos, pos + 2);
-                if (partHandler instanceof CellDateFormatter.DatePartHandler) {
-                    CellDateFormatter.DatePartHandler datePartHandler = (CellDateFormatter.DatePartHandler) partHandler;
+                if (partHandler instanceof CellDateFormatter.DatePartHandler datePartHandler) {
                     datePartHandler.updatePositions(pos, -2);
                 }
             }
@@ -611,8 +600,7 @@ public class CellFormatPart {
             pos = 0;
             while ((pos = fmt.indexOf("\u0000", pos)) >= 0) {
                 fmt.replace(pos, pos + 1, "''");
-                if (partHandler instanceof CellDateFormatter.DatePartHandler) {
-                    CellDateFormatter.DatePartHandler datePartHandler = (CellDateFormatter.DatePartHandler) partHandler;
+                if (partHandler instanceof CellDateFormatter.DatePartHandler datePartHandler) {
                     datePartHandler.updatePositions(pos, 1);
                 }
             }

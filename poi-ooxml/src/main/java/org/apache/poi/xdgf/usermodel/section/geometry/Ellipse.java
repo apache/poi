@@ -60,8 +60,7 @@ public class Ellipse implements GeometryRow {
             String cellName = cell.getN();
 
             if (cellName == null) {
-                throw new POIXMLException("Invalid cell '" + cellName
-                        + "' in Ellipse row");
+                throw new POIXMLException("Cell without a name in Ellipse row");
             }
 
             switch (cellName) {

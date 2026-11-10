@@ -47,11 +47,10 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
                 // values between 0.0 and 1.0 result in #NUM!
                 return ErrorEval.NUM_ERROR;
             }
-            // all other values are rounded up to the next integer
-            int k = (int) Math.ceil(dn);
-
             double result;
             try {
+                // all other values are rounded up to the next integer
+                int k = OperandResolver.coerceDoubleToInt(Math.ceil(dn));
                 double[] ds = ValueCollector.collectValues(arg0);
                 if (k > ds.length) {
                     return ErrorEval.NUM_ERROR;
@@ -116,7 +115,7 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
                 } else if (Double.compare(n, N) == 0) {
                     result = StatsLib.kthLargest(ds, 1);
                 } else {
-                    int k = (int) n;
+                    int k = OperandResolver.coerceDoubleToInt(n);
                     double d = n - k;
                     result = StatsLib.kthSmallest(ds, k) + d
                             * (StatsLib.kthSmallest(ds, k + 1) - StatsLib.kthSmallest(ds, k));

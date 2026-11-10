@@ -15,19 +15,25 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.openxml4j.opc.internal;
+package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.util.Internal;
+import org.apache.poi.ss.usermodel.BaseTestFormulaEvaluatorRowsAndColumns;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.XSSFITestDataProvider;
 
-import java.io.FilterInputStream;
-import java.io.InputStream;
+/**
+ * The row and column tests, run against a workbook whose fill-down formulas are shared formulas.
+ *
+ * @see XSSFSharedFormulaFixture
+ */
+final class TestXSSFFormulaEvaluatorRowsAndColumnsSharedFormulas extends BaseTestFormulaEvaluatorRowsAndColumns {
 
-@Internal
-final class NoCloseInputStream extends FilterInputStream {
-    NoCloseInputStream(InputStream stream) {
-        super(stream);
+    TestXSSFFormulaEvaluatorRowsAndColumnsSharedFormulas() {
+        super(XSSFITestDataProvider.instance);
     }
 
     @Override
-    public void close() {}
+    protected Workbook finishWorkbook(Workbook built) {
+        return XSSFSharedFormulaFixture.shareFillDownFormulasAndReload(built);
+    }
 }

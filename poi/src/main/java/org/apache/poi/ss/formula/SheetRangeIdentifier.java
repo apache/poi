@@ -32,6 +32,11 @@ public class SheetRangeIdentifier extends SheetIdentifier {
     }
     protected void asFormulaString(StringBuilder sb) {
         super.asFormulaString(sb);
+
+        if (_lastSheetIdentifier == null) {
+            return;
+        }
+
         sb.append(':');
         if (_lastSheetIdentifier.isQuoted()) {
             sb.append('\'').append(_lastSheetIdentifier.getName()).append("'");

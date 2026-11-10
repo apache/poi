@@ -343,6 +343,12 @@ public enum XSSFBuiltinTableStyle {
      */
     private static final Map<XSSFBuiltinTableStyle, TableStyle> styleMap = new EnumMap<>(XSSFBuiltinTableStyle.class);
 
+    /** Guards the loading of {@link #styleMap}. A private lock, so other code can't block it by locking the class */
+    private static final Object INIT_LOCK = new Object();
+
+    /** Set once {@link #styleMap} is fully loaded; after that it is only read */
+    private static volatile boolean initialized;
+
     XSSFBuiltinTableStyle() {
     }
 
@@ -370,15 +376,23 @@ public enum XSSFBuiltinTableStyle {
     }
 
     /**
-     * Only init once - thus the synchronized.  Lazy, after creating instances,
+     * Only init once - thus the lock.  Lazy, after creating instances,
      * and only when a style is actually needed, to avoid overhead for uses
      * that don't need the actual style definitions.
      * <p>
      * Public so clients can initialize the map on startup rather than lazily
      * during evaluation if desired.
      */
-    public static synchronized void init() {
-        if (!styleMap.isEmpty()) return;
+    public static void init() {
+        if (initialized) return;
+        synchronized (INIT_LOCK) {
+            if (initialized) return;
+            loadStyles();
+            initialized = true;
+        }
+    }
+
+    private static void loadStyles() {
 
         /*
          * initialize map.  Every built-in has this format:

@@ -33,6 +33,7 @@ import org.apache.poi.sl.draw.DrawPictureShape;
 import org.apache.poi.sl.usermodel.GroupShape;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlObject;
@@ -174,22 +175,22 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
         CTGroupShape grpSp = (CTGroupShape)getXmlObject();
         getSheet().deregisterShapeId(xShape.getShapeId());
         if(obj instanceof CTShape){
-            grpSp.getSpList().remove(obj);
+            XSLFSheet.removeElement(grpSp.getSpArray(), obj, grpSp::removeSp);
         } else if (obj instanceof CTGroupShape){
             XSLFGroupShape gs = (XSLFGroupShape)xShape;
             new ArrayList<>(gs.getShapes()).forEach(gs::removeShape);
-            grpSp.getGrpSpList().remove(obj);
+            XSLFSheet.removeElement(grpSp.getGrpSpArray(), obj, grpSp::removeGrpSp);
         } else if (obj instanceof CTConnector){
-            grpSp.getCxnSpList().remove(obj);
+            XSLFSheet.removeElement(grpSp.getCxnSpArray(), obj, grpSp::removeCxnSp);
         } else if (obj instanceof CTGraphicalObjectFrame) {
-            grpSp.getGraphicFrameList().remove(obj);
+            XSLFSheet.removeElement(grpSp.getGraphicFrameArray(), obj, grpSp::removeGraphicFrame);
         } else if (obj instanceof CTPicture) {
             XSLFPictureShape ps = (XSLFPictureShape)xShape;
             XSLFSheet sh = getSheet();
             if (sh != null) {
                 sh.removePictureRelation(ps);
             }
-            grpSp.getPicList().remove(obj);
+            XSLFSheet.removeElement(grpSp.getPicArray(), obj, grpSp::removePic);
         } else {
             throw new IllegalArgumentException("Unsupported shape: " + xShape);
         }
@@ -262,10 +263,10 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
 
     @Override
     public XSLFPictureShape createPicture(PictureData pictureData){
-        if (!(pictureData instanceof XSLFPictureData)) {
+        if (!(pictureData instanceof XSLFPictureData xPictureData)) {
             throw new IllegalArgumentException("pictureData needs to be of type XSLFPictureData");
         }
-        RelationPart rp = getSheet().addRelation(null, XSLFRelation.IMAGES, (XSLFPictureData)pictureData);
+        RelationPart rp = getSheet().addRelation(null, XSLFRelation.IMAGES, xPictureData);
 
         XSLFPictureShape sh = getDrawing().createPicture(rp.getRelationship().getId());
         new DrawPictureShape(sh).resize();
@@ -276,11 +277,11 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
 
     @Override
     public XSLFObjectShape createOleShape(PictureData pictureData) {
-        if (!(pictureData instanceof XSLFPictureData)) {
+        if (!(pictureData instanceof XSLFPictureData xPictureData)) {
             throw new IllegalArgumentException("pictureData needs to be of type XSLFPictureData");
         }
 
-        RelationPart rp = getSheet().addRelation(null, XSLFRelation.IMAGES, (XSLFPictureData)pictureData);
+        RelationPart rp = getSheet().addRelation(null, XSLFRelation.IMAGES, xPictureData);
 
         XSLFObjectShape sh = getDrawing().createOleShape(rp.getRelationship().getId());
         CTOleObject oleObj = sh.getCTOleObject();
@@ -343,7 +344,7 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
 
     @Override
     public void setRotation(double theta){
-        getSafeXfrm().setRot((int) (theta * 60000));
+        getSafeXfrm().setRot(MathUtil.safeDoubleToInt(theta * 60000));
     }
 
     @Override
@@ -385,8 +386,7 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
                     newShape = createAutoShape();
                 } else if (shape instanceof XSLFConnectorShape) {
                     newShape = createConnector();
-                } else if (shape instanceof XSLFPictureShape) {
-                    XSLFPictureShape p = (XSLFPictureShape)shape;
+                } else if (shape instanceof XSLFPictureShape p) {
                     XSLFPictureData pd = p.getPictureData();
                     XSLFPictureData pdNew = getSheet().getSlideShow().addPicture(pd.getData(), pd.getType());
                     newShape = createPicture(pdNew);

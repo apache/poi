@@ -85,7 +85,8 @@ public final class CString extends RecordAtom {
         _header = Arrays.copyOfRange(source, start, start+8);
 
         // Grab the text
-        _text = IOUtils.safelyClone(source,start+8, len-8, getMaxRecordLength());
+        _text = IOUtils.safelyClone(source,start+8, len-8, RecordAtom.getMaxRecordLength(),
+                "RecordAtom.setMaxRecordLength()");
     }
     /**
      * Create an empty CString

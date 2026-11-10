@@ -97,18 +97,18 @@ public class XDDFShapeProperties {
         if (properties == null) {
             return;
         }
-        if (properties instanceof XDDFGradientFillProperties) {
-            props.setGradFill(((XDDFGradientFillProperties) properties).getXmlObject());
-        } else if (properties instanceof XDDFGroupFillProperties) {
-            props.setGrpFill(((XDDFGroupFillProperties) properties).getXmlObject());
-        } else if (properties instanceof XDDFNoFillProperties) {
-            props.setNoFill(((XDDFNoFillProperties) properties).getXmlObject());
-        } else if (properties instanceof XDDFPatternFillProperties) {
-            props.setPattFill(((XDDFPatternFillProperties) properties).getXmlObject());
-        } else if (properties instanceof XDDFPictureFillProperties) {
-            props.setBlipFill(((XDDFPictureFillProperties) properties).getXmlObject());
-        } else if (properties instanceof XDDFSolidFillProperties) {
-            props.setSolidFill(((XDDFSolidFillProperties) properties).getXmlObject());
+        if (properties instanceof XDDFGradientFillProperties xprops) {
+            props.setGradFill(xprops.getXmlObject());
+        } else if (properties instanceof XDDFGroupFillProperties xprops) {
+            props.setGrpFill(xprops.getXmlObject());
+        } else if (properties instanceof XDDFNoFillProperties xprops) {
+            props.setNoFill(xprops.getXmlObject());
+        } else if (properties instanceof XDDFPatternFillProperties xprops) {
+            props.setPattFill(xprops.getXmlObject());
+        } else if (properties instanceof XDDFPictureFillProperties xprops) {
+            props.setBlipFill(xprops.getXmlObject());
+        } else if (properties instanceof XDDFSolidFillProperties xprops) {
+            props.setSolidFill(xprops.getXmlObject());
         }
     }
 

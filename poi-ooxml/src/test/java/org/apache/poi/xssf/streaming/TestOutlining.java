@@ -19,6 +19,7 @@
 
 package org.apache.poi.xssf.streaming;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -77,16 +78,16 @@ public final class TestOutlining {
 
         IllegalArgumentException e;
         e = assertThrows(IllegalArgumentException.class, () -> sheet2.setRowGroupCollapsed(3, true));
-        assertTrue(e.getMessage().contains("row (3)"));
+        assertContains(e.getMessage(), "row (3)");
 
         e = assertThrows(IllegalArgumentException.class, () -> sheet2.setRowGroupCollapsed(10, true));
-        assertTrue(e.getMessage().contains("row (10)"));
+        assertContains(e.getMessage(), "row (10)");
 
         e = assertThrows(IllegalArgumentException.class, () -> sheet2.setRowGroupCollapsed(0, true));
-        assertTrue(e.getMessage().contains("row (0)"));
+        assertContains(e.getMessage(), "row (0)");
 
         e = assertThrows(IllegalArgumentException.class, () -> sheet2.setRowGroupCollapsed(20, true));
-        assertTrue(e.getMessage().contains("Row does not exist"), "Had: " + e.getMessage());
+        assertContains(e.getMessage(), "Row does not exist");
 
         SXSSFRow r = sheet2.getRow(8);
         assertNotNull(r);

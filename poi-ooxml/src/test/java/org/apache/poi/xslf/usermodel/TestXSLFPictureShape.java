@@ -290,6 +290,27 @@ class TestXSLFPictureShape {
     }
 
     @Test
+    void testAddPictureAfterRemoveShape() throws IOException {
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            byte[] data = new byte[]{1, 2, 3};
+            XSLFSlide slide = ppt.createSlide();
+            XSLFPictureShape ps = slide.createPicture(ppt.addPicture(data, PictureType.PNG));
+
+            // removing the only shape using the image also removes the image part
+            slide.removeShape(ps);
+            assertTrue(ppt.getPictureData().isEmpty());
+
+            // adding the same image again creates a new part instead of returning the removed one
+            slide.createPicture(ppt.addPicture(data, PictureType.PNG));
+            try (XMLSlideShow ppt2 = writeOutAndReadBack(ppt)) {
+                XSLFPictureShape pic = (XSLFPictureShape) ppt2.getSlides().get(0).getShapes().get(0);
+                assertArrayEquals(data, pic.getPictureData().getData());
+                assertEquals(1, ppt2.getPictureData().size());
+            }
+        }
+    }
+
+    @Test
     void testTiffImageBug59742() throws Exception {
         try (XMLSlideShow slideShow = new XMLSlideShow();
             InputStream tiffStream = _slTests.openResourceAsStream("testtiff.tif")) {

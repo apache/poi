@@ -226,8 +226,8 @@ public final class RecipientChunks implements ChunkGroupWithProperties {
                 recipientSMTPChunk = (StringChunk) chunk;
             } else if (chunk.getChunkId() == DELIVERY_TYPE.id) {
                 deliveryTypeChunk = (StringChunk) chunk;
-            } else if (chunk instanceof PropertiesChunk) {
-                recipientProperties = (PropertiesChunk) chunk;
+            } else if (chunk instanceof PropertiesChunk propertiesChunk) {
+                recipientProperties = propertiesChunk;
             }
         } catch (ClassCastException e) {
             throw new IllegalArgumentException("ChunkId and type of chunk did not match, had id " +

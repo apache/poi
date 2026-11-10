@@ -77,7 +77,8 @@ public final class NotesAtom extends RecordAtom {
         followMasterObjects = (flags & 1) == 1;
 
         // There might be 2 more bytes, which are a reserved field
-        reserved = IOUtils.safelyClone(source, start+14, len-14, getMaxRecordLength());
+        reserved = IOUtils.safelyClone(source, start+14, len-14, RecordAtom.getMaxRecordLength(),
+                "RecordAtom.setMaxRecordLength()");
     }
 
     /**

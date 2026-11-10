@@ -28,7 +28,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
@@ -437,16 +436,15 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     public void setTextAlign(TextAlign align) {
         Integer alignInt = null;
         if (align != null) {
-            switch (align) {
-                default:
-                case LEFT: alignInt = TextAlignmentProp.LEFT;break;
-                case CENTER: alignInt = TextAlignmentProp.CENTER; break;
-                case RIGHT: alignInt = TextAlignmentProp.RIGHT; break;
-                case DIST: alignInt = TextAlignmentProp.DISTRIBUTED; break;
-                case JUSTIFY: alignInt = TextAlignmentProp.JUSTIFY; break;
-                case JUSTIFY_LOW: alignInt = TextAlignmentProp.JUSTIFYLOW; break;
-                case THAI_DIST: alignInt = TextAlignmentProp.THAIDISTRIBUTED; break;
-            }
+            alignInt = switch (align) {
+                default -> TextAlignmentProp.LEFT;
+                case CENTER -> TextAlignmentProp.CENTER;
+                case RIGHT -> TextAlignmentProp.RIGHT;
+                case DIST -> TextAlignmentProp.DISTRIBUTED;
+                case JUSTIFY -> TextAlignmentProp.JUSTIFY;
+                case JUSTIFY_LOW -> TextAlignmentProp.JUSTIFYLOW;
+                case THAI_DIST -> TextAlignmentProp.THAIDISTRIBUTED;
+            };
         }
         setParagraphTextPropVal("alignment", alignInt);
     }
@@ -457,16 +455,15 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         if (tp == null) {
             return null;
         }
-        switch (tp.getValue()) {
-            default:
-            case TextAlignmentProp.LEFT: return TextAlign.LEFT;
-            case TextAlignmentProp.CENTER: return TextAlign.CENTER;
-            case TextAlignmentProp.RIGHT: return TextAlign.RIGHT;
-            case TextAlignmentProp.JUSTIFY: return TextAlign.JUSTIFY;
-            case TextAlignmentProp.JUSTIFYLOW: return TextAlign.JUSTIFY_LOW;
-            case TextAlignmentProp.DISTRIBUTED: return TextAlign.DIST;
-            case TextAlignmentProp.THAIDISTRIBUTED: return TextAlign.THAI_DIST;
-        }
+        return switch (tp.getValue()) {
+            case TextAlignmentProp.CENTER -> TextAlign.CENTER;
+            case TextAlignmentProp.RIGHT -> TextAlign.RIGHT;
+            case TextAlignmentProp.JUSTIFY -> TextAlign.JUSTIFY;
+            case TextAlignmentProp.JUSTIFYLOW -> TextAlign.JUSTIFY_LOW;
+            case TextAlignmentProp.DISTRIBUTED -> TextAlign.DIST;
+            case TextAlignmentProp.THAIDISTRIBUTED -> TextAlign.THAI_DIST;
+            default -> TextAlign.LEFT;
+        };
     }
 
     @Override
@@ -476,13 +473,13 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             return null;
         }
 
-        switch (tp.getValue()) {
-            case FontAlignmentProp.BASELINE: return FontAlign.BASELINE;
-            case FontAlignmentProp.TOP: return FontAlign.TOP;
-            case FontAlignmentProp.CENTER: return FontAlign.CENTER;
-            case FontAlignmentProp.BOTTOM: return FontAlign.BOTTOM;
-            default: return FontAlign.AUTO;
-        }
+        return switch (tp.getValue()) {
+            case FontAlignmentProp.BASELINE -> FontAlign.BASELINE;
+            case FontAlignmentProp.TOP -> FontAlign.TOP;
+            case FontAlignmentProp.CENTER -> FontAlign.CENTER;
+            case FontAlignmentProp.BOTTOM -> FontAlign.BOTTOM;
+            default -> FontAlign.AUTO;
+        };
     }
 
     public AutoNumberingScheme getAutoNumberingScheme() {
@@ -503,12 +500,12 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         }
         TextPFException9[] ant = styleTextProp9Atom.getAutoNumberTypes();
         int level = getIndentLevel();
-        if (ant == null || level  >= ant.length) {
+        if (ant == null || level < 0 || level >= ant.length) {
             return null;
         }
+        // null, if the paragraph has no auto numbered bullet
         Short startAt = ant[level].getAutoNumberStartNumber();
-        assert(startAt != null);
-        return startAt.intValue();
+        return (startAt == null) ? null : startAt.intValue();
     }
 
 
@@ -542,10 +539,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
             @Override
             public void setBulletFontColor(PaintStyle color) {
-                if (!(color instanceof SolidPaint)) {
+                if (!(color instanceof SolidPaint sp)) {
                     throw new IllegalArgumentException("HSLF only supports SolidPaint");
                 }
-                SolidPaint sp = (SolidPaint)color;
                 Color col = DrawPaint.applyColorTransform(sp.getSolidColor());
                 HSLFTextParagraph.this.setBulletColor(col);
             }
@@ -575,14 +571,14 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         } else {
             setBullet(true);
             for (Object ostyle : styles) {
-                if (ostyle instanceof Number) {
-                    setBulletSize(((Number)ostyle).doubleValue());
-                } else if (ostyle instanceof Color) {
-                    setBulletColor((Color)ostyle);
-                } else if (ostyle instanceof Character) {
-                    setBulletChar((Character)ostyle);
-                } else if (ostyle instanceof String) {
-                    setBulletFont((String)ostyle);
+                if (ostyle instanceof Number num) {
+                    setBulletSize(num.doubleValue());
+                } else if (ostyle instanceof Color color) {
+                    setBulletColor(color);
+                } else if (ostyle instanceof Character character) {
+                    setBulletChar(character);
+                } else if (ostyle instanceof String str) {
+                    setBulletFont(str);
                 } else if (ostyle instanceof AutoNumberingScheme) {
                     throw new HSLFException("setting bullet auto-numbering scheme for HSLF not supported ... yet");
                 }
@@ -775,7 +771,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             tabStops = textRuler.getTabStops();
         }
 
-        return tabStops.stream().map(HSLFTabStopDecorator::new).collect(Collectors.toList());
+        return tabStops.stream().map(HSLFTabStopDecorator::new).toList();
     }
 
     @Override
@@ -875,8 +871,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         final HSLFSheet sheet = getSheet();
         final int txtype = getRunType();
         final HSLFMasterSheet master;
-        if (sheet instanceof HSLFMasterSheet) {
-            master = (HSLFMasterSheet)sheet;
+        if (sheet instanceof HSLFMasterSheet masterSheet) {
+            master = masterSheet;
         } else {
             master = sheet.getMasterSheet();
             if (master == null) {
@@ -920,8 +916,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         final boolean isChar = props.getTextPropType() == TextPropType.character;
 
         final TextPropCollection pc;
-        if (_sheet instanceof HSLFMasterSheet) {
-            pc = ((HSLFMasterSheet)_sheet).getPropCollection(getRunType(), getIndentLevel(), "*", isChar);
+        if (_sheet instanceof HSLFMasterSheet masterSheet) {
+            pc = masterSheet.getPropCollection(getRunType(), getIndentLevel(), "*", isChar);
             if (pc == null) {
                 throw new HSLFException("Master text property collection can't be determined.");
             }
@@ -1133,8 +1129,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         // If TextSpecInfoAtom is present, we must update the text size in it,
         // otherwise the ppt will be corrupted
         for (Record r : paragraphs.get(0).getRecords()) {
-            if (r instanceof TextSpecInfoAtom) {
-                ((TextSpecInfoAtom) r).setParentSize(rawText.length() + 1);
+            if (r instanceof TextSpecInfoAtom tsia) {
+                tsia.setParentSize(rawText.length() + 1);
                 break;
             }
         }
@@ -1414,9 +1410,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
                 // if we haven't found the wrapper in the sheet runs, create a new paragraph list from its record
                 List<List<HSLFTextParagraph>> rvl = findTextParagraphs(wrapper.getChildRecords());
                 switch (rvl.size()) {
-                case 0: break; // nothing found
-                case 1: rv = rvl.get(0); break; // normal case
-                default:
+                case 0 -> { } // nothing found
+                case 1 -> rv = rvl.get(0); // normal case
+                default ->
                     throw new HSLFException("TextBox contains more than one list of paragraphs.");
                 }
             }
@@ -1738,14 +1734,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         if (ph == null) {
             return false;
         }
-        switch (ph) {
-            case DATETIME:
-            case SLIDE_NUMBER:
-            case FOOTER:
-            case HEADER:
-                return true;
-            default:
-                return false;
-        }
+        return switch (ph) {
+            case DATETIME, SLIDE_NUMBER, FOOTER, HEADER -> true;
+            default -> false;
+        };
     }
 }

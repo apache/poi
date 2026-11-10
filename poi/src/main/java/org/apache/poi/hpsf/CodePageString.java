@@ -53,7 +53,8 @@ public class CodePageString {
     public void read( LittleEndianByteArrayInputStream lei ) {
         int offset = lei.getReadIndex();
         int size = lei.readInt();
-        _value = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
+        _value = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH,
+                "CodePageString.setMaxRecordLength()");
         if (size == 0) {
             return;
         }

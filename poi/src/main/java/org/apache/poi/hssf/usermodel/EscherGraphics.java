@@ -20,6 +20,7 @@ package org.apache.poi.hssf.usermodel;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.SuppressForbidden;
 
@@ -292,15 +293,15 @@ public class EscherGraphics extends Graphics {
         Font excelFont;
         if ( font.getName().equals( "SansSerif" ) )
         {
-            excelFont = new Font( "Arial", font.getStyle(), (int) ( font.getSize() / verticalPixelsPerPoint ) );
+            excelFont = new Font( "Arial", font.getStyle(), MathUtil.safeFloatToInt( font.getSize() / verticalPixelsPerPoint ) );
         }
         else
         {
-            excelFont = new Font( font.getName(), font.getStyle(), (int) ( font.getSize() / verticalPixelsPerPoint ));
+            excelFont = new Font( font.getName(), font.getStyle(), MathUtil.safeFloatToInt( font.getSize() / verticalPixelsPerPoint ));
         }
         FontDetails d = StaticFontMetrics.getFontDetails( excelFont );
         int width = d.getStringWidth( str ) * 8  + 12;
-        int height = (int) ( ( font.getSize() / verticalPixelsPerPoint ) + 6 ) * 2;
+        int height = MathUtil.safeFloatToInt( ( font.getSize() / verticalPixelsPerPoint ) + 6 ) * 2;
         y -= ( font.getSize() / verticalPixelsPerPoint ) + 2 * verticalPixelsPerPoint;    // we want to draw the shape from the top-left
         HSSFTextbox textbox = escherGroup.createTextbox( new HSSFChildAnchor( x, y, x + width, y + height ) );
         textbox.setNoFill( true );

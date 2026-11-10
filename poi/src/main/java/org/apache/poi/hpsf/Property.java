@@ -140,12 +140,12 @@ public class Property {
             throw new UnsupportedEncodingException("Dictionary not allowed here");
         }
 
-        int o = (int) offset;
+        int o = Math.toIntExact(offset);
         type = LittleEndian.getUInt(src, o);
         o += LittleEndianConsts.INT_SIZE;
 
         try {
-            value = VariantSupport.read(src, o, length, (int) type, codepage);
+            value = VariantSupport.read(src, o, length, Math.toIntExact(type), codepage);
         } catch (UnsupportedVariantTypeException ex) {
             VariantSupport.writeUnsupportedTypeMessage(ex);
             value = ex.getValue();
@@ -179,7 +179,7 @@ public class Property {
         type = leis.readUInt();
 
         try {
-            value = VariantSupport.read(leis, length, (int) type, codepage);
+            value = VariantSupport.read(leis, length, Math.toIntExact(type), codepage);
         } catch (UnsupportedVariantTypeException ex) {
             VariantSupport.writeUnsupportedTypeMessage(ex);
             value = ex.getValue();
@@ -298,10 +298,9 @@ public class Property {
      */
     @Override
     public boolean equals(final Object o) {
-        if (!(o instanceof Property)) {
+        if (!(o instanceof Property p)) {
             return false;
         }
-        final Property p = (Property) o;
         final Object pValue = p.getValue();
         final long pId = p.getID();
         if (id != pId || (id != 0 && !typesAreEqual(type, p.getType()))) {
@@ -322,9 +321,9 @@ public class Property {
             return false;
         }
 
-        if (value instanceof byte[]) {
+        if (value instanceof byte[] thisVal) {
             // compare without padding bytes
-            byte[] thisVal = (byte[]) value, otherVal = (byte[]) pValue;
+            byte[] otherVal = (byte[]) pValue;
             int len = unpaddedLength(thisVal);
             if (len != unpaddedLength(otherVal)) {
                 return false;
@@ -366,8 +365,19 @@ public class Property {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id,type,value);
-
+        // consistent with equals: the type is left out, as equals treats VT_LPSTR and VT_LPWSTR
+        // as equal, and byte arrays are compared without their padding bytes
+        final int valueHash;
+        if (value instanceof byte[] bytes) {
+            int hash = 1;
+            for (int i = 0, len = unpaddedLength(bytes); i < len; i++) {
+                hash = 31 * hash + bytes[i];
+            }
+            valueHash = hash;
+        } else {
+            valueHash = Objects.hashCode(value);
+        }
+        return Objects.hash(id, valueHash);
     }
 
     @Override
@@ -396,8 +406,8 @@ public class Property {
         b.append(") ");
         final Object value = getValue();
         b.append(", value: ");
-        if (value instanceof String) {
-            b.append((String)value);
+        if (value instanceof String str) {
+            b.append(str);
             b.append("\n");
             UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
             try {
@@ -411,15 +421,13 @@ public class Property {
                 final String hex = HexDump.dump(bos.toByteArray(), -2L*LittleEndianConsts.INT_SIZE, 2*LittleEndianConsts.INT_SIZE);
                 b.append(hex);
             }
-        } else if (value instanceof byte[]) {
+        } else if (value instanceof byte[] bytes) {
             b.append("\n");
-            byte[] bytes = (byte[])value;
             if(bytes.length > 0) {
                 String hex = HexDump.dump(bytes, 0L, 0);
                 b.append(hex);
             }
-        } else if (value instanceof Date) {
-            Date d = (Date)value;
+        } else if (value instanceof Date d) {
             long filetime = Filetime.dateToFileTime(d);
             if (Filetime.isUndefined(d)) {
                 b.append("<undefined>");
@@ -469,10 +477,12 @@ public class Property {
     private String decodeValueFromID() {
         try {
             switch((int)getID()) {
-                case PropertyIDMap.PID_CODEPAGE:
+                case PropertyIDMap.PID_CODEPAGE -> {
                     return CodePageUtil.codepageToEncoding(((Number)value).intValue());
-                case PropertyIDMap.PID_LOCALE:
+                }
+                case PropertyIDMap.PID_LOCALE -> {
                     return LocaleUtil.getLocaleFromLCID(((Number)value).intValue());
+                }
             }
         } catch (Exception e) {
             LOG.atWarn().log("Can't decode id {}", box(getID()));

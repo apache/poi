@@ -18,14 +18,17 @@
 package org.apache.poi.hdgf.chunks;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
 import org.apache.poi.hdgf.chunks.ChunkFactory.CommandDefinition;
 import org.apache.poi.poifs.storage.RawDataUtil;
+import org.apache.poi.util.LittleEndian;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -48,7 +51,7 @@ public final class TestChunks {
     void testChunkHeaderA() {
         ChunkHeader h = ChunkHeader.createChunkHeader(11, data_a, 0);
 
-        assertTrue(h instanceof ChunkHeaderV11);
+        assertInstanceOf(ChunkHeaderV11.class, h);
         ChunkHeaderV11 header = (ChunkHeaderV11)h;
 
         assertEquals(70, header.getType());
@@ -62,11 +65,55 @@ public final class TestChunks {
         assertTrue(header.hasSeparator());
     }
 
+    /**
+     * A v6+ chunk header reads its Length field as a 32-bit unsigned integer.
+     * A crafted file with Length &gt; Integer.MAX_VALUE used to be silently
+     * narrowed via a plain {@code (int)} cast, letting the wrapped value flow
+     * into the offset arithmetic in {@code ChunkFactory.createChunk}
+     * ({@code offset + getLength() + sizeInBytes}). Match the v4/v5 branch,
+     * which has always used {@code Math.toIntExact} for its Length field, and
+     * reject the input up-front.
+     */
+    @Test
+    void testV11RejectsOversizedLength() {
+        // 19-byte v6+ header: type, id, unknown1, length, unknown2 (short), unknown3 (ubyte)
+        byte[] header = new byte[19];
+        LittleEndian.putUInt(header, 0,  0x46L);            // type
+        LittleEndian.putUInt(header, 4,  0xFFFFFFFFL);      // id (allowed -1 sentinel)
+        LittleEndian.putUInt(header, 8,  0x02L);            // unknown1
+        LittleEndian.putUInt(header, 12, 0x80000001L);      // length: would wrap to a negative int
+        LittleEndian.putShort(header, 16, (short)0);
+        header[18] = 0;
+
+        assertThrows(ArithmeticException.class,
+                () -> ChunkHeader.createChunkHeader(11, header, 0));
+    }
+
+    /**
+     * Lengths up to {@code Integer.MAX_VALUE} (still nonsensically large but
+     * representable) must continue to parse — the hardening is only meant to
+     * catch the silent-narrowing case, not to introduce a new lower ceiling.
+     * Downstream checks (e.g. {@code IOUtils.safelyClone}) handle bounding.
+     */
+    @Test
+    void testV11AcceptsMaxIntLength() {
+        byte[] header = new byte[19];
+        LittleEndian.putUInt(header, 0,  0x46L);
+        LittleEndian.putUInt(header, 4,  0x01L);
+        LittleEndian.putUInt(header, 8,  0x02L);
+        LittleEndian.putUInt(header, 12, Integer.MAX_VALUE & 0xFFFFFFFFL);
+        LittleEndian.putShort(header, 16, (short)0);
+        header[18] = 0;
+
+        ChunkHeader h = ChunkHeader.createChunkHeader(11, header, 0);
+        assertEquals(Integer.MAX_VALUE, h.getLength());
+    }
+
     @Test
     void testChunkHeaderB() {
         ChunkHeader h = ChunkHeader.createChunkHeader(11, data_b, 0);
 
-        assertTrue(h instanceof ChunkHeaderV11);
+        assertInstanceOf(ChunkHeaderV11.class, h);
         ChunkHeaderV11 header = (ChunkHeaderV11)h;
 
         assertEquals(70, header.getType());

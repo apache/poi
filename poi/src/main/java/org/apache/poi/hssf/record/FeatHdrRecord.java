@@ -103,7 +103,7 @@ public final class FeatHdrRecord extends StandardRecord {
 
         out.writeShort(isf_sharedFeatureType);
         out.writeByte(reserved);
-        out.writeInt((int)cbHdrData);
+        out.writeInt(Math.toIntExact(cbHdrData));
         out.write(rgbHdrData);
     }
 

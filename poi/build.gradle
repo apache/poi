@@ -24,30 +24,31 @@ configurations {
 
 sourceSets {
     main {
-        output.dir(JAVA9_OUT, builtBy: 'compileJava9')
+        output.dir(JPMS_OUT, builtBy: 'compileModuleInfo')
         java {
             // also include the generated Version.java
             srcDirs += 'build/generated-sources'
         }
     }
     test {
-        output.dir(TEST9_OUT, builtBy: 'compileTest9')
+        output.dir(TEST_JPMS_OUT, builtBy: 'compileTestModuleInfo')
     }
 }
 
 dependencies {
     api "commons-codec:commons-codec:${commonsCodecVersion}"
-    api 'org.apache.commons:commons-collections4:4.5.0'
+    api 'org.apache.commons:commons-collections4:4.6.0'
     api "org.apache.commons:commons-math3:${commonsMathVersion}"
     api "commons-io:commons-io:${commonsIoVersion}"
     api 'com.zaxxer:SparseBitSet:1.3'
 
     testImplementation 'org.reflections:reflections:0.10.2'
-    testImplementation 'org.apache.ant:ant:1.10.15'
+    testImplementation "org.apache.ant:ant:${antVersion}"
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
     testRuntimeOnly "org.apiguardian:apiguardian-api:${apiGuardianVersion}"
+    testRuntimeOnly "org.jspecify:jspecify:${jspecifyVersion}"
 
     // needed for locating the external references
     javadocs project(':poi-ooxml')
@@ -79,51 +80,23 @@ final Pattern MODULE_NOT_REGEX = ~'(poi[/\\\\][^/\\\\]+$|batik-script)'
 final Pattern MODULE_REGEX = ~'\\.jar$'
 final List MODULE_PATH = sourceSets.test.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX && !(it.path =~ MODULE_NOT_REGEX) }.collect{ it.parent }.unique()
 
-tasks.register('compileJava9', JavaCompile) {
-    dependsOn 'compileJava'
+registerModuleInfoCompile(name: 'compileModuleInfo', dependsOn: 'compileJava',
+    src: JPMS_SRC, out: JPMS_OUT, module: MODULE_NAME,
+    patch: sourceSets.main.output.classesDirs,
+    modulePath: sourceSets.main.compileClasspath)
 
-    javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
-    }
-    sourceCompatibility = 11
-    targetCompatibility = 11
-    destinationDirectory = file(JAVA9_OUT + VERSIONS9)
-    source = file(JAVA9_SRC)
-    classpath = files()
-    options.compilerArgs = [
-            '--patch-module', "${MODULE_NAME}=${sourceSets.main.output.classesDirs.asPath}",
-            '--module-path', sourceSets.main.compileClasspath.asPath
-    ]
-}
-
-tasks.register('compileTest9', JavaCompile) {
-    dependsOn 'compileTestJava'
-
-    javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
-    }
-    sourceCompatibility = 11
-    targetCompatibility = 11
-    destinationDirectory = file(TEST9_OUT + VERSIONS9)
-    source = file(TEST9_SRC)
-    options.compilerArgs = [
-            '--patch-module', "${MODULE_NAME}=${(sourceSets.main.output.classesDirs + sourceSets.test.output.classesDirs).asPath}",
-            '--module-path', files(MODULE_PATH).asPath
-    ]
-    classpath = files()
-}
+registerModuleInfoCompile(name: 'compileTestModuleInfo', dependsOn: 'compileTestJava',
+    src: TEST_JPMS_SRC, out: TEST_JPMS_OUT, module: MODULE_NAME,
+    patch: sourceSets.main.output.classesDirs + sourceSets.test.output.classesDirs,
+    modulePath: MODULE_PATH)
 
 jar {
-    dependsOn compileJava9
-
-    manifest {
-        attributes('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')
-    }
+    dependsOn compileModuleInfo
 }
 
 // Create a separate jar for test-code to depend on it in other projects
 // See http://stackoverflow.com/questions/5144325/gradle-test-dependency
-task testJar(type: Jar, dependsOn: [ testClasses, compileTest9 ]) {
+task testJar(type: Jar, dependsOn: [ testClasses, compileTestModuleInfo ]) {
     destinationDirectory = file("../build/dist/maven/${base.archivesName.get()}-tests")
 
     setArchiveClassifier 'tests'
@@ -131,10 +104,6 @@ task testJar(type: Jar, dependsOn: [ testClasses, compileTest9 ]) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     from sourceSets.test.output + sourceSets.main.output
-
-    manifest {
-        attributes('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')
-    }
 }
 
 javadoc {
@@ -188,23 +157,4 @@ publishing {
             }
         }
     }
-}
-
-cyclonedxBom {
-    // includeConfigs is the list of configuration names to include when generating the BOM (leave empty to include every configuration)
-    includeConfigs = ["runtimeClasspath"]
-    // skipConfigs is a list of configuration names to exclude when generating the BOM
-    //skipConfigs = ["compileClasspath", "testCompileClasspath"]
-    // Specified the type of project being built. Defaults to 'library'
-    projectType = "library"
-    // Specified the version of the CycloneDX specification to use. Defaults to 1.4.
-    schemaVersion = "1.4"
-    // Boms destination directory (defaults to build/reports)
-    destination = file("build/reports")
-    // The file name for the generated BOMs (before the file format suffix). Defaults to 'bom'
-    outputName = "poi-${project.version}.bom"
-    // The file format generated, can be xml, json or all for generating both
-    outputFormat = "all"
-    // Exclude BOM Serial Number
-    includeBomSerialNumber = true
 }

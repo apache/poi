@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 
 import org.apache.poi.ss.formula.ConditionalFormattingEvaluator;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.ThreadLocalUtil;
 
 /**
@@ -62,6 +63,7 @@ public class DateUtil {
     private static final BigDecimal BD_SECOND_RND = BigDecimal.valueOf(0.5 * 1e9);
 
     private static final Pattern TIME_SEPARATOR_PATTERN = Pattern.compile(":");
+    private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
 
     /**
      * The following patterns are used in {@link #isADateFormat(int, String)}
@@ -69,10 +71,15 @@ public class DateUtil {
     private static final Pattern date_ptrn1 = Pattern.compile("^\\[\\$-.*?]");
     private static final Pattern date_ptrn2 = Pattern.compile("^\\[[a-zA-Z]+]");
     private static final Pattern date_ptrn3a = Pattern.compile("[yYmMdDhHsS]");
-    // add "\u5e74 \u6708 \u65e5" for Chinese/Japanese date format:2017 \u5e74 2 \u6708 7 \u65e5
-    private static final Pattern date_ptrn3b = Pattern.compile("^[\\[\\]yYmMdDhHsS\\-T/\u5e74\u6708\u65e5,. :\"\\\\]+0* ?[ampAMP/]*$");
+    // add "年 月 日" for Chinese/Japanese date format:2017 年 2 月 7 日
+    // and "时 分 秒" (Chinese) or "時 分 秒" (Japanese) for hours, minutes and seconds
+    // The first part is possessive: it shares ' ', 'm', 'M' and '/' with the rest, and giving them back
+    // one at a time was quadratic. It never needs to, as the rest can then match without them too.
+    private static final Pattern date_ptrn3b = Pattern.compile(
+            "^[\\[\\]yYmMdDhHsS\\-T/年月日时時分秒,. :\"\\\\]++0* ?[ampAMP/]*$");
     //  elapsed time patterns: [h],[m] and [s]
     private static final Pattern date_ptrn4 = Pattern.compile("^\\[([hH]+|[mM]+|[sS]+)]");
+    private static final Pattern date_ptrn4b = Pattern.compile("\\[([hH]+|[mM]+|[sS]+)]");
 
     // for format which start with "[DBNum1]" or "[DBNum2]" or "[DBNum3]" could be a Chinese date
     private static final Pattern date_ptrn5 = Pattern.compile("^\\[DBNum([123])]");
@@ -532,8 +539,8 @@ public class DateUtil {
         if (!isValidExcelDate(date)) {
             return null;
         }
-        int wholeDays = (int)Math.floor(date);
-        int millisecondsInDay = (int)((date - wholeDays) * DAY_MILLISECONDS + 0.5);
+        int wholeDays = MathUtil.safeDoubleToInt(Math.floor(date));
+        int millisecondsInDay = MathUtil.safeDoubleToInt((date - wholeDays) * DAY_MILLISECONDS + 0.5);
         Calendar calendar;
         if (timeZone != null) {
             calendar = LocaleUtil.getLocaleCalendar(timeZone);
@@ -672,6 +679,27 @@ public class DateUtil {
                         case '\\':
                             // skip current '\' and continue to the next char
                             continue;
+                        default:
+                            if (Character.isLetter(nc)) {
+                                // an escaped letter is literal text, not a date letter
+                                i++;
+                                continue;
+                            }
+                    }
+                } else if (c == '"') {
+                    int end = fs.indexOf('"', i + 1);
+                    if (end > 0) {
+                        // quoted text is literal: keep the quotes and any date letters (so that
+                        // "mm"/"dd"/"yy" still counts as a date format), but not the other characters
+                        sb.append('"');
+                        for (int k = i + 1; k < end; k++) {
+                            if ("yYmMdDhHsS".indexOf(fs.charAt(k)) >= 0) {
+                                sb.append(fs.charAt(k));
+                            }
+                        }
+                        sb.append('"');
+                        i = end;
+                        continue;
                     }
                 } else if (c == ';' && nc == '@') {
                     i++;
@@ -694,6 +722,12 @@ public class DateUtil {
         // If it starts with [$-...], then could be a date, but
         //  who knows what that starting bit is all about
         fs = date_ptrn1.matcher(fs).replaceAll("");
+        // [DBNum1] can also come after [$-...]
+        fs = date_ptrn5.matcher(fs).replaceAll("");
+        // Excel's Chinese AM/PM marker usually comes before the time
+        fs = fs.replace("上午/下午", "");
+        // elapsed times can be anywhere, e.g. [s].000 or s" secs and "[m]
+        fs = date_ptrn4b.matcher(fs).replaceAll("$1");
         // If it starts with something like [Black] or [Yellow],
         //  then it could be a date
         fs = date_ptrn2.matcher(fs).replaceAll("");
@@ -708,7 +742,8 @@ public class DateUtil {
         // Ensure it has some date letters in it
         // (Avoids false positives on the rest of pattern 3)
         if (! date_ptrn3a.matcher(fs).find()) {
-           return false;
+            cache(formatString, formatIndex, false);
+            return false;
         }
 
         // If we get here, check it's only made up, in any case, of:
@@ -726,27 +761,15 @@ public class DateUtil {
      * @see #isADateFormat(int, java.lang.String)
      */
     public static boolean isInternalDateFormat(int format) {
-        switch(format) {
+        return switch (format) {
             // Internal Date Formats as described on page 427 in
             // Microsoft Excel Dev's Kit...
             // see also javadoc in org.apache.poi.ss.usermodel.BuiltinFormats
-            case 0x0e:
-            case 0x0f:
-            case 0x10:
-            case 0x11:
             // the 0x12 to 0x15 formats are time (only) formats
-            case 0x12:
-            case 0x13:
-            case 0x14:
-            case 0x15:
-            case 0x16:
             // the 0x2d to 0x2f formats are time (only) formats
-            case 0x2d:
-            case 0x2e:
-            case 0x2f:
-                return true;
-        }
-        return false;
+            case 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x2d, 0x2e, 0x2f -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -816,14 +839,25 @@ public class DateUtil {
 
 
     /**
-     * Given a double, checks if it is a valid Excel date.
+     * The serial number of the last date Excel supports, 9999-12-31, in the 1900 date system
+     * (in the 1904 date system that day is 1462 less). Excel's date functions report a date
+     * serial beyond it, or below 0, as #NUM!.
+     *
+     * @since 6.0.0
+     */
+    public static final int MAX_EXCEL_DATE_SERIAL = 2958465;
+
+    /**
+     * Given a double, checks if it is a valid Excel date: from 0 (which Excel shows as
+     * 1900-01-00) up to the end of {@link #MAX_EXCEL_DATE_SERIAL 9999-12-31}. Excel displays
+     * a date-formatted cell outside that range as "########".
      *
      * @return true if valid
      * @param  value the double value
      */
     public static boolean isValidExcelDate(double value)
     {
-        return (value > -Double.MIN_VALUE);
+        return value > -Double.MIN_VALUE && value < MAX_EXCEL_DATE_SERIAL + 1;
     }
 
     /**
@@ -986,7 +1020,7 @@ public class DateUtil {
     }
 
     public static Double parseDateTime(String str){
-        TemporalAccessor tmp = dateTimeFormats.parse(str.replaceAll("\\s+", " "));
+        TemporalAccessor tmp = dateTimeFormats.parse(WHITESPACE_PATTERN.matcher(str).replaceAll(" "));
         LocalTime time = tmp.query(TemporalQueries.localTime());
         LocalDate date = tmp.query(TemporalQueries.localDate());
         if(time == null && date == null) return null;

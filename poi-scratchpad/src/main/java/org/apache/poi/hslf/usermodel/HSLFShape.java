@@ -50,6 +50,7 @@ import org.apache.poi.sl.usermodel.PresetColor;
 import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
@@ -392,7 +393,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
         }
 
         double alpha = getAlpha(opacityProperty);
-        return new Color(col.getRed(), col.getGreen(), col.getBlue(), (int)(alpha*255.0));
+        return new Color(col.getRed(), col.getGreen(), col.getBlue(), MathUtil.safeDoubleToInt(alpha*255.0));
     }
 
     Color getColor(EscherColorRef ecr) {
@@ -461,8 +462,8 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
                 break;
             }
             case SHADOW_COLOR: {
-                if (this instanceof HSLFSimpleShape) {
-                    return ((HSLFSimpleShape)this).getShadowColor();
+                if (this instanceof HSLFSimpleShape simpleShape) {
+                    return simpleShape.getShadowColor();
                 }
                 break;
             }
@@ -474,8 +475,8 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
                 return getColor(EscherPropertyTypes.FILL__FILLBACKCOLOR, EscherPropertyTypes.FILL__FILLOPACITY);
             }
             case LINE_BACKGROUND_COLOR: {
-                if (this instanceof HSLFSimpleShape) {
-                    return ((HSLFSimpleShape)this).getLineBackgroundColor();
+                if (this instanceof HSLFSimpleShape simpleShape) {
+                    return simpleShape.getLineBackgroundColor();
                 }
                 break;
             }
@@ -612,7 +613,9 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
 
     public void setFlipHorizontal(boolean flip) {
         EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
-        int flag = spRecord.getFlags() | EscherSpRecord.FLAG_FLIPHORIZ;
+        int flag = flip
+            ? spRecord.getFlags() | EscherSpRecord.FLAG_FLIPHORIZ
+            : spRecord.getFlags() & ~EscherSpRecord.FLAG_FLIPHORIZ;
         spRecord.setFlags(flag);
     }
 
@@ -623,7 +626,9 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
 
     public void setFlipVertical(boolean flip) {
         EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
-        int flag = spRecord.getFlags() | EscherSpRecord.FLAG_FLIPVERT;
+        int flag = flip
+            ? spRecord.getFlags() | EscherSpRecord.FLAG_FLIPVERT
+            : spRecord.getFlags() & ~EscherSpRecord.FLAG_FLIPVERT;
         spRecord.setFlags(flag);
     }
 

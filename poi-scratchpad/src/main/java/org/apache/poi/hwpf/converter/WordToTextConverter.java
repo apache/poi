@@ -324,9 +324,8 @@ public class WordToTextConverter extends AbstractWordConverter {
     protected boolean processOle2( HWPFDocument wordDocument, Element block,
             Entry entry ) throws Exception
     {
-        if ( !( entry instanceof DirectoryNode ) )
+        if ( !( entry instanceof DirectoryNode directoryNode ) )
             return false;
-        DirectoryNode directoryNode = (DirectoryNode) entry;
 
         /*
          * even if there is no ExtractorFactory in classpath, still support
@@ -334,7 +333,7 @@ public class WordToTextConverter extends AbstractWordConverter {
          */
         if ( directoryNode.hasEntryCaseInsensitive( "WordDocument" ) )
         {
-            String text = WordToTextConverter.getText( (DirectoryNode) entry );
+            String text = WordToTextConverter.getText( directoryNode );
             block.appendChild( textDocumentFacade
                     .createText( UNICODECHAR_ZERO_WIDTH_SPACE + text
                             + UNICODECHAR_ZERO_WIDTH_SPACE ) );

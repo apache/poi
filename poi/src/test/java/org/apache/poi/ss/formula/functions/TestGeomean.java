@@ -17,7 +17,7 @@
 package org.apache.poi.ss.formula.functions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
@@ -124,7 +124,7 @@ class TestGeomean {
     }
 
     private void verifyNumericResult(double expected, ValueEval result) {
-        assertTrue(result instanceof NumberEval);
+        assertInstanceOf(NumberEval.class, result);
         assertEquals(expected, ((NumberEval) result).getNumberValue(), 1e-15);
     }
 

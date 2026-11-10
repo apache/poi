@@ -28,6 +28,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianConsts;
+import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.StringUtil;
 
 @Internal
@@ -36,10 +37,22 @@ public class UnicodeString {
 
     private byte[] _value;
 
+    /**
+     * @param lei a LittleEndianByteArrayInputStream
+     * @throws RecordFormatException if there is a problem with calculated length
+     */
     public void read(LittleEndianByteArrayInputStream lei) {
         final int length = lei.readInt();
-        final int unicodeBytes = length*2;
-        _value = IOUtils.safelyAllocate(unicodeBytes, CodePageString.getMaxRecordLength());
+        // Math.multiplyExact rejects crafted lengths that would silently wrap signed-int math
+        // (e.g. length == 0x40000001 -> length*2 == 0x80000002 wraps to negative).
+        final int unicodeBytes;
+        try {
+            unicodeBytes = Math.multiplyExact(length, 2);
+        } catch (ArithmeticException e) {
+            throw new RecordFormatException("Invalid unicode length", e);
+        }
+        _value = IOUtils.safelyAllocate(unicodeBytes, CodePageString.getMaxRecordLength(),
+                "CodePageString.setMaxRecordLength()");
         
         // If Length is zero, this field MUST be zero bytes in length. If Length is
         // nonzero, this field MUST be a null-terminated array of 16-bit Unicode characters, followed by
@@ -81,7 +94,7 @@ public class UnicodeString {
         }
         
         if ( terminator != result.length() - 1 ) {
-            LOG.atWarn().log("String terminator (\\0) for UnicodeString property value occured before the end of " +
+            LOG.atWarn().log("String terminator (\\0) for UnicodeString property value occurred before the end of " +
                     "string. Trimming and hope for the best.");
         }
         return result.substring( 0, terminator );

@@ -42,8 +42,7 @@ public final class SLWTListing {
         // Find the documents, and then their SLWT
         Record[] records = ss.getRecords();
         for(int i=0; i<records.length; i++) {
-            if(records[i] instanceof Document) {
-                Document doc = (Document)records[i];
+            if(records[i] instanceof Document doc) {
                 SlideListWithText[] slwts = doc.getSlideListWithTexts();
 
                 System.out.println("Document at " + i + " had " + slwts.length + " SlideListWithTexts");

@@ -43,8 +43,8 @@ public class CellGeneralFormatter extends CellFormatter {
      */
     @Override
     public void formatValue(StringBuffer toAppendTo, Object value) {
-        if (value instanceof Number) {
-            double val = ((Number) value).doubleValue();
+        if (value instanceof Number num) {
+            double val = num.doubleValue();
             if (val == 0) {
                 toAppendTo.append('0');
                 return;

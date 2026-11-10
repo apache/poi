@@ -79,8 +79,7 @@ public class AdjustPoint implements AdjustPointIf {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof AdjustPoint)) return false;
-        AdjustPoint that = (AdjustPoint) o;
+        if (!(o instanceof AdjustPoint that)) return false;
         return Objects.equals(x, that.x) &&
                 Objects.equals(y, that.y);
     }

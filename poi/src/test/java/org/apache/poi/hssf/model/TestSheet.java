@@ -19,6 +19,7 @@ package org.apache.poi.hssf.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -69,11 +70,11 @@ final class TestSheet {
         sheet.visitContainedRecords(outRecs::add, 0);
 
         Iterator<org.apache.poi.hssf.record.Record> iter = outRecs.iterator();
-        assertTrue(iter.next() instanceof BOFRecord );
-        assertTrue(iter.next() instanceof IndexRecord);
-        assertTrue(iter.next() instanceof DimensionsRecord);
-        assertTrue(iter.next() instanceof WindowTwoRecord );
-        assertTrue(iter.next() instanceof EOFRecord);
+        assertInstanceOf(BOFRecord.class, iter.next());
+        assertInstanceOf(IndexRecord.class, iter.next());
+        assertInstanceOf(DimensionsRecord.class, iter.next());
+        assertInstanceOf(WindowTwoRecord.class, iter.next());
+        assertInstanceOf(EOFRecord.class, iter.next());
     }
 
     private static org.apache.poi.hssf.record.Record createWindow2Record() {

@@ -43,6 +43,11 @@ public class ZipPackagePart extends PackagePart {
     private ZipArchiveEntry zipEntry;
 
     /**
+     * The part that took over the content of this part, once it was written to.
+     */
+    private PackagePart replacement;
+
+    /**
      * Constructor.
      *
      * @param container
@@ -100,6 +105,9 @@ public class ZipPackagePart extends PackagePart {
      */
     @Override
     protected InputStream getInputStreamImpl() throws IOException {
+        if (replacement != null) {
+            return replacement.getInputStream();
+        }
         // We use the getInputStream() method from java.util.zip.ZipFile
         // class which return an InputStream to this part zip entry.
         return ((ZipPackage) _container).getZipArchive()
@@ -119,7 +127,30 @@ public class ZipPackagePart extends PackagePart {
 
     @Override
     public long getSize() {
-        return zipEntry.getSize();
+        return replacement != null ? replacement.getSize() : zipEntry.getSize();
+    }
+
+    @Override
+    public void clear() {
+        if (replacement != null) {
+            replacement.clear();
+        }
+    }
+
+    @Override
+    public long getModificationCount() {
+        return replacement != null ? replacement.getModificationCount() : super.getModificationCount();
+    }
+
+    /**
+     * @return the part that replaced this part when it was written to, or {@code null}
+     */
+    /* package */ PackagePart getReplacement() {
+        return replacement;
+    }
+
+    /* package */ void setReplacement(PackagePart replacement) {
+        this.replacement = replacement;
     }
 
     @Override

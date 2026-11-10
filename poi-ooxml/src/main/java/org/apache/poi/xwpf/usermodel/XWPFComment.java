@@ -51,16 +51,16 @@ public class XWPFComment implements IBody {
             cursor.selectPath("./*");
             while (cursor.toNextSelection()) {
                 XmlObject o = cursor.getObject();
-                if (o instanceof CTP) {
-                    XWPFParagraph p = new XWPFParagraph((CTP) o, this);
+                if (o instanceof CTP ctp) {
+                    XWPFParagraph p = new XWPFParagraph(ctp, this);
                     bodyElements.add(p);
                     paragraphs.add(p);
-                } else if (o instanceof CTTbl) {
-                    XWPFTable t = new XWPFTable((CTTbl) o, this, false);
+                } else if (o instanceof CTTbl table) {
+                    XWPFTable t = new XWPFTable(table, this, false);
                     bodyElements.add(t);
                     tables.add(t);
-                } else if (o instanceof CTSdtBlock) {
-                    XWPFSDT c = new XWPFSDT((CTSdtBlock) o, this);
+                } else if (o instanceof CTSdtBlock block) {
+                    XWPFSDT c = new XWPFSDT(block, this);
                     bodyElements.add(c);
                 }
 
@@ -168,10 +168,10 @@ public class XWPFComment implements IBody {
             while (!(o instanceof CTP) && (cursor.toPrevSibling())) {
                 o = cursor.getObject();
             }
-            if ((!(o instanceof CTP)) || o == p) {
+            if ((!(o instanceof CTP ctp)) || o == p) {
                 paragraphs.add(0, newP);
             } else {
-                int pos = paragraphs.indexOf(getParagraph((CTP) o)) + 1;
+                int pos = paragraphs.indexOf(getParagraph(ctp)) + 1;
                 paragraphs.add(pos, newP);
             }
             int i = 0;
@@ -214,10 +214,10 @@ public class XWPFComment implements IBody {
             while (!(o instanceof CTTbl) && (cursor.toPrevSibling())) {
                 o = cursor.getObject();
             }
-            if (!(o instanceof CTTbl)) {
+            if (!(o instanceof CTTbl tbl)) {
                 tables.add(0, newT);
             } else {
-                int pos = tables.indexOf(getTable((CTTbl) o)) + 1;
+                int pos = tables.indexOf(getTable(tbl)) + 1;
                 tables.add(pos, newT);
             }
             int i = 0;
@@ -243,7 +243,7 @@ public class XWPFComment implements IBody {
     public void insertTable(int pos, XWPFTable table) {
         bodyElements.add(pos, table);
         int i = 0;
-        for (CTTbl tbl : ctComment.getTblList()) {
+        for (CTTbl tbl : ctComment.getTblArray()) {
             if (tbl == table.getCTTbl()) {
                 break;
             }
@@ -260,17 +260,15 @@ public class XWPFComment implements IBody {
         try (final XmlCursor cursor = cell.newCursor()) {
             cursor.toParent();
             o = cursor.getObject();
-            if (!(o instanceof CTRow)) {
+            if (!(o instanceof CTRow ctRow)) {
                 return null;
             }
-            row = (CTRow) o;
-            cursor.toParent();
-            o = cursor.getObject();
+            row = ctRow;
         }
-        if (!(o instanceof CTTbl)) {
+        CTTbl tbl = XWPFTable.getParentTable(row);
+        if (tbl == null) {
             return null;
         }
-        CTTbl tbl = (CTTbl) o;
         XWPFTable table = getTable(tbl);
         if (table == null) {
             return null;

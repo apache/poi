@@ -19,6 +19,7 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
+import org.apache.poi.util.MathUtil;
 
 import java.awt.*;
 import java.awt.font.FontRenderContext;
@@ -149,16 +150,14 @@ public final class EscherGraphics2d extends Graphics2D {
     @Override
     public void draw(Shape shape)
     {
-        if (shape instanceof Line2D)
+        if (shape instanceof Line2D shape2d)
         {
-            Line2D shape2d = (Line2D) shape;
-
             int width = 0;
-            if (_stroke != null && _stroke instanceof BasicStroke) {
-                width = (int) ((BasicStroke)_stroke).getLineWidth() * 12700;
+            if (_stroke != null && _stroke instanceof BasicStroke basicStroke) {
+                width = MathUtil.safeDoubleToInt(basicStroke.getLineWidth() * 12700);
             }
 
-            drawLine((int)shape2d.getX1(), (int)shape2d.getY1(), (int)shape2d.getX2(), (int)shape2d.getY2(), width);
+            drawLine(MathUtil.safeDoubleToInt(shape2d.getX1()), MathUtil.safeDoubleToInt(shape2d.getY1()), MathUtil.safeDoubleToInt(shape2d.getX2()), MathUtil.safeDoubleToInt(shape2d.getY2()), width);
         }
         else
         {
@@ -247,8 +246,8 @@ public final class EscherGraphics2d extends Graphics2D {
     public void drawLine(int x1, int y1, int x2, int y2)
     {
         int width = 0;
-        if (_stroke != null && _stroke instanceof BasicStroke) {
-            width = (int) ((BasicStroke)_stroke).getLineWidth() * 12700;
+        if (_stroke != null && _stroke instanceof BasicStroke basicStroke) {
+            width = MathUtil.safeDoubleToInt(basicStroke.getLineWidth() * 12700);
         }
         getEscherGraphics().drawLine(x1,y1,x2,y2, width);
 //        draw(new GeneralPath(new java.awt.geom.Line2D.Float(x1, y1, x2, y2)));
@@ -311,7 +310,8 @@ public final class EscherGraphics2d extends Graphics2D {
     @Override
     public void drawString(String string, float x, float y)
     {
-        getEscherGraphics().drawString(string, (int)x, (int)y);
+        getEscherGraphics().drawString(
+                string, MathUtil.safeFloatToInt(x), MathUtil.safeFloatToInt(y));
     }
 
     @Override
@@ -557,8 +557,8 @@ public final class EscherGraphics2d extends Graphics2D {
         if(paint1 != null)
         {
             _paint = paint1;
-            if(paint1 instanceof Color)
-                setColor( (Color)paint1 );
+            if(paint1 instanceof Color color)
+                setColor( color );
         }
     }
 

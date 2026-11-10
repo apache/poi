@@ -19,10 +19,18 @@
 package org.apache.poi.ss.tests.formula;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.FormulaParseException;
@@ -176,7 +184,7 @@ class TestFormulaParser {
         Ptg[] ptgs = FormulaParser.parse("[1]Sheet1!A1", fpwb, FormulaType.CELL, -1);
         // org.apache.poi.ss.formula.ptg.Ref3DPxg [ [workbook=1] sheet=Sheet 1 ! A1]
         assertEquals(1, ptgs.length, "Ptgs length");
-        assertTrue(ptgs[0] instanceof Ref3DPxg, "Ptg class");
+        assertInstanceOf(Ref3DPxg.class, ptgs[0], "Ptg class");
         Ref3DPxg pxg = (Ref3DPxg) ptgs[0];
         assertEquals(1, pxg.getExternalWorkbookNumber(), "External workbook number");
         assertEquals("Sheet1", pxg.getSheetName(), "Sheet name");
@@ -193,7 +201,7 @@ class TestFormulaParser {
         Ptg[] ptgs = FormulaParser.parse("'[1]Sheet 1'!A1", fpwb, FormulaType.CELL, -1);
         // org.apache.poi.ss.formula.ptg.Ref3DPxg [ [workbook=1] sheet=Sheet 1 ! A1]
         assertEquals(1, ptgs.length, "Ptgs length");
-        assertTrue(ptgs[0] instanceof Ref3DPxg, "Ptg class");
+        assertInstanceOf(Ref3DPxg.class, ptgs[0], "Ptg class");
         Ref3DPxg pxg = (Ref3DPxg) ptgs[0];
         assertEquals(1, pxg.getExternalWorkbookNumber(), "External workbook number");
         assertEquals("Sheet 1", pxg.getSheetName(), "Sheet name");
@@ -206,5 +214,41 @@ class TestFormulaParser {
     @Test
     void testUnicodeSheetName() {
         checkFormula("'Sheet\u30FB1'!A1:A6");
+    }
+
+    @Test
+    void testNPE() {
+        assertThrows(FormulaParseException.class,
+                () -> checkFormula("r:[]!d:F  "));
+    }
+
+    @Test
+    void testStackOverflow() {
+        // this triggers nested method calls and thus needs to be included
+        // in the existing nested-handling in FormulaParser
+        String formula = "_a:a".repeat(4000);
+
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFEvaluationWorkbook evalWorkbook = HSSFEvaluationWorkbook.create(workbook);
+        assertThrows(FormulaParseException.class,
+                () -> FormulaParser.parse(formula, evalWorkbook, FormulaType.SHARED, 0));
+    }
+
+    @Test
+    void testNestingIsLimited() throws IOException {
+        File file = POIDataSamples.getSpreadSheetInstance()
+                .getFile("clusterfuzz-testcase-minimized-FormulaParserFuzzer-5191407997091840");
+
+        String formula = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+        assertNotNull(formula);
+        assertFalse(formula.isEmpty());
+
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFEvaluationWorkbook evalWorkbook = HSSFEvaluationWorkbook.create(workbook);
+
+        // prevention of StackOverflowException should kick in and report a more meaningful exception
+        assertThrows(FormulaParseException.class,
+                () -> FormulaParser.parse(formula + ".", evalWorkbook, FormulaType.SHARED, 0));
+
     }
 }

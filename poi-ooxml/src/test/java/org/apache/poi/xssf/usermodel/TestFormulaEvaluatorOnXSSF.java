@@ -44,6 +44,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -58,6 +59,7 @@ import org.junit.jupiter.params.provider.MethodSource;
  *  Excel 2007, and re-save it as FormulaEvalTestData_Copy.xlsx
  *
  */
+@Isolated // modifies the default locale and we don't want to affect other tests running in parallel
 public final class TestFormulaEvaluatorOnXSSF {
     private static final Logger LOG = PoiLogManager.getLogger(TestFormulaEvaluatorOnXSSF.class);
 

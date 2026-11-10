@@ -636,6 +636,34 @@ public abstract class BaseTestSheetShiftRows {
     }
 
     @Test
+    void bug69154ShiftRowsWithMergedRegionsNotInColumnZero() throws IOException {
+        // row-shift counterpart of the column-shift scenario in bug 69154:
+        // the overwritten area must be compared against the merged region's own
+        // columns, not column 0, or the region below is shifted onto the one it replaces
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb.createSheet("test");
+            populateSheetCells(sheet, 6);
+
+            CellRangeAddress B1_C1 = new CellRangeAddress(0, 0, 1, 2);
+            CellRangeAddress B2_B3 = new CellRangeAddress(1, 2, 1, 1);
+            CellRangeAddress B4_C4 = new CellRangeAddress(3, 3, 1, 2);
+
+            assertEquals(0, sheet.addMergedRegion(B1_C1));
+            assertEquals(1, sheet.addMergedRegion(B2_B3));
+            assertEquals(2, sheet.addMergedRegion(B4_C4));
+
+            // B1:C1 is untouched
+            // B2:B3 is partly overwritten and should be removed
+            // B4:C4 should be B3:C3
+            sheet.shiftRows(2, sheet.getLastRowNum(), -1);
+
+            assertEquals(2, sheet.getNumMergedRegions());
+            assertEquals(CellRangeAddress.valueOf("B1:C1"), sheet.getMergedRegion(0));
+            assertEquals(CellRangeAddress.valueOf("B3:C3"), sheet.getMergedRegion(1));
+        }
+    }
+
+    @Test
     void shiftMergedRowsToMergedRowsOverlappingMergedRegion() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet("test");

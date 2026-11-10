@@ -19,8 +19,10 @@
 package org.apache.poi.hwpf.converter;
 
 import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.POITestCase.assertNotContains;
 
 import java.io.StringWriter;
+import java.util.function.Predicate;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
@@ -28,6 +30,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.XMLHelper;
 import org.junit.jupiter.api.Test;
 
@@ -41,9 +44,27 @@ public class TestWordToFoConverter
     {
         HWPFDocument hwpfDocument = new HWPFDocument( POIDataSamples
                 .getDocumentInstance().openResourceAsStream( sampleFileName ) );
+        return getFoText( hwpfDocument );
+    }
 
+    private static String getFoText( final HWPFDocument hwpfDocument )
+            throws Exception
+    {
+        return getFoText( hwpfDocument, null );
+    }
+
+    /**
+     * @param hyperlinkValidator the validator to set on the converter, or null for the default
+     */
+    private static String getFoText( final HWPFDocument hwpfDocument,
+            final Predicate<String> hyperlinkValidator ) throws Exception
+    {
         WordToFoConverter wordToFoConverter = new WordToFoConverter(
                 XMLHelper.newDocumentBuilder().newDocument() );
+        if ( hyperlinkValidator != null )
+        {
+            wordToFoConverter.setHyperlinkValidator( hyperlinkValidator );
+        }
         wordToFoConverter.processDocument( hwpfDocument );
 
         StringWriter stringWriter = new StringWriter();
@@ -103,6 +124,61 @@ public class TestWordToFoConverter
         assertContains( result,
                 "<fo:basic-link external-destination=\"http://testuri.org/\">" );
         assertContains( result, "Hyperlink text" );
+    }
+
+    @Test
+    void testScriptHyperlink() throws Exception
+    {
+        // the target of a HYPERLINK field is copied into the external-destination of the
+        // link, which a renderer may hand on to a viewer that runs a javascript: target
+        try ( POIFSFileSystem fs = new POIFSFileSystem( POIDataSamples
+                .getDocumentInstance().openResourceAsStream( "hyperlink.doc" ) ) )
+        {
+            TestWordToHtmlConverter.replaceText( fs, "http://testuri.org/", "javascript:alert(1)" );
+
+            try ( HWPFDocument hwpfDocument = new HWPFDocument( fs ) )
+            {
+                String result = getFoText( hwpfDocument );
+                assertNotContains( result, "javascript:" );
+                assertNotContains( result, "external-destination" );
+                assertContains( result, "Hyperlink text" );
+            }
+        }
+    }
+
+    @Test
+    void testCustomHyperlinkValidator() throws Exception
+    {
+        // a validator only applies to standard URLs, it can't let a javascript: target through
+        try ( POIFSFileSystem fs = new POIFSFileSystem( POIDataSamples
+                .getDocumentInstance().openResourceAsStream( "hyperlink.doc" ) ) )
+        {
+            TestWordToHtmlConverter.replaceText( fs, "http://testuri.org/", "javascript:alert(1)" );
+
+            try ( HWPFDocument hwpfDocument = new HWPFDocument( fs ) )
+            {
+                String result = getFoText( hwpfDocument, h -> true );
+                assertNotContains( result, "javascript:" );
+                assertNotContains( result, "external-destination" );
+                assertContains( result, "Hyperlink text" );
+            }
+        }
+
+        try ( HWPFDocument hwpfDocument = new HWPFDocument( POIDataSamples
+                .getDocumentInstance().openResourceAsStream( "hyperlink.doc" ) ) )
+        {
+            String result = getFoText( hwpfDocument, h -> h.startsWith( "http://testuri.org/" ) );
+            assertContains( result,
+                    "<fo:basic-link external-destination=\"http://testuri.org/\">" );
+        }
+
+        try ( HWPFDocument hwpfDocument = new HWPFDocument( POIDataSamples
+                .getDocumentInstance().openResourceAsStream( "hyperlink.doc" ) ) )
+        {
+            String result = getFoText( hwpfDocument, h -> false );
+            assertNotContains( result, "external-destination" );
+            assertContains( result, "Hyperlink text" );
+        }
     }
 
     @Test

@@ -46,8 +46,8 @@ import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.ddf.EscherSpgrRecord;
 import org.apache.poi.ddf.EscherTextboxRecord;
 import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.GenericRecordUtil;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -218,7 +218,8 @@ public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord
 
         // Now grab the children's data, but fail if it tries to allocate
         // too much
-        byte[] b = IOUtils.safelyAllocate(newSize, MAX_RECORD_SIZE);
+        ArrayUtil.strictAllocateCheck(newSize, MAX_RECORD_SIZE);
+        byte[] b = new byte[newSize];
         int done = 0;
         dgContainer.serialize(done, b);
 

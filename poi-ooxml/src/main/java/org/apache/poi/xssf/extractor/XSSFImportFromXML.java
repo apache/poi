@@ -22,9 +22,7 @@ import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -176,10 +174,10 @@ public class XSSFImportFromXML {
         STRING("string"), //
         DATE("date");
 
-        private Set<String> xmlDataTypes;
+        private final Set<String> xmlDataTypes;
 
         DataType(String... xmlDataTypes) {
-            this.xmlDataTypes = new HashSet<>(Arrays.asList(xmlDataTypes));
+            this.xmlDataTypes = Set.of(xmlDataTypes);
         }
 
         public static DataType getDataType(String xmlDataType) {

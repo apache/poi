@@ -29,6 +29,8 @@ import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
+import static org.apache.poi.util.StringUtil.equalsIgnoreCase;
+
 /**
  * A lister of the entries in POIFS files.
  *
@@ -49,9 +51,9 @@ public class POIFSLister {
       boolean withSizes = false;
       boolean newPOIFS = true;
       for (String arg : args) {
-         if (arg.equalsIgnoreCase("-size") || arg.equalsIgnoreCase("-sizes")) {
+         if (equalsIgnoreCase(arg, "-size") || equalsIgnoreCase(arg, "-sizes")) {
             withSizes = true;
-         } else if (arg.equalsIgnoreCase("-old") || arg.equalsIgnoreCase("-old-poifs")) {
+         } else if (equalsIgnoreCase(arg, "-old") || equalsIgnoreCase(arg, "-old-poifs")) {
             newPOIFS = false;
          } else {
             if (newPOIFS) {
@@ -84,8 +86,8 @@ public class POIFSLister {
       for(Iterator<Entry> it = dir.getEntries(); it.hasNext();) {
          hadChildren = true;
          Entry entry = it.next();
-         if (entry instanceof DirectoryNode) {
-            displayDirectory((DirectoryNode) entry, newIndent, withSizes);
+         if (entry instanceof DirectoryNode dn) {
+            displayDirectory(dn, newIndent, withSizes);
          } else {
             DocumentNode doc = (DocumentNode) entry;
             String name = doc.getName();

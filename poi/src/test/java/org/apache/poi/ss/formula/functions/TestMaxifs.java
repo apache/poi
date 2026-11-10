@@ -20,7 +20,7 @@
 package org.apache.poi.ss.formula.functions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.NumberEval;
@@ -41,7 +41,7 @@ final class TestMaxifs {
     }
 
     private static void confirmDouble(double expected, ValueEval actualEval) {
-        assertTrue(actualEval instanceof NumericValueEval, "Expected numeric result");
+        assertInstanceOf(NumericValueEval.class, actualEval, "Expected numeric result");
         NumericValueEval nve = (NumericValueEval)actualEval;
         assertEquals(expected, nve.getNumberValue(), 0);
     }

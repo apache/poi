@@ -55,8 +55,7 @@ public class Dimension2DDouble extends Dimension2D {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Dimension2DDouble) {
-            Dimension2DDouble other = (Dimension2DDouble) obj;
+        if (obj instanceof Dimension2DDouble other) {
             return width == other.width && height == other.height;
         }
 

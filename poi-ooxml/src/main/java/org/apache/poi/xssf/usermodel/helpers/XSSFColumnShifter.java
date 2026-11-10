@@ -31,28 +31,45 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 // {@link org.apache.poi.hssf.usermodel.helpers.HSSFColumnShifter}
 @Beta
 public final class XSSFColumnShifter extends ColumnShifter {
+    private final XSSFSheet xssfSheet;
 
     public XSSFColumnShifter(XSSFSheet sh) {
         super(sh);
+        xssfSheet = sh;
     }
 
     @Override
     public void updateNamedRanges(FormulaShifter formulaShifter) {
-        XSSFRowColShifter.updateNamedRanges(sheet, formulaShifter);
+        XSSFRowColShifter.updateNamedRanges(xssfSheet, formulaShifter);
     }
 
     @Override
     public void updateFormulas(FormulaShifter formulaShifter) {
-        XSSFRowColShifter.updateFormulas(sheet, formulaShifter);
+        XSSFRowColShifter.updateFormulas(xssfSheet, formulaShifter);
     }
 
     @Override
     public void updateConditionalFormatting(FormulaShifter formulaShifter) {
-        XSSFRowColShifter.updateConditionalFormatting(sheet, formulaShifter);
+        XSSFRowColShifter.updateConditionalFormatting(xssfSheet, formulaShifter);
     }
 
     @Override
     public void updateHyperlinks(FormulaShifter formulaShifter) {
-        XSSFRowColShifter.updateHyperlinks(sheet, formulaShifter);
+        XSSFRowColShifter.updateHyperlinks(xssfSheet, formulaShifter);
+    }
+
+    /**
+     * Shift the anchors of the shapes (charts, pictures, ...) in the sheet's drawing along with the columns
+     * they are anchored to. A shape is moved when its top-left anchor column is within
+     * {@code [startColumn, endColumn]}; the whole shape is moved so it keeps its size.
+     * Shapes with an absolute anchor are not moved.
+     *
+     * @param startColumn the column to start shifting
+     * @param endColumn the column to end shifting
+     * @param n the number of columns to shift
+     * @since 6.0.0
+     */
+    public void shiftDrawingAnchors(int startColumn, int endColumn, int n) {
+        XSSFRowColShifter.shiftDrawingAnchorColumns(xssfSheet, startColumn, endColumn, n);
     }
 }

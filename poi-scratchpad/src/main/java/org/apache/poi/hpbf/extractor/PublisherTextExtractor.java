@@ -68,8 +68,7 @@ public final class PublisherTextExtractor implements POIOLE2TextExtractor {
         // Get the text from the Quill Contents
         QCBit[] bits = doc.getQuillContents().getBits();
         for (QCBit bit1 : bits) {
-            if (bit1 instanceof QCTextBit) {
-                QCTextBit t = (QCTextBit) bit1;
+            if (bit1 instanceof QCTextBit t) {
                 text.append(t.getText().replace('\r', '\n'));
             }
         }
@@ -81,8 +80,7 @@ public final class PublisherTextExtractor implements POIOLE2TextExtractor {
         //  how to tie that together.
         if(hyperlinksByDefault) {
             for (QCBit bit : bits) {
-                if (bit instanceof Type12) {
-                    Type12 hyperlinks = (Type12) bit;
+                if (bit instanceof Type12 hyperlinks) {
                     for (int j = 0; j < hyperlinks.getNumberOfHyperlinks(); j++) {
                         text.append("<");
                         text.append(hyperlinks.getHyperlink(j));

@@ -129,7 +129,7 @@ public class Section {
          * Read the offset from the stream's start and positions to
          * the section header.
          */
-        int offFix = (int)LittleEndian.getUInt(src, offset + ClassID.LENGTH);
+        int offFix = Math.toIntExact(LittleEndian.getUInt(src, offset + ClassID.LENGTH));
 
         // some input files have an invalid (padded?) offset, which need to be fixed
         // search for beginning of size field
@@ -146,12 +146,12 @@ public class Section {
         /*
          * Read the section length.
          */
-        int size = (int)Math.min(leis.readUInt(), src.length-_offset);
+        int size = Math.toIntExact(Math.min(leis.readUInt(), src.length-_offset));
 
         /*
          * Read the number of properties.
          */
-        final int propertyCount = (int)leis.readUInt();
+        final int propertyCount = Math.toIntExact(leis.readUInt());
 
         /*
          * Read the properties. The offset is positioned at the first
@@ -457,16 +457,16 @@ public class Section {
      *        supported by HPSF.
      */
     public void setProperty(final int id, final Object value) {
-        if (value instanceof String) {
-            setProperty(id, (String) value);
-        } else if (value instanceof Long) {
-            setProperty(id, ((Long) value).longValue());
-        } else if (value instanceof Integer) {
-            setProperty(id, ((Integer) value).intValue());
-        } else if (value instanceof Short) {
-            setProperty(id, ((Short) value).intValue());
-        } else if (value instanceof Boolean) {
-            setProperty(id, ((Boolean) value).booleanValue());
+        if (value instanceof String s) {
+            setProperty(id, s);
+        } else if (value instanceof Long l) {
+            setProperty(id, l.longValue());
+        } else if (value instanceof Integer i) {
+            setProperty(id, i.intValue());
+        } else if (value instanceof Short s) {
+            setProperty(id, s.intValue());
+        } else if (value instanceof Boolean b) {
+            setProperty(id, b.booleanValue());
         } else if (value instanceof Date) {
             setProperty(id, Variant.VT_FILETIME, value);
         } else {
@@ -658,10 +658,9 @@ public class Section {
      */
     @Override
     public boolean equals(final Object o) {
-        if (!(o instanceof Section)) {
+        if (!(o instanceof Section s)) {
             return false;
         }
-        final Section s = (Section) o;
         if (!s.getFormatID().equals(getFormatID())) {
             return false;
         }
@@ -820,15 +819,17 @@ public class Section {
 
             /* Read the string - Strip 0x00 characters from the end of the string. */
             int cp = (codepage == -1) ? Property.DEFAULT_CODEPAGE : codepage;
-            int nrBytes = Math.toIntExact(((sLength-1) * (cp == CodePageUtil.CP_UNICODE ? 2 : 1)));
-            if (nrBytes > 0xFFFFFF) {
+            long nrBytesLong = (sLength-1) * (cp == CodePageUtil.CP_UNICODE ? 2 : 1);
+            if (nrBytesLong > 0xFFFFFF) {
                 LOG.atWarn().log(errMsg);
                 isCorrupted = true;
                 break;
             }
+            int nrBytes = (int)nrBytesLong;
 
             try {
-                byte[] buf = IOUtils.safelyAllocate(nrBytes, CodePageString.getMaxRecordLength());
+                byte[] buf = IOUtils.safelyAllocate(nrBytes, CodePageString.getMaxRecordLength(),
+                        "CodePageString.setMaxRecordLength()");
                 leis.readFully(buf, 0, nrBytes);
                 final String str = CodePageUtil.getStringFromCodePage(buf, 0, nrBytes, cp);
 

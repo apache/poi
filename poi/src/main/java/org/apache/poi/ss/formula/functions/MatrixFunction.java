@@ -27,7 +27,9 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.LUDecomposition;
+import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.SingularMatrixException;
 
 public abstract class MatrixFunction implements Function{
 
@@ -92,14 +94,14 @@ public abstract class MatrixFunction implements Function{
 
         @Override
         public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
-            if (arg0 instanceof AreaEval) {
+            if (arg0 instanceof AreaEval ae) {
                 double[] result;
                 double[][] resultArray;
                 int width, height;
 
                 try {
                     double[] values = collectValues(arg0);
-                    double[][] array = fillDoubleArray(values, ((AreaEval) arg0).getHeight(), ((AreaEval) arg0).getWidth());
+                    double[][] array = fillDoubleArray(values, ae.getHeight(), ae.getWidth());
                     resultArray = evaluate(array);
                     width = resultArray[0].length;
                     height = resultArray.length;
@@ -122,9 +124,9 @@ public abstract class MatrixFunction implements Function{
                 }
                 else {
                     /* find a better solution */
-                    return new CacheAreaEval(((AreaEval) arg0).getFirstRow(), ((AreaEval) arg0).getFirstColumn(),
-                                            ((AreaEval) arg0).getFirstRow() + height - 1,
-                                            ((AreaEval) arg0).getFirstColumn() + width - 1, vals);
+                    return new CacheAreaEval(ae.getFirstRow(), ae.getFirstColumn(),
+                                            ae.getFirstRow() + height - 1,
+                                            ae.getFirstColumn() + width - 1, vals);
                 }
             }
             else {
@@ -162,10 +164,10 @@ public abstract class MatrixFunction implements Function{
                 double[][] array1;
                 double[][] resultArray;
 
-                if (arg0 instanceof AreaEval) {
+                if (arg0 instanceof AreaEval ae) {
                     try {
                         double[] values = collectValues(arg0);
-                        array0 = fillDoubleArray(values, ((AreaEval) arg0).getHeight(), ((AreaEval) arg0).getWidth());
+                        array0 = fillDoubleArray(values, ae.getHeight(), ae.getWidth());
                     }
                     catch(EvaluationException e) {
                         return e.getErrorEval();
@@ -181,10 +183,10 @@ public abstract class MatrixFunction implements Function{
                     }
                 }
 
-                if (arg1 instanceof AreaEval) {
+                if (arg1 instanceof AreaEval ae) {
                    try {
                        double[] values = collectValues(arg1);
-                      array1 = fillDoubleArray(values, ((AreaEval) arg1).getHeight(),((AreaEval) arg1).getWidth());
+                      array1 = fillDoubleArray(values, ae.getHeight(), ae.getWidth());
                    }
                    catch (EvaluationException e) {
                       return e.getErrorEval();
@@ -223,9 +225,11 @@ public abstract class MatrixFunction implements Function{
             if (result.length == 1)
                 return vals[0];
             else {
-                return new CacheAreaEval(((AreaEval) arg0).getFirstRow(), ((AreaEval) arg0).getFirstColumn(),
-                        ((AreaEval) arg0).getFirstRow() + height - 1,
-                        ((AreaEval) arg0).getFirstColumn() + width - 1, vals);
+                // more than one result, so at least one argument was an area: anchor the result on it
+                AreaEval anchor = arg0 instanceof AreaEval ae0 ? ae0 : (AreaEval) arg1;
+                return new CacheAreaEval(anchor.getFirstRow(), anchor.getFirstColumn(),
+                        anchor.getFirstRow() + height - 1,
+                        anchor.getFirstColumn() + width - 1, vals);
             }
 
         }
@@ -266,7 +270,14 @@ public abstract class MatrixFunction implements Function{
             }
 
             Array2DRowRealMatrix temp = new Array2DRowRealMatrix(d1);
-            return MatrixUtils.inverse(temp).getData();
+            try {
+                // LU rather than MatrixUtils.inverse (QR with a zero threshold), so that a singular
+                // matrix such as {1,2;2,4} is detected instead of inverted into rounding noise
+                return new LUDecomposition(temp).getSolver().getInverse().getData();
+            } catch (SingularMatrixException e) {
+                // Excel reports a singular matrix as #NUM!
+                throw new EvaluationException(ErrorEval.NUM_ERROR);
+            }
         }
     };
 

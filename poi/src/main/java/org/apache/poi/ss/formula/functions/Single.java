@@ -40,9 +40,7 @@ public final class Single implements FreeRefFunction {
         int row = ec.getRowIndex();
 
         for (ValueEval val : args) {
-            if (val instanceof AreaEvalBase) {
-                AreaEvalBase area = (AreaEvalBase)val;
-
+            if (val instanceof AreaEvalBase area) {
                 if (area.contains(row, col)) {
                     if (intersect != null) return ErrorEval.VALUE_INVALID; 
                     intersect = area.getAbsoluteValue(row, col);

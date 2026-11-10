@@ -41,7 +41,7 @@ public class Vector {
         if ( longLength > Integer.MAX_VALUE ) {
             throw new UnsupportedOperationException( "Vector is too long -- " + longLength );
         }
-        final int length = (int) longLength;
+        final int length = Math.toIntExact(longLength);
 
         //BUG-61295 -- avoid OOM on corrupt file.  Build list instead
         //of allocating array of length "length".

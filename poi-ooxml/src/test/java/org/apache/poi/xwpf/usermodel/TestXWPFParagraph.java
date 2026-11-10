@@ -44,6 +44,8 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPBdr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtContentRun;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRun;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSpacing;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTextAlignment;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
@@ -974,5 +976,163 @@ public final class TestXWPFParagraph {
         assertEquals(endText, result.getEndText(), "endText");
         assertEquals(beginChar, result.getBeginChar(), "beginChar");
         assertEquals(endChar, result.getEndChar(), "endChar");
+    }
+
+    @Test
+    void testGetPictureText() throws IOException {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("shapes-with-text.docx")) {
+            XWPFParagraph p = doc.getParagraphArray(0);
+
+            assertEquals("Floating text box\n" +
+                    "A square shape with text inside\n" +
+                    "An ellipse with text inside\n" +
+                    "A group of shapes\nWhere some contain text", p.getPictureText());
+        }
+    }
+
+    /**
+     * Runs inside an inline SDT belong to the SDT, not to the paragraph:
+     * getRuns() only returns the paragraph's own runs, and the SDT runs
+     * are reachable via the XWPFSDT in getIRuns().
+     */
+    @Test
+    void testParagraphWithSdtRunAndContent() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFParagraph p = doc.createParagraph();
+
+            CTP ctp = p.getCTP();
+
+            CTR normalRun = ctp.addNewR();
+            normalRun.addNewT().setStringValue("Before ");
+
+            CTSdtRun sdtRun = ctp.addNewSdt();
+            CTSdtContentRun content = sdtRun.addNewSdtContent();
+
+            CTR innerRun = content.addNewR();
+            innerRun.addNewRPr().addNewB().setVal(STOnOff1.ON);
+            innerRun.addNewT().setStringValue("SDT Run Content");
+
+            CTR innerRun2 = content.addNewR();
+            innerRun2.addNewRPr().addNewI().setVal(STOnOff1.ON);
+            innerRun2.addNewT().setStringValue(" More");
+
+            CTR afterRun = ctp.addNewR();
+            afterRun.addNewT().setStringValue(" After");
+
+            XWPFParagraph newParagraph = new XWPFParagraph(ctp, doc);
+
+            assertEquals(List.of("Before ", " After"), runTexts(newParagraph.getRuns()));
+
+            List<IRunElement> iruns = newParagraph.getIRuns();
+            assertEquals(3, iruns.size());
+            XWPFSDT sdt = assertInstanceOf(XWPFSDT.class, iruns.get(1));
+            assertEquals(List.of("SDT Run Content", " More"), sdtRunTexts(sdt));
+
+            assertEquals("Before SDT Run Content More After", newParagraph.getText());
+        }
+    }
+
+    @Test
+    void testParagraphWithMultipleSdtRuns() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFParagraph p = doc.createParagraph();
+
+            CTP ctp = p.getCTP();
+
+            CTSdtRun sdtRun1 = ctp.addNewSdt();
+            CTSdtContentRun content1 = sdtRun1.addNewSdtContent();
+            CTR innerRun1 = content1.addNewR();
+            innerRun1.addNewRPr().addNewB().setVal(STOnOff1.ON);
+            innerRun1.addNewT().setStringValue("First");
+
+            CTR normalRun = ctp.addNewR();
+            normalRun.addNewT().setStringValue(" Middle ");
+
+            CTSdtRun sdtRun2 = ctp.addNewSdt();
+            CTSdtContentRun content2 = sdtRun2.addNewSdtContent();
+            CTR innerRun2 = content2.addNewR();
+            innerRun2.addNewRPr().addNewI().setVal(STOnOff1.ON);
+            innerRun2.addNewT().setStringValue("Second");
+
+            XWPFParagraph newParagraph = new XWPFParagraph(ctp, doc);
+
+            assertEquals(List.of(" Middle "), runTexts(newParagraph.getRuns()));
+
+            List<IRunElement> iruns = newParagraph.getIRuns();
+            assertEquals(3, iruns.size());
+            assertEquals(List.of("First"), sdtRunTexts(assertInstanceOf(XWPFSDT.class, iruns.get(0))));
+            assertEquals(List.of("Second"), sdtRunTexts(assertInstanceOf(XWPFSDT.class, iruns.get(2))));
+
+            assertEquals("First Middle Second", newParagraph.getText());
+        }
+    }
+
+    /**
+     * Inserting a run by getRuns() index must not be affected by an inline SDT
+     * sitting between the paragraph's own runs.
+     */
+    @Test
+    void testInsertNewRunNextToSdtRun() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTP ctp = doc.createParagraph().getCTP();
+            ctp.addNewR().addNewT().setStringValue("Before ");
+            ctp.addNewSdt().addNewSdtContent().addNewR().addNewT().setStringValue("SDT");
+            ctp.addNewR().addNewT().setStringValue(" After");
+
+            XWPFParagraph p = new XWPFParagraph(ctp, doc);
+            XWPFRun inserted = p.insertNewRun(1);
+            assertNotNull(inserted);
+            inserted.setText("[new]");
+
+            assertEquals(List.of("Before ", "[new]", " After"), runTexts(p.getRuns()));
+            assertEquals("Before SDT[new] After", p.getText());
+        }
+    }
+
+    /**
+     * Bug 66263 — SDT runs in paragraphs from a sample document,
+     * with and without RPr: both are treated the same way.
+     */
+    @Test
+    void testSdtRunsFromSampleDocument() throws IOException {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug66263-paragraph.docx")) {
+            List<XWPFParagraph> paragraphs = doc.getParagraphs();
+
+            // Paragraph 1: SDT Run with RPr
+            XWPFParagraph paragraph1 = paragraphs.get(0);
+            assertEquals("Before SDT Run with RPr After", paragraph1.getText());
+            assertEquals(List.of("Before ", " After"), runTexts(paragraph1.getRuns()));
+            List<IRunElement> iruns1 = paragraph1.getIRuns();
+            assertEquals(3, iruns1.size());
+            assertEquals(List.of("SDT Run with RPr"), sdtRunTexts(assertInstanceOf(XWPFSDT.class, iruns1.get(1))));
+
+            // Paragraph 2: SDT Run without RPr
+            XWPFParagraph paragraph2 = paragraphs.get(1);
+            assertEquals("Before No RPr SDT Run without RPr After", paragraph2.getText());
+            assertEquals(List.of("Before No RPr ", " After"), runTexts(paragraph2.getRuns()));
+            List<IRunElement> iruns2 = paragraph2.getIRuns();
+            assertEquals(3, iruns2.size());
+            assertEquals(List.of("SDT Run without RPr"), sdtRunTexts(assertInstanceOf(XWPFSDT.class, iruns2.get(1))));
+
+            // Paragraph 3: Multiple SDT Runs
+            XWPFParagraph paragraph3 = paragraphs.get(2);
+            assertEquals("First Middle Second", paragraph3.getText());
+            assertEquals(List.of(" Middle "), runTexts(paragraph3.getRuns()));
+            List<IRunElement> iruns3 = paragraph3.getIRuns();
+            assertEquals(3, iruns3.size());
+            assertEquals(List.of("First"), sdtRunTexts(assertInstanceOf(XWPFSDT.class, iruns3.get(0))));
+            assertEquals(List.of("Second"), sdtRunTexts(assertInstanceOf(XWPFSDT.class, iruns3.get(2))));
+        }
+    }
+
+    private static List<String> runTexts(List<XWPFRun> runs) {
+        return runs.stream().map(XWPFRun::text).toList();
+    }
+
+    private static List<String> sdtRunTexts(XWPFSDT sdt) {
+        XWPFSDTContent content = assertInstanceOf(XWPFSDTContent.class, sdt.getContent());
+        return content.getBodyElements().stream()
+                .map(e -> assertInstanceOf(XWPFRun.class, e).text())
+                .toList();
     }
 }

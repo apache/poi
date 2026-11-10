@@ -26,6 +26,7 @@ import static org.apache.poi.openxml4j.opc.TestContentType.isOldXercesActive;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -104,6 +105,34 @@ public final class TestPackageCoreProperties {
 
         props.setCreatedProperty("2007-05-12T10:00:00.123+0200");
         assertEquals(msdf.parse("2007-05-12T08:00:00.123Z"), props.getCreatedProperty().orElse(null));
+
+        // bug 70229: more than 3 fractional digits must not be read as a millisecond count
+        props.setCreatedProperty("2007-05-12T08:00:00.999999999Z");
+        assertEquals(msdf.parse("2007-05-12T08:00:00.999Z"), props.getCreatedProperty().orElse(null));
+
+        props.setCreatedProperty("2007-05-12T10:00:00.1234567+02:00");
+        assertEquals(msdf.parse("2007-05-12T08:00:00.123Z"), props.getCreatedProperty().orElse(null));
+
+        props.setCreatedProperty("2007-05-12T08:00:00.1Z");
+        assertEquals(msdf.parse("2007-05-12T08:00:00.100Z"), props.getCreatedProperty().orElse(null));
+
+        // other W3CDTF forms: no seconds, month only, year only
+        props.setCreatedProperty("2007-05-12T08:00Z");
+        assertEquals(dateToInsert, props.getCreatedProperty().orElse(null));
+
+        props.setCreatedProperty("2007-05");
+        assertEquals(msdf.parse("2007-05-01T00:00:00.000Z"), props.getCreatedProperty().orElse(null));
+
+        props.setCreatedProperty("2007");
+        assertEquals(msdf.parse("2007-01-01T00:00:00.000Z"), props.getCreatedProperty().orElse(null));
+
+        assertThrows(InvalidFormatException.class, () -> props.setCreatedProperty("2007-05-12T08:00:00.Z"));
+        assertThrows(InvalidFormatException.class, () -> props.setCreatedProperty("2007-05-12T08:00:00Zjunk"));
+        assertThrows(InvalidFormatException.class, () -> props.setCreatedProperty("12/05/2007"));
+
+        // restore the value compareProperties() expects
+        props.setCreatedProperty("2007-05-12T08:00:00Z");
+        assertEquals(dateToInsert, props.getCreatedProperty().orElse(null));
 
         props.setCategoryProperty("MyCategory");
         props.setContentStatusProperty("MyContentStatus");

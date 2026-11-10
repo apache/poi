@@ -32,12 +32,15 @@ import java.security.spec.AlgorithmParameterSpec;
 import java.util.Arrays;
 
 import javax.crypto.Cipher;
+import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.RC2ParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.ChunkedCipherInputStream;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
@@ -49,18 +52,45 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.MathUtil;
 
 /**
  * Decryptor implementation for Agile Encryption
  */
 public class AgileDecryptor extends Decryptor {
+    private static final Logger LOG = PoiLogManager.getLogger(AgileDecryptor.class);
+
     static final byte[] kVerifierInputBlock = longToBytes(0xfea7d2763b4b9e79L);
     static final byte[] kHashedVerifierBlock = longToBytes(0xd7aa0f6d3061344eL);
     static final byte[] kCryptoKeyBlock = longToBytes(0x146e0be7abacd0d6L);
     static final byte[] kIntegrityKeyBlock = longToBytes(0x5fb2ad010cb9e1f6L);
     static final byte[] kIntegrityValueBlock = longToBytes(0xa0677f02b22c8433L);
 
+    private static boolean FAIL_ON_INTEGRITY_ERROR = true;
+
     private long _length = -1;
+
+    /**
+     * Whether {@link #getDataStream(DirectoryNode)} fails when the DataIntegrity HMAC of the
+     * encrypted package does not match. Defaults to {@code true}.
+     * @since 6.1.0
+     */
+    public static boolean isFailOnIntegrityError() {
+        return FAIL_ON_INTEGRITY_ERROR;
+    }
+
+    /**
+     * Whether {@link #getDataStream(DirectoryNode)} fails when the DataIntegrity HMAC of the
+     * encrypted package does not match. Defaults to {@code true}.
+     * <p>
+     * Set it to {@code false} to only log a warning and decrypt the package anyway, e.g. to
+     * extract the content of a file whose HMAC was written incorrectly. Excel for the web shows such
+     * files, but only in read-only mode.
+     * @since 6.1.0
+     */
+    public static void setFailOnIntegrityError(final boolean failOnIntegrityError) {
+        FAIL_ON_INTEGRITY_ERROR = failOnIntegrityError;
+    }
 
     protected AgileDecryptor() {
     }
@@ -180,7 +210,7 @@ public class AgileDecryptor extends Decryptor {
     }
 
     protected static int getNextBlockSize(int inputLen, int blockSize) {
-        return (int)Math.ceil(inputLen / (double)blockSize) * blockSize;
+        return MathUtil.safeDoubleToInt(Math.ceil(inputLen / (double)blockSize) * blockSize);
     }
 
     /* package */ static byte[] hashInput(AgileEncryptionVerifier ver, byte[] pwHash, byte[] blockKey, byte[] inputKey, int cipherMode) {
@@ -209,12 +239,54 @@ public class AgileDecryptor extends Decryptor {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @throws EncryptedDocumentException if the password was not verified, or if the DataIntegrity HMAC
+     *         does not match and {@link #isFailOnIntegrityError()} is {@code true}
+     */
     @SuppressWarnings({"java:S2095"})
     @Override
     public InputStream getDataStream(DirectoryNode dir) throws IOException, GeneralSecurityException {
+        verifyIntegrity(dir);
         DocumentInputStream dis = dir.createDocumentInputStream(DEFAULT_POIFS_ENTRY);
         _length = dis.readLong();
         return new AgileCipherInputStream(dis, _length);
+    }
+
+    /**
+     * 2.3.4.14 DataIntegrity Generation (Agile Encryption)
+     * <p>
+     * Verifies the HMAC of the entire EncryptedPackage stream, including the StreamSize field,
+     * against the decrypted encryptedHmacValue, so modifications of the encrypted data are
+     * detected before any of it is decrypted.
+     */
+    private void verifyIntegrity(DirectoryNode dir) throws IOException, GeneralSecurityException {
+        byte[] hmacKey = getIntegrityHmacKey();
+        byte[] hmacValue = getIntegrityHmacValue();
+        if (hmacKey == null || hmacValue == null) {
+            throw new EncryptedDocumentException("The password needs to be verified successfully before the data stream can be accessed");
+        }
+
+        HashAlgorithm hashAlgo = getEncryptionInfo().getHeader().getHashAlgorithm();
+        Mac integrityMD = CryptoFunctions.getMac(hashAlgo);
+        integrityMD.init(new SecretKeySpec(hmacKey, hashAlgo.jceHmacId));
+
+        byte[] buf = new byte[4096];
+        try (DocumentInputStream dis = dir.createDocumentInputStream(DEFAULT_POIFS_ENTRY)) {
+            int readBytes;
+            while ((readBytes = dis.read(buf)) != -1) {
+                integrityMD.update(buf, 0, readBytes);
+            }
+        }
+
+        if (!MessageDigest.isEqual(hmacValue, integrityMD.doFinal())) {
+            if (FAIL_ON_INTEGRITY_ERROR) {
+                throw new EncryptedDocumentException("The data integrity check of the encrypted package failed - "
+                        + "call AgileDecryptor.setFailOnIntegrityError(false) to decrypt it anyway");
+            }
+            LOG.atWarn().log("The data integrity check of the encrypted package failed, decrypting it anyway");
+        }
     }
 
     @Override
@@ -270,9 +342,6 @@ public class AgileDecryptor extends Decryptor {
         throws GeneralSecurityException {
             super(stream, size, 4096);
         }
-
-        // TODO: calculate integrity hmac while reading the stream
-        // for a post-validation of the data
 
         @Override
         protected Cipher initCipherForBlock(Cipher cipher, int block)

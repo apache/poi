@@ -49,16 +49,14 @@ public final class SlideAndNotesAtomListing {
             Record r = records[i];
 
             // When we find them, print out their IDs
-            if(r instanceof Slide) {
-                Slide s = (Slide)r;
+            if(r instanceof Slide s) {
                 SlideAtom sa = s.getSlideAtom();
                 System.out.println("Found Slide at " + i);
                 System.out.println("  Slide's master ID is " + sa.getMasterID());
                 System.out.println("  Slide's notes ID is  " + sa.getNotesID());
                 System.out.println();
             }
-            if(r instanceof Notes) {
-                Notes n = (Notes)r;
+            if(r instanceof Notes n) {
                 NotesAtom na = n.getNotesAtom();
                 System.out.println("Found Notes at " + i);
                 System.out.println("  Notes ID is " + na.getSlideID());

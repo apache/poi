@@ -146,7 +146,7 @@ class PPTHandler extends MFProxy {
 
     @Override
     public GenericRecord getRoot() {
-        return (ppt instanceof GenericRecord) ? (GenericRecord)ppt : null;
+        return (ppt instanceof GenericRecord genericRecord) ? genericRecord : null;
     }
 
     private Stream<Integer> range(Matcher m) {

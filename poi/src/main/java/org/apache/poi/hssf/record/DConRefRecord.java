@@ -26,7 +26,6 @@ import java.util.function.Supplier;
 import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.GenericRecordUtil;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.StringUtil;
@@ -157,7 +156,7 @@ public class DConRefRecord extends StandardRecord {
         // single-byte, 1 if double-byte.
         final int byteLength = charCount * (charType + 1);
 
-        path = IOUtils.safelyAllocate(byteLength, HSSFWorkbook.getMaxRecordLength());
+        path = HSSFWorkbook.safelyAllocate(byteLength);
         inStream.readFully(path);
 
         // If it's a self reference, the last one or two bytes (depending on char type) are the

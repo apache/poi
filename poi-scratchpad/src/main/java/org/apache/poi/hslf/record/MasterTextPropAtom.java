@@ -93,7 +93,8 @@ public final class MasterTextPropAtom extends RecordAtom {
         _header = Arrays.copyOfRange(source, start, start+8);
 
         // Get the record data.
-        _data = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
+        _data = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH,
+                "MasterTextPropAtom.setMaxRecordLength()");
 
         try {
             read();
@@ -132,7 +133,8 @@ public final class MasterTextPropAtom extends RecordAtom {
     private void write() {
         int pos = 0;
         long newSize = Math.multiplyExact((long)indents.size(), (long)6);
-        _data = IOUtils.safelyAllocate(newSize, MAX_RECORD_LENGTH);
+        _data = IOUtils.safelyAllocate(newSize, MAX_RECORD_LENGTH,
+                "MasterTextPropAtom.setMaxRecordLength()");
         for (IndentProp prop : indents) {
             LittleEndian.putInt(_data, pos, prop.getCharactersCovered());
             LittleEndian.putShort(_data, pos+4, (short)prop.getIndentLevel());

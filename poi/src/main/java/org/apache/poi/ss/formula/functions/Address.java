@@ -37,12 +37,15 @@ public class Address implements Function {
         try {
             boolean pAbsRow, pAbsCol;
 
-            int row =  (int)NumericFunction.singleOperandEvaluate(args[0], srcRowIndex, srcColumnIndex);
-            int col =  (int)NumericFunction.singleOperandEvaluate(args[1], srcRowIndex, srcColumnIndex);
+            int row = OperandResolver.coerceDoubleToInt(NumericFunction.singleOperandEvaluate(args[0], srcRowIndex, srcColumnIndex));
+            int col = OperandResolver.coerceDoubleToInt(NumericFunction.singleOperandEvaluate(args[1], srcRowIndex, srcColumnIndex));
+            if (row < 1 || col < 1) {
+                return ErrorEval.VALUE_INVALID;
+            }
 
             int refType;
             if (args.length > 2  &&  args[2] != MissingArgEval.instance) {
-                refType = (int)NumericFunction.singleOperandEvaluate(args[2], srcRowIndex, srcColumnIndex);
+                refType = OperandResolver.coerceDoubleToInt(NumericFunction.singleOperandEvaluate(args[2], srcRowIndex, srcColumnIndex));
             } else {
                 refType = REF_ABSOLUTE;     // this is also the default if parameter is not given
             }

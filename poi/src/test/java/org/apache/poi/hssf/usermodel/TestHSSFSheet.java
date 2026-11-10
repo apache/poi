@@ -21,6 +21,7 @@ import static org.apache.poi.hssf.HSSFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -922,7 +923,7 @@ final class TestHSSFSheet extends BaseTestSheet {
             // The built-in name for auto-filter must consist of a single Area3d Ptg.
             Ptg[] ptg = name.getNameDefinition();
             assertEquals(1, ptg.length, "The built-in name for auto-filter must consist of a single Area3d Ptg");
-            assertTrue(ptg[0] instanceof Area3DPtg, "The built-in name for auto-filter must consist of a single Area3d Ptg");
+            assertInstanceOf(Area3DPtg.class, ptg[0], "The built-in name for auto-filter must consist of a single Area3d Ptg");
 
             Area3DPtg aref = (Area3DPtg) ptg[0];
             assertEquals(range.getFirstColumn(), aref.getFirstColumn());
@@ -949,9 +950,9 @@ final class TestHSSFSheet extends BaseTestSheet {
                 assertNotNull(objRecord);
                 List<SubRecord> subRecords = objRecord.getSubRecords();
                 assertEquals(3, subRecords.size());
-                assertTrue(subRecords.get(0) instanceof CommonObjectDataSubRecord);
-                assertTrue(subRecords.get(1) instanceof FtCblsSubRecord); // must be present, see Bug 51481
-                assertTrue(subRecords.get(2) instanceof LbsDataSubRecord);
+                assertInstanceOf(CommonObjectDataSubRecord.class, subRecords.get(0));
+                assertInstanceOf(FtCblsSubRecord.class, subRecords.get(1)); // must be present, see Bug 51481
+                assertInstanceOf(LbsDataSubRecord.class, subRecords.get(2));
             }
         }
     }

@@ -63,7 +63,7 @@ public final class Sumifs extends Baseifs {
 
             @Override
             public void addValue(ValueEval value) {
-                accumulator += (value instanceof NumberEval) ? ((NumberEval) value).getNumberValue() : 0.0;
+                accumulator += (value instanceof NumberEval ne) ? ne.getNumberValue() : 0.0;
             }
 
             @Override

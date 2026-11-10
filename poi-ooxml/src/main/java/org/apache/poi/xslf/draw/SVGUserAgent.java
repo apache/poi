@@ -20,12 +20,15 @@ package org.apache.poi.xslf.draw;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 
+import org.apache.batik.bridge.EmbededExternalResourceSecurity;
+import org.apache.batik.bridge.ExternalResourceSecurity;
 import org.apache.batik.bridge.UserAgentAdapter;
 import org.apache.batik.bridge.ViewBox;
 import org.apache.batik.parser.DefaultLengthHandler;
 import org.apache.batik.parser.LengthHandler;
 import org.apache.batik.parser.LengthParser;
 import org.apache.batik.parser.ParseException;
+import org.apache.batik.util.ParsedURL;
 import org.apache.batik.util.SVGConstants;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
@@ -93,6 +96,15 @@ public class SVGUserAgent extends UserAgentAdapter {
         lp.setLengthHandler(lh);
         lp.parse(a);
         return val[0];
+    }
+
+    /**
+     * The SVG comes from inside the document and has no location of its own,
+     * so only allow resources embedded as data: URLs and not local files
+     */
+    @Override
+    public ExternalResourceSecurity getExternalResourceSecurity(ParsedURL resourceURL, ParsedURL docURL) {
+        return new EmbededExternalResourceSecurity(resourceURL);
     }
 
     @Override

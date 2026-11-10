@@ -41,6 +41,7 @@ import org.apache.poi.hemf.record.emfplus.HemfPlusRecord;
 import org.apache.poi.hemf.record.emfplus.HemfPlusRecordIterator;
 import org.apache.poi.hwmf.usermodel.HwmfCharsetAware;
 import org.apache.poi.hwmf.usermodel.HwmfPicture;
+import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
@@ -56,6 +57,30 @@ import org.apache.poi.util.RecordFormatException;
 @Internal
 public class HemfComment {
     private static final Logger LOG = PoiLogManager.getLogger(HemfComment.class);
+    /**
+     * Max. record length - processing longer records will throw an exception.
+     * Comments carry whole embedded metafiles (WMF, EMF+, EPS), so this matches HwmfPicture's limit.
+     */
+    private static final int DEFAULT_MAX_RECORD_LENGTH = HwmfPicture.DEFAULT_MAX_RECORD_LENGTH;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+
+    /**
+     * @param length the max record length allowed for HemfComment
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for HemfComment
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
+
+    public static void safelyAllocateCheck(long length) {
+        ArrayUtil.safelyAllocateCheck(length, getMaxRecordLength(), "HemfComment.setMaxRecordLength()");
+    }
 
     public enum HemfCommentRecordType {
         emfGeneric(-1, EmfCommentDataGeneric::new, false),
@@ -123,7 +148,7 @@ public class HemfComment {
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             long startIdx = leis.getReadIndex();
-            data = new EmfCommentDataIterator(leis, (int)recordSize, true).next();
+            data = new EmfCommentDataIterator(leis, Math.toIntExact(recordSize), true).next();
             return leis.getReadIndex()-startIdx;
         }
 
@@ -152,17 +177,20 @@ public class HemfComment {
         }
 
         static void validateCommentType(final LittleEndianInputStream leis, HemfCommentRecordType commentType) {
-            int commentIdentifier = (int)leis.readUInt();
+            // comment identifiers are uint32 values used as bit-pattern identifiers, not numeric values
+            int commentIdentifier = (int) leis.readUInt();
             if (commentIdentifier == HemfCommentRecordType.emfPublic.id) {
-                commentIdentifier = (int)leis.readUInt();
+                commentIdentifier = (int) leis.readUInt();
             }
-            assert(commentIdentifier == commentType.id);
+            if (commentIdentifier != commentType.id) {
+                LOG.atWarn().log("Unexpected comment identifier for {} in emf file: {}", commentType, commentIdentifier);
+            }
         }
 
         @Override
         public void setCharsetProvider(Supplier<Charset> provider) {
-            if (data instanceof HwmfCharsetAware) {
-                ((HwmfCharsetAware)data).setCharsetProvider(provider);
+            if (data instanceof HwmfCharsetAware charsetAware) {
+                charsetAware.setCharsetProvider(provider);
             }
         }
     }
@@ -211,7 +239,9 @@ public class HemfComment {
                 // as a comment record. This value MUST be 0x00000046.
                 try {
                     long type = leis.readUInt();
-                    assert(type == HemfRecordType.comment.id);
+                    if (type != HemfRecordType.comment.id) {
+                        LOG.atWarn().log("Unexpected record type in emf comment: {}", type);
+                    }
                 } catch (RuntimeException e) {
                     // EOF
                     return null;
@@ -232,10 +262,10 @@ public class HemfComment {
                 // See the preceding table for descriptions of these record types.
                 // Valid comment identifier values are listed in the following table.
                 //
-                // If this field contains any other value, the comment record MUST be an EMR_COMMENT record
-                final int commentIdentifier = (int)leis.readUInt();
+                // comment identifiers are uint32 values used as bit-pattern identifiers, not numeric values
+                final int commentIdentifier = (int) leis.readUInt();
                 // A 32-bit unsigned integer that identifies the type of public comment record.
-                final int publicCommentIdentifier = (int)leis.readUInt();
+                final int publicCommentIdentifier = (int) leis.readUInt();
 
                 final boolean isEmfPublic = (commentIdentifier == HemfCommentRecordType.emfPublic.id);
                 leis.reset();
@@ -246,8 +276,11 @@ public class HemfComment {
                 final EmfCommentData record = commentType.constructor.get();
 
                 long readBytes = record.init(leis, dataSize);
-                final int skipBytes = (int)(recordSize-4-readBytes);
-                assert (skipBytes >= 0);
+                final long skipBytes = recordSize-4-readBytes;
+                if (skipBytes < 0) {
+                    throw new RecordFormatException("Comment record limit exceeded - readBytes: " + readBytes
+                        + " / recordSize: " + recordSize);
+                }
                 leis.skipFully(skipBytes);
 
                 return record;
@@ -285,7 +318,8 @@ public class HemfComment {
 
         @Override
         public long init(LittleEndianInputStream leis, long dataSize) throws IOException {
-            privateData = IOUtils.safelyAllocate(dataSize, HwmfPicture.getMaxRecordLength());
+            privateData = IOUtils.safelyAllocate(dataSize, getMaxRecordLength(),
+                    "HemfComment.setMaxRecordLength()");
             leis.readFully(privateData);
             return privateData.length;
         }
@@ -331,7 +365,7 @@ public class HemfComment {
         throws IOException {
             final long startIdx = leis.getReadIndex();
             EmfComment.validateCommentType(leis, HemfCommentRecordType.emfPlus);
-            new HemfPlusRecordIterator(leis, (int)dataSize-LittleEndianConsts.INT_SIZE).forEachRemaining(records::add);
+            new HemfPlusRecordIterator(leis, Math.toIntExact(dataSize)-LittleEndianConsts.INT_SIZE).forEachRemaining(records::add);
             return leis.getReadIndex()-startIdx;
         }
 
@@ -385,9 +419,10 @@ public class HemfComment {
             HemfDraw.readRectL(leis, bounds);
 
             // The number of Unicode characters in the optional description string that follows.
-            int nDescription = (int)leis.readUInt();
+            long nDescription = leis.readUInt();
 
-            byte[] buf = IOUtils.safelyAllocate(nDescription * 2L, HwmfPicture.getMaxRecordLength());
+            byte[] buf = IOUtils.safelyAllocate(nDescription * 2L, getMaxRecordLength(),
+                    "HemfComment.setMaxRecordLength()");
             leis.readFully(buf);
             description = new String(buf, StandardCharsets.UTF_16LE);
 
@@ -448,7 +483,7 @@ public class HemfComment {
             HemfDraw.readRectL(leis, bounds);
 
             // A 32-bit unsigned integer that specifies the number of graphics formats contained in this record.
-            int countFormats = (int)leis.readUInt();
+            int countFormats = Math.toIntExact(leis.readUInt());
             for (int i=0; i<countFormats; i++) {
                 EmfCommentDataFormat fmt = new EmfCommentDataFormat();
                 long readBytes = fmt.init(leis, dataSize, startIdx);
@@ -462,7 +497,8 @@ public class HemfComment {
             for (EmfCommentDataFormat fmt : formats) {
                 int skip = fmt.offData-(leis.getReadIndex()-startIdx);
                 leis.skipFully(skip);
-                fmt.rawData = IOUtils.safelyAllocate(fmt.sizeData, HwmfPicture.getMaxRecordLength());
+                fmt.rawData = IOUtils.safelyAllocate(fmt.sizeData, getMaxRecordLength(),
+                        "HemfComment.setMaxRecordLength()");
                 int readBytes = leis.read(fmt.rawData);
                 if (readBytes < fmt.sizeData) {
                     // EOF
@@ -602,9 +638,10 @@ public class HemfComment {
 
             // A 32-bit unsigned integer that specifies the size, in bytes, of the
             // WMF metafile in the WinMetafile field.
-            int winMetafileSize = (int)leis.readUInt();
+            long winMetafileSize = leis.readUInt();
 
-            wmfData = IOUtils.safelyAllocate(winMetafileSize, HwmfPicture.getMaxRecordLength());
+            wmfData = IOUtils.safelyAllocate(winMetafileSize, getMaxRecordLength(),
+                    "HemfComment.setMaxRecordLength()");
             // some emf comments are truncated, so we don't use readFully here
             int readBytes = leis.read(wmfData);
             if (readBytes < wmfData.length) {

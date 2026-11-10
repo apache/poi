@@ -34,10 +34,10 @@ configurations {
 
 sourceSets {
     main {
-        output.dir(JAVA9_OUT, builtBy: 'compileJava9')
+        output.dir(JPMS_OUT, builtBy: 'compileModuleInfo')
     }
     test {
-        output.dir(TEST9_OUT, builtBy: 'compileTest9')
+        output.dir(TEST_JPMS_OUT, builtBy: 'compileTestModuleInfo')
     }
 }
 
@@ -68,13 +68,19 @@ dependencies {
     api "org.apache.commons:commons-compress:${commonsCompressVersion}"
     api "commons-io:commons-io:${commonsIoVersion}"
     api 'com.github.virtuald:curvesapi:1.08'
-    api 'org.apache.commons:commons-collections4:4.5.0'
+    api 'org.apache.commons:commons-collections4:4.6.0'
 
+    // xmlsec 4's module-info requires jakarta.xml.bind and jakarta.activation, but its pom
+    // declares them with provided scope, so they must be supplied when xmlsec is on the module path
     signingImplementation "org.apache.santuario:xmlsec:${xmlSecVersion}"
+    signingImplementation "jakarta.xml.bind:jakarta.xml.bind-api:${jakartaXmlBindVersion}"
+    signingImplementation "jakarta.activation:jakarta.activation-api:${jakartaActivationVersion}"
     signingImplementation "org.bouncycastle:bcpkix-jdk18on:${bouncyCastleVersion}"
     signingImplementation "org.bouncycastle:bcutil-jdk18on:${bouncyCastleVersion}"
 
     rendersignImplementation "org.apache.santuario:xmlsec:${xmlSecVersion}"
+    rendersignImplementation "jakarta.xml.bind:jakarta.xml.bind-api:${jakartaXmlBindVersion}"
+    rendersignImplementation "jakarta.activation:jakarta.activation-api:${jakartaActivationVersion}"
     rendersignImplementation "org.bouncycastle:bcpkix-jdk18on:${bouncyCastleVersion}"
     rendersignImplementation "org.bouncycastle:bcutil-jdk18on:${bouncyCastleVersion}"
 
@@ -125,17 +131,18 @@ dependencies {
     testImplementation project(path:':poi', configuration:'tests')
     testImplementation project(path:':poi-ooxml-lite-agent', configuration: 'archives')
     testRuntimeOnly "org.apiguardian:apiguardian-api:${apiGuardianVersion}"
-    testImplementation 'org.xmlunit:xmlunit-core:2.11.0'
+    testRuntimeOnly "org.jspecify:jspecify:${jspecifyVersion}"
+    testImplementation 'org.xmlunit:xmlunit-core:2.14.0'
     testImplementation 'org.reflections:reflections:0.10.2'
-    testImplementation 'org.openjdk.jmh:jmh-core:1.36'
-    testImplementation 'org.openjdk.jmh:jmh-generator-annprocess:1.36'
-    testImplementation 'com.google.guava:guava:33.5.0-jre'
+    testImplementation 'org.openjdk.jmh:jmh-core:1.37'
+    testImplementation 'org.openjdk.jmh:jmh-generator-annprocess:1.37'
+    testImplementation "com.google.guava:guava:${guavaVersion}"
     testImplementation 'com.github.rzymek:opczip:1.2.0'
 
     // prevent slf4j warnings coming from xmlsec -> slf4j-api 1.7.x dependency
     // see https://logging.apache.org/log4j/2.x/log4j-slf4j-impl/
     testImplementation "org.apache.logging.log4j:log4j-slf4j2-impl:${log4jVersion}"
-    testImplementation 'org.slf4j:slf4j-simple:2.0.17'
+    testImplementation "org.slf4j:slf4j-simple:${slf4jVersion}"
 
     javadocs project(':poi')
     javadocs project(':poi-scratchpad')
@@ -151,47 +158,19 @@ final String OOXML_LITE_AGENT = "../build/dist/maven/poi-ooxml-lite-agent/poi-oo
 final String OOXML_LITE_REPORT = '../src/resources/ooxml-lite-report'
 final String OOXML_LITE_INCLUDES = "^(com/microsoft/schemas|org/(etsi|openxmlformats|w3/)|org/apache/poi/schemas)"
 
-tasks.register('compileJava9', JavaCompile) {
-    dependsOn 'compileJava', ':poi:jar'
+registerModuleInfoCompile(name: 'compileModuleInfo', dependsOn: ['compileJava', ':poi:jar'],
+    src: JPMS_SRC, out: JPMS_OUT, module: MODULE_NAME,
+    patch: sourceSets.main.output.classesDirs,
+    modulePath: MAIN_MODULE_PATH)
 
-    javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
-    }
-    sourceCompatibility = 11
-    targetCompatibility = 11
-    destinationDirectory = file(JAVA9_OUT + VERSIONS9)
-    source = file(JAVA9_SRC)
-    classpath = files()
-    options.compilerArgs = [
-            '--patch-module', "${MODULE_NAME}=${sourceSets.main.output.classesDirs.asPath}",
-            '--module-path', files(MAIN_MODULE_PATH).asPath
-    ]
-}
-
-tasks.register('compileTest9', JavaCompile) {
-    dependsOn 'compileTestJava', ':poi:testJar'
-
-    javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
-    }
-    sourceCompatibility = 11
-    targetCompatibility = 11
-    destinationDirectory = file(TEST9_OUT + VERSIONS9)
-    source = file(TEST9_SRC)
-    options.compilerArgs = [
-            '--patch-module', "${MODULE_NAME}=${(sourceSets.main.output.classesDirs + sourceSets.test.output.classesDirs).asPath}",
-            '--module-path', files(TEST_MODULE_PATH).asPath
-    ]
-    classpath = files()
-}
+registerModuleInfoCompile(name: 'compileTestModuleInfo', dependsOn: ['compileTestJava', ':poi:testJar'],
+    src: TEST_JPMS_SRC, out: TEST_JPMS_OUT, module: MODULE_NAME,
+    patch: sourceSets.main.output.classesDirs + sourceSets.test.output.classesDirs,
+    modulePath: TEST_MODULE_PATH)
 
 
 jar {
     destinationDirectory = file("../build/dist/maven/${base.archivesName.get()}")
-
-    manifest {
-        attributes('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')
-    }
 }
 
 // Create a separate jar for test-code to depend on it in other projects
@@ -204,22 +183,20 @@ task testJar(type: Jar, dependsOn: testClasses) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     from sourceSets.test.output + sourceSets.main.output
-
-    manifest {
-        attributes('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')
-    }
 }
 
 javadoc {
+    dependsOn configurations.javadocs.dependencies.collect{ ':' + project.project(it.path).name + ':compileJava' }
+
     failOnError = true
     doFirst {
         options {
             addBooleanOption('html5', true)
             links 'https://poi.apache.org/apidocs/dev/'
-            if (jdkVersion >= 23) links 'https://docs.oracle.com/en/java/javase/23/docs/api/' else links 'https://docs.oracle.com/en/java/javase/11/docs/api/'
+            if (jdkVersion >= 23) links 'https://docs.oracle.com/en/java/javase/23/docs/api/' else links 'https://docs.oracle.com/en/java/javase/17/docs/api/'
             use = true
             splitIndex = true
-            source = "11"
+            source = "17"
             classpath += configurations.javadocs.files
         }
     }
@@ -283,23 +260,4 @@ publishing {
             suppressPomMetadataWarningsFor('rendersignRuntimeElements')
         }
     }
-}
-
-cyclonedxBom {
-    // includeConfigs is the list of configuration names to include when generating the BOM (leave empty to include every configuration)
-    includeConfigs = ["runtimeClasspath"]
-    // skipConfigs is a list of configuration names to exclude when generating the BOM
-    //skipConfigs = ["compileClasspath", "testCompileClasspath"]
-    // Specified the type of project being built. Defaults to 'library'
-    projectType = "library"
-    // Specified the version of the CycloneDX specification to use. Defaults to 1.4.
-    schemaVersion = "1.4"
-    // Boms destination directory (defaults to build/reports)
-    destination = file("build/reports")
-    // The file name for the generated BOMs (before the file format suffix). Defaults to 'bom'
-    outputName = "poi-ooxml-${project.version}.bom"
-    // The file format generated, can be xml, json or all for generating both
-    outputFormat = "all"
-    // Exclude BOM Serial Number
-    includeBomSerialNumber = true
 }

@@ -17,13 +17,13 @@
 
 package org.apache.poi.openxml4j.opc;
 
-import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Locale;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
+import org.apache.poi.util.StringUtil;
 
 /**
  * An immutable Open Packaging Convention compliant part name.
@@ -140,10 +140,17 @@ public final class PackagePartName implements Comparable<PackagePartName> {
         }
 
         final String uriPath = partUri.getPath();
-        return uriPath != null && uriPath.matches(
-                "^.*/" + PackagingURIHelper.RELATIONSHIP_PART_SEGMENT_NAME + "/.*\\"
-                        + PackagingURIHelper.RELATIONSHIP_PART_EXTENSION_NAME
-                        + "$");
+        if (uriPath == null || PackagingURIHelper.hasLineTerminator(uriPath)
+                || !uriPath.endsWith(PackagingURIHelper.RELATIONSHIP_PART_EXTENSION_NAME)) {
+            return false;
+        }
+
+        // same result as uriPath.matches("^.*/_rels/.*\\.rels$") but without the regex,
+        // which backtracks quadratically on "/_rels" repeated
+        final String segment = "/" + PackagingURIHelper.RELATIONSHIP_PART_SEGMENT_NAME + "/";
+        final int index = uriPath.indexOf(segment);
+        return index >= 0 && index + segment.length()
+                <= uriPath.length() - PackagingURIHelper.RELATIONSHIP_PART_EXTENSION_NAME.length();
     }
 
     /**
@@ -262,7 +269,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
                     "A segment shall not end with a dot ('.') character [M1.9]: " + partUri.getPath());
             }
 
-            if (seg.replaceAll("\\\\.", "").isEmpty()) {
+            if (isAllDots(seg)) {
                 // Normally will never been invoked with the previous
                 // implementation rule [M1.9]
                 throw new InvalidFormatException(
@@ -272,6 +279,22 @@ public final class PackagePartName implements Comparable<PackagePartName> {
             // Check for rule M1.6, M1.7, M1.8
             checkPCharCompliance(seg);
         }
+    }
+
+    /**
+     * Checks if a segment consists of dot ('.') characters only.
+     *
+     * @param segment
+     *            The non-empty segment to check.
+     * @return <code>true</code> if the segment holds nothing but dots.
+     */
+    private static boolean isAllDots(String segment) {
+        for (int i = 0; i < segment.length(); i++) {
+            if (segment.charAt(i) != '.') {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -316,7 +339,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 
             // We certainly found an encoded character, check for length
             // now ( '%' HEXDIGIT HEXDIGIT)
-            if ((length - i) < 2 || !isHexDigit(segment.charAt(i+1)) || !isHexDigit(segment.charAt(i+2))) {
+            if ((length - i) < 3 || !isHexDigit(segment.charAt(i+1)) || !isHexDigit(segment.charAt(i+2))) {
                 throw new InvalidFormatException("The segment " + segment + " contain invalid encoded character !");
             }
 
@@ -448,8 +471,8 @@ public final class PackagePartName implements Comparable<PackagePartName> {
      */
     @Override
     public boolean equals(Object other) {
-        return (other instanceof PackagePartName) &&
-            compare(this.getName(), ((PackagePartName)other).getName()) == 0;
+        return (other instanceof PackagePartName otherName) &&
+            compare(this.getName(), otherName.getName()) == 0;
     }
 
     @Override
@@ -528,7 +551,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
             return 1;
         }
 
-        if (str1.equalsIgnoreCase(str2)) {
+        if (StringUtil.equalsIgnoreCase(str1, str2)) {
             return 0;
         }
         final String name1 = str1.toLowerCase(Locale.ROOT);
@@ -551,10 +574,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
                     idx2++;
                 }
 
-                // note: BigInteger for extra safety
-                final BigInteger b1 = new BigInteger(name1.substring(beg1, idx1));
-                final BigInteger b2 = new BigInteger(name2.substring(beg2, idx2));
-                final int cmp = b1.compareTo(b2);
+                final int cmp = compareNumbers(name1, beg1, idx1, name2, beg2, idx2);
                 if (cmp != 0) {
                     return cmp;
                 }
@@ -565,6 +585,31 @@ public final class PackagePartName implements Comparable<PackagePartName> {
         }
 
         return (len1 - len2);
+    }
+
+    /**
+     * Compares two runs of digits by their numerical value, in time linear in their
+     * length: parsing them as a BigInteger is quadratic, and a part name can hold
+     * tens of thousands of digits.
+     */
+    private static int compareNumbers(String str1, int beg1, int end1, String str2, int beg2, int end2) {
+        while (beg1 < end1 && Character.digit(str1.charAt(beg1), 10) == 0) {
+            beg1++;
+        }
+        while (beg2 < end2 && Character.digit(str2.charAt(beg2), 10) == 0) {
+            beg2++;
+        }
+        final int cmp = (end1 - beg1) - (end2 - beg2);
+        if (cmp != 0) {
+            return cmp;
+        }
+        while (beg1 < end1) {
+            final int diff = Character.digit(str1.charAt(beg1++), 10) - Character.digit(str2.charAt(beg2++), 10);
+            if (diff != 0) {
+                return diff;
+            }
+        }
+        return 0;
     }
 
     private static boolean isDigitOrLetter(char c) {

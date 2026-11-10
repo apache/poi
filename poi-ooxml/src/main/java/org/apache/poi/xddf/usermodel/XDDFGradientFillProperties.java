@@ -17,9 +17,9 @@
 
 package org.apache.poi.xddf.usermodel;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
@@ -108,12 +108,11 @@ public class XDDFGradientFillProperties implements XDDFFillProperties {
 
     public List<XDDFGradientStop> getGradientStops() {
         if (props.isSetGsLst()) {
-            return Collections.unmodifiableList(props
+            return Collections.unmodifiableList(Arrays.stream(props
                 .getGsLst()
-                .getGsList()
-                .stream()
+                .getGsArray())
                 .map(XDDFGradientStop::new)
-                .collect(Collectors.toList()));
+                .toList());
         } else {
             return Collections.emptyList();
         }

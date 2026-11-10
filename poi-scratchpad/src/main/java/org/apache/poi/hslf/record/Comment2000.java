@@ -117,8 +117,7 @@ public final class Comment2000 extends RecordContainer {
     private void findInterestingChildren() {
 
         for(org.apache.poi.hslf.record.Record r : _children){
-            if (r instanceof CString){
-                CString cs = (CString)r;
+            if (r instanceof CString cs) {
                 int recInstance = cs.getOptions() >> 4;
                 switch(recInstance){
                     case 0: authorRecord = cs; break;
@@ -126,8 +125,8 @@ public final class Comment2000 extends RecordContainer {
                     case 2: authorInitialsRecord = cs; break;
                     default: break;
                 }
-            } else if (r instanceof Comment2000Atom){
-                commentAtom = (Comment2000Atom)r;
+            } else if (r instanceof Comment2000Atom atom){
+                commentAtom = atom;
             } else {
                 LOG.atWarn().log("Unexpected record with type={} in Comment2000: {}", box(r.getRecordType()),r.getClass().getName());
             }

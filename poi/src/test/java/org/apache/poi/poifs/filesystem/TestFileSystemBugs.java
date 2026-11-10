@@ -18,6 +18,7 @@
 package org.apache.poi.poifs.filesystem;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
@@ -90,7 +91,7 @@ final class TestFileSystemBugs {
 
         Entry entry = root.getEntries().next();
         assertTrue(entry.isDirectoryEntry());
-        assertTrue(entry instanceof DirectoryEntry);
+        assertInstanceOf(DirectoryEntry.class, entry);
 
         // The directory lacks a name!
         DirectoryEntry dir = (DirectoryEntry)entry;

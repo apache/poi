@@ -118,7 +118,7 @@ class OpcOutputStream extends DeflaterOutputStream {
      * @see ZipOutputStream#write(byte[], int, int)
      */
     @Override
-    public synchronized void write(byte[] b, int off, int len) throws IOException {
+    public void write(byte[] b, int off, int len) throws IOException {
         if (off < 0 || len < 0 || off > b.length - len) {
             throw new IndexOutOfBoundsException();
         } else if (len == 0) {

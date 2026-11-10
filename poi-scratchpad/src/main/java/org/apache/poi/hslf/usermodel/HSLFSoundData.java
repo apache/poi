@@ -79,8 +79,8 @@ public final class HSLFSoundData {
                 RecordContainer col = (RecordContainer) value;
                 org.apache.poi.hslf.record.Record[] sr = col.getChildRecords();
                 for (org.apache.poi.hslf.record.Record record : sr) {
-                    if (record instanceof Sound) {
-                        lst.add(new HSLFSoundData((Sound) record));
+                    if (record instanceof Sound sound) {
+                        lst.add(new HSLFSoundData(sound));
                     }
                 }
             }

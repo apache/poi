@@ -31,6 +31,7 @@ import org.apache.poi.ss.formula.ptg.Ref3DPxg;
 import org.apache.poi.ss.formula.ptg.RefErrorPtg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.ss.formula.ptg.RefPtgBase;
+import org.apache.poi.util.StringUtil;
 
 
 /**
@@ -163,23 +164,18 @@ public final class FormulaShifter {
     }
 
     private Ptg adjustPtg(Ptg ptg, int currentExternSheetIx) {
-        switch(_mode){
-            case RowMove:
-                return adjustPtgDueToRowMove(ptg, currentExternSheetIx);
-            case RowCopy:
+        return switch (_mode) {
+            case RowMove -> adjustPtgDueToRowMove(ptg, currentExternSheetIx);
+            case RowCopy ->
                 // Covered Scenarios:
                 // * row copy on same sheet
                 // * row copy between different sheets in the same workbook
-                return adjustPtgDueToRowCopy(ptg);
-            case ColumnMove:
-                return adjustPtgDueToColumnMove(ptg, currentExternSheetIx);
-            case ColumnCopy:
-                return adjustPtgDueToColumnCopy(ptg);
-            case SheetMove:
-                return adjustPtgDueToSheetMove(ptg);
-            default:
-                throw new IllegalStateException("Unsupported shift mode: " + _mode);
-        }
+                    adjustPtgDueToRowCopy(ptg);
+            case ColumnMove -> adjustPtgDueToColumnMove(ptg, currentExternSheetIx);
+            case ColumnCopy -> adjustPtgDueToColumnCopy(ptg);
+            case SheetMove -> adjustPtgDueToSheetMove(ptg);
+            default -> throw new IllegalStateException("Unsupported shift mode: " + _mode);
+        };
     }
 
     /**
@@ -188,16 +184,14 @@ public final class FormulaShifter {
      * or null (if no Ptg change is needed)
      */
     private Ptg adjustPtgDueToMove(Ptg ptg, int currentExternSheetIx, boolean isRowMove) {
-        if(ptg instanceof RefPtg) {
+        if(ptg instanceof RefPtg rptg) {
             if (currentExternSheetIx != _externSheetIndex) {
                 // local refs on other sheets are unaffected
                 return null;
             }
-            RefPtg rptg = (RefPtg)ptg;
             return isRowMove ? rowMoveRefPtg(rptg) : columnMoveRefPtg(rptg);
         }
-        if(ptg instanceof Ref3DPtg) {
-            Ref3DPtg rptg = (Ref3DPtg)ptg;
+        if(ptg instanceof Ref3DPtg rptg) {
             if (_externSheetIndex != rptg.getExternSheetIndex()) {
                 // only move 3D refs that refer to the sheet with cells being moved
                 // (currentExternSheetIx is irrelevant)
@@ -205,25 +199,22 @@ public final class FormulaShifter {
             }
             return isRowMove ? rowMoveRefPtg(rptg) : columnMoveRefPtg(rptg);
         }
-        if(ptg instanceof Ref3DPxg) {
-            Ref3DPxg rpxg = (Ref3DPxg)ptg;
+        if(ptg instanceof Ref3DPxg rpxg) {
             if (rpxg.getExternalWorkbookNumber() > 0 ||
-                    ! _sheetName.equalsIgnoreCase(rpxg.getSheetName())) {
+                    !StringUtil.equalsIgnoreCase(_sheetName, rpxg.getSheetName())) {
                 // only move 3D refs that refer to the sheet with cells being moved
                 return null;
             }
             return isRowMove ? rowMoveRefPtg(rpxg) : columnMoveRefPtg(rpxg);
         }
-        if(ptg instanceof Area2DPtgBase) {
+        if(ptg instanceof Area2DPtgBase aptg) {
             if (currentExternSheetIx != _externSheetIndex) {
                 // local refs on other sheets are unaffected
                 return ptg;
             }
-            Area2DPtgBase aptg = (Area2DPtgBase) ptg;
             return isRowMove ? rowMoveAreaPtg(aptg) : columnMoveAreaPtg(aptg);
         }
-        if(ptg instanceof Area3DPtg) {
-            Area3DPtg aptg = (Area3DPtg)ptg;
+        if(ptg instanceof Area3DPtg aptg) {
             if (_externSheetIndex != aptg.getExternSheetIndex()) {
                 // only move 3D refs that refer to the sheet with cells being moved
                 // (currentExternSheetIx is irrelevant)
@@ -231,10 +222,9 @@ public final class FormulaShifter {
             }
             return isRowMove ? rowMoveAreaPtg(aptg) : columnMoveAreaPtg(aptg);
         }
-        if(ptg instanceof Area3DPxg) {
-            Area3DPxg apxg = (Area3DPxg)ptg;
+        if(ptg instanceof Area3DPxg apxg) {
             if (apxg.getExternalWorkbookNumber() > 0 ||
-                    ! _sheetName.equalsIgnoreCase(apxg.getSheetName())) {
+                    !StringUtil.equalsIgnoreCase(_sheetName, apxg.getSheetName())) {
                 // only move 3D refs that refer to the sheet with cells being moved
                 return null;
             }
@@ -273,28 +263,22 @@ public final class FormulaShifter {
      * If Ptg doesn't need to be changed, returns <code>null</code>
      */
     private Ptg adjustPtgDueToCopy(Ptg ptg, boolean isRowCopy) {
-        if(ptg instanceof RefPtg) {
-            RefPtg rptg = (RefPtg)ptg;
+        if(ptg instanceof RefPtg rptg) {
             return isRowCopy ? rowCopyRefPtg(rptg) : columnCopyRefPtg(rptg);
         }
-        if(ptg instanceof Ref3DPtg) {
-            Ref3DPtg rptg = (Ref3DPtg)ptg;
+        if(ptg instanceof Ref3DPtg rptg) {
             return isRowCopy ? rowCopyRefPtg(rptg) : columnCopyRefPtg(rptg);
         }
-        if(ptg instanceof Ref3DPxg) {
-            Ref3DPxg rpxg = (Ref3DPxg)ptg;
+        if(ptg instanceof Ref3DPxg rpxg) {
             return isRowCopy ? rowCopyRefPtg(rpxg) : columnCopyRefPtg(rpxg);
         }
-        if(ptg instanceof Area2DPtgBase) {
-            Area2DPtgBase aptg = (Area2DPtgBase) ptg;
+        if(ptg instanceof Area2DPtgBase aptg) {
             return isRowCopy ? rowCopyAreaPtg(aptg) : columnCopyAreaPtg(aptg);
         }
-        if(ptg instanceof Area3DPtg) {
-            Area3DPtg aptg = (Area3DPtg)ptg;
+        if(ptg instanceof Area3DPtg aptg) {
             return isRowCopy ? rowCopyAreaPtg(aptg) : columnCopyAreaPtg(aptg);
         }
-        if(ptg instanceof Area3DPxg) {
-            Area3DPxg apxg = (Area3DPxg)ptg;
+        if(ptg instanceof Area3DPxg apxg) {
             return isRowCopy ? rowCopyAreaPtg(apxg) : columnCopyAreaPtg(apxg);
         }
         return null;
@@ -332,8 +316,7 @@ public final class FormulaShifter {
 
 
     private Ptg adjustPtgDueToSheetMove(Ptg ptg) {
-        if(ptg instanceof Ref3DPtg) {
-            Ref3DPtg ref = (Ref3DPtg)ptg;
+        if(ptg instanceof Ref3DPtg ref) {
             int oldSheetIndex = ref.getExternSheetIndex();
             
             // we have to handle a few cases here
@@ -811,23 +794,19 @@ public final class FormulaShifter {
         if (ptg instanceof RefPtg) {
             return new RefErrorPtg();
         }
-        if (ptg instanceof Ref3DPtg) {
-            Ref3DPtg rptg = (Ref3DPtg) ptg;
+        if (ptg instanceof Ref3DPtg rptg) {
             return new DeletedRef3DPtg(rptg.getExternSheetIndex());
         }
         if (ptg instanceof AreaPtg) {
             return new AreaErrPtg();
         }
-        if (ptg instanceof Area3DPtg) {
-            Area3DPtg area3DPtg = (Area3DPtg) ptg;
+        if (ptg instanceof Area3DPtg area3DPtg) {
             return new DeletedArea3DPtg(area3DPtg.getExternSheetIndex());
         }
-        if (ptg instanceof Ref3DPxg) {
-            Ref3DPxg pxg = (Ref3DPxg)ptg;
+        if (ptg instanceof Ref3DPxg pxg) {
             return new Deleted3DPxg(pxg.getExternalWorkbookNumber(), pxg.getSheetName());
         }
-        if (ptg instanceof Area3DPxg) {
-            Area3DPxg pxg = (Area3DPxg)ptg;
+        if (ptg instanceof Area3DPxg pxg) {
             return new Deleted3DPxg(pxg.getExternalWorkbookNumber(), pxg.getSheetName());
         }
 

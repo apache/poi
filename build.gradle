@@ -21,6 +21,7 @@ import org.w3c.dom.NodeList
 import javax.xml.xpath.XPath
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
+import java.util.zip.ZipFile
 
 buildscript {
     repositories {
@@ -31,21 +32,19 @@ buildscript {
 
 plugins {
     id 'base'
-    id 'com.dorongold.task-tree' version '4.0.1'
-    id 'org.nosphere.apache.rat' version '0.8.1'
+    id 'com.dorongold.task-tree' version '4.0.2'
+    id 'org.nosphere.apache.rat' version '0.11.0'
     id 'distribution'
 
-    // 6.2.0+ requires JDK 11
-    // this is the version of the Gradle plugin, it usually includes a
-    // different version of spotbugs itself
     // Latest spotbugs: https://github.com/spotbugs/spotbugs
     // Latest gradle plugin: https://plugins.gradle.org/plugin/com.github.spotbugs
-    id 'com.github.spotbugs' version '6.4.8'
+    id 'com.github.spotbugs' version '6.5.13'
 
-    id 'de.thetaphi.forbiddenapis' version '3.10'
-    id 'org.sonarqube' version '7.2.3.7755'
-    id 'org.cyclonedx.bom' version '2.4.1'
+    id 'de.thetaphi.forbiddenapis' version '3.11'
+    id 'org.sonarqube' version '7.5.0.8588'
+    id 'org.cyclonedx.bom' version '3.5.1'
     id 'com.adarshr.test-logger' version '4.0.0'
+    id 'me.champeau.jmh' version '0.7.4' apply false
 }
 
 repositories {
@@ -60,6 +59,10 @@ if (project.hasProperty('enableSonar')) {
 }
 
 boolean isCIBuild = false
+
+// the modules that are published to Maven repositories (the same set as the 5.5.1 release)
+ext.publishedModules = ['poi', 'poi-ooxml', 'poi-ooxml-full', 'poi-ooxml-lite', 'poi-scratchpad',
+                        'poi-excelant', 'poi-examples']
 String dateSuffix = new Date().format('yyyyMMdd')
 
 // For help converting an Ant build to a Gradle build, see
@@ -73,9 +76,16 @@ configurations {
     }
 }
 
+allprojects {
+    ext {
+        antVersion = '1.10.18'
+        junitVersion = '6.1.3'
+    }
+}
+
 dependencies {
-    antLibs("org.junit.jupiter:junit-jupiter:5.13.4")
-    antLibs("org.apache.ant:ant-junitlauncher:1.10.15")
+    antLibs("org.junit.jupiter:junit-jupiter:${junitVersion}")
+    antLibs("org.apache.ant:ant-junitlauncher:${antVersion}")
 }
 
 ant.taskdef(name: "junit",
@@ -84,7 +94,7 @@ ant.taskdef(name: "junit",
 
 
 wrapper {
-    gradleVersion = '8.14.3'
+    gradleVersion = '9.8.1'
 }
 
 group = 'org.apache.poi'
@@ -96,7 +106,42 @@ allprojects {
 //    apply plugin: 'eclipse'
     apply plugin: 'idea'
 
-    version = '6.0.0-SNAPSHOT'
+    version = '6.1.0-SNAPSHOT'
+
+    tasks.cyclonedxDirectBom {
+        // includeConfigs is the list of configuration names to include when generating the BOM (leave empty to include every configuration)
+        includeConfigs = ["runtimeClasspath"]
+        // skipConfigs is a list of configuration names to exclude when generating the BOM
+        //skipConfigs = ["compileClasspath", "testCompileClasspath"]
+        // Specified the version of the CycloneDX specification to use
+        //schemaVersion = org.cyclonedx.model.schema.SchemaVersion.VERSION_16
+        // Specified the type of project being built. Defaults to 'library'
+        projectType = "library"
+        jsonOutput = file("build/reports/sbom/${project.name}-sbom.json")
+    }
+}
+
+abstract class VerifyModuleInfoIsPresent extends DefaultTask {
+    @InputFile
+    abstract RegularFileProperty getVerifiedJar()
+
+    @TaskAction
+    void verifyModuleInfo() {
+        def jar = verifiedJar.get().asFile
+        if (jar.getName().contains('poi-integration') || jar.getName().contains('poi-fuzz')
+                || jar.getName().contains('benchmark')) {
+            return
+        }
+
+        new ZipFile(jar).withCloseable { zip ->
+            if (zip.getEntry("META-INF/versions/9/module-info.class") != null) {
+                throw new VerificationException("Unexpected multi-release module-info in $jar")
+            }
+            if (zip.getEntry("module-info.class") == null) {
+                throw new VerificationException("Missing module-info in $jar")
+            }
+        }
+    }
 }
 
 /**
@@ -114,32 +159,54 @@ subprojects {
     apply plugin: 'com.adarshr.test-logger'
 
     ext {
-        bouncyCastleVersion = '1.83'
-        commonsCodecVersion = '1.21.0'
+        bouncyCastleVersion = '1.86'
+        commonsCodecVersion = '1.23.0'
         commonsCompressVersion = '1.28.0'
-        commonsIoVersion = '2.21.0'
+        commonsIoVersion = '2.22.0'
         commonsMathVersion = '3.6.1'
-        junitVersion = '5.13.4'
-        log4jVersion = '2.25.3'
-        mockitoVersion = '5.23.0'
+        log4jVersion = '2.26.1'
+        mockitoVersion = '5.24.0'
         hamcrestVersion = '3.0'
-        xmlbeansVersion = '5.3.0'
-        batikVersion = '1.19'
+        xmlbeansVersion = '5.4.1'
+        batikVersion = '1.20'
         graphics2dVersion = '3.0.5'
-        pdfboxVersion = '3.0.6'
-        saxonVersion = '12.9'
-        xmlSecVersion = '3.0.6'
+        pdfboxVersion = '3.0.8'
+        saxonVersion = '13.1'
+        guavaVersion = '33.8.0-jre'
+        slf4jVersion = '2.0.20'
+        jspecifyVersion = '1.0.1'
+        xmlSecVersion = '4.0.4'
+        jakartaXmlBindVersion = '4.0.5'
+        jakartaActivationVersion = '2.1.4'
         apiGuardianVersion = '1.1.2'
 
-        jdkVersion = (project.properties['jdkVersion'] ?: '11') as int
+        jdkVersion = (project.properties['jdkVersion'] ?: '17') as int
         // see https://github.com/gradle/gradle/blob/master/subprojects/jvm-services/src/main/java/org/gradle/internal/jvm/inspection/JvmVendor.java
         jdkVendor = (project.properties['jdkVendor'] ?: '') as String
 
-        JAVA9_SRC = 'src/main/java9'
-        JAVA9_OUT = layout.buildDirectory.dir('classes/java9/main/').get().asFile.absolutePath
-        TEST9_SRC = 'src/test/java9'
-        TEST9_OUT = layout.buildDirectory.dir('classes/java9/test/').get().asFile.absolutePath
-        VERSIONS9 = '/META-INF/versions/9'
+        JPMS_SRC = 'src/main/jpms'
+        JPMS_OUT = layout.buildDirectory.dir('classes/jpms/main/').get().asFile.absolutePath
+        TEST_JPMS_SRC = 'src/test/jpms'
+        TEST_JPMS_OUT = layout.buildDirectory.dir('classes/jpms/test/').get().asFile.absolutePath
+
+        // Registers a task compiling a module-info.java on its own: the already compiled classes of the module
+        // are patched into it and its dependencies are taken from the module path.
+        // The resulting module-info.class ends up in the jar root.
+        registerModuleInfoCompile = { Map args ->
+            tasks.register(args.name, JavaCompile) {
+                dependsOn args.dependsOn
+                options.release = 17
+                destinationDirectory = file(args.out)
+                source = file(args.src)
+                classpath = files()
+                doFirst {
+                    options.compilerArgs = [
+                        '--patch-module', "${args.module}=${files(args.patch).asPath}",
+                        '--module-path', files(args.modulePath).asPath
+                    ]
+                }
+            }
+        }
 
         NO_SCRATCHPAD = (findProperty("scratchpad.ignore") == "true")
         SAXON_TEST = (findProperty("saxon.test") == "true")
@@ -149,8 +216,8 @@ subprojects {
         configureEach {
             resolutionStrategy {
                 force "commons-io:commons-io:${commonsIoVersion}"
-                force 'org.slf4j:slf4j-api:2.0.17'
-                force 'com.fasterxml.woodstox:woodstox-core:7.1.1'
+                force "org.slf4j:slf4j-api:${slf4jVersion}"
+                force 'com.fasterxml.woodstox:woodstox-core:7.3.0'
             }
         }
     }
@@ -215,12 +282,12 @@ subprojects {
                 addBooleanOption('html5', true)
                 addBooleanOption('Xdoclint:all,-missing', true)
                 links 'https://poi.apache.org/apidocs/dev/'
-                if (jdkVersion >= 23) links 'https://docs.oracle.com/en/java/javase/23/docs/api/' else links 'https://docs.oracle.com/en/java/javase/11/docs/api/'
+                if (jdkVersion >= 23) links 'https://docs.oracle.com/en/java/javase/23/docs/api/' else links 'https://docs.oracle.com/en/java/javase/17/docs/api/'
                 links 'https://xmlbeans.apache.org/docs/5.0.0/'
                 links 'https://www.javadocs.dev/org.apache.commons/commons-compress/1.28.0/'
                 use = true
                 splitIndex = true
-                source = "11"
+                source = "17"
             }
         }
     }
@@ -239,7 +306,7 @@ subprojects {
         doLast {
             // make sure we do not have distribution jar-files with different versions
             // in the build-dir as those lead to strange errors about "duplicate modules"
-            // when building java9 JPMS class files ("java9")
+            // when compiling the JPMS module-info files
             ant.delete(failOnError: true, verbose: true) {
                 fileset(dir: "../build/dist/maven/${base.archivesName.get()}", erroronmissingdir: false) {
                     include(name: '*.jar')
@@ -321,6 +388,15 @@ subprojects {
                 'Implementation-Vendor-Id': 'The Apache Software Foundation'
             )
         }
+    }
+
+    // Verify if module-info is present in the jar-file
+    def verifyModuleInfoPresentRef = tasks.register("verifyModuleInfoPresent", VerifyModuleInfoIsPresent) {
+        verifiedJar = tasks.named("jar").flatMap { it.archiveFile }
+    }
+
+    tasks.named("check") {
+        dependsOn(verifyModuleInfoPresentRef)
     }
 
     javadocJar {
@@ -421,13 +497,6 @@ subprojects {
         systemProperties['java.locale.providers'] = 'JRE,CLDR'
 
         doFirst {
-            // some options were removed in JDK 18
-            if (jdkVersion < 18) {
-                jvmArgs += [
-                    '--illegal-access=warn',
-                ]
-            }
-
             jvmArgs += [
                 // see https://github.com/java9-modularity/gradle-modules-plugin/issues/97
                 // opposed to the recommendation there, it doesn't work to add ... to the dependencies
@@ -452,7 +521,7 @@ subprojects {
     }
 
     jacoco {
-        toolVersion = '0.8.13'
+        toolVersion = '0.8.16'
     }
 
     jacocoTestReport {
@@ -536,17 +605,18 @@ subprojects {
                         }
                     }
 
+                    // license and organization metadata match the POMs of the 5.5.1 release in Maven Central
                     licenses {
                         license {
                             name = 'Apache License, Version 2.0'
-                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
                             distribution = 'repo'
                         }
                     }
 
                     organization {
                         name = 'Apache Software Foundation'
-                        url = 'http://www.apache.org/'
+                        url = 'https://www.apache.org/'
                     }
 
                     issueManagement {
@@ -568,7 +638,7 @@ subprojects {
                         def doc = r.getOwnerDocument()
                         def hdr = new File('../legal/HEADER')
                         if (!hdr.exists()) hdr = new File('legal/HEADER')
-                        def asl = doc.createComment(hdr.text)
+                        def asl = doc.createComment(hdr.text.replace('http://www.apache.org/', 'https://www.apache.org/'))
                         // adding ASF header before root node is ignored
                         // doc.insertBefore(asl, doc.getDocumentElement())
                         r.insertBefore(asl, r.getFirstChild())
@@ -590,6 +660,19 @@ subprojects {
                 }
             }
         }
+
+        repositories {
+            // Only the modules that are released to Maven Central are published to Nexus.
+            // Credentials are read from the Gradle properties 'apacheSnapshotsUsername' and
+            // 'apacheSnapshotsPassword' (or ORG_GRADLE_PROJECT_apacheSnapshotsUsername/Password env vars).
+            if (project.name in publishedModules && project.version.toString().endsWith('-SNAPSHOT')) {
+                maven {
+                    name = 'apacheSnapshots'
+                    url = 'https://repository.apache.org/content/repositories/snapshots/'
+                    credentials(PasswordCredentials)
+                }
+            }
+        }
     }
 
     generatePomFileForPOIPublication.destination = "../build/dist/maven/${base.archivesName.get()}/${base.archivesName.get()}-${project.version}.pom"
@@ -602,7 +685,8 @@ subprojects {
         setRequired {
             // signing is only required if this is a release version
             // and the artifacts are to be published
-            gradle.taskGraph.allTasks.any { it instanceof PublishToMavenRepository }
+            !project.version.toString().endsWith('-SNAPSHOT') &&
+                gradle.taskGraph.allTasks.any { it instanceof PublishToMavenRepository }
         }
         sign publishing.publications.POI
     }
@@ -728,7 +812,6 @@ task jenkins(dependsOn: [
             subprojects.javadoc,
             subprojects.jacocoTestReport,
             subprojects.getDeps,
-            'srcDistZip',
             'srcDistTar',
             rat
 ]) {}
@@ -736,7 +819,8 @@ task jenkins(dependsOn: [
 task jenkinsLite(dependsOn: [
             'replaceVersion',
             subprojects.build,
-            subprojects.test
+            subprojects.test,
+            ":poi-fuzz:shadowJar"
 ]) {}
 
 /*task downloadJarsToLibs() {
@@ -796,6 +880,7 @@ distributions {
                 exclude 'lib/**'
                 exclude 'lib.stored/**'
                 exclude 'bin/**'
+                exclude '*/out/**'
                 exclude 'out/**'
                 exclude 'tmp/**'
                 exclude 'gradle/**'
@@ -831,6 +916,15 @@ distributions {
 
                 // exclude intermediate files
                 exclude '**/*-saved.xls'
+
+                // exclude fuzz-corpus and crash-files
+                exclude 'poi-fuzz/corpus*'
+                exclude 'poi-fuzz/Crash_*.java'
+                exclude 'poi-fuzz/crash-*'
+                exclude 'poi-fuzz/oom-*'
+                exclude 'poi-fuzz/slow-unit-*'
+                exclude 'poi-fuzz/jazzer*'
+                exclude 'poi-fuzz/jacoco*'
             }
             from('legal') { exclude 'HEADER' }
 
@@ -861,19 +955,19 @@ tasks.register('soLinkCheck') {
 }
 
 var srcDep = [
-    ':poi:compileJava9',
-    ':poi:compileTest9',
-    ':poi-ooxml-full:compileJava9',
-    ':poi-ooxml-lite-agent:compileJava9',
-    ':poi-ooxml:compileJava9',
-    ':poi-ooxml:compileTest9',
-    ':poi-scratchpad:compileJava9',
-    ':poi-scratchpad:compileTest9',
-    ':poi-excelant:compileJava9',
-    ':poi-excelant:compileTest9',
-    ':poi-examples:compileJava9',
-    ':poi-integration:compileTest9',
-    ':poi-ooxml-lite:compileJava9',
+    ':poi:compileModuleInfo',
+    ':poi:compileTestModuleInfo',
+    ':poi-ooxml-full:compileModuleInfo',
+    ':poi-ooxml-lite-agent:compileModuleInfo',
+    ':poi-ooxml:compileModuleInfo',
+    ':poi-ooxml:compileTestModuleInfo',
+    ':poi-scratchpad:compileModuleInfo',
+    ':poi-scratchpad:compileTestModuleInfo',
+    ':poi-excelant:compileModuleInfo',
+    ':poi-excelant:compileTestModuleInfo',
+    ':poi-examples:compileModuleInfo',
+    ':poi-integration:compileTestModuleInfo',
+    ':poi-ooxml-lite:compileModuleInfo',
     ':poi-ooxml-lite:generateModuleInfo'
 ]
 

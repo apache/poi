@@ -20,7 +20,6 @@ package org.apache.poi.fuzz;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import org.apache.poi.fuzz.POIFuzzer;
 import org.apache.poi.hmef.HMEFMessage;
 import org.apache.poi.util.RecordFormatException;
 

@@ -278,6 +278,7 @@ public final class Thumbnail {
                                     "be CF_METAFILEPICT.");
         }
         byte[] thumbnail = getThumbnail();
-        return IOUtils.safelyClone(thumbnail, OFFSET_WMFDATA, thumbnail.length - OFFSET_WMFDATA, MAX_RECORD_LENGTH);
+        return IOUtils.safelyClone(thumbnail, OFFSET_WMFDATA, thumbnail.length - OFFSET_WMFDATA,
+                MAX_RECORD_LENGTH, "Thumbnail.setMaxRecordLength()");
     }
 }

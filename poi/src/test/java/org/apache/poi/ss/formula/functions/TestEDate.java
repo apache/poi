@@ -18,7 +18,7 @@
 package org.apache.poi.ss.formula.functions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -42,8 +42,9 @@ class TestEDate {
         checkValue(0, 1, 31d);
         checkValue(1, 1, 32d);
         checkValue(0, 0, 0.0d);
-        checkValue(0, -2, /* BAD_DATE! */ -1.0d);
-        checkValue(0, -3, /* BAD_DATE! */ -1.0d);
+        // a result before 1900-01-00 is #NUM! (it used to come out as the BAD_DATE marker -1)
+        checkError(0, -2);
+        checkError(0, -3);
         checkValue(49104, 0, 49104d);
         checkValue(49104, 1, 49134d);
     }
@@ -52,6 +53,12 @@ class TestEDate {
         EDate eDate = new EDate();
         NumberEval result = (NumberEval) eDate.evaluate(new ValueEval[]{new NumberEval(startDate), new NumberEval(monthInc)}, null);
         assertEquals(expectedResult, result.getNumberValue(), 0);
+    }
+
+    private void checkError(int startDate, int monthInc) {
+        EDate eDate = new EDate();
+        ValueEval result = eDate.evaluate(new ValueEval[]{new NumberEval(startDate), new NumberEval(monthInc)}, null);
+        assertEquals(ErrorEval.NUM_ERROR, result);
     }
 
     @Test
@@ -105,7 +112,7 @@ class TestEDate {
     @Test
     void testEDateInvalidValueEval() {
         ValueEval evaluate = new EDate().evaluate(new ValueEval[]{new ValueEval() {}, new NumberEval(0)}, null);
-        assertTrue(evaluate instanceof ErrorEval);
+        assertInstanceOf(ErrorEval.class, evaluate);
         assertEquals(ErrorEval.VALUE_INVALID, evaluate);
     }
 

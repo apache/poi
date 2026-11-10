@@ -65,18 +65,18 @@ public final class MainMaster extends SheetContainer {
         ArrayList<ColorSchemeAtom> clr = new ArrayList<>();
         // Find the interesting ones in there
         for (Record child : _children) {
-            if (child instanceof SlideAtom) {
-                slideAtom = (SlideAtom) child;
-            } else if (child instanceof PPDrawing) {
-                ppDrawing = (PPDrawing) child;
-            } else if (child instanceof TxMasterStyleAtom) {
-                tx.add((TxMasterStyleAtom) child);
-            } else if (child instanceof ColorSchemeAtom) {
-                clr.add((ColorSchemeAtom) child);
+            if (child instanceof SlideAtom atom) {
+                slideAtom = atom;
+            } else if (child instanceof PPDrawing drawing) {
+                ppDrawing = drawing;
+            } else if (child instanceof TxMasterStyleAtom atom) {
+                tx.add(atom);
+            } else if (child instanceof ColorSchemeAtom atom) {
+                clr.add(atom);
             }
 
-            if (ppDrawing != null && child instanceof ColorSchemeAtom) {
-                _colorScheme = (ColorSchemeAtom) child;
+            if (ppDrawing != null && child instanceof ColorSchemeAtom csa) {
+                _colorScheme = csa;
             }
 
         }

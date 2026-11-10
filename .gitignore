@@ -37,6 +37,8 @@ TEST-org.apache.poi*.xml
 /*/build/
 dist
 lib/
-
-# Compiled module-info class-files
-/poi*/src/*/java9/*.class
+/poi-fuzz/jacoco-*.zip
+/poi-fuzz/jazzer
+/poi-fuzz/jazzer-*.tar.gz
+/poi-fuzz/jazzer_standalone.jar
+/poi-fuzz/corpus*/

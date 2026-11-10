@@ -40,6 +40,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -52,6 +53,7 @@ import org.junit.jupiter.params.provider.MethodSource;
  * corresponding test class ({@code TestXxxx}) of the target ({@code Xxxx}) implementor,
  * where execution can be observed more easily.
  */
+@Isolated // modifies the default locale and we don't want to affect other tests running in parallel
 public final class TestFormulasFromSpreadsheet {
 
     private static HSSFWorkbook workbook;

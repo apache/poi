@@ -87,7 +87,9 @@ public final class SprmUtils {
                 LittleEndian.putShort(sprm, 2, (short)param);
                 break;
             case 6:
-                assert(varParam != null);
+                if (varParam == null) {
+                    throw new IllegalArgumentException("A variable length sprm needs varParam");
+                }
                 sprm = new byte[3 + varParam.length];
                 sprm[2] = (byte)varParam.length;
                 System.arraycopy(varParam, 0, sprm, 3, varParam.length);
@@ -111,7 +113,7 @@ public final class SprmUtils {
     public static byte[] getGrpprl(List<byte[]> sprmList, int size)
     {
         // spit out the final grpprl
-        byte[] grpprl = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
+        byte[] grpprl = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH, "SprmUtils.setMaxRecordLength()");
         int listSize = sprmList.size() - 1;
         int index = 0;
         for (; listSize >= 0; listSize--)

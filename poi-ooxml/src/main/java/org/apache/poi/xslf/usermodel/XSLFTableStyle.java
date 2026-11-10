@@ -52,34 +52,20 @@ public class XSLFTableStyle {
      * @since 3.15-beta2
      */
     protected CTTablePartStyle getTablePartStyle(TablePartStyle tps) {
-        switch (tps) {
-        default:
-        case wholeTbl:
-            return _tblStyle.getWholeTbl();
-        case band1H:
-            return _tblStyle.getBand1H();
-        case band2H:
-            return _tblStyle.getBand2H();
-        case band1V:
-            return _tblStyle.getBand1V();
-        case band2V:
-            return _tblStyle.getBand2V();
-        case firstCol:
-            return _tblStyle.getFirstCol();
-        case lastCol:
-            return _tblStyle.getLastCol();
-        case firstRow:
-            return _tblStyle.getFirstRow();
-        case lastRow:
-            return _tblStyle.getLastRow();
-        case seCell:
-            return _tblStyle.getSeCell();
-        case swCell:
-            return _tblStyle.getSwCell();
-        case neCell:
-            return _tblStyle.getNeCell();
-        case nwCell:
-            return _tblStyle.getNwCell();
-        }
+        return switch (tps) {
+            case band1H -> _tblStyle.getBand1H();
+            case band2H -> _tblStyle.getBand2H();
+            case band1V -> _tblStyle.getBand1V();
+            case band2V -> _tblStyle.getBand2V();
+            case firstCol -> _tblStyle.getFirstCol();
+            case lastCol -> _tblStyle.getLastCol();
+            case firstRow -> _tblStyle.getFirstRow();
+            case lastRow -> _tblStyle.getLastRow();
+            case seCell -> _tblStyle.getSeCell();
+            case swCell -> _tblStyle.getSwCell();
+            case neCell -> _tblStyle.getNeCell();
+            case nwCell -> _tblStyle.getNwCell();
+            default -> _tblStyle.getWholeTbl();
+        };
     }
 }

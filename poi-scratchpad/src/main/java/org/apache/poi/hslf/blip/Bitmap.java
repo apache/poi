@@ -27,9 +27,11 @@ import javax.imageio.ImageIO;
 import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.hslf.record.RecordAtom;
 import org.apache.poi.hslf.usermodel.HSLFPictureData;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 
 /**
@@ -60,7 +62,9 @@ public abstract class Bitmap extends HSLFPictureData {
     @Override
     protected byte[] formatImageForSlideshow(byte[] data) {
         byte[] checksum = getChecksum(data);
-        byte[] rawData = new byte[checksum.length * getUIDInstanceCount() + 1 + data.length];
+        long rawDataSize = calcRawDataSize(getUIDInstanceCount(), checksum.length, data.length);
+        byte[] rawData = IOUtils.safelyAllocate(rawDataSize, RecordAtom.getMaxRecordLength(),
+                "RecordAtom.setMaxRecordLength()");
         int offset = 0;
 
         System.arraycopy(checksum, 0, rawData, offset, checksum.length);
@@ -76,13 +80,28 @@ public abstract class Bitmap extends HSLFPictureData {
         return rawData;
     }
 
+    /**
+     * Calculates the size in bytes of the raw data array produced by {@link #formatImageForSlideshow}.
+     * Exposed for testing overflow safety.
+     *
+     * @param uidInstanceCount UID instance count (1 or 2)
+     * @param checksumLength   length of the MD5 checksum array
+     * @param dataLength       length of the image data array
+     * @return required buffer size as a {@code long} to avoid integer overflow
+     * @throws ArithmeticException if there is an overflow
+     */
+    static long calcRawDataSize(int uidInstanceCount, int checksumLength, int dataLength) {
+        final long multiplicand = (long) checksumLength * uidInstanceCount;
+        return Math.addExact(multiplicand, 1L + dataLength);
+    }
+
     @Override
     public Dimension getImageDimension() {
         try (InputStream is = UnsynchronizedByteArrayInputStream.builder().setByteArray(getData()).get()){
             BufferedImage bi = ImageIO.read(is);
             return new Dimension(
-                (int)Units.pixelToPoints(bi.getWidth()),
-                (int)Units.pixelToPoints(bi.getHeight())
+                    MathUtil.safeDoubleToInt(Units.pixelToPoints(bi.getWidth())),
+                    MathUtil.safeDoubleToInt(Units.pixelToPoints(bi.getHeight()))
             );
         } catch (IOException e) {
             return new Dimension(200,200);

@@ -18,7 +18,7 @@
 package org.apache.poi.ss.formula.eval;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,8 +29,8 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.TwoDEval;
-import org.apache.poi.ss.formula.ptg.AreaI;
 import org.apache.poi.ss.formula.ptg.AreaI.OffsetArea;
+import org.apache.poi.ss.formula.ptg.AreaI;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
@@ -61,7 +61,7 @@ final class TestRangeEval {
         for(SpreadsheetVersion version : versions) {
             AreaReference ar = new AreaReference(expectedAreaRef, version);
             ValueEval result = EvalInstances.Range.evaluate(args, 0, (short)0);
-            assertTrue(result instanceof AreaEval);
+            assertInstanceOf(AreaEval.class, result);
             AreaEval ae = (AreaEval) result;
             assertEquals(ar.getFirstCell().getRow(), ae.getFirstRow());
             assertEquals(ar.getLastCell().getRow(), ae.getLastRow());

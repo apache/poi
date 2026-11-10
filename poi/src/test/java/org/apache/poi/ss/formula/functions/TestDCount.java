@@ -24,9 +24,11 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.time.Duration;
 
 import static org.apache.poi.ss.util.Utils.addRow;
 import static org.apache.poi.ss.util.Utils.assertDouble;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 
 /**
  * Testcase for function DCOUNT()
@@ -48,6 +50,23 @@ public class TestDCount {
             assertDouble(fe, cell, "DCOUNT(A5:E11, 5, A1:F3)", 3);
             assertDouble(fe, cell, "DCOUNT(A5:E11, 5, A13:A14)", 2);
             assertDouble(fe, cell, "DCOUNT(A5:E11, 5, B13:B14)", 3);
+        }
+    }
+
+    @Test
+    void testWildCardsDoNotTakeExponentialTime() throws IOException {
+        // text criteria used to be matched with a backtracking regular expression,
+        // which took minutes for this text
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet();
+            addRow(sheet, 0, "Name", "Value", null, "Name", "Name");
+            addRow(sheet, 1, "a".repeat(2000) + "b", 1, null, "*a*a*c", "*a*a*b");
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = sheet.getRow(0).createCell(100);
+            assertTimeoutPreemptively(Duration.ofSeconds(10), () -> {
+                assertDouble(fe, cell, "DCOUNT(A1:B2, \"Value\", D1:D2)", 0);
+                assertDouble(fe, cell, "DCOUNT(A1:B2, \"Value\", E1:E2)", 1);
+            });
         }
     }
 

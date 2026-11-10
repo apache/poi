@@ -83,6 +83,20 @@ public class Utils {
         assertEquals(expectedResult, result.getNumberValue(), tolerance);
     }
 
+    /**
+     * Asserts the exact IEEE 754 result of a formula and the 15 significant digits Excel would display
+     * for it - a function must not round its result to what Excel displays.
+     */
+    public static void assertDoubleAndDisplay(FormulaEvaluator fe, Cell cell, String formulaText,
+                                              double expectedResult, String expectedDisplay) {
+        cell.setCellFormula(formulaText);
+        fe.notifyUpdateCell(cell);
+        CellValue result = fe.evaluate(cell);
+        assertEquals(CellType.NUMERIC, result.getCellType(), formulaText);
+        assertEquals(expectedResult, result.getNumberValue(), formulaText);
+        assertEquals(expectedDisplay, NumberToTextConverter.toText(result.getNumberValue()), formulaText);
+    }
+
     public static void assertBoolean(FormulaEvaluator fe, Cell cell, String formulaText, boolean expectedResult) {
         cell.setCellFormula(formulaText);
         fe.notifyUpdateCell(cell);

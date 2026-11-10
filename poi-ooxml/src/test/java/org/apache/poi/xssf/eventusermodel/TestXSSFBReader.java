@@ -29,7 +29,7 @@ import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.xssf.binary.XSSFBSharedStringsTable;
 import org.apache.poi.xssf.binary.XSSFBSheetHandler;
 import org.apache.poi.xssf.binary.XSSFBStylesTable;
-import org.apache.poi.xssf.usermodel.XSSFComment;
+import org.apache.poi.ss.usermodel.Comment;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
@@ -201,7 +201,7 @@ class TestXSSFBReader {
         }
 
         @Override
-        public void cell(String cellReference, String formattedValue, XSSFComment comment) {
+        public void cell(String cellReference, String formattedValue, Comment comment) {
             formattedValue = (formattedValue == null) ? "" : formattedValue;
             if (comment == null) {
                 sb.append("\n\t<td ref=\"").append(cellReference).append("\">").append(formattedValue).append("</td>");
@@ -237,7 +237,7 @@ class TestXSSFBReader {
                 withSettings().strictness(Strictness.STRICT_STUBS));
     }
 
-    private static ArgumentMatcher<XSSFComment> commentWith(String author, String text) {
+    private static ArgumentMatcher<Comment> commentWith(String author, String text) {
         return comment -> comment != null
                 && author.equals(comment.getAuthor())
                 && comment.getString() != null

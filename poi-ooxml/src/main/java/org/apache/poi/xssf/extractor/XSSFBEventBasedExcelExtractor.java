@@ -25,12 +25,15 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.xssf.binary.XSSFBCommentsTable;
 import org.apache.poi.xssf.binary.XSSFBHyperlinksTable;
 import org.apache.poi.xssf.binary.XSSFBSharedStringsTable;
 import org.apache.poi.xssf.binary.XSSFBSheetHandler;
 import org.apache.poi.xssf.binary.XSSFBStylesTable;
+import org.apache.poi.xssf.binary.XSSFHyperlinkRecord;
 import org.apache.poi.xssf.eventusermodel.XSSFBReader;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler.SheetContentsHandler;
 import org.apache.poi.xssf.model.SharedStrings;
@@ -62,6 +65,14 @@ public class XSSFBEventBasedExcelExtractor extends XSSFEventBasedExcelExtractor 
         super(container);
     }
 
+    /**
+     * Should the targets of the hyperlinks be added to the text of the cells they cover?
+     * The target is appended to the cell text as {@code " <target>"}, which is the url
+     * for external links and the location (e.g. {@code Sheet2!A1}) for links within
+     * the workbook. Default is false.
+     *
+     * @param handleHyperlinksInCells {@code true} to add the hyperlink targets
+     */
     public void setHandleHyperlinksInCells(boolean handleHyperlinksInCells) {
         this.handleHyperlinksInCells = handleHyperlinksInCells;
     }
@@ -113,18 +124,21 @@ public class XSSFBEventBasedExcelExtractor extends XSSFEventBasedExcelExtractor 
 
             StringBuilder text = new StringBuilder(64);
             SheetTextExtractor sheetExtractor = new SheetTextExtractor();
-            XSSFBHyperlinksTable hyperlinksTable = null;
             while (iter.hasNext()) {
                 try (InputStream stream = iter.next()) {
                     if (getIncludeSheetNames()) {
                         text.append(iter.getSheetName());
                         text.append('\n');
                     }
+                    SheetContentsHandler handler = sheetExtractor;
                     if (handleHyperlinksInCells) {
-                        hyperlinksTable = new XSSFBHyperlinksTable(iter.getSheetPart());
+                        XSSFBHyperlinksTable hyperlinksTable = new XSSFBHyperlinksTable(iter.getSheetPart());
+                        if (!hyperlinksTable.getHyperLinks().isEmpty()) {
+                            handler = new HyperlinkAppendingHandler(sheetExtractor, hyperlinksTable);
+                        }
                     }
                     XSSFBCommentsTable comments = getIncludeCellComments() ? iter.getXSSFBSheetComments() : null;
-                    processSheet(sheetExtractor, styles, comments, strings, stream);
+                    processSheet(handler, styles, comments, strings, stream);
                     if (getIncludeHeadersFooters()) {
                         sheetExtractor.appendHeaderText(text);
                     }
@@ -146,4 +160,54 @@ public class XSSFBEventBasedExcelExtractor extends XSSFEventBasedExcelExtractor 
         }
     }
 
+    /**
+     * Appends the targets of the hyperlinks covering a cell to the cell text,
+     * like {@code XWPFWordExtractor.setFetchHyperlinks} does for linked text
+     */
+    private static final class HyperlinkAppendingHandler implements SheetContentsHandler {
+        private final SheetContentsHandler delegate;
+        private final XSSFBHyperlinksTable hyperlinksTable;
+
+        HyperlinkAppendingHandler(SheetContentsHandler delegate, XSSFBHyperlinksTable hyperlinksTable) {
+            this.delegate = delegate;
+            this.hyperlinksTable = hyperlinksTable;
+        }
+
+        @Override
+        public void startRow(int rowNum) {
+            delegate.startRow(rowNum);
+        }
+
+        @Override
+        public void endRow(int rowNum) {
+            delegate.endRow(rowNum);
+        }
+
+        @Override
+        public void cell(String cellReference, String formattedValue, Comment comment) {
+            List<XSSFHyperlinkRecord> records = cellReference == null ? null
+                    : hyperlinksTable.findHyperlinkRecord(new CellAddress(cellReference));
+            if (records != null) {
+                StringBuilder sb = new StringBuilder(formattedValue == null ? "" : formattedValue);
+                for (XSSFHyperlinkRecord record : records) {
+                    String target = record.getLocation();
+                    if (target != null && !target.isEmpty()) {
+                        sb.append(" <").append(target).append('>');
+                    }
+                }
+                formattedValue = sb.toString();
+            }
+            delegate.cell(cellReference, formattedValue, comment);
+        }
+
+        @Override
+        public void headerFooter(String text, boolean isHeader, String tagName) {
+            delegate.headerFooter(text, isHeader, tagName);
+        }
+
+        @Override
+        public void endSheet() {
+            delegate.endSheet();
+        }
+    }
 }

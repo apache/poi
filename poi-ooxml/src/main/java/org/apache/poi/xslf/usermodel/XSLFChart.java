@@ -29,6 +29,7 @@ import org.apache.poi.ooxml.POIXMLRelation;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.xddf.usermodel.chart.XDDFChart;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
@@ -127,12 +128,12 @@ public final class XSLFChart extends XDDFChart {
         CTTransform2D xfrm = frame.addNewXfrm();
 
         CTPoint2D off = xfrm.addNewOff();
-        off.setX((int)anchor.getX());
-        off.setY((int)anchor.getY());
+        off.setX(MathUtil.safeDoubleToInt(anchor.getX()));
+        off.setY(MathUtil.safeDoubleToInt(anchor.getY()));
 
         CTPositiveSize2D ext = xfrm.addNewExt();
-        ext.setCx((int)anchor.getWidth());
-        ext.setCy((int)anchor.getHeight());
+        ext.setCx(MathUtil.safeDoubleToInt(anchor.getWidth()));
+        ext.setCy(MathUtil.safeDoubleToInt(anchor.getHeight()));
 
         xfrm.setExt(ext);
         xfrm.setOff(off);

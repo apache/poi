@@ -123,7 +123,7 @@ public class XORDecryptor extends Decryptor {
 
         @Override
         protected int invokeCipher(int totalBytes, boolean doFinal) {
-            final int pos = (int)getPos();
+            final int pos = Math.toIntExact(getPos());
             final byte[] xorArray = getEncryptionInfo().getDecryptor().getSecretKey().getEncoded();
             final byte[] chunk = getChunk();
             final byte[] plain = getPlain();
@@ -168,7 +168,7 @@ public class XORDecryptor extends Decryptor {
          */
         @Override
         public void setNextRecordSize(int recordSize) {
-            final int pos = (int)getPos();
+            final int pos = Math.toIntExact(getPos());
             final byte[] chunk = getChunk();
             final int chunkMask = getChunkMask();
             recordStart = pos;

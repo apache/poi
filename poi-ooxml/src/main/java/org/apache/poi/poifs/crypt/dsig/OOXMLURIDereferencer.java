@@ -25,7 +25,6 @@
 package org.apache.poi.poifs.crypt.dsig;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -36,8 +35,6 @@ import javax.xml.crypto.URIReference;
 import javax.xml.crypto.URIReferenceException;
 import javax.xml.crypto.XMLCryptoContext;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -51,6 +48,7 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 public class OOXMLURIDereferencer implements URIDereferencer {
 
     private static final Logger LOG = PoiLogManager.getLogger(OOXMLURIDereferencer.class);
+    private static final String CONTENT_TYPE_QUERY = "ContentType=";
 
     private SignatureInfo signatureInfo;
     private URIDereferencer baseUriDereferencer;
@@ -78,32 +76,36 @@ public class OOXMLURIDereferencer implements URIDereferencer {
 
         PackagePart part = findPart(uri);
         if (part == null) {
+            // Signature references are expected to point at parts within the package (or be
+            // same-document references). A URI that carries a scheme (i.e. an absolute URI)
+            // refers to something outside the package and is not resolved here.
+            if (uri.isAbsolute()) {
+                throw new URIReferenceException("only in-package references are supported: " + uri);
+            }
             LOG.atDebug().log("cannot resolve {}, delegating to base DOM URI dereferencer", uri);
             return baseUriDereferencer.dereference(uriReference, context);
         }
 
-        InputStream dataStream = null;
-        try {
-            dataStream = part.getInputStream();
-
-            // workaround for office 2007 pretty-printed .rels files
-            if (part.getPartName().toString().endsWith(".rels")) {
-                // although xmlsec has an option to ignore line breaks, currently this
-                // only affects .rels files, so we only modify these
-                try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
-                    for (int ch; (ch = dataStream.read()) != -1; ) {
-                        if (ch == 10 || ch == 13) continue;
-                        bos.write(ch);
-                    }
-                    dataStream = bos.toInputStream();
-                }
+        // [Content_Types].xml is not signed, so a signed reference carries the content type of
+        // the part in its query - the signature only covers the part if the content type matches.
+        // Office and POI write the content type as the only query parameter
+        String query = uri.getQuery();
+        if (query != null && query.startsWith(CONTENT_TYPE_QUERY)) {
+            String signedContentType = query.substring(CONTENT_TYPE_QUERY.length());
+            if (!signedContentType.equalsIgnoreCase(part.getContentType())) {
+                throw new ContentTypeMismatchException("content type of " + part.getPartName() + " is " +
+                    part.getContentType() + ", but the signature references " + signedContentType);
             }
-        } catch (IOException e) {
-            IOUtils.closeQuietly(dataStream);
-            throw new URIReferenceException("I/O error: " + e.getMessage(), e);
         }
 
-        return new OctetStreamData(dataStream, uri.toString(), null);
+        // .rels parts are not modified: the relationship transform drops the whitespace between
+        // relationships (e.g. of office 2007 pretty-printed .rels files), and removing line breaks
+        // inside an attribute would digest another value than the package reads
+        try {
+            return new OctetStreamData(part.getInputStream(), uri.toString(), null);
+        } catch (IOException e) {
+            throw new URIReferenceException("I/O error: " + e.getMessage(), e);
+        }
     }
 
     private PackagePart findPart(URI uri) {
@@ -122,6 +124,17 @@ public class OOXMLURIDereferencer implements URIDereferencer {
         } catch (InvalidFormatException e) {
             LOG.atWarn().log("illegal part name (not expected) in {}", uri);
             return null;
+        }
+    }
+
+    /**
+     * The content type of a part differs from the one the signature references, i.e. the signature is invalid
+     */
+    static final class ContentTypeMismatchException extends URIReferenceException {
+        private static final long serialVersionUID = 1L;
+
+        ContentTypeMismatchException(String message) {
+            super(message);
         }
     }
 }

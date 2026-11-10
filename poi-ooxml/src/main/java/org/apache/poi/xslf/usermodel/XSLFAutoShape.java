@@ -42,9 +42,10 @@ public class XSLFAutoShape extends XSLFTextShape implements AutoShape<XSLFShape,
 
     /* package */
     static XSLFAutoShape create(CTShape shape, XSLFSheet sheet) {
-        if (shape.getSpPr().isSetCustGeom()) {
+        if (shape.getSpPr() != null && shape.getSpPr().isSetCustGeom()) {
             return new XSLFFreeformShape(shape, sheet);
-        } else if (shape.getNvSpPr().getCNvSpPr() != null && shape.getNvSpPr().getCNvSpPr().isSetTxBox()) {
+        } else if (shape.getNvSpPr() != null && shape.getNvSpPr().getCNvSpPr() != null &&
+                shape.getNvSpPr().getCNvSpPr().isSetTxBox()) {
             return new XSLFTextBox(shape, sheet);
         } else {
             return new XSLFAutoShape(shape, sheet);

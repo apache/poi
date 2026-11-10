@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -29,6 +30,7 @@ import org.apache.poi.ss.usermodel.BaseTestSheetUpdateArrayFormulas;
 import org.apache.poi.ss.usermodel.CellRange;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
@@ -94,6 +96,36 @@ public final class TestXSSFSheetUpdateArrayFormulas extends BaseTestSheetUpdateA
 
         assertSame(firstCell, sheet.getFirstCellInArrayFormula(firstCell));
         workbook.close();
+    }
+
+    @Test
+    void testManyArrayFormulas() throws IOException {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            XSSFSheet sheet = workbook.createSheet();
+            // one 2-row array formula per pair of rows in column B, plus a tall one in column D
+            for (int row = 0; row < 1000; row += 2) {
+                sheet.setArrayFormula("1", new CellRangeAddress(row, row + 1, 1, 1));
+            }
+            sheet.setArrayFormula("2", CellRangeAddress.valueOf("D1:D1000"));
+
+            try (XSSFWorkbook read = XSSFTestDataSamples.writeOutAndReadBack(workbook)) {
+                XSSFSheet readSheet = read.getSheetAt(0);
+                for (int row = 0; row < 1000; row++) {
+                    XSSFCell cell = readSheet.getRow(row).getCell(1);
+                    assertTrue(cell.isPartOfArrayFormulaGroup());
+                    int firstRow = row - row % 2;
+                    assertEquals(new CellRangeAddress(firstRow, firstRow + 1, 1, 1), cell.getArrayFormulaRange());
+                    assertEquals("D1:D1000", readSheet.getRow(row).getCell(3).getArrayFormulaRange().formatAsString());
+                }
+                assertFalse(readSheet.getRow(500).createCell(2).isPartOfArrayFormulaGroup());
+
+                readSheet.removeArrayFormula(readSheet.getRow(501).getCell(1));
+                assertFalse(readSheet.getRow(500).getCell(1).isPartOfArrayFormulaGroup());
+                assertFalse(readSheet.getRow(501).getCell(1).isPartOfArrayFormulaGroup());
+                assertTrue(readSheet.getRow(502).getCell(1).isPartOfArrayFormulaGroup());
+                assertTrue(readSheet.getRow(501).getCell(3).isPartOfArrayFormulaGroup());
+            }
+        }
     }
 
     private static void confirmArrayFormulaCell(XSSFCell c, String cellRef) {

@@ -35,10 +35,9 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
-/**
- *
- */
+@Isolated // modifies the default locale and we don't want to affect other tests running in parallel
 final class TestExcelExtractor {
     private static ExcelExtractor createExtractor(String sampleFileName) throws IOException {
         File file = HSSFTestDataSamples.getSampleFile(sampleFileName);

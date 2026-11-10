@@ -25,8 +25,10 @@ import java.util.Locale;
 
 import javax.xml.namespace.QName;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.poifs.crypt.agile.AgileEncryptionVerifier;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.RandomSingleton;
 import org.apache.poi.util.StringUtil;
@@ -95,6 +97,8 @@ public final class XSSFPasswordHelper {
      * @param prefix the prefix of the password attributes, may be null
      * 
      * @return true, if the hashes match
+     * @throws EncryptedDocumentException if the stored spin count is outside the range allowed by
+     *  {@link AgileEncryptionVerifier#getMaxSpinCount()}
      */
     public static boolean validatePassword(XmlObject xobj, String password, String prefix) {
         // TODO: is "velvetSweatshop" the default password?
@@ -120,8 +124,18 @@ public final class XSSFPasswordHelper {
                 byte[] hash1 = dec64.decode(hashVal);
                 HashAlgorithm hashAlgo = HashAlgorithm.fromString(algoName);
                 byte[] salt = dec64.decode(saltVal);
-                int spinCnt = Integer.parseInt(spinCount);
-                byte[] hash2 = CryptoFunctions.hashPassword(password, hashAlgo, salt, spinCnt, false);
+                // spinCount is an xsd:unsignedInt, so it may not fit in an int
+                long spinCnt;
+                try {
+                    spinCnt = Long.parseLong(spinCount);
+                } catch (NumberFormatException e) {
+                    throw new EncryptedDocumentException("Invalid SpinCount", e);
+                }
+                if (spinCnt < 0 || spinCnt > AgileEncryptionVerifier.getMaxSpinCount()) {
+                    throw new EncryptedDocumentException("SpinCount " + spinCnt +
+                            " is out of the allowed range [0, " + AgileEncryptionVerifier.getMaxSpinCount() + "]");
+                }
+                byte[] hash2 = CryptoFunctions.hashPassword(password, hashAlgo, salt, (int) spinCnt, false);
                 return Arrays.equals(hash1, hash2);
             }
         }

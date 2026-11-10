@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.usermodel;
 
+import static org.apache.poi.POITestCase.assertNotContains;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -141,7 +142,7 @@ public abstract class BaseTestWorkbook {
                 "should have thrown exception due to invalid sheet index"
             );
             // expected during successful test no negative index in the range message
-            assertFalse(ex.getMessage().contains("-1"));
+            assertNotContains(ex.getMessage(), "-1");
 
             assertThrows(IllegalArgumentException.class, () -> wb.getSheetAt(0));
 

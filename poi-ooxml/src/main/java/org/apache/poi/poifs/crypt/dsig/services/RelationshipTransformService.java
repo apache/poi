@@ -36,8 +36,8 @@ import java.security.Provider;
 import java.security.Security;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.TreeMap;
 
 import javax.xml.crypto.Data;
 import javax.xml.crypto.MarshalException;
@@ -52,9 +52,11 @@ import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import org.apache.jcp.xml.dsig.internal.dom.ApacheNodeSetData;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
+import org.apache.poi.openxml4j.opc.PackageNamespaces;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.util.SuppressForbidden;
-import org.apache.xml.security.signature.XMLSignatureInput;
+import org.apache.xml.security.signature.XMLSignatureNodeInput;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.xpackage.x2006.digitalSignature.CTRelationshipReference;
@@ -78,6 +80,8 @@ public class RelationshipTransformService extends TransformService {
 
     private final List<String> sourceIds;
 
+    private final List<String> sourceTypes;
+
     private static final Logger LOG = PoiLogManager.getLogger(RelationshipTransformService.class);
 
     /**
@@ -85,8 +89,17 @@ public class RelationshipTransformService extends TransformService {
      */
     public static class RelationshipTransformParameterSpec implements TransformParameterSpec {
         List<String> sourceIds = new ArrayList<>();
+        List<String> sourceTypes = new ArrayList<>();
         public void addRelationshipReference(String relationshipId) {
                 sourceIds.add(relationshipId);
+        }
+        /**
+         * Adds a RelationshipsGroupReference, i.e. signs all relationships of the given type
+         *
+         * @since 6.1.0
+         */
+        public void addRelationshipGroupReference(String relationshipType) {
+            sourceTypes.add(relationshipType);
         }
         public boolean hasSourceIds() {
             return !sourceIds.isEmpty();
@@ -110,6 +123,7 @@ public class RelationshipTransformService extends TransformService {
         super();
         LOG.atDebug().log("constructor");
         this.sourceIds = new ArrayList<>();
+        this.sourceTypes = new ArrayList<>();
     }
 
     /**
@@ -117,23 +131,28 @@ public class RelationshipTransformService extends TransformService {
      *
      * @see TransformService
      */
-    public static synchronized void registerDsigProvider() {
+    public static void registerDsigProvider() {
         // the xml signature classes will try to find a special TransformerService,
         // which is of course unknown to JCE before ...
-        if (Security.getProvider(POIXmlDsigProvider.NAME) == null) {
-            Security.addProvider(new POIXmlDsigProvider());
+        synchronized (REGISTER_LOCK) {
+            if (Security.getProvider(POIXmlDsigProvider.NAME) == null) {
+                Security.addProvider(new POIXmlDsigProvider());
+            }
         }
     }
+
+    /** A private lock, so other code can't block the registration by locking the class */
+    private static final Object REGISTER_LOCK = new Object();
 
 
     @Override
     public void init(TransformParameterSpec params) throws InvalidAlgorithmParameterException {
         LOG.atDebug().log("init(params)");
-        if (!(params instanceof RelationshipTransformParameterSpec)) {
+        if (!(params instanceof RelationshipTransformParameterSpec relParams)) {
             throw new InvalidAlgorithmParameterException();
         }
-        RelationshipTransformParameterSpec relParams = (RelationshipTransformParameterSpec) params;
         this.sourceIds.addAll(relParams.sourceIds);
+        this.sourceTypes.addAll(relParams.sourceTypes);
     }
 
     @Override
@@ -146,13 +165,22 @@ public class RelationshipTransformService extends TransformService {
         try {
             TransformDocument transDoc = TransformDocument.Factory.parse(parentNode, DEFAULT_XML_OPTIONS);
             XmlObject[] xoList = transDoc.getTransform().selectChildren(RelationshipReferenceDocument.type.getDocumentElementName());
-            if (xoList.length == 0) {
-                LOG.atWarn().log("no RelationshipReference/@SourceId parameters present");
-            }
             for (XmlObject xo : xoList) {
                 String sourceId = ((CTRelationshipReference)xo).getSourceId();
                 LOG.atDebug().log("sourceId: {}", sourceId);
                 this.sourceIds.add(sourceId);
+            }
+            // RelationshipsGroupReference selects all relationships of a type (13.2.4.24)
+            for (Node n = parentNode.getFirstChild(); n != null; n = n.getNextSibling()) {
+                if (n instanceof Element && OO_DIGSIG_NS.equals(n.getNamespaceURI())
+                    && "RelationshipsGroupReference".equals(n.getLocalName())) {
+                    String sourceType = ((Element)n).getAttribute("SourceType");
+                    LOG.atDebug().log("sourceType: {}", sourceType);
+                    this.sourceTypes.add(sourceType);
+                }
+            }
+            if (sourceIds.isEmpty() && sourceTypes.isEmpty()) {
+                LOG.atWarn().log("no RelationshipReference/@SourceId or RelationshipsGroupReference/@SourceType parameters present");
             }
         } catch (XmlException e) {
             throw new InvalidAlgorithmParameterException(e);
@@ -170,6 +198,12 @@ public class RelationshipTransformService extends TransformService {
             Element el = doc.createElementNS(OO_DIGSIG_NS, "mdssi:RelationshipReference");
             el.setAttributeNS(XML_NS, "xmlns:mdssi", OO_DIGSIG_NS);
             el.setAttribute("SourceId", sourceId);
+            parentNode.appendChild(el);
+        }
+        for (String sourceType : this.sourceTypes) {
+            Element el = doc.createElementNS(OO_DIGSIG_NS, "mdssi:RelationshipsGroupReference");
+            el.setAttributeNS(XML_NS, "xmlns:mdssi", OO_DIGSIG_NS);
+            el.setAttribute("SourceType", sourceType);
             parentNode.appendChild(el);
         }
     }
@@ -199,33 +233,47 @@ public class RelationshipTransformService extends TransformService {
             throw new TransformException(e.getMessage(), e);
         }
 
-        // keep only those relationships which id is registered in the sourceIds
+        // keep only those relationships which id is registered in the sourceIds, or which type is
+        // registered in the sourceTypes (RelationshipsGroupReference) - all of them,
+        // at any depth: the package model also reads nested elements and resolves a duplicated
+        // id to the last one, so dropping a duplicate of a signed id here would leave its target
+        // out of the digest. Only elements in the relationships namespace are relationships,
+        // as in PackageRelationshipCollection
         Element root = doc.getDocumentElement();
-        NodeList nl = root.getChildNodes();
-        TreeMap<String,Element> rsList = new TreeMap<>();
-        for (int i=nl.getLength()-1; i>=0; i--) {
-            Node n = nl.item(i);
-            if ("Relationship".equals(n.getLocalName())) {
-                Element el = (Element)n;
-                String id = el.getAttribute("Id");
-                if (sourceIds.contains(id)) {
-                    String targetMode = el.getAttribute("TargetMode");
-                    if (targetMode == null || targetMode.isEmpty()) {
-                        el.setAttribute("TargetMode", "Internal");
-                    }
-                    rsList.put(id, el);
+        NodeList nl = root.getElementsByTagNameNS(PackageNamespaces.RELATIONSHIPS, PackageRelationship.RELATIONSHIP_TAG_NAME);
+        List<Element> rsList = new ArrayList<>();
+        for (int i=0; i<nl.getLength(); i++) {
+            Element el = (Element)nl.item(i);
+            String id = el.getAttribute("Id");
+            if (sourceIds.contains(id) || sourceTypes.contains(el.getAttribute("Type"))) {
+                // the default applies to an absent attribute only: the package model reads a
+                // present TargetMode with any value other than "Internal" as an external
+                // relationship, so an empty one has to be digested as what it is
+                if (!el.hasAttribute("TargetMode")) {
+                    el.setAttribute("TargetMode", "Internal");
                 }
+                rsList.add(el);
             }
-            root.removeChild(n);
         }
 
-        for (Element el : rsList.values()) {
+        while (root.hasChildNodes()) {
+            root.removeChild(root.getFirstChild());
+        }
+
+        // the transform removes any content of the Relationship elements, e.g. whitespace of a
+        // pretty-printed <Relationship ...></Relationship> - Office/.NET digest them as empty elements.
+        // A nested relationship which is kept is moved to the root, before or after its parent is emptied
+        rsList.sort(Comparator.comparing(el -> el.getAttribute("Id")));
+        for (Element el : rsList) {
+            while (el.hasChildNodes()) {
+                el.removeChild(el.getFirstChild());
+            }
             root.appendChild(el);
         }
 
         LOG.atDebug().log("# Relationship elements: {}", box(rsList.size()));
 
-        return new ApacheNodeSetData(new XMLSignatureInput(root));
+        return new ApacheNodeSetData(new XMLSignatureNodeInput(root));
     }
 
     public Data transform(Data data, XMLCryptoContext context, OutputStream os) throws TransformException {

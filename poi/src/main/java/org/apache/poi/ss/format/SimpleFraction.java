@@ -16,8 +16,16 @@
 */
 package org.apache.poi.ss.format;
 
+import org.apache.poi.util.MathUtil;
+
 public class SimpleFraction {
 
+    /**
+     * The most denominator digits a fraction can have: 10^9 - 1 is the largest all-nines denominator that fits in an int
+     *
+     * @since 6.0.1
+     */
+    public static final int MAX_DENOMINATOR_DIGITS = 9;
 
     /** The denominator. */
     private final int denominator;
@@ -32,7 +40,7 @@ public class SimpleFraction {
      * @return a SimpleFraction with the given values set.
      */
     public static SimpleFraction buildFractionExactDenominator(double val, int exactDenom){
-        int num =  (int)Math.round(val*exactDenom);
+        int num =  MathUtil.safeDoubleToInt(Math.round(val*exactDenom));
         return new SimpleFraction(num,exactDenom);
     }
 
@@ -48,7 +56,20 @@ public class SimpleFraction {
      * @throws IllegalArgumentException if value &gt; Integer.MAX_VALUE
      */
     public static SimpleFraction buildFractionMaxDenominator(double value, int maxDenominator){
-        return buildFractionMaxDenominator(value, 0, maxDenominator, 100);
+        return buildFractionMaxDenominator(value, 0, maxDenominator, 100, 0, Long.MAX_VALUE);
+    }
+
+    /**
+     * Create a fraction for the part of an improper fraction after the whole number, stopping before the
+     * numerator of the improper fraction, {@code wholeNumber * denominator + numerator}, exceeds a maximum.
+     *
+     * @param value the part after the whole number, from 0 up to (not including) 1
+     * @param maxDenominator maximum denominator value allowed.
+     * @param wholeNumber the whole number, which must be below 2^31
+     * @param maxNumerator maximum numerator allowed for the improper fraction
+     */
+    static SimpleFraction buildFractionMaxDenominator(double value, int maxDenominator, long wholeNumber, long maxNumerator) {
+        return buildFractionMaxDenominator(value, 0, maxDenominator, 100, wholeNumber, maxNumerator);
     }
     /**
      * Create a fraction given the double value and either the maximum error
@@ -68,11 +89,14 @@ public class SimpleFraction {
      *        {@code epsilon} of {@code value}, in absolute terms.
      * @param maxDenominator maximum denominator value allowed.
      * @param maxIterations maximum number of convergents
+     * @param wholeNumber the whole number of an improper fraction that {@code value} is the rest of
+     * @param maxNumerator maximum value of {@code wholeNumber * denominator + numerator}
      * @throws IllegalStateException if the continued fraction failed to
      *         converge.
      * @throws IllegalArgumentException if value > Integer.MAX_VALUE
      */
-    private static SimpleFraction buildFractionMaxDenominator(double value, double epsilon, int maxDenominator, int maxIterations)
+    private static SimpleFraction buildFractionMaxDenominator(double value, double epsilon, int maxDenominator, int maxIterations,
+            long wholeNumber, long maxNumerator)
     {
         long overflow = Integer.MAX_VALUE;
         double r0 = value;
@@ -84,7 +108,7 @@ public class SimpleFraction {
         // check for (almost) integer arguments, which should not go
         // to iterations.
         if (Math.abs(a0 - value) < epsilon) {
-            return new SimpleFraction((int)a0, 1);
+            return new SimpleFraction(Math.toIntExact(a0), 1);
         }
 
         long p0 = 1;
@@ -100,6 +124,10 @@ public class SimpleFraction {
         do {
             ++n;
             double r1 = 1.0 / (r0 - a0);
+            if (r1 > overflow) {
+                // a zero or tiny remainder: the next convergent would overflow, and p1/q1 is already the closest
+                return new SimpleFraction(Math.toIntExact(p1), Math.toIntExact(q1));
+            }
             long a1 = (long)Math.floor(r1);
             p2 = (a1 * p1) + p0;
             q2 = (a1 * q1) + q0;
@@ -107,9 +135,17 @@ public class SimpleFraction {
             if (epsilon == 0.0f && maxDenominator > 0 && Math.abs(q2) > maxDenominator &&
                     Math.abs(q1) < maxDenominator){
 
-                return new SimpleFraction((int)p1, (int)q1);
+                return new SimpleFraction(Math.toIntExact(p1), Math.toIntExact(q1));
             }
-            if ((p2 > overflow) || (q2 > overflow)) {
+            // wholeNumber * q2 + p2 > maxNumerator, without overflowing a long
+            if (wholeNumber > 0 && q2 > (maxNumerator - p2) / wholeNumber) {
+                return new SimpleFraction(Math.toIntExact(p1), Math.toIntExact(q1));
+            }
+            if ((Math.abs(p2) > overflow) || (q2 > overflow)) {
+                if (epsilon == 0.0f && maxDenominator > 0) {
+                    // an improper fraction's numerator can overflow before the denominator reaches its maximum
+                    return new SimpleFraction(Math.toIntExact(p1), Math.toIntExact(q1));
+                }
                 throw new IllegalStateException("Overflow trying to convert "+value+" to fraction ("+p2+"/"+q2+")");
             }
 
@@ -131,9 +167,9 @@ public class SimpleFraction {
         }
 
         if (q2 < maxDenominator) {
-            return new SimpleFraction((int) p2, (int)q2);
+            return new SimpleFraction(Math.toIntExact(p2), Math.toIntExact(q2));
         } else {
-            return new SimpleFraction((int)p1, (int)q1);
+            return new SimpleFraction(Math.toIntExact(p1), Math.toIntExact(q1));
         }
 
     }

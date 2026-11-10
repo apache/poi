@@ -51,11 +51,17 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.RecordFormatException;
+import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 
 public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
     /** Max. record length - processing longer records will throw an exception */
     public static final int DEFAULT_MAX_RECORD_LENGTH = 100_000_000;
+    /**
+     * @deprecated use {@link #setMaxRecordLength(int)} and {@link #getMaxRecordLength()} instead - the field will be made private
+     */
+    @Deprecated
+    @Removal(version = "7.0.0")
     public static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     private static final Logger LOG = PoiLogManager.getLogger(HwmfPicture.class);
@@ -103,7 +109,7 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
                     } else if (recordSizeLong < 0L) {
                         throw new RecordFormatException("record size can't be < 0");
                     }
-                    recordSize = (int)recordSizeLong;
+                    recordSize = Math.toIntExact(recordSizeLong);
                     recordFunction = leis.readShort();
                 } catch (Exception e) {
                     LOG.atError().log("unexpected eof - wmf file was truncated");
@@ -126,7 +132,7 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
                 records.add(wr);
 
                 consumedSize += wr.init(leis, recordSize, recordFunction);
-                int remainingSize = (int)(recordSize - consumedSize);
+                int remainingSize = Math.toIntExact(recordSize - consumedSize);
                 if (remainingSize < 0) {
                     throw new RecordFormatException("read too many bytes. record size: "+recordSize + "; comsumed size: "+consumedSize);
                 } else if(remainingSize > 0) {
@@ -136,8 +142,8 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
                     }
                 }
 
-                if (wr instanceof HwmfCharsetAware) {
-                    ((HwmfCharsetAware)wr).setCharsetProvider(this::getDefaultCharset);
+                if (wr instanceof HwmfCharsetAware charsetAware) {
+                    charsetAware.setCharsetProvider(this::getDefaultCharset);
                 }
             }
         }
@@ -220,10 +226,10 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
         WmfSetWindowOrg wOrg = null;
         WmfSetWindowExt wExt = null;
         for (HwmfRecord r : getRecords()) {
-            if (r instanceof WmfSetWindowOrg) {
-                wOrg = (WmfSetWindowOrg)r;
-            } else if (r instanceof WmfSetWindowExt) {
-                wExt = (WmfSetWindowExt)r;
+            if (r instanceof WmfSetWindowOrg org) {
+                wOrg = org;
+            } else if (r instanceof WmfSetWindowExt ext) {
+                wExt = ext;
             }
             if (wOrg != null && wExt != null) {
                 return new Rectangle2D.Double(wOrg.getX(), wOrg.getY(), wExt.getSize().getWidth(), wExt.getSize().getHeight());

@@ -285,23 +285,21 @@ public class IntList
             return true;
         }
 
-        if (!(o instanceof IntList)) {
-            return false;
-        }
-
-        IntList other = ( IntList ) o;
-
-        if (other._limit != _limit) {
-            return false;
-        }
-
-        for (int i=0; i< _limit; i++) {
-            if (other._array[i] != _array[i]) {
+        if (o instanceof IntList other) {
+            if (other._limit != _limit) {
                 return false;
             }
-        }
 
-        return true;
+            for (int i=0; i< _limit; i++) {
+                if (other._array[i] != _array[i]) {
+                    return false;
+                }
+            }
+
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**

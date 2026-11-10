@@ -35,6 +35,7 @@ import org.apache.poi.openxml4j.opc.PackageNamespaces;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.util.StringUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -232,8 +233,7 @@ public abstract class ContentTypeManager {
             try {
                 for (PackagePart part : this.container.getParts()) {
                     if (!part.getPartName().equals(partName)
-                            && part.getPartName().getExtension()
-                                    .equalsIgnoreCase(extensionToDelete)) {
+                            && StringUtil.equalsIgnoreCase(part.getPartName().getExtension(), extensionToDelete)) {
                         deleteDefaultContentTypeFlag = false;
                         break;
                     }

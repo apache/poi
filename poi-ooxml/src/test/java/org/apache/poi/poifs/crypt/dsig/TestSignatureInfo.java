@@ -23,10 +23,14 @@
    ================================================================= */
 package org.apache.poi.poifs.crypt.dsig;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
@@ -44,24 +48,39 @@ import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import javax.security.auth.x500.X500Principal;
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
+import javax.xml.crypto.dsig.DigestMethod;
+import javax.xml.crypto.dsig.Reference;
+import javax.xml.crypto.dsig.Transform;
 import javax.xml.crypto.dsig.XMLSignatureException;
+import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.dom.DOMSignContext;
+import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.jcp.xml.dsig.internal.dom.DOMSignedInfo;
 import org.apache.logging.log4j.Logger;
@@ -75,6 +94,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
+import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.dsig.DummyKeystore.KeyCertPair;
 import org.apache.poi.poifs.crypt.dsig.facets.EnvelopedSignatureFacet;
@@ -85,11 +105,12 @@ import org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.XAdESSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.XAdESXLSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationData;
+import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService;
+import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService.RelationshipTransformParameterSpec;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationDataService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampServiceValidator;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.util.ConditionalExecution.DisabledOnJreEx;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.StringUtil;
@@ -102,6 +123,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
+import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.apache.poi.xwpf.usermodel.XWPFSignatureLine;
 import org.apache.xmlbeans.SystemProperties;
 import org.apache.xmlbeans.XmlCursor;
@@ -156,6 +178,26 @@ class TestSignatureInfo {
 
         // Set line.separator for bug61182
         // System.setProperty("line.separator", "\n");
+    }
+
+    @Test
+    void isSignedRelationship() {
+        assertTrue(RelationshipTypeFacet.isSigned("http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles"));
+        assertTrue(RelationshipTypeFacet.isSigned("a/relationships/b/relationships/styles"));
+        assertFalse(RelationshipTypeFacet.isSigned("http://schemas.openxmlformats.org/officeDocument/2006/relationships/unknown"));
+        // '.' does not match line terminators, so only the first line's prefix is removed
+        assertFalse(RelationshipTypeFacet.isSigned("x/relationships/a\nb/relationships/styles"));
+        assertTrue(RelationshipTypeFacet.isSigned("x\nb/relationships/customXml"));
+
+        // the old ".*/relationships/" regex backtracked quadratically on types without "/relationships/"
+        String longType = "a".repeat(50_000);
+        assertFalse(assertTimeoutPreemptively(Duration.ofSeconds(10), () -> RelationshipTypeFacet.isSigned(longType)));
+    }
+
+    private static class RelationshipTypeFacet extends OOXMLSignatureFacet {
+        static boolean isSigned(String relationshipType) {
+            return isSignedRelationship(relationshipType);
+        }
     }
 
     @Disabled("This test is very sensitive, it breaks with every little change to the produced XML")
@@ -325,6 +367,27 @@ class TestSignatureInfo {
     }
 
     @Test
+    void contentTypeChangeInvalidatesSignature() throws Exception {
+        // the signed references carry the part content type as "?ContentType=...", because
+        // [Content_Types].xml itself is not signed
+        final String docType = XWPFRelation.DOCUMENT.getContentType();
+        final String macroType = XWPFRelation.MACRO_DOCUMENT.getContentType();
+
+        InputStream modified = rewriteSignedDocx(entries -> {
+            assertThat(new String(entries.get("[Content_Types].xml"), StandardCharsets.UTF_8), containsString(docType));
+            entries.put("[Content_Types].xml", replace(entries.get("[Content_Types].xml"), docType, macroType));
+        });
+
+        try (OPCPackage pkg = OPCPackage.open(modified)) {
+            assertEquals(macroType, pkg.getPart(PackagingURIHelper.createPartName("/word/document.xml")).getContentType());
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(new SignatureConfig());
+            assertFalse(si.verifySignature(), "a changed content type must invalidate the signature");
+        }
+    }
+
+    @Test
     void getMultiSigners() throws Exception {
         String testFile = "hello-world-signed-twice.docx";
         try (OPCPackage pkg = OPCPackage.open(testdata.getFile(testFile), PackageAccess.READ)) {
@@ -353,7 +416,6 @@ class TestSignatureInfo {
     }
 
     @Test
-    @DisabledOnJreEx("1.8.0_292")
     void testSignSpreadsheet() throws Exception {
         String testFile = "hello-world-unsigned.xlsx";
         try (OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE)) {
@@ -372,7 +434,6 @@ class TestSignatureInfo {
     }
 
     @Test
-    @DisabledOnJreEx("1.8.0_292")
     void testManipulation() throws Exception {
         // sign & validate
         String testFile = "hello-world-unsigned.xlsx";
@@ -399,8 +460,243 @@ class TestSignatureInfo {
         }
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"%s", "<x:wrap xmlns:x=\"urn:x\">%s</x:wrap>"})
+    void testDuplicateRelationshipId(String wrapper) throws Exception {
+        // add a second officeDocument relationship reusing the signed Id "rId1",
+        // pointing to an unsigned part - the package model resolves rId1 to this one
+        String rel = String.format(Locale.ROOT, wrapper, "<Relationship Id=\"rId1\" Type=\"" +
+            PackageRelationshipTypes.CORE_DOCUMENT + "\" Target=\"word/tampered.xml\"/>");
+
+        try (OPCPackage pkg = OPCPackage.open(modifySignedDocx(rel, true));
+             XWPFDocument doc = new XWPFDocument(pkg)) {
+            assertEquals("Tampered", doc.getParagraphs().get(0).getText());
+
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(new SignatureConfig());
+            assertFalse(si.verifySignature(), "signature must not cover the substituted main part");
+        }
+    }
+
     @Test
-    @DisabledOnJreEx("1.8.0_292")
+    void testAddedRelationshipIsNotSigned() throws Exception {
+        // a second officeDocument relationship with a new Id, added after signing
+        String rel = "<Relationship Id=\"rId0\" Type=\"" + PackageRelationshipTypes.CORE_DOCUMENT +
+            "\" Target=\"word/tampered.xml\"/>";
+
+        try (OPCPackage pkg = OPCPackage.open(modifySignedDocx(rel, true))) {
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(new SignatureConfig());
+            assertFalse(si.verifySignature(), "a relationship added after signing must invalidate the signature");
+        }
+    }
+
+    @Test
+    void testForeignRelationshipElementIsIgnored() throws Exception {
+        // an element named Relationship in another namespace is not a relationship,
+        // neither for the package model nor for the relationship transform
+        String rel = "<y:Relationship xmlns:y=\"urn:y\" Id=\"rId1\" Target=\"word/other.xml\"/>";
+
+        try (OPCPackage pkg = OPCPackage.open(modifySignedDocx(rel, false));
+             XWPFDocument doc = new XWPFDocument(pkg)) {
+            assertEquals("Hello world", doc.getParagraphs().get(0).getText());
+
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(new SignatureConfig());
+            assertTrue(si.verifySignature());
+        }
+    }
+
+    @Test
+    void testLineBreakInSignedRelationshipTarget() throws Exception {
+        // a line break in an attribute is read as a space, so the target becomes "word/document.xml "
+        // (stored as /word/document.xml%20) - another part than the signed one
+        InputStream modified = rewriteSignedDocx(entries -> {
+            String target = "Target=\"word/document.xml\"";
+            assertThat(new String(entries.get("_rels/.rels"), StandardCharsets.UTF_8), containsString(target));
+            entries.put("_rels/.rels", replace(entries.get("_rels/.rels"), target, "Target=\"word/document.xml\n\""));
+            entries.put("[Content_Types].xml", replace(entries.get("[Content_Types].xml"), "</Types>",
+                "<Override PartName=\"/word/document.xml%20\" ContentType=\"" +
+                XWPFRelation.DOCUMENT.getContentType() + "\"/></Types>"));
+            entries.put("word/document.xml%20", replace(entries.get("word/document.xml"), "Hello world", "Tampered"));
+        });
+
+        try (OPCPackage pkg = OPCPackage.open(modified);
+             XWPFDocument doc = new XWPFDocument(pkg)) {
+            assertEquals("Tampered", doc.getParagraphs().get(0).getText());
+
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(new SignatureConfig());
+            assertFalse(si.verifySignature(), "signature must not cover the substituted main part");
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+        // line breaks between the attributes
+        "\r\n    Target=\"word/document.xml\"\r\n/>",
+        // content of the Relationship element is not part of the transform output
+        "Target=\"word/document.xml\">\r\n</Relationship>",
+        "Target=\"word/document.xml\"><x:ext xmlns:x=\"urn:x\">text</x:ext></Relationship>"
+    })
+    void testSignedRelationshipFormatting(String reformatted) throws Exception {
+        // the relationship transform digests the relationships, not how they are written
+        InputStream modified = rewriteSignedDocx(entries -> {
+            String target = "Target=\"word/document.xml\"/>";
+            assertThat(new String(entries.get("_rels/.rels"), StandardCharsets.UTF_8), containsString(target));
+            entries.put("_rels/.rels", replace(entries.get("_rels/.rels"), target, reformatted));
+        });
+
+        try (OPCPackage pkg = OPCPackage.open(modified)) {
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(new SignatureConfig());
+            assertTrue(si.verifySignature());
+        }
+    }
+
+    @Test
+    void testEmptyTargetModeOnSignedRelationship() throws Exception {
+        // an empty TargetMode is not the absent attribute: the package reads it as an external
+        // relationship, so the signed styles part is no longer part of the document
+        InputStream modified = rewriteSignedDocx(entries -> {
+            String rel = "Target=\"styles.xml\"/>";
+            byte[] rels = entries.get("word/_rels/document.xml.rels");
+            assertThat(new String(rels, StandardCharsets.UTF_8), containsString(rel));
+            entries.put("word/_rels/document.xml.rels", replace(rels, rel, "Target=\"styles.xml\" TargetMode=\"\"/>"));
+        });
+
+        try (OPCPackage pkg = OPCPackage.open(modified);
+             XWPFDocument doc = new XWPFDocument(pkg)) {
+            assertNull(doc.getStyles(), "the styles part is not reachable through the relationship anymore");
+
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(new SignatureConfig());
+            assertFalse(si.verifySignature(), "signature must not cover a relationship whose target mode was changed");
+        }
+    }
+
+    @Test
+    void testRelationshipsGroupReference() throws Exception {
+        // sign with an additional reference to the document relationships, which signs all
+        // attachedTemplate relationships as a group - there is none of them when signing
+        String templateType = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/attachedTemplate";
+        String relsName = "word/_rels/document.xml.rels";
+
+        DummyKeystore ks = new DummyKeystore(STORE_PASS);
+        KeyCertPair certPair = ks.createDummyKey();
+        SignatureConfig sic = new SignatureConfig();
+        sic.setKey(certPair.getKey());
+        sic.setSigningCertificateChain(certPair.getX509Chain());
+        sic.setSignatureFacets(Arrays.asList(new OOXMLSignatureFacet() {
+            @Override
+            protected void addManifestReferences(SignatureInfo signatureInfo, List<Reference> manifestReferences)
+            throws XMLSignatureException {
+                super.addManifestReferences(signatureInfo, manifestReferences);
+                RelationshipTransformParameterSpec parameterSpec = new RelationshipTransformParameterSpec();
+                parameterSpec.addRelationshipGroupReference(templateType);
+                XMLSignatureFactory sigFac = signatureInfo.getSignatureFactory();
+                try {
+                    List<Transform> transforms = Arrays.asList(
+                        sigFac.newTransform(RelationshipTransformService.TRANSFORM_URI, parameterSpec),
+                        sigFac.newTransform(CanonicalizationMethod.INCLUSIVE, (TransformParameterSpec)null));
+                    DigestMethod digestMethod = sigFac.newDigestMethod(signatureInfo.getSignatureConfig().getDigestMethodUri(), null);
+                    manifestReferences.add(sigFac.newReference("/" + relsName +
+                        "?ContentType=application/vnd.openxmlformats-package.relationships+xml", digestMethod, transforms, null, null));
+                } catch (GeneralSecurityException e) {
+                    throw new XMLSignatureException(e);
+                }
+            }
+        }, new KeyInfoSignatureFacet()));
+
+        File signed = copy(testdata.getFile("hello-world-unsigned.docx"));
+        try (OPCPackage pkg = OPCPackage.open(signed, PackageAccess.READ_WRITE)) {
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(sic);
+            si.confirmSignature();
+        }
+
+        try (OPCPackage pkg = OPCPackage.open(signed, PackageAccess.READ)) {
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(new SignatureConfig());
+            assertTrue(si.verifySignature());
+        }
+
+        // a template relationship added after signing is one of the relationships signed as a group
+        String rel = "<Relationship Id=\"rId99\" Type=\"" + templateType +
+            "\" Target=\"https://example.com/template.dotm\" TargetMode=\"External\"/>";
+        InputStream tampered = rewriteDocx(signed, entries -> entries.put(relsName,
+            replace(entries.get(relsName), "</Relationships>", rel + "</Relationships>")));
+        try (OPCPackage pkg = OPCPackage.open(tampered)) {
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(new SignatureConfig());
+            assertFalse(si.verifySignature(), "a relationship of a type signed as a group must be covered by the digest");
+        }
+    }
+
+    /**
+     * Copies hello-world-signed.docx, adding {@code rel} to _rels/.rels and, if {@code addTamperedPart}
+     * is set, a word/tampered.xml main part which says "Tampered" instead of "Hello world"
+     */
+    private static InputStream modifySignedDocx(String rel, boolean addTamperedPart) throws IOException {
+        return rewriteSignedDocx(entries -> {
+            entries.put("_rels/.rels", replace(entries.get("_rels/.rels"), "</Relationships>", rel + "</Relationships>"));
+            if (addTamperedPart) {
+                entries.put("[Content_Types].xml", replace(entries.get("[Content_Types].xml"), "</Types>",
+                    "<Override PartName=\"/word/tampered.xml\" ContentType=\"" +
+                    XWPFRelation.DOCUMENT.getContentType() + "\"/></Types>"));
+                byte[] document = entries.get("word/document.xml");
+                assertNotNull(document);
+                entries.put("word/tampered.xml", replace(document, "Hello world", "Tampered"));
+            }
+        });
+    }
+
+    /**
+     * Copies hello-world-signed.docx, letting {@code modifier} change, add or remove entries by name
+     */
+    private static InputStream rewriteSignedDocx(Consumer<Map<String, byte[]>> modifier) throws IOException {
+        return rewriteDocx(testdata.getFile("hello-world-signed.docx"), modifier);
+    }
+
+    /**
+     * Copies {@code file}, letting {@code modifier} change, add or remove entries by name
+     */
+    private static InputStream rewriteDocx(File file, Consumer<Map<String, byte[]>> modifier) throws IOException {
+        Map<String, byte[]> entries = new LinkedHashMap<>();
+        try (ZipFile zf = ZipFile.builder().setFile(file).get()) {
+            for (ZipArchiveEntry ze : Collections.list(zf.getEntries())) {
+                try (InputStream is = zf.getInputStream(ze)) {
+                    entries.put(ze.getName(), IOUtils.toByteArray(is));
+                }
+            }
+        }
+        modifier.accept(entries);
+
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
+        try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(bos)) {
+            for (Map.Entry<String, byte[]> me : entries.entrySet()) {
+                zos.putArchiveEntry(new ZipArchiveEntry(me.getKey()));
+                zos.write(me.getValue());
+                zos.closeArchiveEntry();
+            }
+        }
+        return bos.toInputStream();
+    }
+
+    private static byte[] replace(byte[] data, String target, String replacement) {
+        return new String(data, StandardCharsets.UTF_8).replace(target, replacement).getBytes(StandardCharsets.UTF_8);
+    }
+
+    @Test
     void testSignSpreadsheetWithSignatureInfo() throws Exception {
         String testFile = "hello-world-unsigned.xlsx";
         DummyKeystore ks = new DummyKeystore(STORE_PASS);
@@ -427,7 +723,6 @@ class TestSignatureInfo {
     }
 
     @Test
-    @DisabledOnJreEx("1.8.0_292")
     void testSignEnvelopingDocument() throws Exception {
         String testFile = "hello-world-unsigned.xlsx";
         File sigCopy = testdata.getFile(testFile);
@@ -662,7 +957,6 @@ class TestSignatureInfo {
     }
 
     @Test
-    @DisabledOnJreEx("1.8.0_292")
     void testNonSha1() throws Exception {
         String testFile = "hello-world-unsigned.xlsx";
         DummyKeystore ks = new DummyKeystore(STORE_PASS);
@@ -693,7 +987,6 @@ class TestSignatureInfo {
 
     // Test signing of external references / hyperlinks
     @Test
-    @DisabledOnJreEx("1.8.0_292")
     void bug65214() throws Exception {
         DummyKeystore ks = new DummyKeystore(STORE_PASS);
         KeyCertPair certPair = ks.createDummyKey();
@@ -733,7 +1026,6 @@ class TestSignatureInfo {
     }
 
     @Test
-    @DisabledOnJreEx("1.8.0_292")
     void bug58630() throws Exception {
         DummyKeystore ks = new DummyKeystore(STORE_PASS);
         KeyCertPair certPair = ks.createDummyKey();
@@ -968,7 +1260,6 @@ class TestSignatureInfo {
 
 
     @Test
-    @DisabledOnJreEx("1.8.0_292")
     @Tag("scratchpad.ignore")
     void testSignatureImage() throws Exception {
         DummyKeystore ks = new DummyKeystore(STORE_PASS);

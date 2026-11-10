@@ -32,6 +32,9 @@ import org.apache.poi.util.IOUtils;
  * lazy loads its binary data from the document (if linked with a node via {@link #readValue(DocumentNode)}).
  */
 public class ByteChunkDeferred extends ByteChunk {
+    // maximum size that is allowed by default, can be extended via IOUtils.setByteArrayMaxOverride()
+    // can be set higher if normal documents exceed this size
+    private static final int MAX_CHUNK_SIZE = 10 * 1024 * 1024;
 
     private DocumentNode node;
 
@@ -77,7 +80,7 @@ public class ByteChunkDeferred extends ByteChunk {
         }
 
         try (DocumentInputStream dis = createDocumentInputStream()) {
-            return IOUtils.toByteArray(dis, node.getSize());
+            return IOUtils.toByteArray(dis, node.getSize(), MAX_CHUNK_SIZE);
         } catch (IOException e) {
             return null;
         }

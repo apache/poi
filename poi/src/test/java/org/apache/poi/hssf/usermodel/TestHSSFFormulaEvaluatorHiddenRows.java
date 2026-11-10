@@ -15,26 +15,14 @@
    limitations under the License.
 ==================================================================== */
 
-module org.apache.poi.stress {
-    requires org.junit.jupiter.api;
-    requires org.junit.jupiter.params;
-    requires net.bytebuddy;
-    requires java.desktop;
+package org.apache.poi.hssf.usermodel;
 
-    requires org.apache.commons.collections4;
-    requires org.apache.commons.io;
-    requires transitive org.apache.poi.poi;
-    requires org.apache.poi.examples;
-    requires org.apache.poi.scratchpad;
+import org.apache.poi.hssf.HSSFITestDataProvider;
+import org.apache.poi.ss.usermodel.BaseTestFormulaEvaluatorHiddenRows;
 
-    requires org.apache.santuario.xmlsec;
-    requires org.bouncycastle.provider;
-    requires org.bouncycastle.pkix;
-    requires org.codehaus.stax2;
+final class TestHSSFFormulaEvaluatorHiddenRows extends BaseTestFormulaEvaluatorHiddenRows {
 
-
-
-    exports org.apache.poi.stress;
-
-    opens org.apache.poi.stress to org.junit.platform.commons;
+    TestHSSFFormulaEvaluatorHiddenRows() {
+        super(HSSFITestDataProvider.instance);
+    }
 }

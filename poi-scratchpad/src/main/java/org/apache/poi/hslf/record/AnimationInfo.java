@@ -55,8 +55,8 @@ public final class AnimationInfo extends RecordContainer {
 
         // First child should be the ExMediaAtom
         final Record child = _children[0];
-        if(child instanceof AnimationInfoAtom) {
-            animationAtom = (AnimationInfoAtom) child;
+        if(child instanceof AnimationInfoAtom infoAtom) {
+            animationAtom = infoAtom;
         } else {
             LOG.atError().log("First child record wasn't a AnimationInfoAtom, was of type {}", box(child.getRecordType()));
         }

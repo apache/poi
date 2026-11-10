@@ -33,10 +33,10 @@ public abstract class AbstractColorStyle implements ColorStyle {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ColorStyle)) {
+        if (!(o instanceof ColorStyle cs)) {
             return false;
         }
-        return Objects.equals(DrawPaint.applyColorTransform(this), DrawPaint.applyColorTransform((ColorStyle)o));
+        return Objects.equals(DrawPaint.applyColorTransform(this), DrawPaint.applyColorTransform(cs));
     }
 
     @Override

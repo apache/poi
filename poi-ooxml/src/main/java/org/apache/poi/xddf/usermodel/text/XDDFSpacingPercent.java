@@ -20,6 +20,7 @@ package org.apache.poi.xddf.usermodel.text;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextSpacing;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextSpacingPercent;
 
@@ -54,6 +55,6 @@ public class XDDFSpacingPercent extends XDDFSpacing {
     }
 
     public void setPercent(double value) {
-        percent.setVal((int)(1000 * value));
+        percent.setVal(MathUtil.safeDoubleToInt(1000 * value));
     }
 }

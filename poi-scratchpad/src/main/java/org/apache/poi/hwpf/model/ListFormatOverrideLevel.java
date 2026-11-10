@@ -47,8 +47,7 @@ public final class ListFormatOverrideLevel
 
     public boolean equals( Object obj )
     {
-        if (!(obj instanceof ListFormatOverrideLevel)) return false;
-        ListFormatOverrideLevel lfolvl = (ListFormatOverrideLevel) obj;
+        if (!(obj instanceof ListFormatOverrideLevel lfolvl)) return false;
         boolean lvlEquality = false;
         if ( _lvl != null )
         {

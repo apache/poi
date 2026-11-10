@@ -28,6 +28,7 @@ import java.nio.file.Files;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.apache.commons.io.input.CloseShieldInputStream;
 import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
 import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -190,7 +191,7 @@ public final class ZipHelper {
         InputStream checkedStream = FileMagic.prepareToCheckMagic(stream);
         verifyZipHeader(checkedStream);
 
-        final InputStream processStream = closeStream ? checkedStream : new NoCloseInputStream(checkedStream);
+        final InputStream processStream = closeStream ? checkedStream : CloseShieldInputStream.wrap(checkedStream);
         // Open as a proper zip stream
         return new ZipArchiveThresholdInputStream(new ZipArchiveInputStream(
                 processStream, StandardCharsets.UTF_8.name(), false, true));

@@ -37,7 +37,7 @@ import org.apache.poi.ss.formula.functions.CountUtils.I_MatchPredicate;
  *      <tr><th>sum_range</th><td>Locates the top-left corner of the corresponding range of addends - values to be added (after being selected by the criteria)</td></tr>
  *    </table><br>
  */
-public final class Sumif extends Var2or3ArgFunction {
+public final class Sumif extends Var2or3ArgFunction implements ArrayFunction {
 
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
@@ -66,7 +66,39 @@ public final class Sumif extends Var2or3ArgFunction {
         return eval(srcRowIndex, srcColumnIndex, arg1, aeRange, aeSum);
     }
 
+    /**
+     * Evaluated in array context (the result feeds an array-mode function such as SUMPRODUCT, or
+     * the cell is part of an array formula): a multi-cell range as criteria means one sum per
+     * criterion.
+     * @since 6.0.0
+     */
+    @Override
+    public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+        if (args.length < 2 || args.length > 3) {
+            return ErrorEval.VALUE_INVALID;
+        }
+        AreaEval aeRange;
+        AreaEval aeSum;
+        try {
+            aeRange = convertRangeArg(args[0]);
+            aeSum = args.length == 3 ? createSumRange(args[2], aeRange) : aeRange;
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
+        return eval(srcRowIndex, srcColumnIndex, args[1], aeRange, aeSum, true);
+    }
+
     private static ValueEval eval(int srcRowIndex, int srcColumnIndex, ValueEval arg1, AreaEval aeRange, AreaEval aeSum) {
+        return eval(srcRowIndex, srcColumnIndex, arg1, aeRange, aeSum, false);
+    }
+
+    private static ValueEval eval(int srcRowIndex, int srcColumnIndex, ValueEval arg1, AreaEval aeRange, AreaEval aeSum,
+            boolean arrayContext) {
+        if (Countif.isArrayCriteria(arg1, arrayContext)) {
+            // one result per criterion
+            return Countif.evaluateForEachCriterion((AreaEval) arg1,
+                    criterion -> eval(srcRowIndex, srcColumnIndex, criterion, aeRange, aeSum, false));
+        }
         I_MatchPredicate mp = Countif.createCriteriaPredicate(arg1, srcRowIndex, srcColumnIndex);
         if (mp == null) {
             return NumberEval.ZERO;
@@ -100,10 +132,10 @@ public final class Sumif extends Var2or3ArgFunction {
             return 0.0D;
         } else {
             ValueEval addend = aeSum.getRelativeValue(relRowIndex, relColIndex);
-            if (addend instanceof NumberEval) {
-                return ((NumberEval) addend).getNumberValue();
-            } else if (addend instanceof ErrorEval) {
-                throw new EvaluationException((ErrorEval)addend);
+            if (addend instanceof NumberEval ne) {
+                return ne.getNumberValue();
+            } else if (addend instanceof ErrorEval ee) {
+                throw new EvaluationException(ee);
             } else {
                 // everything else (including string and boolean values) counts as zero
                 return 0.0;
@@ -116,21 +148,21 @@ public final class Sumif extends Var2or3ArgFunction {
      * @throws EvaluationException if eval is not a reference
      */
     private static AreaEval createSumRange(ValueEval eval, AreaEval aeRange) throws EvaluationException {
-        if (eval instanceof AreaEval) {
-            return ((AreaEval) eval).offset(0, aeRange.getHeight()-1, 0, aeRange.getWidth()-1);
+        if (eval instanceof AreaEval ae) {
+            return ae.offset(0, aeRange.getHeight()-1, 0, aeRange.getWidth()-1);
         }
-        if (eval instanceof RefEval) {
-            return ((RefEval)eval).offset(0, aeRange.getHeight()-1, 0, aeRange.getWidth()-1);
+        if (eval instanceof RefEval re) {
+            return re.offset(0, aeRange.getHeight()-1, 0, aeRange.getWidth()-1);
         }
         throw new EvaluationException(ErrorEval.VALUE_INVALID);
     }
 
     private static AreaEval convertRangeArg(ValueEval eval) throws EvaluationException {
-        if (eval instanceof AreaEval) {
-            return (AreaEval) eval;
+        if (eval instanceof AreaEval ae) {
+            return ae;
         }
-        if (eval instanceof RefEval) {
-            return ((RefEval)eval).offset(0, 0, 0, 0);
+        if (eval instanceof RefEval re) {
+            return re.offset(0, 0, 0, 0);
         }
         throw new EvaluationException(ErrorEval.VALUE_INVALID);
     }

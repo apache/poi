@@ -17,6 +17,7 @@
 package org.apache.poi.ss.format;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.FieldPosition;
@@ -42,11 +43,15 @@ import org.apache.poi.util.LocaleUtil;
  */
 public class CellNumberFormatter extends CellFormatter {
     private static final Logger LOG = PoiLogManager.getLogger(CellNumberFormatter.class);
+    // the largest numerator Excel shows for an improper fraction, the maximum unsigned 32-bit int
+    private static final long MAX_IMPROPER_NUMERATOR = 0xFFFFFFFFL;
 
     private final String desc;
     private final String printfFmt;
     private final double scale;
     private final Special decimalPoint;
+    /** where the decimal point is in {@link #desc}, shown as the locale's decimal separator, or -1 */
+    private final int decimalPointPos;
     private final Special slash;
     private final Special exponent;
     private final Special numerator;
@@ -61,6 +66,10 @@ public class CellNumberFormatter extends CellFormatter {
     private final List<Special> exponentSpecials = new ArrayList<>();
     private final List<Special> exponentDigitSpecials = new ArrayList<>();
     private final int maxDenominator;
+    /** the denominator given as a number, e.g. 4 for "# ?/4", or 0 */
+    private final int fixedDenominator;
+    /** the last digit of the fixed denominator, which ends the fraction */
+    private final Special fixedDenominatorEnd;
     private final String numeratorFmt;
     private final String denominatorFmt;
     private final boolean improperFraction;
@@ -87,8 +96,7 @@ public class CellNumberFormatter extends CellFormatter {
             }
 
             CellFormatter cf;
-            if (value instanceof Number) {
-                Number num = (Number) value;
+            if (value instanceof Number num) {
                 cf = (num.doubleValue() % 1.0 == 0) ? new CellNumberFormatter(locale, "#") :
                     new CellNumberFormatter(locale, "#.#");
             } else {
@@ -191,6 +199,18 @@ public class CellNumberFormatter extends CellFormatter {
             afterFractional = null;
         }
 
+        // the decimal point moves left by one for each comma before it, which is removed below
+        int pointPos = -1;
+        if (ph.getDecimalPoint() != null) {
+            pointPos = ph.getDecimalPoint().pos;
+            for (Special s : specials) {
+                if (s.ch == ',' && s.pos < ph.getDecimalPoint().pos) {
+                    pointPos--;
+                }
+            }
+        }
+        decimalPointPos = pointPos;
+
         double[] scaleByRef = {ph.getScale()};
         showGroupingSeparator = interpretIntegerCommas(descBuf, specials, decimalPoint, integerEnd(), fractionalEnd(), scaleByRef);
         if (exponent == null) {
@@ -211,7 +231,16 @@ public class CellNumberFormatter extends CellFormatter {
             exponentDigitSpecials.addAll(specialsFor(exponentPos + 2));
         }
 
-        if (slash != null) {
+        fixedDenominator = slash == null ? 0 : ph.getFixedDenominator();
+        fixedDenominatorEnd = slash == null ? null : ph.getFixedDenominatorEnd();
+        if (slash != null && fixedDenominator > 0) {
+            if (numerator != null) {
+                numeratorSpecials.addAll(specialsFor(specials.indexOf(numerator)));
+            }
+            maxDenominator = fixedDenominator;
+            numeratorFmt = singleNumberFormat(numeratorSpecials);
+            denominatorFmt = null;
+        } else if (slash != null) {
             if (numerator != null) {
                 numeratorSpecials.addAll(specialsFor(specials.indexOf(numerator)));
             }
@@ -309,7 +338,7 @@ public class CellNumberFormatter extends CellFormatter {
     }
 
     private static int maxValue(List<Special> s) {
-        return Math.toIntExact(Math.round(Math.pow(10, s.size()) - 1));
+        return Math.toIntExact(Math.round(Math.pow(10, Math.min(s.size(), SimpleFraction.MAX_DENOMINATOR_DIGITS)) - 1));
     }
 
     private List<Special> specialsFor(int pos, int takeFirst) {
@@ -425,6 +454,10 @@ public class CellNumberFormatter extends CellFormatter {
 
     @Override
     public void formatValue(StringBuffer toAppendTo, Object valueObject) {
+        if (!(valueObject instanceof Number)) {
+            throw new IllegalArgumentException("Expected object of type number for format " + format + ", but had: " + valueObject);
+        }
+
         BigDecimal bd = BigDecimal.valueOf(((Number) valueObject).doubleValue()).multiply(BigDecimal.valueOf(scale));
         double value = bd.doubleValue();
 
@@ -447,8 +480,8 @@ public class CellNumberFormatter extends CellFormatter {
                 value = 0;
             } else {
                 fractional = value % 1.0;
-                //noinspection SillyAssignment
-                value = (long) value;
+                // not a cast to long, which shows a value above Long.MAX_VALUE as 9223372036854775807
+                value = Math.floor(value);
             }
         }
 
@@ -518,6 +551,10 @@ public class CellNumberFormatter extends CellFormatter {
                     while (deletedChars.get(delPos)) {
                         delPos++;
                         modPos++;
+                    }
+
+                    if (nextChange.getEnd() == null) {
+                        throw new IllegalArgumentException("Cannot apply format, end could not determined for format: " + format);
                     }
 
                     // delete end point in original
@@ -635,17 +672,67 @@ public class CellNumberFormatter extends CellFormatter {
     @SuppressWarnings("unchecked")
     private void writeFraction(double value, StringBuffer result,
             double fractional, StringBuffer output, Set<CellNumberStringMod> mods) {
+        // the fraction is worked out with ints, so for an improper fraction of a large value it is worked out
+        // for the part after the whole number, and the whole number is added to the numerator when it is written
+        BigInteger wholeNumber = null;
+        if (improperFraction && fractional * Math.max(fixedDenominator, 1) >= Integer.MAX_VALUE) {
+            double floor = Math.floor(fractional);
+            wholeNumber = new BigDecimal(floor).toBigInteger();
+            fractional -= floor;
+        }
+
+        // Work out the fraction first, as it can round to 0, or up to 1
+        int n;
+        int d;
+        // the "fractional % 1" captures integer values in improper fractions
+        if (fractional == 0 || (improperFraction && fractional % 1 == 0)) {
+            // 0 as a fraction is reported by excel as 0/1
+            n = Math.toIntExact(Math.round(fractional));
+            d = fixedDenominator > 0 ? fixedDenominator : 1;
+            if (fixedDenominator > 0) {
+                n *= d;
+            }
+        } else if (fixedDenominator > 0) {
+            // a fixed denominator is always used, without reducing the fraction (2/4 stays 2/4)
+            d = fixedDenominator;
+            n = Math.toIntExact(Math.round(fractional * d));
+        } else if (improperFraction && wholeNumber == null) {
+            // Excel stops before an improper fraction's numerator exceeds an unsigned 32-bit int:
+            // 300000.707106781 is 2435705741/8119, where the next fraction would be 5880013860/19601
+            double floor = Math.floor(fractional);
+            wholeNumber = BigInteger.valueOf((long) floor);
+            SimpleFraction frac = SimpleFraction.buildFractionMaxDenominator(fractional - floor, maxDenominator + 1,
+                    (long) floor, MAX_IMPROPER_NUMERATOR);
+            n = frac.getNumerator();
+            d = frac.getDenominator();
+        } else {
+            // buildFractionMaxDenominator only gives denominators below the maximum it is passed, so pass
+            // 10^digits, as FractionFormat does: e.g. "??/??" shows 0.99 as 98/99, where 99 would give 1/1
+            SimpleFraction frac = SimpleFraction.buildFractionMaxDenominator(fractional, maxDenominator + 1);
+            n = frac.getNumerator();
+            d = frac.getDenominator();
+        }
+        if (!improperFraction && n >= d && n > 0) {
+            // the fraction rounds up to a whole number: e.g. "# ?/2" shows 0.9 as 1
+            value += 1;
+            n = 0;
+            result = new StringBuffer();
+            try (Formatter f = new Formatter(result, locale)) {
+                f.format(locale, printfFmt, value);
+            }
+        }
+        boolean fractionIsZero = n == 0;
 
         // Figure out if we are to suppress either the integer or fractional part.
         // With # the suppressed part is removed; with ? it is replaced with spaces.
         if (!improperFraction) {
             // If fractional part is zero, and numerator doesn't have '0', write out
             // only the integer part and strip the rest.
-            if (fractional == 0 && !hasChar('0', numeratorSpecials)) {
+            if (fractionIsZero && !hasChar('0', numeratorSpecials)) {
                 writeInteger(result, output, integerSpecials, mods, false);
 
                 Special start = lastSpecial(integerSpecials);
-                Special end = lastSpecial(denominatorSpecials);
+                Special end = denominatorSpecials.isEmpty() ? fixedDenominatorEnd : lastSpecial(denominatorSpecials);
                 if (hasChar('?', integerSpecials, numeratorSpecials, denominatorSpecials)) {
                     //if any format has '?', then replace the fraction with spaces
                     mods.add(replaceMod(start, false, end, true, ' '));
@@ -662,8 +749,8 @@ public class CellNumberFormatter extends CellFormatter {
                 boolean intNoZero = !hasChar('0', integerSpecials);
                 boolean intOnlyHash = integerSpecials.isEmpty() || (integerSpecials.size() == 1 && hasChar('#', integerSpecials));
 
-                boolean removeBecauseZero     = fractional == 0 && (intOnlyHash || numNoZero);
-                boolean removeBecauseFraction = fractional != 0 && intNoZero;
+                boolean removeBecauseZero     = fractionIsZero && (intOnlyHash || numNoZero);
+                boolean removeBecauseFraction = !fractionIsZero && intNoZero;
 
                 if (value == 0 && (removeBecauseZero || removeBecauseFraction)) {
                     Special start = lastSpecial(integerSpecials);
@@ -679,49 +766,35 @@ public class CellNumberFormatter extends CellFormatter {
             }
         }
 
-        // Calculate and print the actual fraction (improper or otherwise)
+        // Print the actual fraction (improper or otherwise)
         try {
-            int n;
-            int d;
-            // the "fractional % 1" captures integer values in improper fractions
-            if (fractional == 0 || (improperFraction && fractional % 1 == 0)) {
-                // 0 as a fraction is reported by excel as 0/1
-                n = (int) Math.round(fractional);
-                d = 1;
-            } else {
-                SimpleFraction frac = SimpleFraction.buildFractionMaxDenominator(fractional, maxDenominator);
-                n = frac.getNumerator();
-                d = frac.getDenominator();
-            }
             if (improperFraction) {
                 n = Math.toIntExact(n + Math.round(value * d));
             }
-            writeSingleInteger(numeratorFmt, n, output, numeratorSpecials, mods);
-            writeSingleInteger(denominatorFmt, d, output, denominatorSpecials, mods);
+            Number numerator = wholeNumber == null ? (Number) n
+                    : wholeNumber.multiply(BigInteger.valueOf(d)).add(BigInteger.valueOf(n));
+            writeSingleInteger(numeratorFmt, numerator, output, numeratorSpecials, mods);
+            if (fixedDenominator == 0) {
+                // a fixed denominator is already in the output
+                writeDenominator(d, output, mods);
+            }
         } catch (RuntimeException e) {
             LOG.atError().withThrowable(e).log("error while fraction evaluation");
         }
     }
 
+    /**
+     * Shows the decimal point as the locale's decimal separator. The grouping commas have
+     * already been removed from the format, so any other '.' or ',' is literal text, which Excel
+     * shows as it is, e.g. the dot in {@code 0.00"x."}
+     */
     private String localiseFormat(String format) {
-        DecimalFormatSymbols dfs = getDecimalFormatSymbols();
-        if(format.contains(",") && dfs.getGroupingSeparator() != ',') {
-            if(format.contains(".") && dfs.getDecimalSeparator() != '.') {
-                format = replaceLast(format, "\\.", "[DECIMAL_SEPARATOR]");
-                format = format.replace(',', dfs.getGroupingSeparator())
-                        .replace("[DECIMAL_SEPARATOR]", Character.toString(dfs.getDecimalSeparator()));
-            } else {
-                format = format.replace(',', dfs.getGroupingSeparator());
-            }
-        } else if(format.contains(".") && dfs.getDecimalSeparator() != '.') {
-            format = format.replace('.', dfs.getDecimalSeparator());
+        char decimalSeparator = getDecimalFormatSymbols().getDecimalSeparator();
+        if (decimalPointPos < 0 || decimalPointPos >= format.length() || decimalSeparator == '.'
+                || format.charAt(decimalPointPos) != '.') {
+            return format;
         }
-        return format;
-    }
-
-
-    private static String replaceLast(String text, String regex, String replacement) {
-        return text.replaceFirst("(?s)(.*)" + regex, "$1" + replacement);
+        return format.substring(0, decimalPointPos) + decimalSeparator + format.substring(decimalPointPos + 1);
     }
 
     private static boolean hasChar(char ch, List<Special> numSpecials) {
@@ -742,7 +815,28 @@ public class CellNumberFormatter extends CellFormatter {
         return hasChar(ch, numSpecials1) || hasChar(ch, numSpecials2) || hasChar(ch, numSpecials3);
     }
 
-    private void writeSingleInteger(String fmt, int num, StringBuffer output, List<Special> numSpecials, Set<CellNumberStringMod> mods) {
+    /**
+     * Excel aligns the denominator of a fraction to the left, so its '?' placeholders
+     * give spaces after it: "# ???/???" shows 1.05 as "1   1/20 "
+     */
+    private void writeDenominator(int d, StringBuffer output, Set<CellNumberStringMod> mods) {
+        String digits = Integer.toString(d);
+        if (digits.length() >= denominatorSpecials.size() || hasChar('0', denominatorSpecials)) {
+            writeSingleInteger(denominatorFmt, d, output, denominatorSpecials, mods);
+            return;
+        }
+        for (int i = 0; i < denominatorSpecials.size(); i++) {
+            Special s = denominatorSpecials.get(i);
+            if (i < digits.length()) {
+                output.setCharAt(s.pos, digits.charAt(i));
+            } else if (s.ch == '?') {
+                output.setCharAt(s.pos, ' ');
+            }
+            // an unused '#' is removed later
+        }
+    }
+
+    private void writeSingleInteger(String fmt, Number num, StringBuffer output, List<Special> numSpecials, Set<CellNumberStringMod> mods) {
 
         StringBuffer sb = new StringBuffer();
         try (Formatter formatter = new Formatter(sb, locale)) {
@@ -774,6 +868,12 @@ public class CellNumberFormatter extends CellFormatter {
             if (resultCh != '0' && resultCh != dfs.getGroupingSeparator()) {
                 break;
             }
+        }
+        // an integer part of zero is insignificant too: only a '0' placeholder shows it,
+        // e.g. "??" shows 0 as two spaces, and "#.00" shows 0.5 as ".50"
+        // (but not in fractions or scientific notation, where Excel shows the 0)
+        if (exponent == null && slash == null && strip == pos && pos >= 0 && result.charAt(pos) == '0') {
+            strip++;
         }
 
         ListIterator<Special> it = numSpecials.listIterator(numSpecials.size());

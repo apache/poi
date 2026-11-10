@@ -33,11 +33,11 @@ public final class DMin implements IDStarAlgorithm {
 
     @Override
     public boolean processMatch(ValueEval eval) {
-        if(eval instanceof NumericValueEval) {
+        if(eval instanceof NumericValueEval num) {
             if(minimumValue == null) { // First match, just set the value.
                 minimumValue = eval;
             } else { // There was a previous match, find the new minimum.
-                double currentValue = ((NumericValueEval)eval).getNumberValue();
+                double currentValue = num.getNumberValue();
                 double oldValue = ((NumericValueEval)minimumValue).getNumberValue();
                 if(currentValue < oldValue) {
                     minimumValue = eval;

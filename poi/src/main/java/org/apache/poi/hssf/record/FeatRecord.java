@@ -123,9 +123,9 @@ public final class FeatRecord extends StandardRecord {
 
         out.writeShort(isf_sharedFeatureType);
         out.writeByte(reserved1);
-        out.writeInt((int)reserved2);
+        out.writeInt(Math.toIntExact(reserved2));
         out.writeShort(cellRefs.length);
-        out.writeInt((int)cbFeatData);
+        out.writeInt(Math.toIntExact(cbFeatData));
         out.writeShort(reserved3);
 
         for (CellRangeAddress cellRef : cellRefs) {

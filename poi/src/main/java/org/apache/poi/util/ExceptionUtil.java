@@ -54,11 +54,11 @@ public class ExceptionUtil {
      * Otherwise wraps the throwable in a RuntimeException.
      */
     public static void rethrow(Throwable throwable) throws Error, RuntimeException {
-        if (throwable instanceof Error) {
-            throw (Error) throwable;
+        if (throwable instanceof Error err) {
+            throw err;
         }
-        if (throwable instanceof RuntimeException) {
-            throw (RuntimeException) throwable;
+        if (throwable instanceof RuntimeException rex) {
+            throw rex;
         }
         throw new RuntimeException(throwable);
     }

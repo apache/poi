@@ -22,10 +22,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Duration;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ooxml.TrackingInputStream;
@@ -180,6 +182,20 @@ class TestXMLSlideShow extends BaseTestSlideShow<XSLFShape, XSLFTextParagraph> {
                     assertTrue(slide.getComments().isEmpty());
                 }
             }
+        }
+    }
+
+    @Test
+    void testCommentAuthorInitials() throws Exception {
+        try (XMLSlideShow xmlComments = openSampleDocument("45545_Comment.pptx")) {
+            XSLFComment comment = xmlComments.getSlides().get(0).getComments().get(0);
+            comment.setAuthor("Apache  POI-team !x");
+            assertEquals("AP !X", comment.getAuthorInitials());
+
+            // the old "\\s*(\\w)\\S*" regex backtracked quadratically on whitespace not followed by a word character
+            String spaces = " ".repeat(50_000);
+            assertTimeoutPreemptively(Duration.ofSeconds(10), () -> comment.setAuthor("Apache" + spaces + "!"));
+            assertEquals("A" + spaces + "!", comment.getAuthorInitials());
         }
     }
 

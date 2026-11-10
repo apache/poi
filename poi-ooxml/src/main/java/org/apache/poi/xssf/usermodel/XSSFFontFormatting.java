@@ -22,6 +22,7 @@ import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FontFormatting;
 import org.apache.poi.ss.usermodel.FontUnderline;
+import org.apache.poi.util.MathUtil;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STVerticalAlignRun;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
@@ -92,7 +93,7 @@ public class XSSFFontFormatting implements FontFormatting {
 
         int idx = 0;
         CTColor color = _font.getColorArray(0);
-        if(color.isSetIndexed()) idx = (int)color.getIndexed();
+        if(color.isSetIndexed()) idx = Math.toIntExact(color.getIndexed());
         return (short)idx;
     }
 
@@ -136,7 +137,7 @@ public class XSSFFontFormatting implements FontFormatting {
         if(_font.sizeOfSzArray() == 0) return -1;
 
         CTFontSize sz = _font.getSzArray(0);
-        return (int)(20*sz.getVal());
+        return MathUtil.safeDoubleToInt(20*sz.getVal());
     }
 
     /**
@@ -167,13 +168,13 @@ public class XSSFFontFormatting implements FontFormatting {
     public short getUnderlineType(){
         if(_font.sizeOfUArray() == 0) return Font.U_NONE;
         CTUnderlineProperty u = _font.getUArray(0);
-        switch(u.getVal().intValue()){
-            case STUnderlineValues.INT_SINGLE: return Font.U_SINGLE;
-            case STUnderlineValues.INT_DOUBLE: return Font.U_DOUBLE;
-            case STUnderlineValues.INT_SINGLE_ACCOUNTING: return Font.U_SINGLE_ACCOUNTING;
-            case STUnderlineValues.INT_DOUBLE_ACCOUNTING: return Font.U_DOUBLE_ACCOUNTING;
-            default: return Font.U_NONE;
-        }
+        return switch (u.getVal().intValue()) {
+            case STUnderlineValues.INT_SINGLE -> Font.U_SINGLE;
+            case STUnderlineValues.INT_DOUBLE -> Font.U_DOUBLE;
+            case STUnderlineValues.INT_SINGLE_ACCOUNTING -> Font.U_SINGLE_ACCOUNTING;
+            case STUnderlineValues.INT_DOUBLE_ACCOUNTING -> Font.U_DOUBLE_ACCOUNTING;
+            default -> Font.U_NONE;
+        };
     }
 
     /**

@@ -29,6 +29,7 @@ import com.microsoft.schemas.office.visio.x2012.main.RelType;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.ooxml.POIXMLTypeLoader;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xdgf.exceptions.XDGFException;
@@ -62,7 +63,7 @@ public class XDGFPages extends XDGFXMLDocumentPart {
     protected void onDocumentRead() {
         try {
             try (InputStream stream = getPackagePart().getInputStream()) {
-                _pagesObject = PagesDocument.Factory.parse(stream).getPages();
+                _pagesObject = PagesDocument.Factory.parse(stream, POIXMLTypeLoader.DEFAULT_XML_OPTIONS).getPages();
             } catch (XmlException | IOException e) {
                 throw new POIXMLException(e);
             }
@@ -81,15 +82,13 @@ public class XDGFPages extends XDGFXMLDocumentPart {
                 if (pageContentsPart == null)
                     throw new POIXMLException("PageSettings relationship for " + relId + " not found");
 
-                if (!(pageContentsPart instanceof XDGFPageContents))
+                if (pageContentsPart instanceof XDGFPageContents contents) {
+                    XDGFPage page = new XDGFPage(pageSettings, contents, _document, this);
+                    contents.onDocumentRead();
+                    _pages.add(page);
+                } else {
                     throw new POIXMLException("Unexpected pages relationship for " + relId + ": " + pageContentsPart);
-
-                XDGFPageContents contents = (XDGFPageContents)pageContentsPart;
-                XDGFPage page = new XDGFPage(pageSettings, contents, _document, this);
-
-                contents.onDocumentRead();
-
-                _pages.add(page);
+                }
             }
 
         } catch (POIXMLException e) {

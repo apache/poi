@@ -32,6 +32,7 @@ import org.apache.poi.hmef.attribute.TNEFStringAttribute;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Developer focused raw dumper
@@ -63,7 +64,7 @@ public final class HMEFDumper {
 
       boolean truncatePropData = true;
       for (String arg : args) {
-         if (arg.equalsIgnoreCase("--full")) {
+         if (StringUtil.equalsIgnoreCase(arg, "--full")) {
             truncatePropData = false;
             continue;
          }
@@ -132,11 +133,11 @@ public final class HMEFDumper {
          // Print the contents
          String indent = "  ";
 
-         if(attr instanceof TNEFStringAttribute) {
-            System.out.println(indent + indent + indent + ((TNEFStringAttribute)attr).getString());
+         if(attr instanceof TNEFStringAttribute stringAttr) {
+            System.out.println(indent + indent + indent + stringAttr.getString());
          }
-         if(attr instanceof TNEFDateAttribute) {
-            System.out.println(indent + indent + indent + ((TNEFDateAttribute)attr).getDate());
+         if(attr instanceof TNEFDateAttribute dateAttr) {
+            System.out.println(indent + indent + indent + dateAttr.getDate());
          }
 
          System.out.println(indent + "Data of length " + attr.getData().length);
@@ -156,7 +157,8 @@ public final class HMEFDumper {
                   thisLen = len - offset;
                }
 
-               byte[] data = IOUtils.safelyClone(attr.getData(), offset, thisLen, MAX_RECORD_LENGTH);
+               byte[] data = IOUtils.safelyClone(attr.getData(), offset, thisLen, MAX_RECORD_LENGTH,
+                       "HMEFDumper.setMaxRecordLength()");
 
                System.out.print(
                      indent + HexDump.dump(data, 0, 0)

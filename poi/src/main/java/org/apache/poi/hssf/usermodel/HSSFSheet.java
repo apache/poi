@@ -85,6 +85,7 @@ import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Configurator;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Removal;
 
 import static java.lang.System.currentTimeMillis;
@@ -237,8 +238,8 @@ public final class HSSFSheet implements Sheet {
                 }
             }
             LOGGER.atTrace().log(() -> {
-                if (cval instanceof Record) {
-                    return new SimpleMessage("record id = " + Integer.toHexString(((Record) cval).getSid()));
+                if (cval instanceof Record record) {
+                    return new SimpleMessage("record id = " + Integer.toHexString(record.getSid()));
                 } else {
                     return new SimpleMessage("record = " + cval);
                 }
@@ -440,10 +441,9 @@ public final class HSSFSheet implements Sheet {
 
             @Override
             public void visitRecord(Record r) {
-                if (!(r instanceof DVRecord)) {
+                if (!(r instanceof DVRecord dvRecord)) {
                     return;
                 }
-                DVRecord dvRecord = (DVRecord) r;
                 CellRangeAddressList regions = dvRecord.getCellRangeAddress().copy();
                 DVConstraint constraint = DVConstraint.createDVConstraint(dvRecord, book);
                 HSSFDataValidation hssfDataValidation = new HSSFDataValidation(regions, constraint);
@@ -1328,14 +1328,11 @@ public final class HSSFSheet implements Sheet {
      */
     @Override
     public double getMargin(PageMargin margin) {
-        switch (margin) {
-            case FOOTER:
-                return _sheet.getPageSettings().getPrintSetup().getFooterMargin();
-            case HEADER:
-                return _sheet.getPageSettings().getPrintSetup().getHeaderMargin();
-            default:
-                return _sheet.getPageSettings().getMargin(margin.getLegacyApiValue());
-        }
+        return switch (margin) {
+            case FOOTER -> _sheet.getPageSettings().getPrintSetup().getFooterMargin();
+            case HEADER -> _sheet.getPageSettings().getPrintSetup().getHeaderMargin();
+            default -> _sheet.getPageSettings().getMargin(margin.getLegacyApiValue());
+        };
     }
 
     /**
@@ -1372,14 +1369,9 @@ public final class HSSFSheet implements Sheet {
     @Override
     public void setMargin(PageMargin margin, double size) {
         switch (margin) {
-            case FOOTER:
-                _sheet.getPageSettings().getPrintSetup().setFooterMargin(size);
-                break;
-            case HEADER:
-                _sheet.getPageSettings().getPrintSetup().setHeaderMargin(size);
-                break;
-            default:
-                _sheet.getPageSettings().setMargin(margin.getLegacyApiValue(), size);
+            case FOOTER -> _sheet.getPageSettings().getPrintSetup().setFooterMargin(size);
+            case HEADER -> _sheet.getPageSettings().getPrintSetup().setHeaderMargin(size);
+            default -> _sheet.getPageSettings().setMargin(margin.getLegacyApiValue(), size);
         }
     }
 
@@ -1599,6 +1591,9 @@ public final class HSSFSheet implements Sheet {
      * Additionally shifts merged regions that are completely defined in these
      * rows (ie. merged 2 cells on a row to be shifted).<p>
      *
+     * Shapes in the sheet's drawing (pictures, charts, ...) whose top-left anchor is in one of the
+     * shifted rows are moved along with it, keeping their size.<p>
+     *
      * TODO Might want to add bounds checking here
      *
      * @param startRow               the row to start shifting
@@ -1625,7 +1620,7 @@ public final class HSSFSheet implements Sheet {
             return;
         }
 
-        final RowShifter rowShifter = new HSSFRowShifter(this);
+        final HSSFRowShifter rowShifter = new HSSFRowShifter(this);
 
         // Move comments from the source row to the
         //  destination row. Note that comments can
@@ -1640,6 +1635,9 @@ public final class HSSFSheet implements Sheet {
 
         // Shift Merged Regions
         rowShifter.shiftMergedRegions(startRow, endRow, n);
+
+        // Shift the shapes (pictures, charts, ...) anchored to the shifted rows
+        rowShifter.shiftDrawingAnchors(startRow, endRow, n);
 
         // Shift Row Breaks
         _sheet.getPageSettings().shiftRowBreaks(startRow, endRow, n);
@@ -1783,10 +1781,9 @@ public final class HSSFSheet implements Sheet {
     private void moveCommentsForRowShift(int startRow, int endRow, int n) {
         final HSSFPatriarch patriarch = createDrawingPatriarch();
         for (final HSSFShape shape : patriarch.getChildren()) {
-            if (!(shape instanceof HSSFComment)) {
+            if (!(shape instanceof HSSFComment comment)) {
                 continue;
             }
-            final HSSFComment comment = (HSSFComment) shape;
             final int r = comment.getRow();
             if (startRow <= r && r <= endRow) {
                 comment.setRow(clip(r + n));
@@ -1797,7 +1794,8 @@ public final class HSSFSheet implements Sheet {
     /**
      * Shifts columns in range [startColumn, endColumn] for n places to the right.
      * For n &lt; 0, it will shift columns left.
-     * Additionally adjusts formulas.
+     * Additionally adjusts formulas and moves the shapes in the sheet's drawing (pictures, charts, ...)
+     * whose top-left anchor is in one of the shifted columns.
      * Probably should also process other features (hyperlinks, comments...) in the way analog to shiftRows method
      * @param startColumn   the column to start shifting
      * @param endColumn     the column to end shifting
@@ -1808,6 +1806,7 @@ public final class HSSFSheet implements Sheet {
     public void shiftColumns(int startColumn, int endColumn, int n){
         HSSFColumnShifter columnShifter = new HSSFColumnShifter(this);
         columnShifter.shiftColumns(startColumn, endColumn, n);
+        columnShifter.shiftDrawingAnchors(startColumn, endColumn, n);
 
         int sheetIndex = _workbook.getSheetIndex(this);
         short externSheetIndex = _book.checkExternSheet(sheetIndex);
@@ -1901,22 +1900,12 @@ public final class HSSFSheet implements Sheet {
      */
     @Override
     public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, PaneType activePane) {
-        byte activePaneByte;
-        switch (activePane) {
-            case LOWER_RIGHT:
-                activePaneByte = Sheet.PANE_LOWER_RIGHT;
-                break;
-            case UPPER_RIGHT:
-                activePaneByte = Sheet.PANE_UPPER_RIGHT;
-                break;
-            case LOWER_LEFT:
-                activePaneByte = Sheet.PANE_LOWER_LEFT;
-                break;
-            case UPPER_LEFT:
-            default:
-                activePaneByte = Sheet.PANE_UPPER_LEFT;
-                break;
-        }
+        byte activePaneByte = switch (activePane) {
+            case LOWER_RIGHT -> Sheet.PANE_LOWER_RIGHT;
+            case UPPER_RIGHT -> Sheet.PANE_UPPER_RIGHT;
+            case LOWER_LEFT -> Sheet.PANE_LOWER_LEFT;
+            default -> Sheet.PANE_UPPER_LEFT;
+        };
         getSheet().createSplitPane(xSplitPos, ySplitPos, topRow, leftmostColumn, activePaneByte);
     }
 
@@ -2303,7 +2292,7 @@ public final class HSSFSheet implements Sheet {
             if (width > maxColumnWidth) {
                 width = maxColumnWidth;
             }
-            setColumnWidth(column, (int) (width));
+            setColumnWidth(column, MathUtil.safeDoubleToInt(width));
         }
     }
 
@@ -2327,8 +2316,7 @@ public final class HSSFSheet implements Sheet {
     @Override
     public HSSFHyperlink getHyperlink(int row, int column) {
         for (RecordBase rec : _sheet.getRecords()) {
-            if (rec instanceof HyperlinkRecord) {
-                HyperlinkRecord link = (HyperlinkRecord) rec;
+            if (rec instanceof HyperlinkRecord link) {
                 if (link.getFirstColumn() == column && link.getFirstRow() == row) {
                     return new HSSFHyperlink(link);
                 }
@@ -2358,8 +2346,7 @@ public final class HSSFSheet implements Sheet {
     public List<HSSFHyperlink> getHyperlinkList() {
         final List<HSSFHyperlink> hyperlinkList = new ArrayList<>();
         for (RecordBase rec : _sheet.getRecords()) {
-            if (rec instanceof HyperlinkRecord) {
-                HyperlinkRecord link = (HyperlinkRecord) rec;
+            if (rec instanceof HyperlinkRecord link) {
                 hyperlinkList.add(new HSSFHyperlink(link));
             }
         }
@@ -2384,8 +2371,7 @@ public final class HSSFSheet implements Sheet {
     protected void removeHyperlink(HyperlinkRecord link) {
         for (Iterator<RecordBase> it = _sheet.getRecords().iterator(); it.hasNext();) {
             RecordBase rec = it.next();
-            if (rec instanceof HyperlinkRecord) {
-                HyperlinkRecord recLink = (HyperlinkRecord) rec;
+            if (rec instanceof HyperlinkRecord recLink) {
                 if (link == recLink) {
                     it.remove();
                     // if multiple HSSFHyperlinks refer to the same record
@@ -2462,11 +2448,10 @@ public final class HSSFSheet implements Sheet {
             throw new IllegalArgumentException("Specified cell does not belong to this sheet.");
         }
         CellValueRecordInterface rec = ((HSSFCell) cell).getCellValueRecord();
-        if (!(rec instanceof FormulaRecordAggregate)) {
+        if (!(rec instanceof FormulaRecordAggregate fra)) {
             String ref = new CellReference(cell).formatAsString();
             throw new IllegalArgumentException("Cell " + ref + " is not part of an array formula.");
         }
-        FormulaRecordAggregate fra = (FormulaRecordAggregate) rec;
         CellRangeAddress range = fra.removeArrayFormula(cell.getRowIndex(), cell.getColumnIndex());
 
         CellRange<HSSFCell> result = getCellRange(range);
@@ -2540,8 +2525,7 @@ public final class HSSFSheet implements Sheet {
                 }
                 continue;
             }
-            if (shape instanceof HSSFComment) {
-                HSSFComment comment = (HSSFComment) shape;
+            if (shape instanceof HSSFComment comment) {
                 if (comment.hasPosition() && comment.getColumn() == column && comment.getRow() == row) {
                     return comment;
                 }
@@ -2575,12 +2559,11 @@ public final class HSSFSheet implements Sheet {
     private void findCellCommentLocations(HSSFShapeContainer container, Map<CellAddress, HSSFComment> locations) {
         for (Object object : container.getChildren()) {
             HSSFShape shape = (HSSFShape) object;
-            if (shape instanceof HSSFShapeGroup) {
-                findCellCommentLocations((HSSFShapeGroup) shape, locations);
+            if (shape instanceof HSSFShapeGroup group) {
+                findCellCommentLocations(group, locations);
                 continue;
             }
-            if (shape instanceof HSSFComment) {
-                HSSFComment comment = (HSSFComment) shape;
+            if (shape instanceof HSSFComment comment) {
                 if (comment.hasPosition()) {
                     locations.put(new CellAddress(comment.getRow(), comment.getColumn()), comment);
                 }
@@ -2705,8 +2688,7 @@ public final class HSSFSheet implements Sheet {
 
         for (Ptg ptg : nameDefinition) {
 
-            if (ptg instanceof Area3DPtg) {
-                Area3DPtg areaPtg = (Area3DPtg) ptg;
+            if (ptg instanceof Area3DPtg areaPtg) {
 
                 if (areaPtg.getFirstColumn() == 0
                         && areaPtg.getLastColumn() == maxColIndex) {
