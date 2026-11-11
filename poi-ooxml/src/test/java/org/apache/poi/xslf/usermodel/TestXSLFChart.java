@@ -26,9 +26,17 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
+import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagePartName;
+import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xddf.usermodel.chart.AxisCrossBetween;
 import org.apache.poi.xddf.usermodel.chart.AxisCrosses;
@@ -37,6 +45,7 @@ import org.apache.poi.xddf.usermodel.chart.AxisPosition;
 import org.apache.poi.xddf.usermodel.chart.AxisTickMark;
 import org.apache.poi.xddf.usermodel.chart.BarDirection;
 import org.apache.poi.xddf.usermodel.chart.BarGrouping;
+import org.apache.poi.xddf.usermodel.chart.ChartTypes;
 import org.apache.poi.xddf.usermodel.chart.Grouping;
 import org.apache.poi.xddf.usermodel.chart.LayoutMode;
 import org.apache.poi.xddf.usermodel.chart.LayoutTarget;
@@ -56,6 +65,7 @@ import org.apache.poi.xddf.usermodel.chart.XDDFRadarChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFScatterChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFValueAxis;
 import org.apache.poi.xslf.XSLFTestDataSamples;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -145,6 +155,37 @@ class TestXSLFChart {
 
         fillChartData(chart, scatter);
         pptx.close();
+    }
+
+    @Test
+    void testGitHub1002() throws IOException, InvalidFormatException {
+        try (XMLSlideShow pptx = new XMLSlideShow()) {
+            XSLFSlide slide = pptx.createSlide();
+            // an embedded Excel object, which already uses the part name of the first chart workbook
+            PackagePartName embeddedName = PackagingURIHelper.createPartName(XSLFRelation.WORKBOOK.getFileName(1));
+            PackagePart embeddedPart = pptx.getPackage().createPart(embeddedName, XSLFRelation.WORKBOOK.getContentType());
+            try (OutputStream out = embeddedPart.getOutputStream(); XSSFWorkbook embedded = new XSSFWorkbook()) {
+                embedded.createSheet("Embedded");
+                embedded.write(out);
+            }
+            slide.getPackagePart().addRelationship(embeddedName, TargetMode.INTERNAL, POIXMLDocument.PACK_OBJECT_REL_TYPE);
+
+            XSLFChart chart = pptx.createChart(slide);
+            XDDFChartData pie = chart.createData(ChartTypes.PIE, null, null);
+            pie.addSeries(
+                XDDFDataSourcesFactory.fromArray(new String[]{"First", "Second"}, chart.formatRange(new CellRangeAddress(1, 2, 0, 0)), 0),
+                XDDFDataSourcesFactory.fromArray(new Integer[]{1, 3}, chart.formatRange(new CellRangeAddress(1, 2, 1, 1)), 1));
+            chart.plot(pie);
+
+            try (XMLSlideShow pptx2 = XSLFTestDataSamples.writeOutAndReadBack(pptx)) {
+                XSLFChart chart2 = pptx2.getCharts().get(0);
+                assertEquals(3.0, chart2.getWorkbook().getSheetAt(0).getRow(2).getCell(1).getNumericCellValue());
+                try (InputStream in = pptx2.getPackage().getPart(embeddedName).getInputStream();
+                     XSSFWorkbook embedded2 = new XSSFWorkbook(in)) {
+                    assertEquals("Embedded", embedded2.getSheetName(0));
+                }
+            }
+        }
     }
 
     private void fillChartData(XSLFChart chart, XDDFChartData data) {

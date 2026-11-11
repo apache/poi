@@ -750,7 +750,9 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      */
     private PackagePart createWorksheetPart(POIXMLRelation chartWorkbookRelation, POIXMLFactory chartFactory)
             throws InvalidFormatException {
-        PackageRelationship xlsx = createRelationshipInChart(chartWorkbookRelation, chartFactory, chartIndex);
+        // the document can already contain an embedded workbook with this index, e.g. an embedded Excel object
+        int workbookIndex = getNextPartNumber(chartWorkbookRelation, chartIndex);
+        PackageRelationship xlsx = createRelationshipInChart(chartWorkbookRelation, chartFactory, workbookIndex);
         setExternalId(xlsx.getId());
         return getTargetPart(xlsx);
     }
