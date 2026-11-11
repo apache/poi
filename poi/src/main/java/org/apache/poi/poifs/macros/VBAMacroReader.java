@@ -99,6 +99,36 @@ public class VBAMacroReader implements Closeable {
         return MAX_STRING_LENGTH;
     }
 
+    //arbitrary limit on the size of the vbaProject.bin entry read from an OOXML file
+    private static final int DEFAULT_MAX_VBA_PROJECT_SIZE = 100_000_000;
+    private static int MAX_VBA_PROJECT_SIZE = DEFAULT_MAX_VBA_PROJECT_SIZE;
+
+    /**
+     * Set the maximum number of bytes that will be read for the {@code vbaProject.bin} entry
+     * of an OOXML file (.xlsm, .docm, .pptm, ...). The entry is held in memory while it is parsed.
+     * Use this to adjust the default limit if you need to process very large VBA projects,
+     * or to tighten the limit on memory-constrained systems.
+     *
+     * @param maxVbaProjectSize the maximum number of bytes that may be read; must be &gt; 0
+     * @throws IllegalArgumentException if {@code maxVbaProjectSize} is not positive
+     * @since 6.1.0
+     */
+    public static void setMaxVbaProjectSize(int maxVbaProjectSize) {
+        if (maxVbaProjectSize <= 0) {
+            throw new IllegalArgumentException("maxVbaProjectSize must be > 0");
+        }
+        MAX_VBA_PROJECT_SIZE = maxVbaProjectSize;
+    }
+
+    /**
+     * @return the maximum number of bytes that will be read for the {@code vbaProject.bin} entry
+     * of an OOXML file
+     * @since 6.1.0
+     */
+    public static int getMaxVbaProjectSize() {
+        return MAX_VBA_PROJECT_SIZE;
+    }
+
     protected static final String VBA_PROJECT_OOXML = "vbaProject.bin";
     protected static final String VBA_PROJECT_POIFS = "VBA";
 
@@ -134,7 +164,7 @@ public class VBAMacroReader implements Closeable {
             ZipEntry zipEntry;
             while ((zipEntry = zis.getNextEntry()) != null) {
                 if (endsWithIgnoreCase(zipEntry.getName(), VBA_PROJECT_OOXML)) {
-                    byte[] bytes = IOUtils.toByteArray(zis);
+                    byte[] bytes = IOUtils.toByteArrayWithMaxLength(zis, MAX_VBA_PROJECT_SIZE);
                     String lowerName = zipEntry.getName().toLowerCase(Locale.ROOT);
                     boolean canonical = CANONICAL_VBA_DIRS.stream()
                             .anyMatch(lowerName::startsWith);
