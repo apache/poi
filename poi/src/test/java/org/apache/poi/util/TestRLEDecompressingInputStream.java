@@ -143,7 +143,7 @@ class TestRLEDecompressingInputStream {
         final byte[] compressed = {
             0x01, 0x03, (byte)0xB0, 0x02, 0x61, 0x45, 0x00
         };
-        final byte[] expanded = RLEDecompressingInputStream.decompress(compressed);
+        final byte[] expanded = decompressAll(compressed);
         final byte[] expected = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".getBytes(StringUtil.UTF8);
         assertArrayEquals(expected, expanded);
     }
@@ -187,7 +187,7 @@ class TestRLEDecompressingInputStream {
         final byte[] compressed = {
             0x01, 0x02, (byte)0xB0, 0x01, 0x00, 0x00
         };
-        assertThrows(IllegalStateException.class, () -> RLEDecompressingInputStream.decompress(compressed));
+        assertThrows(IllegalStateException.class, () -> decompressAll(compressed));
     }
 
     /**
@@ -199,7 +199,7 @@ class TestRLEDecompressingInputStream {
         final byte[] compressed = {
             0x01, 0x03, (byte)0xB0, 0x02, 0x41, (byte)0xFF, 0x0F
         };
-        assertThrows(IllegalStateException.class, () -> RLEDecompressingInputStream.decompress(compressed));
+        assertThrows(IllegalStateException.class, () -> decompressAll(compressed));
     }
 
     /**
@@ -213,13 +213,13 @@ class TestRLEDecompressingInputStream {
         };
         final byte[] expected = new byte[4096];
         Arrays.fill(expected, (byte) 0x41);
-        assertArrayEquals(expected, RLEDecompressingInputStream.decompress(full));
+        assertArrayEquals(expected, decompressAll(full));
 
         // the same chunk followed by the literal 'B'
         final byte[] overflow = {
             0x01, 0x04, (byte)0xB0, 0x02, 0x41, (byte)0xFC, 0x0F, 0x42
         };
-        assertThrows(IllegalStateException.class, () -> RLEDecompressingInputStream.decompress(overflow));
+        assertThrows(IllegalStateException.class, () -> decompressAll(overflow));
     }
 
     /**
@@ -297,7 +297,13 @@ class TestRLEDecompressingInputStream {
         final byte[] compressed = {
             0x01, 0x02, 0x30, 0x61, 0x62, 0x63
         };
-        assertThrows(IllegalStateException.class, () -> RLEDecompressingInputStream.decompress(compressed));
+        assertThrows(IllegalStateException.class, () -> decompressAll(compressed));
+    }
+
+    private static byte[] decompressAll(byte[] compressed) throws IOException {
+        try (InputStream stream = new RLEDecompressingInputStream(new ByteArrayInputStream(compressed))) {
+            return IOUtils.toByteArray(stream);
+        }
     }
 
     private static void checkRLEDecompression(String expected, byte[] runLengthEncodedData) throws IOException {

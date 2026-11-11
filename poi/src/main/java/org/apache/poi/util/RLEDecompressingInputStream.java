@@ -296,10 +296,46 @@ public class RLEDecompressingInputStream extends InputStream {
         return (b0 & 0xFF) | ((b1 & 0xFF) << 8) | ((b2 & 0xFF) << 16) | ((b3 & 0xFF) << 24);
     }
 
+    /**
+     * Decompresses the given MS-OVBA compressed data in full.
+     * <p>
+     * There is no limit on the size of the decompressed data, which can be several hundred times
+     * the size of the compressed data, and all of it is held in memory.
+     *
+     * @param compressed the compressed data, starting with the signature byte
+     * @return the decompressed data
+     * @throws IOException if the data cannot be read
+     * @throws IllegalArgumentException if the signature byte or a chunk header is invalid
+     * @throws IllegalStateException if the compressed data is invalid
+     * @deprecated POI 6.0.1, there is no limit on the size of the decompressed data. Use
+     * {@link #RLEDecompressingInputStream(InputStream)} and read it with a size limit instead,
+     * e.g. with {@link IOUtils#toByteArrayWithMaxLength(InputStream, int)}.
+     */
+    @Deprecated
+    @Removal(version = "7.0.0")
     public static byte[] decompress(byte[] compressed) throws IOException {
         return decompress(compressed, 0, compressed.length);
     }
 
+    /**
+     * Decompresses part of the given array of MS-OVBA compressed data in full.
+     * <p>
+     * There is no limit on the size of the decompressed data, which can be several hundred times
+     * the size of the compressed data, and all of it is held in memory.
+     *
+     * @param compressed the array holding the compressed data
+     * @param offset the position in {@code compressed} of the signature byte
+     * @param length the number of bytes of compressed data, including the signature byte
+     * @return the decompressed data
+     * @throws IOException if the data cannot be read
+     * @throws IllegalArgumentException if the signature byte or a chunk header is invalid
+     * @throws IllegalStateException if the compressed data is invalid
+     * @deprecated POI 6.0.1, there is no limit on the size of the decompressed data. Use
+     * {@link #RLEDecompressingInputStream(InputStream)} and read it with a size limit instead,
+     * e.g. with {@link IOUtils#toByteArrayWithMaxLength(InputStream, int)}.
+     */
+    @Deprecated
+    @Removal(version = "7.0.0")
     public static byte[] decompress(byte[] compressed, int offset, int length) throws IOException {
         try (UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
              InputStream instream = UnsynchronizedByteArrayInputStream.builder().setByteArray(compressed).setOffset(offset).setLength(length).get();
