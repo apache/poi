@@ -111,7 +111,7 @@ public class VBAMacroReader implements Closeable {
      *
      * @param maxVbaProjectSize the maximum number of bytes that may be read; must be &gt; 0
      * @throws IllegalArgumentException if {@code maxVbaProjectSize} is not positive
-     * @since 6.1.0
+     * @since 6.0.1
      */
     public static void setMaxVbaProjectSize(int maxVbaProjectSize) {
         if (maxVbaProjectSize <= 0) {
@@ -123,7 +123,7 @@ public class VBAMacroReader implements Closeable {
     /**
      * @return the maximum number of bytes that will be read for the {@code vbaProject.bin} entry
      * of an OOXML file
-     * @since 6.1.0
+     * @since 6.0.1
      */
     public static int getMaxVbaProjectSize() {
         return MAX_VBA_PROJECT_SIZE;
