@@ -80,9 +80,11 @@ public class VBAMacroReader implements Closeable {
     private static int MAX_STRING_LENGTH = DEFAULT_MAX_STRING_LENGTH;
 
     /**
-     * Set the maximum number of bytes to be allocated for a single VBA entry or decompressed
-     * stream. Use this to adjust the default limit if you need to process very large VBA projects,
-     * or to tighten the limit on memory-constrained systems.
+     * Set the maximum number of bytes to be allocated for a single string read from the
+     * VBA project metadata (module names, references, ...). Use this to adjust the default limit
+     * if you need to process very large VBA projects, or to tighten the limit on memory-constrained
+     * systems. The size of the VBA project data and of each module is limited by
+     * {@link #setMaxStreamSize(int)} instead.
      *
      * @param maxStringLength the maximum number of bytes that may be allocated; must be &gt; 0
      * @since 5.4.1
@@ -92,7 +94,8 @@ public class VBAMacroReader implements Closeable {
     }
 
     /**
-     * @return the maximum number of bytes that may be allocated per VBA entry or decompressed stream
+     * @return the maximum number of bytes that may be allocated for a single string read from
+     * the VBA project metadata
      * @since 5.4.1
      */
     public static int getMaxStringLength() {
@@ -100,33 +103,35 @@ public class VBAMacroReader implements Closeable {
     }
 
     //arbitrary limit on the size of the vbaProject.bin entry read from an OOXML file
-    private static final int DEFAULT_MAX_VBA_PROJECT_SIZE = 100_000_000;
-    private static int MAX_VBA_PROJECT_SIZE = DEFAULT_MAX_VBA_PROJECT_SIZE;
+    //and of each (decompressed) VBA module
+    private static final int DEFAULT_MAX_STREAM_SIZE = 100_000_000;
+    private static int MAX_STREAM_SIZE = DEFAULT_MAX_STREAM_SIZE;
 
     /**
      * Set the maximum number of bytes that will be read for the {@code vbaProject.bin} entry
-     * of an OOXML file (.xlsm, .docm, .pptm, ...). The entry is held in memory while it is parsed.
+     * of an OOXML file (.xlsm, .docm, .pptm, ...), and for each VBA module after decompression.
+     * This data is held in memory while it is parsed.
      * Use this to adjust the default limit if you need to process very large VBA projects,
      * or to tighten the limit on memory-constrained systems.
      *
-     * @param maxVbaProjectSize the maximum number of bytes that may be read; must be &gt; 0
-     * @throws IllegalArgumentException if {@code maxVbaProjectSize} is not positive
+     * @param maxStreamSize the maximum number of bytes that may be read; must be &gt; 0
+     * @throws IllegalArgumentException if {@code maxStreamSize} is not positive
      * @since 6.0.1
      */
-    public static void setMaxVbaProjectSize(int maxVbaProjectSize) {
-        if (maxVbaProjectSize <= 0) {
-            throw new IllegalArgumentException("maxVbaProjectSize must be > 0");
+    public static void setMaxStreamSize(int maxStreamSize) {
+        if (maxStreamSize <= 0) {
+            throw new IllegalArgumentException("maxStreamSize must be > 0");
         }
-        MAX_VBA_PROJECT_SIZE = maxVbaProjectSize;
+        MAX_STREAM_SIZE = maxStreamSize;
     }
 
     /**
      * @return the maximum number of bytes that will be read for the {@code vbaProject.bin} entry
-     * of an OOXML file
+     * of an OOXML file, and for each VBA module after decompression
      * @since 6.0.1
      */
-    public static int getMaxVbaProjectSize() {
-        return MAX_VBA_PROJECT_SIZE;
+    public static int getMaxStreamSize() {
+        return MAX_STREAM_SIZE;
     }
 
     protected static final String VBA_PROJECT_OOXML = "vbaProject.bin";
@@ -164,7 +169,7 @@ public class VBAMacroReader implements Closeable {
             ZipEntry zipEntry;
             while ((zipEntry = zis.getNextEntry()) != null) {
                 if (endsWithIgnoreCase(zipEntry.getName(), VBA_PROJECT_OOXML)) {
-                    byte[] bytes = IOUtils.toByteArrayWithMaxLength(zis, MAX_VBA_PROJECT_SIZE);
+                    byte[] bytes = IOUtils.toByteArrayWithMaxLength(zis, MAX_STREAM_SIZE);
                     String lowerName = zipEntry.getName().toLowerCase(Locale.ROOT);
                     boolean canonical = CANONICAL_VBA_DIRS.stream()
                             .anyMatch(lowerName::startsWith);
@@ -235,7 +240,7 @@ public class VBAMacroReader implements Closeable {
         ModuleType moduleType;
         Charset charset;
         void read(InputStream in) throws IOException {
-            buf = IOUtils.toByteArray(in);
+            buf = IOUtils.toByteArrayWithMaxLength(in, MAX_STREAM_SIZE);
         }
         @Override
         public String getContent() {
@@ -874,40 +879,57 @@ public class VBAMacroReader implements Closeable {
      */
     private static byte[] findCompressedStreamWBruteForce(InputStream is) throws IOException {
         //buffer to memory for multiple tries
-        byte[] compressed = IOUtils.toByteArray(is);
-        byte[] decompressed = null;
+        byte[] compressed = IOUtils.toByteArrayWithMaxLength(is, MAX_STREAM_SIZE);
+        int lastCandidate = -1;
         for (int i = 0; i < compressed.length; i++) {
             if (compressed[i] == 0x01 && i < compressed.length-1) {
                 int w = LittleEndian.getUShort(compressed, i+1);
                 if (w <= 0 || (w & 0x7000) != 0x3000) {
                     continue;
                 }
-                decompressed = tryToDecompress(UnsynchronizedByteArrayInputStream.builder().
-                        setByteArray(compressed).
-                        setOffset(i).
-                        setLength(compressed.length - i).
-                        get());
-                if (decompressed != null) {
-                    if (decompressed.length > 9) {
-                        //this is a complete hack.  The challenge is that there
-                        //can be many 0 length or junk streams that are uncompressed
-                        //look in the first 20 characters for "Attribute"
-                        int firstX = Math.min(20, decompressed.length);
-                        String start = new String(decompressed, 0, firstX, WIN_1252);
-                        if (start.contains("Attribute")) {
-                            return decompressed;
-                        }
+                lastCandidate = i;
+                //this is a complete hack.  The challenge is that there
+                //can be many 0 length or junk streams that are uncompressed
+                //look in the first 20 characters for "Attribute".
+                //Only the start is decompressed here, so that junk candidates
+                //do not each cost a full decompression of the rest of the stream.
+                if (startsWithAttribute(compressed, i)) {
+                    byte[] decompressed = tryToDecompress(compressed, i);
+                    if (decompressed != null) {
+                        return decompressed;
                     }
                 }
             }
         }
-        return decompressed;
+        // no candidate starts with "Attribute": fall back to the last candidate
+        return lastCandidate < 0 ? null : tryToDecompress(compressed, lastCandidate);
     }
 
-    private static byte[] tryToDecompress(InputStream is) {
-        try (RLEDecompressingInputStream ris = new RLEDecompressingInputStream(is)) {
-            return IOUtils.toByteArray(ris);
-        } catch (IllegalArgumentException | IOException | IllegalStateException e){
+    private static boolean startsWithAttribute(byte[] compressed, int offset) {
+        final int prefixLength = 20;
+        try (RLEDecompressingInputStream ris = new RLEDecompressingInputStream(
+                UnsynchronizedByteArrayInputStream.builder().
+                        setByteArray(compressed).
+                        setOffset(offset).
+                        setLength(compressed.length - offset).
+                        get())) {
+            byte[] prefix = new byte[prefixLength];
+            int read = IOUtils.readFully(ris, prefix);
+            return read > 9 && new String(prefix, 0, read, WIN_1252).contains("Attribute");
+        } catch (IllegalArgumentException | IOException | IllegalStateException e) {
+            return false;
+        }
+    }
+
+    private static byte[] tryToDecompress(byte[] compressed, int offset) {
+        try (RLEDecompressingInputStream ris = new RLEDecompressingInputStream(
+                UnsynchronizedByteArrayInputStream.builder().
+                        setByteArray(compressed).
+                        setOffset(offset).
+                        setLength(compressed.length - offset).
+                        get())) {
+            return IOUtils.toByteArrayWithMaxLength(ris, MAX_STREAM_SIZE);
+        } catch (IllegalArgumentException | IOException | IllegalStateException e) {
             return null;
         }
     }
