@@ -353,6 +353,35 @@ class TestVBAMacroReader {
         }
     }
 
+    @Test
+    void setMaxVbaProjectSizeIsRespected() throws IOException {
+        int prevLimit = VBAMacroReader.getMaxVbaProjectSize();
+        try {
+            File f = POIDataSamples.getSpreadSheetInstance().getFile("SimpleMacro.xlsm");
+            int vbaSize = extractZipEntry(f, "xl/vbaProject.bin").length;
+
+            VBAMacroReader.setMaxVbaProjectSize(vbaSize - 1);
+            assertThrows(RecordFormatException.class, () -> new VBAMacroReader(f),
+                    "Expected RecordFormatException when vbaProject.bin exceeds the limit");
+            try (InputStream is = new FileInputStream(f)) {
+                assertThrows(RecordFormatException.class, () -> new VBAMacroReader(is),
+                        "Expected RecordFormatException when vbaProject.bin exceeds the limit");
+            }
+
+            VBAMacroReader.setMaxVbaProjectSize(vbaSize);
+            try (VBAMacroReader r = new VBAMacroReader(f)) {
+                assertFalse(r.readMacros().isEmpty(), "macros should be read when within the limit");
+            }
+        } finally {
+            VBAMacroReader.setMaxVbaProjectSize(prevLimit);
+        }
+    }
+
+    @Test
+    void setMaxVbaProjectSizeRejectsNonPositive() {
+        assertThrows(IllegalArgumentException.class, () -> VBAMacroReader.setMaxVbaProjectSize(0));
+    }
+
     /**
      * Verify that VBAMacroReader prefers the vbaProject.bin at a canonical OPC path
      * (xl/vbaProject.bin) over one at a non-canonical path (docProps/vbaProject.bin),
