@@ -19,10 +19,12 @@ package org.apache.poi.util;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.junit.jupiter.api.Test;
@@ -141,7 +143,7 @@ class TestRLEDecompressingInputStream {
         final byte[] compressed = {
             0x01, 0x03, (byte)0xB0, 0x02, 0x61, 0x45, 0x00
         };
-        final byte[] expanded = RLEDecompressingInputStream.decompress(compressed);
+        final byte[] expanded = decompressAll(compressed);
         final byte[] expected = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".getBytes(StringUtil.UTF8);
         assertArrayEquals(expected, expanded);
     }
@@ -173,6 +175,134 @@ class TestRLEDecompressingInputStream {
             assertEquals(2 * chunkSize - 5011, stream.skip(10000));
             assertEquals(0, stream.skip(1));
             assertEquals(-1, stream.read());
+        }
+    }
+
+    /**
+     * a copy token as the first item of a chunk has nothing to copy from
+     */
+    @Test
+    void copyTokenBeforeChunkStart() {
+        // compressed chunk of 3 bytes: flag byte with item 0 set, copy token 0x0000 (offset 1, length 3)
+        final byte[] compressed = {
+            0x01, 0x02, (byte)0xB0, 0x01, 0x00, 0x00
+        };
+        assertThrows(IllegalStateException.class, () -> decompressAll(compressed));
+    }
+
+    /**
+     * a copy token may not expand the chunk past 4096 bytes
+     */
+    @Test
+    void copyTokenPastChunkEnd() {
+        // literal 'A', then copy token 0x0FFF: offset 1, length 4098
+        final byte[] compressed = {
+            0x01, 0x03, (byte)0xB0, 0x02, 0x41, (byte)0xFF, 0x0F
+        };
+        assertThrows(IllegalStateException.class, () -> decompressAll(compressed));
+    }
+
+    /**
+     * a chunk of exactly 4096 bytes is fine, one more literal is not
+     */
+    @Test
+    void literalPastChunkEnd() throws IOException {
+        // literal 'A', then copy token 0x0FFC: offset 1, length 4095 -> 4096 bytes
+        final byte[] full = {
+            0x01, 0x03, (byte)0xB0, 0x02, 0x41, (byte)0xFC, 0x0F
+        };
+        final byte[] expected = new byte[4096];
+        Arrays.fill(expected, (byte) 0x41);
+        assertArrayEquals(expected, decompressAll(full));
+
+        // the same chunk followed by the literal 'B'
+        final byte[] overflow = {
+            0x01, 0x04, (byte)0xB0, 0x02, 0x41, (byte)0xFC, 0x0F, 0x42
+        };
+        assertThrows(IllegalStateException.class, () -> decompressAll(overflow));
+    }
+
+    /**
+     * a chunk without any token must not repeat a byte of the previous chunk,
+     * and reading must carry on with the chunk after it
+     */
+    @Test
+    void emptyChunkDoesNotRepeatBytes() throws IOException {
+        // "abc", then a compressed chunk consisting of a flag byte only, then "d",
+        // then a chunk header without flag byte
+        final byte[] compressed = {
+            0x01, 0x03, (byte)0xB0, 0x00, 0x61, 0x62, 0x63, 0x00, (byte)0xB0, 0x00,
+            0x01, (byte)0xB0, 0x00, 0x64, 0x05, (byte)0xB0
+        };
+        checkRLEDecompression("abcd", compressed);
+
+        try (InputStream stream = new RLEDecompressingInputStream(new ByteArrayInputStream(compressed))) {
+            assertEquals('a', stream.read());
+            assertEquals('b', stream.read());
+            assertEquals('c', stream.read());
+            assertEquals('d', stream.read());
+            assertEquals(-1, stream.read());
+            assertEquals(-1, stream.read());
+        }
+    }
+
+    /**
+     * a chunk that fails to decode must not leave bytes of the previous chunk to be read
+     */
+    @Test
+    @SuppressForbidden("checks available() reports nothing after a failed chunk")
+    void failedChunkLeavesNoStaleBytes() throws IOException {
+        // "abcd", then a chunk with the literal 'x' and a copy token reaching 2 bytes back
+        final byte[] compressed = {
+            0x01, 0x04, (byte)0xB0, 0x00, 0x61, 0x62, 0x63, 0x64,
+            0x03, (byte)0xB0, 0x02, 0x78, 0x00, 0x10
+        };
+        try (InputStream stream = new RLEDecompressingInputStream(new ByteArrayInputStream(compressed))) {
+            final byte[] b = new byte[4];
+            assertEquals(4, stream.read(b));
+            assertArrayEquals("abcd".getBytes(StringUtil.UTF8), b);
+            assertThrows(IllegalStateException.class, stream::read);
+            assertEquals(-1, stream.read());
+            assertEquals(-1, stream.read(b));
+            assertEquals(0, stream.skip(1));
+            assertEquals(0, stream.available());
+        }
+    }
+
+    /**
+     * input that ends inside a literal or a copy token keeps the bytes decompressed before it,
+     * as input that ends at a flag byte does
+     */
+    @Test
+    void truncatedChunkKeepsDecompressedBytes() throws IOException {
+        // a flag byte for 8 literals, but the input ends after "ab"
+        final byte[] midLiteral = {
+            0x01, 0x05, (byte)0xB0, 0x00, 0x61, 0x62
+        };
+        checkRLEDecompression("ab", midLiteral);
+
+        // "ab", then a flag byte for a copy token, but only one byte of it follows
+        final byte[] midCopyToken = {
+            0x01, 0x05, (byte)0xB0, 0x04, 0x61, 0x62, 0x00
+        };
+        checkRLEDecompression("ab", midCopyToken);
+    }
+
+    /**
+     * an uncompressed chunk always holds 4096 bytes
+     */
+    @Test
+    void shortUncompressedChunk() {
+        // raw chunk (bit 15 unset) with size field 0x002: 3 bytes
+        final byte[] compressed = {
+            0x01, 0x02, 0x30, 0x61, 0x62, 0x63
+        };
+        assertThrows(IllegalStateException.class, () -> decompressAll(compressed));
+    }
+
+    private static byte[] decompressAll(byte[] compressed) throws IOException {
+        try (InputStream stream = new RLEDecompressingInputStream(new ByteArrayInputStream(compressed))) {
+            return IOUtils.toByteArray(stream);
         }
     }
 
