@@ -354,13 +354,13 @@ class TestVBAMacroReader {
     }
 
     @Test
-    void setMaxVbaProjectSizeIsRespected() throws IOException {
-        int prevLimit = VBAMacroReader.getMaxVbaProjectSize();
+    void setMaxStreamSizeIsRespectedByVbaProject() throws IOException {
+        int prevLimit = VBAMacroReader.getMaxStreamSize();
         try {
             File f = POIDataSamples.getSpreadSheetInstance().getFile("SimpleMacro.xlsm");
             int vbaSize = extractZipEntry(f, "xl/vbaProject.bin").length;
 
-            VBAMacroReader.setMaxVbaProjectSize(vbaSize - 1);
+            VBAMacroReader.setMaxStreamSize(vbaSize - 1);
             assertThrows(RecordFormatException.class, () -> new VBAMacroReader(f),
                     "Expected RecordFormatException when vbaProject.bin exceeds the limit");
             try (InputStream is = new FileInputStream(f)) {
@@ -368,18 +368,18 @@ class TestVBAMacroReader {
                         "Expected RecordFormatException when vbaProject.bin exceeds the limit");
             }
 
-            VBAMacroReader.setMaxVbaProjectSize(vbaSize);
+            VBAMacroReader.setMaxStreamSize(vbaSize);
             try (VBAMacroReader r = new VBAMacroReader(f)) {
                 assertFalse(r.readMacros().isEmpty(), "macros should be read when within the limit");
             }
         } finally {
-            VBAMacroReader.setMaxVbaProjectSize(prevLimit);
+            VBAMacroReader.setMaxStreamSize(prevLimit);
         }
     }
 
     @Test
-    void setMaxVbaProjectSizeRejectsNonPositive() {
-        assertThrows(IllegalArgumentException.class, () -> VBAMacroReader.setMaxVbaProjectSize(0));
+    void setMaxStreamSizeRejectsNonPositive() {
+        assertThrows(IllegalArgumentException.class, () -> VBAMacroReader.setMaxStreamSize(0));
     }
 
     /**
@@ -581,6 +581,119 @@ class TestVBAMacroReader {
                 assertEquals(Collections.singletonMap("Module1", source), macros);
             }
         }
+    }
+
+    @Test
+    void setMaxStreamSizeIsRespectedByModule() throws IOException {
+        final int chunks = 100;
+        // RLE header + chunks that each expand to 4096 bytes
+        final ByteArrayOutputStream moduleStream = new ByteArrayOutputStream();
+        moduleStream.write(0x01);
+        moduleStream.writeBytes(expandingChunks(chunks));
+
+        int prevLimit = VBAMacroReader.getMaxStreamSize();
+        try {
+            VBAMacroReader.setMaxStreamSize(chunks * 4096);
+            VBAMacroReader.ModuleMap modules = readModuleWithDir(moduleStream.toByteArray(), 0);
+            assertEquals(chunks * 4096, modules.get("Module1").buf.length);
+
+            VBAMacroReader.setMaxStreamSize(chunks * 4096 - 1);
+            assertThrows(RecordFormatException.class, () -> readModuleWithDir(moduleStream.toByteArray(), 0));
+        } finally {
+            VBAMacroReader.setMaxStreamSize(prevLimit);
+        }
+    }
+
+    /**
+     * When the module offset is bad, the brute-force search for the module source
+     * must apply the stream size limit too
+     */
+    @Test
+    void setMaxStreamSizeIsRespectedByBruteForceSearch() throws IOException {
+        final int chunks = 100;
+        final byte[] source = "Attribute VB_Name = \"Module1\"".getBytes(StandardCharsets.US_ASCII);
+        final ByteArrayOutputStream moduleStream = new ByteArrayOutputStream();
+        // a byte that is not the RLE signature, so the offset 0 is bad
+        moduleStream.write(0x00);
+        // the real compressed source, followed by chunks that each expand to 4096 bytes
+        moduleStream.writeBytes(compressLiterals(source));
+        moduleStream.writeBytes(expandingChunks(chunks));
+        final int expectedSize = source.length + chunks * 4096;
+
+        int prevLimit = VBAMacroReader.getMaxStreamSize();
+        try {
+            VBAMacroReader.setMaxStreamSize(expectedSize);
+            VBAMacroReader.ModuleMap modules = readDirWithModule(moduleStream.toByteArray(), 0);
+            assertEquals(expectedSize, modules.get("Module1").buf.length);
+
+            VBAMacroReader.setMaxStreamSize(expectedSize - 1);
+            assertThrows(RecordFormatException.class, () -> readDirWithModule(moduleStream.toByteArray(), 0));
+        } finally {
+            VBAMacroReader.setMaxStreamSize(prevLimit);
+        }
+    }
+
+    /**
+     * Reads the module stream "Module1" first, then a dir stream giving its offset
+     */
+    private static VBAMacroReader.ModuleMap readModuleWithDir(byte[] moduleStream, int moduleOffset) throws IOException {
+        return readModuleAndDir(moduleStream, moduleOffset, false);
+    }
+
+    /**
+     * Reads a dir stream giving the offset of the module stream "Module1" first, then the module stream
+     */
+    private static VBAMacroReader.ModuleMap readDirWithModule(byte[] moduleStream, int moduleOffset) throws IOException {
+        return readModuleAndDir(moduleStream, moduleOffset, true);
+    }
+
+    private static VBAMacroReader.ModuleMap readModuleAndDir(byte[] moduleStream, int moduleOffset, boolean dirFirst) throws IOException {
+        final ByteArrayOutputStream dir = new ByteArrayOutputStream();
+        writeShort(dir, 0x1A);
+        writeInt(dir, 7);
+        dir.write("Module1".getBytes(StandardCharsets.US_ASCII));
+        writeShort(dir, 0x32);
+        writeInt(dir, 14);
+        dir.write("Module1".getBytes(StandardCharsets.UTF_16LE));
+        writeShort(dir, 0x31);
+        writeInt(dir, 4);
+        writeInt(dir, moduleOffset);
+
+        try (POIFSFileSystem fs = new POIFSFileSystem();
+             VBAMacroReader reader = new VBAMacroReader(fs)) {
+            DirectoryNode moduleDir = (DirectoryNode) fs.getRoot().createDirectory("first").createDirectory("VBA");
+            moduleDir.createDocument("Module1", new ByteArrayInputStream(moduleStream));
+            DirectoryNode dirDir = (DirectoryNode) fs.getRoot().createDirectory("second").createDirectory("VBA");
+            dirDir.createDocument("dir", new ByteArrayInputStream(compressLiterals(dir.toByteArray())));
+
+            VBAMacroReader.ModuleMap modules = new VBAMacroReader.ModuleMap();
+            if (dirFirst) {
+                reader.readMacros(dirDir, modules);
+                reader.readMacros(moduleDir, modules);
+            } else {
+                reader.readMacros(moduleDir, modules);
+                reader.readMacros(dirDir, modules);
+            }
+            return modules;
+        }
+    }
+
+    /**
+     * RLE chunks (without the leading signature byte) that each hold one literal
+     * and one copy token, so that 6 bytes expand to 4096
+     */
+    private static byte[] expandingChunks(int count) {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        for (int c = 0; c < count; c++) {
+            // compressed chunk of 6 bytes in total
+            writeShort(out, 0xB000 | (6 - 3));
+            // flag: first token is a literal, second token is a copy token
+            out.write(0x02);
+            out.write('A');
+            // copy token: offset 1, length 4095 (4 bits of offset, 12 bits of length - 3)
+            writeShort(out, 4095 - 3);
+        }
+        return out.toByteArray();
     }
 
     /**
