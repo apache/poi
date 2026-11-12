@@ -31,7 +31,7 @@ dependencies {
 
     implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
     // fuzzing can trigger zstd-code in commons-compress
-    implementation 'com.github.luben:zstd-jni:1.5.7-25'
+    implementation 'com.github.luben:zstd-jni:1.5.7-26'
     implementation 'org.apache.commons:commons-lang3:3.21.0'
     implementation 'org.opentest4j:opentest4j:1.3.0'
     implementation 'com.code-intelligence:jazzer-api:0.30.0'
