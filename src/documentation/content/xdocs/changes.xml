@@ -70,6 +70,20 @@
         </p>
     </section>
 
+    <release version="6.0.1" date="TBD">
+        <actions>
+            <action type="fix" fixes-bug="70292" context="HSSF">FileSharingRecord: support UTF-16LE user names</action>
+            <action type="fix" fixes-bug="github-1473" context="SS_Common">Fraction formatting: fix SimpleFraction overflow, cap denominator digits and allow an improper fraction's numerator up to an unsigned 32-bit int</action>
+            <action type="fix" fixes-bug="github-1482" context="SS_Common">DataFormatter: scale each section of a percent format by its own percent signs</action>
+            <action type="fix" fixes-bug="github-1486" context="XSLF">XMLSlideShow.findPictureData: compare data, not just the CRC32</action>
+            <action type="fix" fixes-bug="github-1499" context="HWPF">PAPBinTable.rebuild: keep a PAPX's properties at an internal paragraph mark</action>
+            <action type="fix" fixes-bug="github-1512" context="POI_Overall">VBAMacroReader: key module map by StreamNameUnicode and fall back to windows-1252 for unsupported project code pages</action>
+            <action type="fix" fixes-bug="github-1513" context="POI_Overall">CodePageUtil: fix the Cp1256 mapping and map Windows code pages 932 and 950 to Microsoft charsets</action>
+            <action type="fix" fixes-bug="github-1534" context="SL_Common HSLF">Fix application of horizontal/vertical flip flags in shapes</action>
+            <action type="fix" fixes-bug="github-1565" context="POI_Overall">VBAMacroReader: limit the size of the vbaProject.bin entry and of decompressed VBA modules (setMaxStreamSize), and deprecate RLEDecompressingInputStream.decompress</action>
+        </actions>
+    </release>
+
     <release version="6.0.0" date="2026-10-22">
         <summary>
             <summary-item>Minimum Java version is now JDK 17 (was JDK 8 in POI 5.x)</summary-item>
