@@ -462,6 +462,28 @@ public final class TestXSSFReader {
     }
 
     @Test
+    void testDrawingTargetedByDuplicateRelationships() throws Exception {
+        try (OPCPackage pkg = XSSFTestDataSamples.openSamplePackage("WithTextBox.xlsx")) {
+            XSSFReader r = new XSSFReader(pkg);
+            XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) r.getSheetsData();
+            it.next().close();
+            PackagePart sheet = it.getSheetPart();
+            List<PackagePart> drawings = XSSFReader.getSheetDrawingParts(sheet, false);
+            assertEquals(1, drawings.size());
+            int shapes = it.getShapes().size();
+
+            // every extra relationship to the same drawing used to parse it once more
+            PackageRelationship rel = sheet.getRelationshipsByType(
+                    XSSFRelation.DRAWINGS.getRelation()).getRelationship(0);
+            for (int i = 0; i < 100; i++) {
+                sheet.addRelationship(rel.getTargetURI(), rel.getTargetMode(), rel.getRelationshipType());
+            }
+            assertEquals(drawings, XSSFReader.getSheetDrawingParts(sheet, false));
+            assertEquals(shapes, it.getShapes().size());
+        }
+    }
+
+    @Test
     void testStrictRelation() {
         assertEquals("http://purl.oclc.org/ooxml/officeDocument/relationships/worksheet",
                 XSSFRelation.WORKSHEET.getStrictRelation());
