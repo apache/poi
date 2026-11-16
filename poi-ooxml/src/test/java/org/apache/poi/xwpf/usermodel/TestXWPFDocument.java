@@ -24,10 +24,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTimeout;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -44,6 +47,7 @@ import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
@@ -51,6 +55,7 @@ import org.apache.xmlbeans.XmlCursor;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHyperlink;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 
 public final class TestXWPFDocument {
@@ -220,6 +225,44 @@ public final class TestXWPFDocument {
             h.setText("Apache POI");
 
             assertEquals("rId8", h.getHyperlinkId());
+        }
+    }
+
+    /**
+     * Looking up an id that isn't a hyperlink relationship must not rebuild the hyperlink list,
+     * otherwise a document with n such links and n hyperlink relationships takes O(n^2) to extract
+     */
+    @Test
+    void testUnknownHyperlinkIds() throws Exception {
+        final int count = 10_000;
+        try (XWPFDocument doc = new XWPFDocument()) {
+            for (int i = 0; i < count; i++) {
+                doc.getPackagePart().addRelationship(new URI("https://poi.apache.org/" + i),
+                    TargetMode.EXTERNAL, XWPFRelation.HYPERLINK.getRelation(), "rIdH" + i);
+            }
+            doc.getPackagePart().addRelationship(new URI("https://poi.apache.org/"),
+                TargetMode.EXTERNAL, "http://example.com/other", "rIdOther");
+            XWPFParagraph p = doc.createParagraph();
+            for (int i = 0; i < count; i++) {
+                CTHyperlink link = p.getCTP().addNewHyperlink();
+                link.setId("x" + i);
+                link.addNewR().addNewT().setStringValue("a");
+            }
+            CTHyperlink known = p.getCTP().addNewHyperlink();
+            known.setId("rIdH42");
+            known.addNewR().addNewT().setStringValue("b");
+
+            try (XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc)) {
+                assertTimeout(Duration.ofSeconds(20), () -> {
+                    try (XWPFWordExtractor ex = new XWPFWordExtractor(doc2)) {
+                        ex.setFetchHyperlinks(true);
+                        assertTrue(ex.getText().contains(" <https://poi.apache.org/42>"));
+                    }
+                });
+                assertEquals(count, doc2.getHyperlinks().length);
+                assertNull(doc2.getHyperlinkByID("x0"));
+                assertNull(doc2.getHyperlinkByID("rIdOther"));
+            }
         }
     }
 
