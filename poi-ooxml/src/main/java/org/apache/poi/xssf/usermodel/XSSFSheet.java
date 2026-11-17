@@ -240,6 +240,32 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     }
 
     /**
+     * Remove the hyperlink relations no hyperlink refers to anymore, i.e. those of hyperlinks
+     * that were removed or got a new address, as they still hold the old target
+     */
+    private void removeUnusedHyperlinkRelations() {
+        PackagePart part = getPackagePart();
+        if (part == null) {
+            return;
+        }
+
+        Set<String> ids = new HashSet<>();
+        for (XSSFHyperlink hyperlink : hyperlinks) {
+            ids.add(hyperlink.getCTHyperlink().getId());
+        }
+
+        try {
+            for (PackageRelationship rel : part.getRelationshipsByType(XSSFRelation.SHEET_HYPERLINKS.getRelation())) {
+                if (!ids.contains(rel.getId())) {
+                    part.removeRelationship(rel.getId());
+                }
+            }
+        } catch (InvalidFormatException e) {
+            throw new POIXMLException(e);
+        }
+    }
+
+    /**
      * Create a new CTWorksheet instance with all values set to defaults
      *
      * @return a new instance
@@ -3961,6 +3987,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
                 // nothing to do
             }*/
         }
+        removeUnusedHyperlinkRelations();
 
         CellRangeAddress cellRangeAddress = dimensionOverride;
         if (cellRangeAddress == null) {

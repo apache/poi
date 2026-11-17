@@ -37,7 +37,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
  */
 public class XSSFHyperlink implements Hyperlink, Duplicatable {
     final private HyperlinkType _type;
-    final private PackageRelationship _externalRel;
+    private PackageRelationship _externalRel;
     final private CTHyperlink _ctHyperlink; //contains a reference to the cell where the hyperlink is anchored, getRef()
     private String _location; //what the hyperlink refers to
 
@@ -237,6 +237,13 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
     public void setAddress(String address) {
         validate(address);
 
+        if (_externalRel != null && !address.equals(_location)) {
+            // the relationship holds the old target, a new one is generated when the sheet is written
+            _externalRel = null;
+            if (_ctHyperlink.isSetLocation()) {
+                _ctHyperlink.unsetLocation();
+            }
+        }
        _location = address;
         //we must set location for internal hyperlinks
         if (_type == HyperlinkType.DOCUMENT) {

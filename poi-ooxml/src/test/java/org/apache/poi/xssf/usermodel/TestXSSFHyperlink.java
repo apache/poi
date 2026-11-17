@@ -20,6 +20,7 @@ package org.apache.poi.xssf.usermodel;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.HSSFHyperlink;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -595,6 +596,38 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
                     assertEquals(hyperlink.getAddress(), testHyperlink.getAddress(), "cell " + cellRef.formatAsString() + "has hyperlink with right address?");
                     assertEquals(hyperlink.getLocation(), testHyperlink.getLocation(), "cell " + cellRef.formatAsString() + "has hyperlink with right location?");
                     assertEquals(hyperlink.getLabel(), testHyperlink.getLabel(), "cell " + cellRef.formatAsString() + "has hyperlink with right label?");
+                }
+            }
+        }
+    }
+
+    @Test
+    void testChangeOrRemoveLoadedHyperlink() throws IOException, InvalidFormatException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFHyperlink changed = wb.getCreationHelper().createHyperlink(HyperlinkType.URL);
+            changed.setAddress("https://example.com/old");
+            changed.setLocation("section");
+            sheet.createRow(0).createCell(0).setHyperlink(changed);
+            XSSFHyperlink removed = wb.getCreationHelper().createHyperlink(HyperlinkType.URL);
+            removed.setAddress("https://example.com/removed");
+            sheet.createRow(1).createCell(0).setHyperlink(removed);
+
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                XSSFSheet sheet2 = wb2.getSheetAt(0);
+                assertEquals("https://example.com/old#section", sheet2.getHyperlink(0, 0).getAddress());
+                sheet2.getHyperlink(0, 0).setAddress("https://example.org/new");
+                sheet2.getRow(1).getCell(0).removeHyperlink();
+
+                try (XSSFWorkbook wb3 = XSSFTestDataSamples.writeOutAndReadBack(wb2)) {
+                    XSSFSheet sheet3 = wb3.getSheetAt(0);
+                    assertEquals("https://example.org/new", sheet3.getHyperlink(0, 0).getAddress());
+                    assertNull(sheet3.getHyperlink(1, 0));
+
+                    PackageRelationshipCollection rels = sheet3.getPackagePart()
+                        .getRelationshipsByType(XSSFRelation.SHEET_HYPERLINKS.getRelation());
+                    assertEquals(1, rels.size());
+                    assertEquals("https://example.org/new", rels.getRelationship(0).getTargetURI().toString());
                 }
             }
         }
