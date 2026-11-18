@@ -51,6 +51,7 @@ import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.PaneType;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.PaneInformation;
@@ -1112,6 +1113,30 @@ final class TestHSSFSheet extends BaseTestSheet {
             try (HSSFWorkbook wb2 = writeOutAndReadBack(wb1)) {
 
                 assertEquals((short) 0xbecc, wb2.getSheetAt(0).getPassword());
+            }
+        }
+    }
+
+    @Test
+    void removeRowRemovesComments() throws IOException {
+        try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb1.createSheet();
+            HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+            for (int rowNum = 0; rowNum < 2; rowNum++) {
+                HSSFCell cell = sheet.createRow(rowNum).createCell(0);
+                HSSFComment comment = patriarch.createCellComment(
+                        new HSSFClientAnchor(0, 0, 0, 0, (short) 1, rowNum, (short) 3, rowNum + 3));
+                comment.setString(new HSSFRichTextString("comment " + rowNum));
+                cell.setCellComment(comment);
+            }
+
+            sheet.removeRow(sheet.getRow(0));
+            assertEquals("[A2]", sheet.getCellComments().keySet().toString());
+
+            try (HSSFWorkbook wb2 = writeOutAndReadBack(wb1)) {
+                HSSFSheet sheet2 = wb2.getSheetAt(0);
+                assertEquals("[A2]", sheet2.getCellComments().keySet().toString());
+                assertEquals("comment 1", sheet2.getCellComment(new CellAddress(1, 0)).getString().getString());
             }
         }
     }

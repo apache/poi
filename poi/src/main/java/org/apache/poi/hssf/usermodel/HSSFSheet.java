@@ -324,6 +324,21 @@ public final class HSSFSheet implements Sheet {
                 _firstrow = -1;
                 _lastrow = -1;
             }
+
+            // also remove any comment located in that row
+            removeCommentsInRow(hrow.getRowNum());
+        }
+    }
+
+    private void removeCommentsInRow(int rowNum) {
+        final HSSFPatriarch patriarch = getDrawingPatriarch();
+        if (patriarch == null) {
+            return;
+        }
+        for (final HSSFShape shape : new ArrayList<>(patriarch.getChildren())) {
+            if (shape instanceof HSSFComment comment && comment.hasPosition() && comment.getRow() == rowNum) {
+                patriarch.removeShape(comment);
+            }
         }
     }
 
