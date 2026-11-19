@@ -642,6 +642,31 @@ class TestSignatureInfo {
         }
     }
 
+    @Test
+    void testWrappedPackageObject() throws Exception {
+        // the signed package object is moved into another ds:Object, where it still has the digest
+        // the SignedInfo references, but its manifest isn't a ds:Manifest of the signature anymore
+        InputStream modified = rewriteSignedDocx(entries -> {
+            String sig = new String(entries.get("_xmlsignatures/sig1.xml"), StandardCharsets.UTF_8);
+            int start = sig.indexOf("<Object Id=\"idPackageObject\"");
+            int end = sig.indexOf("</Object>", start) + "</Object>".length();
+            assertTrue(start > 0);
+            sig = sig.substring(0, start) + "<Object>" + sig.substring(start, end) + "</Object>" + sig.substring(end);
+            entries.put("_xmlsignatures/sig1.xml", sig.getBytes(StandardCharsets.UTF_8));
+            entries.put("word/document.xml", replace(entries.get("word/document.xml"), "Hello world", "Tampered"));
+        });
+
+        try (OPCPackage pkg = OPCPackage.open(modified);
+             XWPFDocument doc = new XWPFDocument(pkg)) {
+            assertEquals("Tampered", doc.getParagraphs().get(0).getText());
+
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(new SignatureConfig());
+            assertFalse(si.verifySignature(), "the manifest of the signed package object must be validated");
+        }
+    }
+
     /**
      * Copies hello-world-signed.docx, adding {@code rel} to _rels/.rels and, if {@code addTamperedPart}
      * is set, a word/tampered.xml main part which says "Tampered" instead of "Hello world"

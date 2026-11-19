@@ -61,6 +61,7 @@ import org.apache.xmlbeans.XmlException;
 import org.w3.x2000.x09.xmldsig.SignatureDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -146,7 +147,7 @@ public class SignaturePart {
             XMLSignatureFactory xmlSignatureFactory = signatureInfo.getSignatureFactory();
             XMLSignature xmlSignature = xmlSignatureFactory.unmarshalXMLSignature(domValidateContext);
 
-            boolean valid = xmlSignature.validate(domValidateContext) && hasSignedRelationships(doc, xmlSignature);
+            boolean valid = xmlSignature.validate(domValidateContext) && hasValidatedManifests(doc) && hasSignedRelationships(doc, xmlSignature);
 
             if (valid) {
                 signer = keySelector.getSigner();
@@ -182,6 +183,24 @@ public class SignaturePart {
             LOG.atError().withThrowable(e).log(s);
             throw new EncryptedDocumentException(s, e);
         }
+    }
+
+    /**
+     * Checks that each ds:Manifest is the content of a ds:Object of the signature, as only those
+     * manifests are validated - a signed object moved into another element keeps its digest,
+     * but the references of its manifest, i.e. of the package parts, would not be checked
+     */
+    private static boolean hasValidatedManifests(Document doc) {
+        Element signature = doc.getDocumentElement();
+        NodeList manifests = doc.getElementsByTagNameNS(XML_DIGSIG_NS, "Manifest");
+        for (int i=0; i<manifests.getLength(); i++) {
+            Node obj = manifests.item(i).getParentNode();
+            if (obj.getParentNode() != signature || !XML_DIGSIG_NS.equals(obj.getNamespaceURI()) || !"Object".equals(obj.getLocalName())) {
+                LOG.atWarn().log("manifest outside of the signature objects is not validated");
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
