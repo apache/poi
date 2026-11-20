@@ -20,8 +20,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -63,6 +65,9 @@ public class POIXMLDocumentPart {
     private final Map<String, RelationPart> relations = new LinkedHashMap<>();
     private final Map<String, ReferenceRelationship> referenceRelationships = new LinkedHashMap<>();
     private boolean isCommitted = false;
+    // the relationships read() creates the child parts for and their index by target, see findChildRelationship
+    private PackageRelationshipCollection childRelationships;
+    private Map<String, PackageRelationship> childRelationshipsByTarget;
 
     /**
      * to check whether embedded part is already committed
@@ -713,6 +718,7 @@ public class POIXMLDocumentPart {
 
         PackageRelationshipCollection rels = packagePart.getRelationships();
         List<POIXMLDocumentPart> readLater = new ArrayList<>();
+        childRelationships = rels;
 
         // scan breadth-first, so parent-relations are hopefully the shallowest element
         for (PackageRelationship rel : rels) {
@@ -769,9 +775,40 @@ public class POIXMLDocumentPart {
             }
         }
 
+        childRelationships = null;
+        childRelationshipsByTarget = null;
+
         for (POIXMLDocumentPart childPart : readLater) {
             childPart.read(factory, context);
         }
+    }
+
+    /**
+     * Returns the relationship of this part to a child part, while {@link #read} creates the child parts.
+     * {@link POIXMLFactory#getPackageRelationship} is called for each new child part, so the relationships
+     * are indexed by their target once instead of being searched for each child part.
+     *
+     * @param part the child part
+     * @return the first relationship that targets the part (ignoring case), or {@code null} if there is none
+     *  or the child parts aren't being read
+     */
+    /* package */ PackageRelationship findChildRelationship(PackagePart part) {
+        if (childRelationships == null) {
+            return null;
+        }
+        if (childRelationshipsByTarget == null) {
+            childRelationshipsByTarget = new HashMap<>();
+            for (PackageRelationship rel : childRelationships) {
+                try {
+                    childRelationshipsByTarget.putIfAbsent(rel.getTargetURI().toASCIIString().toLowerCase(Locale.ROOT), rel);
+                } catch (IllegalArgumentException e) {
+                    // the target can't be resolved, a part can't be found by it
+                }
+            }
+        }
+        PackageRelationship rel = childRelationshipsByTarget.get(part.getPartName().getName().toLowerCase(Locale.ROOT));
+        // only return a relationship the part still has
+        return (rel != null && rel == getPackagePart().getRelationship(rel.getId())) ? rel : null;
     }
 
     /**

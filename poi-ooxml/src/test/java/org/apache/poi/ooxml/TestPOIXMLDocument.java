@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -31,12 +32,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.output.NullOutputStream;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.ooxml.util.PackageHelper;
@@ -291,6 +297,53 @@ public final class TestPOIXMLDocument {
             assertNotNull(doc);
             assertSame(POIXMLDocumentPart.class, doc.getClass());
         }
+    }
+
+    /**
+     * The relationship of each new child part was looked up by searching all relationships of
+     * the parent, which made loading quadratic in the number of child parts and relationships
+     */
+    @Test
+    void testManyChildPartsAndRelationships() throws IOException {
+        final int childParts = 900;
+        final String relNs = "http://schemas.openxmlformats.org/package/2006/relationships";
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
+        try (ZipOutputStream zos = new ZipOutputStream(bos)) {
+            addEntry(zos, "[Content_Types].xml",
+                "<Types xmlns=\"http://schemas.openxmlformats.org/package/2006/content-types\">"
+                + "<Default Extension=\"rels\" ContentType=\"application/vnd.openxmlformats-package.relationships+xml\"/>"
+                + "<Default Extension=\"xml\" ContentType=\"application/xml\"/></Types>");
+            addEntry(zos, "_rels/.rels", "<Relationships xmlns=\"" + relNs + "\">"
+                + "<Relationship Id=\"rId1\" Type=\"" + PackageRelationshipTypes.CORE_DOCUMENT + "\" Target=\"main.xml\"/>"
+                + "</Relationships>");
+            addEntry(zos, "main.xml", "<main/>");
+            StringBuilder rels = new StringBuilder("<Relationships xmlns=\"" + relNs + "\">");
+            for (int i = 0; i < childParts; i++) {
+                rels.append("<Relationship Id=\"rIdP").append(i)
+                    .append("\" Type=\"urn:child\" Target=\"child/p").append(i).append(".xml\"/>");
+                addEntry(zos, "child/p" + i + ".xml", "<p/>");
+            }
+            for (int i = 0; i < 50_000; i++) {
+                rels.append("<Relationship Id=\"rIdE").append(i)
+                    .append("\" Type=\"urn:link\" TargetMode=\"External\" Target=\"https://example.com/").append(i).append("\"/>");
+            }
+            addEntry(zos, "_rels/main.xml.rels", rels.append("</Relationships>").toString());
+        }
+
+        assertTimeoutPreemptively(Duration.ofSeconds(20), () -> {
+            try (OPCPackage pkg = OPCPackage.open(bos.toInputStream());
+                 OPCParser doc = new OPCParser(pkg)) {
+                doc.parse(new TestFactory());
+                assertEquals(childParts, doc.getRelations().size());
+                traverse(doc);
+            }
+        });
+    }
+
+    private static void addEntry(ZipOutputStream zos, String name, String content) throws IOException {
+        zos.putNextEntry(new ZipEntry(name));
+        zos.write(content.getBytes(StandardCharsets.UTF_8));
+        zos.closeEntry();
     }
 
     @Test
