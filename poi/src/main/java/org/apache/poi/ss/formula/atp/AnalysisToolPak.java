@@ -68,6 +68,10 @@ public final class AnalysisToolPak implements UDFFinder {
         // case-sensitive
         if(name.startsWith(prefix)) name = name.substring(prefix.length());
 
+        // Google Sheets wraps non-Excel functions with the __xludf. prefix
+        final String xludfPrefix = "__xludf.";
+        if(name.startsWith(xludfPrefix)) name = name.substring(xludfPrefix.length());
+
         // FIXME: inconsistent case-sensitivity
         return _functionsByName.get(name.toUpperCase(Locale.ROOT));
     }
@@ -118,6 +122,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "DEC2OCT", null);
         r(m, "DELTA", Delta.instance);
         r(m, "DISC", null);
+        r(m, "DUMMYFUNCTION", DummyFunction.instance);
         r(m, "DOLLARDE", DollarDe.instance);
         r(m, "DOLLARFR", DollarFr.instance);
         r(m, "DURATION", null);
