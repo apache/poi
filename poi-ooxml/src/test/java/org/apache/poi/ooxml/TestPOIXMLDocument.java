@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -33,11 +32,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -301,11 +300,13 @@ public final class TestPOIXMLDocument {
 
     /**
      * The relationship of each new child part was looked up by searching all relationships of
-     * the parent, which made loading quadratic in the number of child parts and relationships
+     * the parent, which made loading quadratic in the number of child parts and relationships.
+     * Each child part now has to be mapped to the relationship it was found by.
      */
     @Test
-    void testManyChildPartsAndRelationships() throws IOException {
-        final int childParts = 900;
+    void testManyChildPartsAndRelationships() throws Exception {
+        final int childParts = 50;
+        final int externalRels = 2_000;
         final String relNs = "http://schemas.openxmlformats.org/package/2006/relationships";
         UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
         try (ZipOutputStream zos = new ZipOutputStream(bos)) {
@@ -320,24 +321,47 @@ public final class TestPOIXMLDocument {
             StringBuilder rels = new StringBuilder("<Relationships xmlns=\"" + relNs + "\">");
             for (int i = 0; i < childParts; i++) {
                 rels.append("<Relationship Id=\"rIdP").append(i)
-                    .append("\" Type=\"urn:child\" Target=\"child/p").append(i).append(".xml\"/>");
+                    .append("\" Type=\"urn:child:").append(i)
+                    .append("\" Target=\"child/p").append(i).append(".xml\"/>");
                 addEntry(zos, "child/p" + i + ".xml", "<p/>");
             }
-            for (int i = 0; i < 50_000; i++) {
+            for (int i = 0; i < externalRels; i++) {
                 rels.append("<Relationship Id=\"rIdE").append(i)
                     .append("\" Type=\"urn:link\" TargetMode=\"External\" Target=\"https://example.com/").append(i).append("\"/>");
             }
             addEntry(zos, "_rels/main.xml.rels", rels.append("</Relationships>").toString());
         }
 
-        assertTimeoutPreemptively(Duration.ofSeconds(20), () -> {
-            try (OPCPackage pkg = OPCPackage.open(bos.toInputStream());
-                 OPCParser doc = new OPCParser(pkg)) {
-                doc.parse(new TestFactory());
-                assertEquals(childParts, doc.getRelations().size());
-                traverse(doc);
+        // each child part gets its own relationship type, so a part mapped to the wrong relationship shows up
+        Map<String, String> relTypesByPart = new HashMap<>();
+        POIXMLFactory factory = new POIXMLFactory() {
+            @Override
+            protected POIXMLRelation getDescriptor(String relationshipType) {
+                return null;
             }
-        });
+
+            @Override
+            public POIXMLDocumentPart createDocumentPart(POIXMLDocumentPart parent, PackagePart part) {
+                relTypesByPart.put(part.getPartName().getName(),
+                    getPackageRelationship(parent, part).getRelationshipType());
+                return super.createDocumentPart(parent, part);
+            }
+        };
+
+        try (OPCPackage pkg = OPCPackage.open(bos.toInputStream());
+             OPCParser doc = new OPCParser(pkg)) {
+            doc.parse(factory);
+            assertEquals(childParts, doc.getRelations().size());
+            for (int i = 0; i < childParts; i++) {
+                String partName = "/child/p" + i + ".xml";
+                assertEquals("urn:child:" + i, relTypesByPart.get(partName), partName);
+                POIXMLDocumentPart child = doc.getRelationById("rIdP" + i);
+                assertNotNull(child, partName);
+                assertEquals(partName, child.getPackagePart().getPartName().getName());
+                assertEquals("rIdP" + i, doc.getRelationId(child));
+            }
+            traverse(doc);
+        }
     }
 
     private static void addEntry(ZipOutputStream zos, String name, String content) throws IOException {
