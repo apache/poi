@@ -161,15 +161,26 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
      * Generates the relation if required
      */
     protected void generateRelationIfNeeded(PackagePart sheetPart) {
-        if (_externalRel == null && needsRelationToo()) {
+        if (!needsRelationToo()) {
+            return;
+        }
+        if (_externalRel == null) {
             // Generate the relation
             _externalRel =
                     sheetPart.addExternalRelationship(_location, XSSFRelation.SHEET_HYPERLINKS.getRelation());
-            _relShared = false;
-
-            // Update the r:id
-            _ctHyperlink.setId(_externalRel.getId());
+        } else if (sheetPart.equals(_externalRel.getSource()) && sheetPart.getRelationship(_externalRel.getId()) == null) {
+            // the relationship was removed together with this hyperlink, which was added to the sheet
+            // again since, e.g. to move it to another cell. The old target is used, as the location
+            // is still written as a separate attribute.
+            _externalRel = sheetPart.addExternalRelationship(
+                    _externalRel.getTargetURI().toString(), XSSFRelation.SHEET_HYPERLINKS.getRelation());
+        } else {
+            return;
         }
+        _relShared = false;
+
+        // Update the r:id
+        _ctHyperlink.setId(_externalRel.getId());
     }
 
     /**

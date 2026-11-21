@@ -283,7 +283,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     private void removeHyperlinkRelation(XSSFHyperlink hyperlink) {
         PackageRelationship rel = hyperlink.getExternalRelationship();
         PackagePart part = getPackagePart();
-        if (rel == null || part == null || !part.equals(rel.getSource())) {
+        if (rel == null || part == null || !part.equals(rel.getSource())
+            // the relationship was removed already, and its id may have been given to another one since
+            || !rel.equals(part.getRelationship(rel.getId()))) {
             return;
         }
 
@@ -3741,6 +3743,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         if (hyperlinks.remove(hyperlink)) {
             // the relationship still holds the link target
             removeHyperlinkRelation(hyperlink);
+            // the hyperlink no longer belongs to this sheet, so changing its address must not add a
+            // relationship to it
+            hyperlink.setSheet(null);
         }
     }
 
@@ -3786,8 +3791,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
                 }
                 if (hyperlink.getFirstRow() < row) {
                     XSSFHyperlink newLink = new XSSFHyperlink(hyperlink);
-                    int firstColumn = leftCreated ? row : hyperlink.getFirstColumn();
-                    int lastColumn = rightCreated ? row : hyperlink.getLastColumn();
+                    int firstColumn = leftCreated ? column : hyperlink.getFirstColumn();
+                    int lastColumn = rightCreated ? column : hyperlink.getLastColumn();
                     newLink.setFirstColumn(firstColumn);
                     newLink.setLastColumn(lastColumn);
                     newLink.setFirstRow(hyperlink.getFirstRow());
@@ -3796,8 +3801,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
                 }
                 if (hyperlink.getLastRow() > row) {
                     XSSFHyperlink newLink = new XSSFHyperlink(hyperlink);
-                    int firstColumn = leftCreated ? row : hyperlink.getFirstColumn();
-                    int lastColumn = rightCreated ? row : hyperlink.getLastColumn();
+                    int firstColumn = leftCreated ? column : hyperlink.getFirstColumn();
+                    int lastColumn = rightCreated ? column : hyperlink.getLastColumn();
                     newLink.setFirstColumn(firstColumn);
                     newLink.setLastColumn(lastColumn);
                     newLink.setFirstRow(row + 1);
