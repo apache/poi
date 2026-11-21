@@ -168,10 +168,10 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
             // Generate the relation
             _externalRel =
                     sheetPart.addExternalRelationship(_location, XSSFRelation.SHEET_HYPERLINKS.getRelation());
-        } else if (sheetPart.equals(_externalRel.getSource()) && sheetPart.getRelationship(_externalRel.getId()) == null) {
-            // the relationship was removed together with this hyperlink, which was added to the sheet
-            // again since, e.g. to move it to another cell. The old target is used, as the location
-            // is still written as a separate attribute.
+        } else if (isRemovedFrom(sheetPart) || isMovedTo(sheetPart)) {
+            // the hyperlink was added to this sheet again after its relationship was removed with it,
+            // or it was moved here from another sheet, whose relationships this sheet can't refer to.
+            // The old target is used, as the location is still written as a separate attribute.
             _externalRel = sheetPart.addExternalRelationship(
                     _externalRel.getTargetURI().toString(), XSSFRelation.SHEET_HYPERLINKS.getRelation());
         } else {
@@ -181,6 +181,23 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
 
         // Update the r:id
         _ctHyperlink.setId(_externalRel.getId());
+    }
+
+    /**
+     * @return whether the relationship belongs to the sheet part but has been removed from it
+     */
+    private boolean isRemovedFrom(PackagePart sheetPart) {
+        return sheetPart.equals(_externalRel.getSource()) && sheetPart.getRelationship(_externalRel.getId()) == null;
+    }
+
+    /**
+     * @return whether the relationship belongs to another sheet, while this hyperlink was last added to
+     *  the given sheet part. A hyperlink still listed by the other sheet as well keeps the relationship
+     *  there, as it is only written to the sheet it was last added to.
+     */
+    private boolean isMovedTo(PackagePart sheetPart) {
+        return !sheetPart.equals(_externalRel.getSource())
+            && _sheet != null && sheetPart.equals(_sheet.getPackagePart());
     }
 
     /**
