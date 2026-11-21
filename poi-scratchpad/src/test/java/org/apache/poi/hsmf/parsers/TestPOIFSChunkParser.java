@@ -26,8 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Arrays;
-import java.util.Calendar;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hsmf.MAPIMessage;
@@ -42,7 +42,6 @@ import org.apache.poi.hsmf.datatypes.StringChunk;
 import org.apache.poi.hsmf.datatypes.Types;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -70,10 +69,8 @@ public final class TestPOIFSChunkParser {
                 assertEquals("Kevin Roast", msg.getDisplayFrom());
                 assertEquals("Test the content transformer", msg.getSubject());
 
-                // Check date too
-                Calendar calExp = LocaleUtil.getLocaleCalendar(2007, 5, 14, 9, 42, 55);
-                Calendar calAct = msg.getMessageDate();
-                assertEquals(calExp, calAct);
+                // Check date too - the submission ID timestamp is UTC
+                assertEquals(Instant.parse("2007-06-14T09:42:55Z"), msg.getMessageDate().toInstant());
             }
         }
     }
