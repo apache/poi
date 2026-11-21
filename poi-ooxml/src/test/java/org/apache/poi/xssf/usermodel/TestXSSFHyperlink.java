@@ -17,9 +17,12 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.HSSFHyperlink;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ooxml.ReferenceRelationship;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -30,10 +33,12 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -598,6 +603,164 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
                 }
             }
         }
+    }
+
+    @Test
+    void testChangeOrRemoveLoadedHyperlink() throws IOException, InvalidFormatException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFHyperlink changed = wb.getCreationHelper().createHyperlink(HyperlinkType.URL);
+            changed.setAddress("https://example.com/old");
+            changed.setLocation("section");
+            sheet.createRow(0).createCell(0).setHyperlink(changed);
+            XSSFHyperlink removed = wb.getCreationHelper().createHyperlink(HyperlinkType.URL);
+            removed.setAddress("https://example.com/removed");
+            sheet.createRow(1).createCell(0).setHyperlink(removed);
+
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                XSSFSheet sheet2 = wb2.getSheetAt(0);
+                assertEquals("https://example.com/old#section", sheet2.getHyperlink(0, 0).getAddress());
+                sheet2.getHyperlink(0, 0).setAddress("https://example.org/new");
+                sheet2.getRow(1).getCell(0).removeHyperlink();
+
+                // the old targets are gone from the package and from the reference relationships,
+                // which cloneSheet and getReferenceRelationship(id) read
+                assertEquals(1, hyperlinkTargets(sheet2).size());
+                assertTrue(hyperlinkTargets(sheet2).contains("https://example.org/new"));
+                for (ReferenceRelationship ref : sheet2.getReferenceRelationships()) {
+                    assertNotEquals("https://example.com/old", ref.getUri().toString());
+                    assertNotEquals("https://example.com/removed", ref.getUri().toString());
+                }
+
+                try (XSSFWorkbook wb3 = XSSFTestDataSamples.writeOutAndReadBack(wb2)) {
+                    XSSFSheet sheet3 = wb3.getSheetAt(0);
+                    assertEquals("https://example.org/new", sheet3.getHyperlink(0, 0).getAddress());
+                    assertNull(sheet3.getHyperlink(1, 0));
+                    assertEquals(1, hyperlinkTargets(sheet3).size());
+                    assertTrue(hyperlinkTargets(sheet3).contains("https://example.org/new"));
+                }
+            }
+        }
+    }
+
+    @Test
+    void testRemoveLoadedHyperlinkSharingItsRelationship() throws IOException, InvalidFormatException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFHyperlink link = wb.getCreationHelper().createHyperlink(HyperlinkType.URL);
+            link.setAddress("https://example.com/shared");
+            sheet.createRow(0).createCell(0).setHyperlink(link);
+            sheet.createRow(1).createCell(0);
+
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                // a second <hyperlink> with the same r:id, which a file can have
+                XSSFSheet sheet2 = wb2.getSheetAt(0);
+                XSSFHyperlink first = sheet2.getHyperlink(0, 0);
+                CTHyperlink second = CTHyperlink.Factory.newInstance();
+                second.setRef("A2");
+                second.setId(first.getCTHyperlink().getId());
+                sheet2.addHyperlink(new XSSFHyperlink(second, first.getExternalRelationship()));
+
+                try (XSSFWorkbook wb3 = XSSFTestDataSamples.writeOutAndReadBack(wb2)) {
+                    XSSFSheet sheet3 = wb3.getSheetAt(0);
+                    assertEquals("https://example.com/shared", sheet3.getHyperlink(1, 0).getAddress());
+                    sheet3.removeHyperlink(sheet3.getHyperlink(0, 0));
+
+                    // the relationship is still used by A2, so it is kept
+                    assertEquals(1, hyperlinkTargets(sheet3).size());
+                    try (XSSFWorkbook wb4 = XSSFTestDataSamples.writeOutAndReadBack(wb3)) {
+                        XSSFSheet sheet4 = wb4.getSheetAt(0);
+                        assertNull(sheet4.getHyperlink(0, 0));
+                        assertEquals("https://example.com/shared", sheet4.getHyperlink(1, 0).getAddress());
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    void testCloneSheetAfterSetAddress() throws IOException, InvalidFormatException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFHyperlink link = wb.getCreationHelper().createHyperlink(HyperlinkType.URL);
+            link.setAddress("https://example.com/old");
+            wb.createSheet().createRow(0).createCell(0).setHyperlink(link);
+
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                wb2.getSheetAt(0).getHyperlink(0, 0).setAddress("https://example.org/new");
+
+                XSSFSheet cloned = wb2.cloneSheet(0);
+                assertEquals("https://example.org/new", cloned.getHyperlink(0, 0).getAddress());
+                assertEquals("https://example.org/new", wb2.getSheetAt(0).getHyperlink(0, 0).getAddress());
+
+                try (XSSFWorkbook wb3 = XSSFTestDataSamples.writeOutAndReadBack(wb2)) {
+                    assertEquals("https://example.org/new", wb3.getSheetAt(0).getHyperlink(0, 0).getAddress());
+                    assertEquals("https://example.org/new", wb3.getSheetAt(1).getHyperlink(0, 0).getAddress());
+                }
+            }
+        }
+    }
+
+    @Test
+    void testWriteTwiceKeepsOneHyperlinkRelation() throws IOException, InvalidFormatException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFHyperlink link = wb.getCreationHelper().createHyperlink(HyperlinkType.URL);
+            link.setAddress("https://example.com/one");
+            XSSFSheet sheet = wb.createSheet();
+            sheet.createRow(0).createCell(0).setHyperlink(link);
+
+            try (UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get()) {
+                wb.write(out);
+            }
+            String relId = sheet.getHyperlinkList().get(0).getCTHyperlink().getId();
+            assertEquals(1, hyperlinkTargets(sheet).size());
+
+            // writing again must reuse the relationship instead of adding another one
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                assertEquals(relId, sheet.getHyperlinkList().get(0).getCTHyperlink().getId());
+                assertEquals(1, hyperlinkTargets(sheet).size());
+                assertEquals(1, hyperlinkTargets(wb2.getSheetAt(0)).size());
+                assertEquals("https://example.com/one", wb2.getSheetAt(0).getHyperlink(0, 0).getAddress());
+            }
+        }
+    }
+
+    @Test
+    void testSetLocationBeforeSetAddress() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFHyperlink link = wb.getCreationHelper().createHyperlink(HyperlinkType.URL);
+            link.setAddress("https://example.com/old");
+            link.setLocation("section");
+            wb.createSheet().createRow(0).createCell(0).setHyperlink(link);
+
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                // a location set by the caller survives a new address, on a loaded link as well as
+                // on one that was just created
+                XSSFHyperlink loaded = wb2.getSheetAt(0).getHyperlink(0, 0);
+                loaded.setLocation("Top");
+                loaded.setAddress("https://example.org/new");
+
+                XSSFHyperlink created = wb2.getCreationHelper().createHyperlink(HyperlinkType.URL);
+                created.setLocation("Top");
+                created.setAddress("https://example.org/new");
+                wb2.getSheetAt(0).createRow(1).createCell(0).setHyperlink(created);
+
+                try (XSSFWorkbook wb3 = XSSFTestDataSamples.writeOutAndReadBack(wb2)) {
+                    XSSFSheet sheet3 = wb3.getSheetAt(0);
+                    assertEquals("https://example.org/new#Top", sheet3.getHyperlink(0, 0).getAddress());
+                    assertEquals("https://example.org/new#Top", sheet3.getHyperlink(1, 0).getAddress());
+                }
+            }
+        }
+    }
+
+    private static List<String> hyperlinkTargets(XSSFSheet sheet) throws InvalidFormatException {
+        List<String> targets = new ArrayList<>();
+        PackageRelationshipCollection rels = sheet.getPackagePart()
+            .getRelationshipsByType(XSSFRelation.SHEET_HYPERLINKS.getRelation());
+        for (PackageRelationship rel : rels) {
+            targets.add(rel.getTargetURI().toString());
+        }
+        return targets;
     }
 
 }
