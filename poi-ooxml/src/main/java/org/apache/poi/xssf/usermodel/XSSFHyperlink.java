@@ -42,6 +42,7 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
     private String _location; //what the hyperlink refers to
     private String _relLocation; //the location that was folded into _location as the fragment of the relationship target
     private XSSFSheet _sheet; //the sheet this hyperlink belongs to, null as long as it is not added to one
+    private boolean _relShared; //whether another hyperlink may hold _externalRel too, see isRelationshipShared
 
     /**
      * Create a new XSSFHyperlink. This method is protected to be used only by
@@ -121,6 +122,11 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
             // the copy shares the relationship until it is added to a sheet and its address changes,
             // the owning sheet is not copied so that changing the copy cannot touch the original's relationship
             _externalRel = xlink._externalRel;
+            if (_externalRel != null) {
+                // both now hold the relationship, so neither may remove it without checking the other
+                _relShared = true;
+                xlink._relShared = true;
+            }
             _ctHyperlink = (CTHyperlink) xlink._ctHyperlink.copy();
         }
         else {
@@ -159,6 +165,7 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
             // Generate the relation
             _externalRel =
                     sheetPart.addExternalRelationship(_location, XSSFRelation.SHEET_HYPERLINKS.getRelation());
+            _relShared = false;
 
             // Update the r:id
             _ctHyperlink.setId(_externalRel.getId());
@@ -170,6 +177,22 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
      */
     PackageRelationship getExternalRelationship() {
         return _externalRel;
+    }
+
+    /**
+     * @return whether another hyperlink may hold the same relationship, i.e. this hyperlink was
+     *  copied or copied from, or it was read with an {@code r:id} another hyperlink of the sheet has
+     *  too. Only then does removing the relationship need to check the other hyperlinks.
+     */
+    boolean isRelationshipShared() {
+        return _relShared;
+    }
+
+    /**
+     * Mark the relationship of this hyperlink as held by another hyperlink as well
+     */
+    void markRelationshipShared() {
+        _relShared = true;
     }
 
     /**
@@ -263,6 +286,7 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
             // Without an owning sheet there is no package to update, the relationship is then
             // generated when the sheet is written.
             _externalRel = _sheet == null ? null : _sheet.replaceHyperlinkRelation(this, address);
+            _relShared = false;
             if (_externalRel != null) {
                 _ctHyperlink.setId(_externalRel.getId());
             }

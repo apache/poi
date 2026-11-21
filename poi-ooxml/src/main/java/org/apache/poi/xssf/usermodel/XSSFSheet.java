@@ -226,6 +226,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
                     getPackagePart().getRelationshipsByType(XSSFRelation.SHEET_HYPERLINKS.getRelation());
 
             // Turn each one into a XSSFHyperlink
+            Map<PackageRelationship, XSSFHyperlink> linksByRel = new IdentityHashMap<>();
             for(CTHyperlink hyperlink : worksheet.getHyperlinks().getHyperlinkArray()) {
                 PackageRelationship hyperRel = null;
                 if(hyperlink.getId() != null) {
@@ -234,6 +235,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
 
                 XSSFHyperlink link = new XSSFHyperlink(hyperlink, hyperRel);
                 link.setSheet(this);
+                if (hyperRel != null) {
+                    // several hyperlinks can refer to the same relationship
+                    XSSFHyperlink first = linksByRel.putIfAbsent(hyperRel, link);
+                    if (first != null) {
+                        first.markRelationshipShared();
+                        link.markRelationshipShared();
+                    }
+                }
                 hyperlinks.add(link);
             }
         } catch (InvalidFormatException e){
@@ -278,6 +287,23 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
             return;
         }
 
+        // a hyperlink that was never copied holds its relationship alone, so the hyperlinks of the
+        // workbook are only searched for a shared one, which keeps removing many hyperlinks linear
+        if (hyperlink.isRelationshipShared() && isHeldByAnotherHyperlink(hyperlink, rel)) {
+            return;
+        }
+
+        // removeReferenceRelationship keeps the reference relationships of this part in sync with
+        // the package, it only knows the relationships the sheet was read with
+        if (!removeReferenceRelationship(rel.getId())) {
+            part.removeRelationship(rel.getId());
+        }
+    }
+
+    /**
+     * @return whether a hyperlink of the workbook other than {@code hyperlink} refers to {@code rel}
+     */
+    private boolean isHeldByAnotherHyperlink(XSSFHyperlink hyperlink, PackageRelationship rel) {
         for (Sheet sheet : getWorkbook()) {
             if (!(sheet instanceof XSSFSheet)) {
                 continue;
@@ -288,16 +314,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
             }
             for (XSSFHyperlink other : links) {
                 if (other != hyperlink && rel.equals(other.getExternalRelationship())) {
-                    return;
+                    return true;
                 }
             }
         }
-
-        // removeReferenceRelationship keeps the reference relationships of this part in sync with
-        // the package, it only knows the relationships the sheet was read with
-        if (!removeReferenceRelationship(rel.getId())) {
-            part.removeRelationship(rel.getId());
-        }
+        return false;
     }
 
     /**

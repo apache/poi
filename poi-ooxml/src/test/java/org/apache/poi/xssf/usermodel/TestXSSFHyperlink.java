@@ -33,6 +33,7 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -637,6 +638,41 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
                     assertNull(sheet3.getHyperlink(1, 0));
                     assertEquals(1, hyperlinkTargets(sheet3).size());
                     assertTrue(hyperlinkTargets(sheet3).contains("https://example.org/new"));
+                }
+            }
+        }
+    }
+
+    @Test
+    void testRemoveLoadedHyperlinkSharingItsRelationship() throws IOException, InvalidFormatException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFHyperlink link = wb.getCreationHelper().createHyperlink(HyperlinkType.URL);
+            link.setAddress("https://example.com/shared");
+            sheet.createRow(0).createCell(0).setHyperlink(link);
+            sheet.createRow(1).createCell(0);
+
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                // a second <hyperlink> with the same r:id, which a file can have
+                XSSFSheet sheet2 = wb2.getSheetAt(0);
+                XSSFHyperlink first = sheet2.getHyperlink(0, 0);
+                CTHyperlink second = CTHyperlink.Factory.newInstance();
+                second.setRef("A2");
+                second.setId(first.getCTHyperlink().getId());
+                sheet2.addHyperlink(new XSSFHyperlink(second, first.getExternalRelationship()));
+
+                try (XSSFWorkbook wb3 = XSSFTestDataSamples.writeOutAndReadBack(wb2)) {
+                    XSSFSheet sheet3 = wb3.getSheetAt(0);
+                    assertEquals("https://example.com/shared", sheet3.getHyperlink(1, 0).getAddress());
+                    sheet3.removeHyperlink(sheet3.getHyperlink(0, 0));
+
+                    // the relationship is still used by A2, so it is kept
+                    assertEquals(1, hyperlinkTargets(sheet3).size());
+                    try (XSSFWorkbook wb4 = XSSFTestDataSamples.writeOutAndReadBack(wb3)) {
+                        XSSFSheet sheet4 = wb4.getSheetAt(0);
+                        assertNull(sheet4.getHyperlink(0, 0));
+                        assertEquals("https://example.com/shared", sheet4.getHyperlink(1, 0).getAddress());
+                    }
                 }
             }
         }
