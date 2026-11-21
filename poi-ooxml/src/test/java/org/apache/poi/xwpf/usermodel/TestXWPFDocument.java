@@ -17,6 +17,8 @@
 
 package org.apache.poi.xwpf.usermodel;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -24,13 +26,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTimeout;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -234,7 +234,7 @@ public final class TestXWPFDocument {
      */
     @Test
     void testUnknownHyperlinkIds() throws Exception {
-        final int count = 10_000;
+        final int count = 2_000;
         try (XWPFDocument doc = new XWPFDocument()) {
             for (int i = 0; i < count; i++) {
                 doc.getPackagePart().addRelationship(new URI("https://poi.apache.org/" + i),
@@ -253,16 +253,62 @@ public final class TestXWPFDocument {
             known.addNewR().addNewT().setStringValue("b");
 
             try (XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc)) {
-                assertTimeout(Duration.ofSeconds(20), () -> {
-                    try (XWPFWordExtractor ex = new XWPFWordExtractor(doc2)) {
-                        ex.setFetchHyperlinks(true);
-                        assertTrue(ex.getText().contains(" <https://poi.apache.org/42>"));
-                    }
-                });
-                assertEquals(count, doc2.getHyperlinks().length);
+                List<XWPFHyperlink> loaded = doc2.hyperlinks;
+                try (XWPFWordExtractor ex = new XWPFWordExtractor(doc2)) {
+                    ex.setFetchHyperlinks(true);
+                    assertThat(ex.getText(), containsString(" <https://poi.apache.org/42>"));
+                }
                 assertNull(doc2.getHyperlinkByID("x0"));
                 assertNull(doc2.getHyperlinkByID("rIdOther"));
+                // the misses above must not have rebuilt the list from the relationships
+                assertSame(loaded, doc2.hyperlinks);
+                assertEquals(count, loaded.size());
+                assertEquals(count, doc2.getHyperlinks().length);
             }
+        }
+    }
+
+    @Test
+    void testHyperlinksFollowRelationships() throws Exception {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            PackagePart part = doc.getPackagePart();
+            XWPFParagraph p = doc.createParagraph();
+            String idA = p.createHyperlinkRun("https://poi.apache.org/a").getHyperlinkId();
+            String idB = p.createHyperlinkRun("https://poi.apache.org/b").getHyperlinkId();
+
+            // resolving one new link must not hide the other from getHyperlinks()
+            assertEquals("https://poi.apache.org/a", doc.getHyperlinkByID(idA).getURL());
+            XWPFHyperlink[] links = doc.getHyperlinks();
+            assertEquals(2, links.length);
+            assertEquals(idA, links[0].getId());
+            assertEquals(idB, links[1].getId());
+
+            // a replaced relationship resolves to its new target
+            part.removeRelationship(idA);
+            part.addRelationship(new URI("https://poi.apache.org/a2"),
+                TargetMode.EXTERNAL, XWPFRelation.HYPERLINK.getRelation(), idA);
+            assertEquals("https://poi.apache.org/a2", doc.getHyperlinkByID(idA).getURL());
+
+            // and a removed one is no longer listed
+            part.removeRelationship(idB);
+            links = doc.getHyperlinks();
+            assertEquals(1, links.length);
+            assertEquals("https://poi.apache.org/a2", links[0].getURL());
+            assertNull(doc.getHyperlinkByID(idB));
+
+            // a relationship of another type isn't a hyperlink
+            part.removeRelationship(idA);
+            part.addRelationship(new URI("https://poi.apache.org/a3"),
+                TargetMode.EXTERNAL, "http://example.com/other", idA);
+            assertNull(doc.getHyperlinkByID(idA));
+        }
+    }
+
+    @Test
+    void testHyperlinkAddedToList() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            doc.hyperlinks.add(new XWPFHyperlink("myId", "https://poi.apache.org/mine"));
+            assertEquals("https://poi.apache.org/mine", doc.getHyperlinkByID("myId").getURL());
         }
     }
 

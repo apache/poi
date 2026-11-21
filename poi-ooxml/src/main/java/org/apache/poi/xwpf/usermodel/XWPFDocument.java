@@ -100,7 +100,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     protected List<XWPFFooter> footers = new ArrayList<>();
     protected List<XWPFHeader> headers = new ArrayList<>();
     protected List<XWPFHyperlink> hyperlinks = new ArrayList<>();
-    private final Map<String, XWPFHyperlink> hyperlinksById = new HashMap<>();
     protected List<XWPFParagraph> paragraphs = new ArrayList<>();
     protected List<XWPFTable> tables = new ArrayList<>();
     protected List<XWPFSDT> contentControls = new ArrayList<>();
@@ -311,14 +310,14 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     private void initHyperlinks() {
-        // Get the hyperlinks
-        // TODO: make me optional/separated in private function
+        // Build a new list rather than changing the current one in place, so that a caller
+        // iterating the previous list isn't affected.
         try {
-            hyperlinks = new ArrayList<>();
-            hyperlinksById.clear();
+            List<XWPFHyperlink> links = new ArrayList<>();
             for (PackageRelationship rel : getPackagePart().getRelationshipsByType(XWPFRelation.HYPERLINK.getRelation())) {
-                addHyperlink(rel);
+                links.add(toHyperlink(rel));
             }
+            hyperlinks = links;
         } catch (InvalidFormatException e) {
             throw new POIXMLException(e);
         }
@@ -444,30 +443,40 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         return table.getStyleID();
     }
 
+    /**
+     * Resolves a hyperlink id (the {@code r:id} of a {@code w:hyperlink}).
+     * <p>
+     * A hyperlink relationship of the document part takes precedence, so links added after the
+     * document was read (e.g. by {@link XWPFParagraph#createHyperlinkRun(String)}) or relationships
+     * that were replaced resolve to their current target. Ids that aren't relationships of the
+     * document part are looked up in {@link #hyperlinks}, which covers links added to that list directly.
+     * <p>
+     * This doesn't modify the document or {@link #hyperlinks}.
+     *
+     * @param id the relationship id
+     * @return the hyperlink, or {@code null} if the id is unknown
+     */
     public XWPFHyperlink getHyperlinkByID(String id) {
         if (id == null) {
             return null;
         }
-        XWPFHyperlink link = hyperlinksById.get(id);
-        if (link != null) {
-            return link;
-        }
-
-        // The link may have been added after the document was read, e.g. by createHyperlinkRun.
-        // Only look up this relationship: rebuilding the list for every unknown id is quadratic
-        // in the number of hyperlinks, and the ids are taken from the document content.
+        // Look up only this relationship (a map lookup) instead of rebuilding the list from all
+        // relationships on a miss: the ids come from the document content, so the rebuild made
+        // extraction quadratic in the number of hyperlinks.
         PackageRelationship rel = getPackagePart().getRelationship(id);
-        if (rel == null || !XWPFRelation.HYPERLINK.getRelation().equals(rel.getRelationshipType())) {
-            return null;
+        if (rel != null) {
+            return XWPFRelation.HYPERLINK.getRelation().equals(rel.getRelationshipType()) ? toHyperlink(rel) : null;
         }
-        return addHyperlink(rel);
+        for (XWPFHyperlink link : hyperlinks) {
+            if (id.equals(link.getId())) {
+                return link;
+            }
+        }
+        return null;
     }
 
-    private XWPFHyperlink addHyperlink(PackageRelationship rel) {
-        XWPFHyperlink link = new XWPFHyperlink(rel.getId(), rel.getTargetURI().toString());
-        hyperlinks.add(link);
-        hyperlinksById.put(rel.getId(), link);
-        return link;
+    private static XWPFHyperlink toHyperlink(PackageRelationship rel) {
+        return new XWPFHyperlink(rel.getId(), rel.getTargetURI().toString());
     }
 
     public XWPFFootnote getFootnoteByID(int id) {
@@ -499,7 +508,17 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         return theme;
     }
 
+    /**
+     * Returns the hyperlink relationships of the document part, in relationship order.
+     * <p>
+     * The list is re-read from the package on each call, so it includes links added after the
+     * document was read and drops links whose relationship was removed. {@link #hyperlinks} is
+     * replaced with the re-read list.
+     *
+     * @return the hyperlinks of the document part
+     */
     public XWPFHyperlink[] getHyperlinks() {
+        initHyperlinks();
         return hyperlinks.toArray(new XWPFHyperlink[0]);
     }
 
