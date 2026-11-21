@@ -30,8 +30,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
@@ -76,11 +78,17 @@ import javax.xml.crypto.dsig.Transform;
 import javax.xml.crypto.dsig.XMLSignatureException;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.dom.DOMSignContext;
+import javax.xml.crypto.dsig.dom.DOMValidateContext;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPathConstants;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.jcp.xml.dsig.internal.dom.DOMSignedInfo;
 import org.apache.logging.log4j.Logger;
@@ -90,6 +98,7 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
 import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.util.DocumentHelper;
+import org.apache.poi.ooxml.util.XPathHelper;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
@@ -112,6 +121,7 @@ import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampServiceValidator;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.XMLHelper;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.TempFile;
@@ -148,6 +158,9 @@ import org.w3.x2000.x09.xmldsig.ObjectType;
 import org.w3.x2000.x09.xmldsig.ReferenceType;
 import org.w3.x2000.x09.xmldsig.SignatureDocument;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 class TestSignatureInfo {
     private static final Logger LOG = PoiLogManager.getLogger(TestSignatureInfo.class);
@@ -645,16 +658,8 @@ class TestSignatureInfo {
     @Test
     void testWrappedPackageObject() throws Exception {
         // the signed package object is moved into another ds:Object, where it still has the digest
-        // the SignedInfo references, but its manifest isn't a ds:Manifest of the signature anymore
-        InputStream modified = rewriteSignedDocx(entries -> {
-            String sig = new String(entries.get("_xmlsignatures/sig1.xml"), StandardCharsets.UTF_8);
-            int start = sig.indexOf("<Object Id=\"idPackageObject\"");
-            int end = sig.indexOf("</Object>", start) + "</Object>".length();
-            assertTrue(start > 0);
-            sig = sig.substring(0, start) + "<Object>" + sig.substring(start, end) + "</Object>" + sig.substring(end);
-            entries.put("_xmlsignatures/sig1.xml", sig.getBytes(StandardCharsets.UTF_8));
-            entries.put("word/document.xml", replace(entries.get("word/document.xml"), "Hello world", "Tampered"));
-        });
+        // the SignedInfo references, but its manifest isn't validated anymore
+        InputStream modified = rewriteSignature(true, sig -> wrapInObject(signedObject(sig, "idPackageObject")));
 
         try (OPCPackage pkg = OPCPackage.open(modified);
              XWPFDocument doc = new XWPFDocument(pkg)) {
@@ -665,6 +670,112 @@ class TestSignatureInfo {
             si.setSignatureConfig(new SignatureConfig());
             assertFalse(si.verifySignature(), "the manifest of the signed package object must be validated");
         }
+    }
+
+    @Test
+    void testWrappedPackageObjectKeepsTheSignedDigests() throws Exception {
+        // the same wrapping without touching a part: the XML signature itself still verifies, so
+        // it has to be the manifest check which rejects the document
+        InputStream modified = rewriteSignature(false, sig -> wrapInObject(signedObject(sig, "idPackageObject")));
+
+        try (OPCPackage pkg = OPCPackage.open(modified)) {
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(new SignatureConfig());
+            assertTrue(validateXmlSignature(si), "wrapping must not change the SignedInfo digests");
+            assertFalse(si.verifySignature(), "the manifest of the signed package object must be validated");
+        }
+    }
+
+    @Test
+    void testDuplicatePackageObjectId() throws Exception {
+        // a second ds:Object with the Id of the signed one, so that #idPackageObject and the
+        // getElementById lookups could each resolve to either of them
+        InputStream modified = rewriteSignature(false, sig ->
+            sig.appendChild(signedObject(sig, "idPackageObject").cloneNode(true)));
+
+        try (OPCPackage pkg = OPCPackage.open(modified)) {
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(new SignatureConfig());
+            // the reference resolver gives up on the ambiguous Id instead of returning a verdict
+            assertThrows(XMLSignatureException.class, () -> validateXmlSignature(si));
+            assertFalse(si.verifySignature(), "an Id must not be used by more than one element");
+        }
+    }
+
+    /**
+     * Copies hello-world-signed.docx, letting {@code modifier} change the ds:Signature of
+     * _xmlsignatures/sig1.xml and, if {@code tamperDocument} is set, making word/document.xml
+     * say "Tampered" instead of "Hello world"
+     */
+    private static InputStream rewriteSignature(boolean tamperDocument, Consumer<Element> modifier) throws IOException {
+        return rewriteSignedDocx(entries -> {
+            byte[] signature = entries.get("_xmlsignatures/sig1.xml");
+            assertNotNull(signature);
+            UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
+            try (InputStream is = UnsynchronizedByteArrayInputStream.builder().setByteArray(signature).get()) {
+                Document doc = DocumentHelper.readDocument(is);
+                modifier.accept(doc.getDocumentElement());
+                XMLHelper.newTransformer().transform(new DOMSource(doc), new StreamResult(bos));
+            } catch (IOException | SAXException | TransformerException e) {
+                fail(e);
+            }
+            entries.put("_xmlsignatures/sig1.xml", bos.toByteArray());
+            if (tamperDocument) {
+                entries.put("word/document.xml", replace(entries.get("word/document.xml"), "Hello world", "Tampered"));
+            }
+        });
+    }
+
+    /**
+     * @return the ds:Object of {@code signature} with the given Id
+     */
+    private static Element signedObject(Element signature, String id) {
+        NodeList objects = signature.getElementsByTagNameNS(SignatureFacet.XML_DIGSIG_NS, "Object");
+        for (int i=0; i<objects.getLength(); i++) {
+            Element obj = (Element)objects.item(i);
+            if (id.equals(obj.getAttribute("Id"))) {
+                return obj;
+            }
+        }
+        return fail("no ds:Object with the Id " + id);
+    }
+
+    /**
+     * Moves {@code el} into a new ds:Object which takes its place, which leaves the canonical form
+     * of {@code el} and so its digest unchanged
+     */
+    private static void wrapInObject(Element el) {
+        String prefix = el.getPrefix();
+        Element wrapper = el.getOwnerDocument().createElementNS(SignatureFacet.XML_DIGSIG_NS,
+            prefix == null ? "Object" : prefix + ":Object");
+        el.getParentNode().replaceChild(wrapper, el);
+        wrapper.appendChild(el);
+    }
+
+    /**
+     * Validates the XML signature of the first signature part on its own, i.e. the SignedInfo
+     * digests, the manifests and the signature value, without the structural checks which
+     * {@link SignaturePart#validate()} adds
+     */
+    private static boolean validateXmlSignature(SignatureInfo si) throws Exception {
+        SignaturePart sp = si.getSignatureParts().iterator().next();
+        Document doc;
+        try (InputStream is = sp.getPackagePart().getInputStream()) {
+            doc = DocumentHelper.readDocument(is);
+        }
+        NodeList nl = (NodeList)XPathHelper.getFactory().newXPath()
+            .compile("//*[@Id]").evaluate(doc, XPathConstants.NODESET);
+        for (int i=0; i<nl.getLength(); i++) {
+            ((Element)nl.item(i)).setIdAttribute("Id", true);
+        }
+
+        DOMValidateContext ctx = new DOMValidateContext(new KeyInfoKeySelector(), doc);
+        ctx.setProperty("org.jcp.xml.dsig.validateManifests", Boolean.TRUE);
+        ctx.setProperty("org.apache.jcp.xml.dsig.secureValidation", si.getSignatureConfig().isSecureValidation());
+        ctx.setURIDereferencer(si.getUriDereferencer());
+        return si.getSignatureFactory().unmarshalXMLSignature(ctx).validate(ctx);
     }
 
     /**
