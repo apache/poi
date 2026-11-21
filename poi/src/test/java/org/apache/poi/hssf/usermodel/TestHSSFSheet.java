@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.ddf.EscherDgRecord;
@@ -1171,6 +1172,52 @@ final class TestHSSFSheet extends BaseTestSheet {
                 assertEquals(List.of("grouped 1"), textObjectStrings(sheet2));
             }
         }
+    }
+
+    @Test
+    void removeRowAndShiftRowsHandleTwoCommentsOnOneCell() throws IOException {
+        try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb1.createSheet();
+            sheet.createRow(0).createCell(0);
+            sheet.createRow(1).createCell(0);
+            HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+            // two comments on A1 and two on A2, which a malformed file can have
+            for (int i = 0; i < 4; i++) {
+                int rowNum = i / 2;
+                HSSFComment comment = patriarch.createCellComment(
+                        new HSSFClientAnchor(0, 0, 0, 0, (short) 1, i, (short) 3, i + 3));
+                comment.setRow(rowNum);
+                comment.setColumn(0);
+                comment.setString(new HSSFRichTextString("comment " + i));
+            }
+
+            // both comments of row 1 move to row 3 (the map of getCellComments only shows one per cell)
+            sheet.shiftRows(1, 1, 2);
+            assertEquals(List.of(0, 0, 3, 3), commentRows(patriarch));
+
+            // both comments of row 0 go with the row
+            sheet.removeRow(sheet.getRow(0));
+            assertEquals(List.of(3, 3), commentRows(patriarch));
+            // POI doesn't write two comments on one cell, so one of the remaining ones is removed
+            // to check that the records of the removed row are gone from the written stream
+            sheet.getRow(3).getCell(0).removeCellComment();
+            try (HSSFWorkbook wb2 = writeOutAndReadBack(wb1)) {
+                HSSFSheet sheet2 = wb2.getSheetAt(0);
+                assertEquals(List.of(3), noteRows(sheet2));
+                assertEquals(1, textObjectStrings(sheet2).size());
+            }
+        }
+    }
+
+    private static List<Integer> commentRows(HSSFPatriarch patriarch) {
+        List<Integer> rows = new ArrayList<>();
+        for (HSSFShape shape : patriarch.getChildren()) {
+            if (shape instanceof HSSFComment comment) {
+                rows.add(comment.getRow());
+            }
+        }
+        Collections.sort(rows);
+        return rows;
     }
 
     @Test

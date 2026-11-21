@@ -354,11 +354,13 @@ public final class HSSFSheet implements Sheet {
         if (patriarch == null) {
             return;
         }
-        final Map<CellAddress, HSSFComment> comments = new TreeMap<>();
-        findCellCommentLocations(patriarch, comments);
-        for (final Map.Entry<CellAddress, HSSFComment> comment : comments.entrySet()) {
-            if (comment.getKey().getRow() == rowNum) {
-                removeComment(patriarch, comment.getValue());
+        // a list rather than getCellComments' map keyed by cell, so that a second comment on the
+        // same cell (possible in a malformed file) is removed as well
+        final List<HSSFComment> comments = new ArrayList<>();
+        findCellComments(patriarch, comments);
+        for (final HSSFComment comment : comments) {
+            if (comment.getRow() == rowNum) {
+                removeComment(patriarch, comment);
             }
         }
     }
@@ -1834,12 +1836,13 @@ public final class HSSFSheet implements Sheet {
     }
 
     private void moveCommentsForRowShift(int startRow, int endRow, int n) {
-        final Map<CellAddress, HSSFComment> comments = new TreeMap<>();
-        findCellCommentLocations(createDrawingPatriarch(), comments);
-        for (final Map.Entry<CellAddress, HSSFComment> comment : comments.entrySet()) {
-            final int r = comment.getKey().getRow();
+        // every comment is moved, also a second one on the same cell
+        final List<HSSFComment> comments = new ArrayList<>();
+        findCellComments(createDrawingPatriarch(), comments);
+        for (final HSSFComment comment : comments) {
+            final int r = comment.getRow();
             if (startRow <= r && r <= endRow) {
-                comment.getValue().setRow(clip(r + n));
+                comment.setRow(clip(r + n));
             }
         }
     }
@@ -2636,6 +2639,23 @@ public final class HSSFSheet implements Sheet {
         findCellCommentLocations(patriarch, locations);
         return locations;
     }
+    /**
+     * Finds all cell comments in the container and, recursively, in the shape groups it holds,
+     * including several comments on the same cell
+     *
+     * @param container a container that may contain HSSFComments
+     * @param comments the list to add the HSSFComments to
+     */
+    private static void findCellComments(HSSFShapeContainer container, List<HSSFComment> comments) {
+        for (final HSSFShape shape : container.getChildren()) {
+            if (shape instanceof HSSFShapeGroup group) {
+                findCellComments(group, comments);
+            } else if (shape instanceof HSSFComment comment && comment.hasPosition()) {
+                comments.add(comment);
+            }
+        }
+    }
+
     /**
      * Finds all cell comments in this sheet and adds them to the specified locations map
      *
