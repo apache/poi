@@ -27,8 +27,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
+import java.nio.file.attribute.UserPrincipal;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -198,36 +200,68 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
                 if (dir == null) {
                     final Path dirPath = getPOIFilesDirectoryPath();
                     File fileDir = dirPath.toFile();
+                    File newDir;
                     if (fileDir.exists()) {
                         if (!fileDir.isDirectory()) {
                             throw new IOException("Could not create temporary directory. '" + fileDir + "' exists but is not a directory.");
                         }
-                        dir = fileDir;
+                        newDir = fileDir;
                     } else {
-                        dir = Files.createDirectories(dirPath).toFile();
+                        newDir = Files.createDirectories(dirPath).toFile();
                         try {
                             // attempt to restrict directory perms to owner only
                             try {
                                 Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rwx------");
-                                Files.setPosixFilePermissions(dir.toPath(), perms);
+                                Files.setPosixFilePermissions(newDir.toPath(), perms);
                             } catch (UnsupportedOperationException | IOException e) {
                                 // fallback: use File API to set owner-only flags where supported
-                                dir.setReadable(false, false);
-                                dir.setWritable(false, false);
-                                dir.setExecutable(false, false);
-                                dir.setReadable(true, true);
-                                dir.setWritable(true, true);
-                                dir.setExecutable(true, true);
+                                newDir.setReadable(false, false);
+                                newDir.setWritable(false, false);
+                                newDir.setExecutable(false, false);
+                                newDir.setReadable(true, true);
+                                newDir.setWritable(true, true);
+                                newDir.setExecutable(true, true);
                             }
                         } catch (Exception ignored) {
                             // best-effort only
                         }
                     }
+                    // a directory passed to the constructor was chosen by the caller, but the default
+                    // directory has a fixed name in the shared temporary directory
+                    dir = (initDir == null) ? checkDirectoryOwner(newDir) : newDir;
                 }
             } finally {
                 dirLock.unlock();
             }
         }
+    }
+
+    /**
+     * Another user could have created the directory (or a symbolic link to one) before us,
+     * and would then be able to replace the temporary files in it.
+     * So only use it, if it belongs to the user that creates the files in it.
+     *
+     * @return the directory with symbolic links resolved, so that it can't be redirected later
+     * @throws IOException if the directory belongs to another user
+     */
+    private static File checkDirectoryOwner(final File fileDir) throws IOException {
+        final Path dirPath = fileDir.toPath().toRealPath();
+        if (Files.getFileAttributeView(dirPath, PosixFileAttributeView.class) == null) {
+            return dirPath.toFile();
+        }
+        // the owner of a new file is the current user - this avoids looking up the user name
+        final Path probe = Files.createTempFile(dirPath, "poi-owner", ".tmp");
+        try {
+            final UserPrincipal owner = Files.getOwner(dirPath);
+            final UserPrincipal user = Files.getOwner(probe);
+            if (!owner.equals(user)) {
+                throw new IOException("Could not use temporary directory '" + dirPath + "' as it is owned by '" +
+                        owner.getName() + "' and not by '" + user.getName() + "' - remove it or use a TempFileCreationStrategy with a different directory");
+            }
+        } finally {
+            Files.deleteIfExists(probe);
+        }
+        return dirPath.toFile();
     }
 
     private static void setOwnerOnlyFilePermissions(final File file, final boolean executable) {
