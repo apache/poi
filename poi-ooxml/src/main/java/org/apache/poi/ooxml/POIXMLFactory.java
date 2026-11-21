@@ -108,6 +108,10 @@ public abstract class POIXMLFactory {
       * @since 3.14-Beta1
       */
      protected PackageRelationship getPackageRelationship(POIXMLDocumentPart parent, PackagePart part) {
+         PackageRelationship rel = parent.findChildRelationship(part);
+         if (rel != null) {
+             return rel;
+         }
          try {
              String partName = part.getPartName().getName();
              for (PackageRelationship pr : parent.getPackagePart().getRelationships()) {

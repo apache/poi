@@ -63,6 +63,9 @@ public class POIXMLDocumentPart {
     private final Map<String, RelationPart> relations = new LinkedHashMap<>();
     private final Map<String, ReferenceRelationship> referenceRelationships = new LinkedHashMap<>();
     private boolean isCommitted = false;
+    // the child part read() is creating and the relationship it found it by, see findChildRelationship
+    private PackagePart newChildPart;
+    private PackageRelationship newChildRelationship;
 
     /**
      * to check whether embedded part is already committed
@@ -739,6 +742,8 @@ public class POIXMLDocumentPart {
                     POIXMLDocumentPart childPart = context.get(p);
                     if (childPart == null) {
                         try {
+                            newChildPart = p;
+                            newChildRelationship = rel;
                             childPart = factory.createDocumentPart(this, p);
                         } catch (POIXMLException e) {
                             if (e.getCause() instanceof XmlException
@@ -752,6 +757,9 @@ public class POIXMLDocumentPart {
                             } else {
                                 throw e;
                             }
+                        } finally {
+                            newChildPart = null;
+                            newChildRelationship = null;
                         }
                         //here we are checking if part is embedded and excel then set it to chart class
                         //so that at the time to writing we can also write updated embedded part
@@ -772,6 +780,20 @@ public class POIXMLDocumentPart {
         for (POIXMLDocumentPart childPart : readLater) {
             childPart.read(factory, context);
         }
+    }
+
+    /**
+     * Returns the relationship that {@link #read} is currently creating the given child part for, so that
+     * {@link POIXMLFactory#getPackageRelationship} doesn't have to search this part's relationships for it
+     * again. Searching them for every child part makes loading quadratic in the number of child parts and
+     * relationships, both of which come from the file.
+     *
+     * @param part the part to look for
+     * @return the relationship that targets the part, or {@code null} if it isn't the child part that is
+     *  currently being created
+     */
+    /* package */ PackageRelationship findChildRelationship(PackagePart part) {
+        return newChildPart == part ? newChildRelationship : null;
     }
 
     /**
