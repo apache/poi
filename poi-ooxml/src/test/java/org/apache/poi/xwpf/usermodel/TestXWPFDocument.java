@@ -307,8 +307,32 @@ public final class TestXWPFDocument {
     @Test
     void testHyperlinkAddedToList() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
+            String id = doc.createParagraph().createHyperlinkRun("https://poi.apache.org/rel").getHyperlinkId();
             doc.hyperlinks.add(new XWPFHyperlink("myId", "https://poi.apache.org/mine"));
             assertEquals("https://poi.apache.org/mine", doc.getHyperlinkByID("myId").getURL());
+
+            // getHyperlinks() lists it after the relationships and doesn't drop it from the list
+            XWPFHyperlink[] links = doc.getHyperlinks();
+            assertEquals(2, links.length);
+            assertEquals(id, links[0].getId());
+            assertEquals("myId", links[1].getId());
+            assertEquals("https://poi.apache.org/mine", doc.getHyperlinkByID("myId").getURL());
+        }
+    }
+
+    @Test
+    void testRemovedRelationshipOfLoadedHyperlink() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            doc.createParagraph().createHyperlinkRun("https://poi.apache.org/loaded");
+            try (XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc)) {
+                XWPFHyperlink loaded = doc2.getHyperlinks()[0];
+                assertEquals("https://poi.apache.org/loaded", doc2.getHyperlinkByID(loaded.getId()).getURL());
+
+                // the list still has the entry read with the document, but the relationship is gone
+                doc2.getPackagePart().removeRelationship(loaded.getId());
+                assertNull(doc2.getHyperlinkByID(loaded.getId()));
+                assertEquals(0, doc2.getHyperlinks().length);
+            }
         }
     }
 
