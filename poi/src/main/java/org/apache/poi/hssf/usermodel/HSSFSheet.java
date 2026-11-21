@@ -44,6 +44,7 @@ import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
 import org.apache.poi.hssf.record.HyperlinkRecord;
 import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.hssf.record.NoteRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
 import org.apache.poi.hssf.record.RowRecord;
@@ -286,7 +287,11 @@ public final class HSSFSheet implements Sheet {
     }
 
     /**
-     * Remove a row from this sheet.  All cells contained in the row are removed as well
+     * Remove a row from this sheet.  All cells contained in the row are removed as well,
+     * as are the cell comments anchored to the row.
+     * <p>
+     * The comments of the removed row were previously left in the sheet's drawing and written
+     * out again, so code that needs them has to read them before removing the row.
      *
      * @param row representing a row to remove.
      */
@@ -306,11 +311,21 @@ public final class HSSFSheet implements Sheet {
 
         if (!_rows.isEmpty()) {
             Integer key = Integer.valueOf(row.getRowNum());
-            HSSFRow removedRow = _rows.remove(key);
-            if (removedRow != row) {
+            if (_rows.get(key) != row) {
                 //should not happen if the input argument is valid
                 throw new IllegalArgumentException("Specified row does not belong to this sheet");
             }
+
+            // remove the comments of the row before the row itself: if the sheet's drawing cannot
+            // be read, the sheet is left as it was rather than with the row gone and its comments
+            // still in the drawing
+            removeCommentsInRow(hrow.getRowNum());
+            for (Cell cell : row) {
+                // the comment records are gone, so don't hand a cached comment out again
+                ((HSSFCell) cell).clearCachedComment();
+            }
+
+            _rows.remove(key);
             if (hrow.getRowNum() == getLastRowNum()) {
                 _lastrow = findLastRow(_lastrow);
             }
@@ -325,6 +340,48 @@ public final class HSSFSheet implements Sheet {
                 _lastrow = -1;
             }
         }
+    }
+
+    /**
+     * Removes the comments anchored to the given row, wherever in the sheet's drawing they are,
+     * so that their records are not written out again.
+     */
+    private void removeCommentsInRow(int rowNum) {
+        if (!mayHaveCommentInRow(rowNum)) {
+            return;
+        }
+        final HSSFPatriarch patriarch = getDrawingPatriarch();
+        if (patriarch == null) {
+            return;
+        }
+        // a list rather than getCellComments' map keyed by cell, so that a second comment on the
+        // same cell (possible in a malformed file) is removed as well
+        final List<HSSFComment> comments = new ArrayList<>();
+        findCellComments(patriarch, comments);
+        for (final HSSFComment comment : comments) {
+            if (comment.getRow() == rowNum) {
+                removeComment(patriarch, comment);
+            }
+        }
+    }
+
+    /**
+     * Cheap check for a comment on the given row, so that removing a row only reads the sheet's
+     * drawing when there is a comment to remove: {@link #getDrawingPatriarch()} aggregates the
+     * drawing records, and a sheet may well have a drawing (pictures, charts) but no comment.
+     */
+    private boolean mayHaveCommentInRow(int rowNum) {
+        if (_patriarch != null || null != _sheet.findFirstRecordBySid(EscherAggregate.sid)) {
+            // the drawing records have been aggregated already, so the NoteRecords are in the
+            // aggregate and going through the patriarch costs nothing on top
+            return true;
+        }
+        for (final RecordBase rec : _sheet.getRecords()) {
+            if (rec instanceof NoteRecord note && note.getRow() == rowNum) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -1779,11 +1836,10 @@ public final class HSSFSheet implements Sheet {
     }
 
     private void moveCommentsForRowShift(int startRow, int endRow, int n) {
-        final HSSFPatriarch patriarch = createDrawingPatriarch();
-        for (final HSSFShape shape : patriarch.getChildren()) {
-            if (!(shape instanceof HSSFComment comment)) {
-                continue;
-            }
+        // every comment is moved, also a second one on the same cell
+        final List<HSSFComment> comments = new ArrayList<>();
+        findCellComments(createDrawingPatriarch(), comments);
+        for (final HSSFComment comment : comments) {
             final int r = comment.getRow();
             if (startRow <= r && r <= endRow) {
                 comment.setRow(clip(r + n));
@@ -2515,6 +2571,39 @@ public final class HSSFSheet implements Sheet {
         return patriarch == null ? null : lookForComment(patriarch, row, column);
     }
 
+    /**
+     * Removes the given comment from the container that actually holds it, the drawing patriarch
+     * itself or the shape group it is in, so that its NoteRecord goes with it.
+     *
+     * @param patriarch the sheet's drawing patriarch
+     * @param comment   the comment to remove
+     * @return whether the comment was found and removed
+     */
+    static boolean removeComment(HSSFPatriarch patriarch, HSSFComment comment) {
+        final HSSFShapeContainer container = findShapeContainer(patriarch, comment);
+        return container != null && container.removeShape(comment);
+    }
+
+    /**
+     * Looks for the shape in the container and, recursively, in the shape groups it holds.
+     *
+     * @return the container the shape is a child of, or {@code null} if it is not in there
+     */
+    private static HSSFShapeContainer findShapeContainer(HSSFShapeContainer container, HSSFShape shape) {
+        for (final HSSFShape child : container.getChildren()) {
+            if (child == shape) {
+                return container;
+            }
+            if (child instanceof HSSFShapeGroup group) {
+                final HSSFShapeContainer res = findShapeContainer(group, shape);
+                if (null != res) {
+                    return res;
+                }
+            }
+        }
+        return null;
+    }
+
     private HSSFComment lookForComment(HSSFShapeContainer container, int row, int column) {
         for (Object object : container.getChildren()) {
             HSSFShape shape = (HSSFShape) object;
@@ -2550,6 +2639,23 @@ public final class HSSFSheet implements Sheet {
         findCellCommentLocations(patriarch, locations);
         return locations;
     }
+    /**
+     * Finds all cell comments in the container and, recursively, in the shape groups it holds,
+     * including several comments on the same cell
+     *
+     * @param container a container that may contain HSSFComments
+     * @param comments the list to add the HSSFComments to
+     */
+    private static void findCellComments(HSSFShapeContainer container, List<HSSFComment> comments) {
+        for (final HSSFShape shape : container.getChildren()) {
+            if (shape instanceof HSSFShapeGroup group) {
+                findCellComments(group, comments);
+            } else if (shape instanceof HSSFComment comment && comment.hasPosition()) {
+                comments.add(comment);
+            }
+        }
+    }
+
     /**
      * Finds all cell comments in this sheet and adds them to the specified locations map
      *
