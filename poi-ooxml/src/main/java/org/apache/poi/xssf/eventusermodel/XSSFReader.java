@@ -305,7 +305,8 @@ public class XSSFReader {
     }
 
     /**
-     * Returns the drawing parts associated with a sheet. Missing parts are skipped.
+     * Returns the drawing parts associated with a sheet. Missing parts are skipped and
+     * a part targeted by several relationships is only returned once.
      *
      * @param sheetPart the package part holding the sheet data
      * @param allowStrictOoxmlFiles whether to also look for the Strict OOXML drawing relationship.
@@ -319,11 +320,14 @@ public class XSSFReader {
             throws InvalidFormatException {
         PackageRelationshipCollection drawingsList =
                 getRelationshipsByType(sheetPart, XSSFRelation.DRAWINGS, allowStrictOoxmlFiles);
-        int drawingsSize = drawingsList.size();
-        List<PackagePart> drawingParts = new ArrayList<>(drawingsSize);
-        for (int i = 0; i < drawingsSize; i++) {
-            PackageRelationship drawings = drawingsList.getRelationship(i);
+        List<PackagePart> drawingParts = new ArrayList<>();
+        Set<PackagePartName> seen = new HashSet<>();
+        for (PackageRelationship drawings : drawingsList) {
             PackagePartName drawingsName = PackagingURIHelper.createPartName(drawings.getTargetURI());
+            if (!seen.add(drawingsName)) {
+                // several relationships can target the same part, return it only once
+                continue;
+            }
             PackagePart drawingsPart = sheetPart.getPackage().getPart(drawingsName);
             if (drawingsPart == null) {
                 //parts can go missing; Excel ignores them silently -- TIKA-2134
