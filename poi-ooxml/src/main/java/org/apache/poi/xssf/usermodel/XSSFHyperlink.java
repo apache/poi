@@ -38,7 +38,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
 public class XSSFHyperlink implements Hyperlink, Duplicatable {
     final private HyperlinkType _type;
     private PackageRelationship _externalRel;
-    final private CTHyperlink _ctHyperlink; //contains a reference to the cell where the hyperlink is anchored, getRef()
+    private CTHyperlink _ctHyperlink; //contains a reference to the cell where the hyperlink is anchored, getRef()
     private String _location; //what the hyperlink refers to
     private String _relLocation; //the location that was folded into _location as the fragment of the relationship target
     private XSSFSheet _sheet; //the sheet this hyperlink belongs to, null as long as it is not added to one
@@ -221,6 +221,15 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
      */
     void markRelationshipShared() {
         _relShared = true;
+    }
+
+    /**
+     * Give this hyperlink its own copy of its XML, which can belong to the worksheet XML of the
+     * sheet it was read from. That sheet drops its hyperlinks element when it is written without
+     * hyperlinks, which would disconnect the XML of a hyperlink moved to another sheet.
+     */
+    void detachFromSheetXml() {
+        _ctHyperlink = (CTHyperlink) _ctHyperlink.copy();
     }
 
     /**

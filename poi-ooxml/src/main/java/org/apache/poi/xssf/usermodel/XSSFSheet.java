@@ -3744,8 +3744,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
             // the relationship still holds the link target
             removeHyperlinkRelation(hyperlink);
             // the hyperlink no longer belongs to this sheet, so changing its address must not add a
-            // relationship to it
+            // relationship to it, and its XML must not depend on this sheet's
             hyperlink.setSheet(null);
+            hyperlink.detachFromSheetXml();
         }
     }
 
