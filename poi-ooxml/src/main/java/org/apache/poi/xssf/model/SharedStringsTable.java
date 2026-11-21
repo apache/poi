@@ -30,11 +30,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.zaxxer.sparsebits.SparseBitSet;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
@@ -98,6 +100,12 @@ public class SharedStringsTable extends POIXMLDocumentPart implements SharedStri
     protected int uniqueCount;
 
     private SstDocument _sstDoc;
+
+    /**
+     * Whether the indexes of the entries are used outside the cells of the workbook,
+     * e.g. by rows that SXSSF has written to temporary files, so they must not change
+     */
+    private boolean fixedIndexes;
 
     private static final XmlOptions options = new XmlOptions();
     static {
@@ -280,6 +288,79 @@ public class SharedStringsTable extends POIXMLDocumentPart implements SharedStri
             items.add(new XSSFRichTextString(rst));
         }
         return Collections.unmodifiableList(items);
+    }
+
+    /**
+     * Marks the indexes of the entries as used outside the cells of the workbook, e.g. by rows
+     * that SXSSF writes to temporary files, so that {@link #removeUnusedEntries(SparseBitSet, int)}
+     * refuses to renumber them.
+     *
+     * @since 6.1.0
+     */
+    @Internal
+    public void setFixedIndexes() {
+        fixedIndexes = true;
+    }
+
+    /**
+     * Removes the entries whose index is not set in {@code used} and renumbers the remaining ones,
+     * keeping their order.<p>
+     *
+     * Subclasses that keep the entries in their own storage must override this method,
+     * as this implementation only works on the storage of this class.
+     *
+     * @param used the indexes of the entries to keep
+     * @param count the new total count of strings in the workbook, see {@link #getCount()}
+     * @return the new index for each old index, or -1 for a removed entry, with one element per entry before the removal
+     * @throws IllegalStateException if the indexes can't be changed, see {@link #setFixedIndexes()}
+     * @throws IllegalArgumentException if {@code used} contains an index past the last entry
+     * @throws UnsupportedOperationException if called on a subclass that doesn't override this method
+     * @since 6.1.0
+     */
+    @Internal
+    public int[] removeUnusedEntries(SparseBitSet used, int count) {
+        if (getClass() != SharedStringsTable.class) {
+            // a subclass may keep the entries elsewhere, e.g. in a temp file, so changing
+            // only the storage of this class would leave its entries and counts inconsistent
+            throw new UnsupportedOperationException(getClass().getName()
+                    + " doesn't support removing unused shared strings");
+        }
+        if (fixedIndexes) {
+            throw new IllegalStateException("The shared strings are used by streamed rows, so they can't be renumbered");
+        }
+        if (used.length() > strings.size()) {
+            throw new IllegalArgumentException("Shared string index " + (used.length() - 1)
+                    + " is past the last entry " + (strings.size() - 1));
+        }
+        int[] newIndexes = new int[strings.size()];
+        List<CTRst> kept = new ArrayList<>(used.cardinality());
+        stmap.clear();
+        plainmap.clear();
+        for (int i = 0; i < strings.size(); i++) {
+            CTRst st = strings.get(i);
+            if (!used.get(i)) {
+                // removing by index would look up the element each time, which is slow for big tables
+                try (XmlCursor cursor = st.newCursor()) {
+                    cursor.removeXml();
+                }
+                newIndexes[i] = -1;
+                continue;
+            }
+            int idx = kept.size();
+            String plain = plainText(st);
+            if (plain != null) {
+                plainmap.put(plain, idx);
+            } else {
+                stmap.put(xmlText(st), idx);
+            }
+            kept.add(st);
+            newIndexes[i] = idx;
+        }
+        strings.clear();
+        strings.addAll(kept);
+        this.uniqueCount = strings.size();
+        this.count = count;
+        return newIndexes;
     }
 
     /**

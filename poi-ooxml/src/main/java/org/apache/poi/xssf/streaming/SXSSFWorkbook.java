@@ -276,6 +276,10 @@ public class SXSSFWorkbook implements Workbook {
                 createAndRegisterSXSSFSheet( (XSSFSheet)sheet );
             }
         }
+        if (_sharedStringSource != null) {
+            // streamed rows refer to the shared strings by index
+            _sharedStringSource.setFixedIndexes();
+        }
     }
 
     /**
