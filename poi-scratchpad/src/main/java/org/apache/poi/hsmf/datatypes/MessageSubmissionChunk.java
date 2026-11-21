@@ -86,10 +86,10 @@ public class MessageSubmissionChunk extends Chunk {
                     }
                 }
                 if (dateS != null) {
-                    // Should be yymmddhhmmssZ
+                    // Should be yymmddhhmmssZ, where the 'Z' means UTC
                     Matcher m = datePatern.matcher(dateS);
                     if (m.matches()) {
-                        date = LocaleUtil.getLocaleCalendar();
+                        date = LocaleUtil.getLocaleCalendar(LocaleUtil.TIMEZONE_UTC);
 
                         // work around issues with dates like 1989, which appear as "89" here
                         int year = Integer.parseInt(m.group(1));

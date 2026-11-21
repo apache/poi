@@ -21,10 +21,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Calendar;
+import java.util.TimeZone;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
+import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -57,5 +60,25 @@ public final class TestMessageSubmissionChunk {
         assertNotNull(date);
         final int year = date.get(Calendar.YEAR);
         assertEquals(2007, year);
+    }
+
+    /**
+     * Bug 70365 - the submission-ID timestamp ends in 'Z' and is UTC,
+     * so the parsed instant must not depend on the user timezone
+     */
+    @Test
+    void testAcceptedAtTimeIsUtc() throws IOException, ChunkNotFoundException {
+        // quick.msg has l=THHS2EXBE1X-070614094255Z-84723
+        Instant expected = Instant.parse("2007-06-14T09:42:55Z");
+        for (String tz : new String[]{"UTC", "America/New_York", "Australia/Adelaide"}) {
+            LocaleUtil.setUserTimeZone(TimeZone.getTimeZone(tz));
+            // the timestamp is parsed while the message is read, so open it under the zone
+            try (MAPIMessage msg = new MAPIMessage(POIDataSamples.getHSMFInstance().openResourceAsStream("quick.msg"))) {
+                assertEquals(expected, msg.getMainChunks().getSubmissionChunk().getAcceptedAtTime().toInstant(), tz);
+                assertEquals(expected, msg.getMessageDate().toInstant(), tz);
+            } finally {
+                LocaleUtil.resetUserTimeZone();
+            }
+        }
     }
 }
