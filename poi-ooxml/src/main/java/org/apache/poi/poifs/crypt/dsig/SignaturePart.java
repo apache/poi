@@ -36,7 +36,10 @@ import java.util.function.Consumer;
 
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.URIDereferencer;
+import javax.xml.crypto.XMLStructure;
+import javax.xml.crypto.dsig.Manifest;
 import javax.xml.crypto.dsig.Reference;
+import javax.xml.crypto.dsig.XMLObject;
 import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.crypto.dsig.XMLSignatureException;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
@@ -132,8 +135,17 @@ public class SignaturePart {
 
             NodeList nl = (NodeList)xpath.compile("//*[@Id]").evaluate(doc, XPathConstants.NODESET);
             final int length = nl.getLength();
+            final Set<String> ids = new HashSet<>();
             for (int i=0; i<length; i++) {
-                ((Element)nl.item(i)).setIdAttribute("Id", true);
+                Element el = (Element)nl.item(i);
+                String id = el.getAttribute("Id");
+                if (!ids.add(id)) {
+                    // the Ids are the only way to resolve a same-document reference, so a duplicate
+                    // would let an attacker-supplied element stand in for the signed one
+                    LOG.atWarn().log("the signature has more than one element with the Id {}", id);
+                    return false;
+                }
+                el.setIdAttribute("Id", true);
             }
 
             DOMValidateContext domValidateContext = new DOMValidateContext(keySelector, doc);
@@ -146,7 +158,9 @@ public class SignaturePart {
             XMLSignatureFactory xmlSignatureFactory = signatureInfo.getSignatureFactory();
             XMLSignature xmlSignature = xmlSignatureFactory.unmarshalXMLSignature(domValidateContext);
 
-            boolean valid = xmlSignature.validate(domValidateContext) && hasSignedRelationships(doc, xmlSignature);
+            boolean valid = xmlSignature.validate(domValidateContext)
+                && hasValidatedManifests(doc, xmlSignature)
+                && hasSignedRelationships(doc, xmlSignature);
 
             if (valid) {
                 signer = keySelector.getSigner();
@@ -182,6 +196,58 @@ public class SignaturePart {
             LOG.atError().withThrowable(e).log(s);
             throw new EncryptedDocumentException(s, e);
         }
+    }
+
+    /**
+     * Checks that every referenced element which carries a ds:Manifest is one whose manifests
+     * {@code org.jcp.xml.dsig.validateManifests} validates, i.e. that the reference resolves to a
+     * ds:Object of the signature or to a ds:Manifest which is the content of one. A signed object
+     * moved into another element keeps its canonical form and so its digest, but the references of
+     * its manifest, i.e. of the package parts, would no longer be checked.
+     * <p>
+     * Manifests which the SignedInfo doesn't reference, e.g. in unsigned XAdES properties, are not
+     * relied upon here and are left alone.
+     */
+    private static boolean hasValidatedManifests(Document doc, XMLSignature xmlSignature) {
+        // the Ids of the ds:Object children of ds:Signature and of the ds:Manifest they contain
+        Set<String> validated = new HashSet<>();
+        for (XMLObject obj : xmlSignature.getObjects()) {
+            addId(validated, obj.getId());
+            for (XMLStructure content : obj.getContent()) {
+                if (content instanceof Manifest) {
+                    addId(validated, ((Manifest)content).getId());
+                }
+            }
+        }
+
+        for (Reference ref : xmlSignature.getSignedInfo().getReferences()) {
+            String uri = ref.getURI();
+            if (uri == null || !uri.startsWith("#")) {
+                continue;
+            }
+            String id = uri.substring(1);
+            Element referenced = doc.getElementById(id);
+            // keying this on the manifest instead of the reference type keeps a reference without a
+            // Type attribute from skipping the check
+            if (referenced == null || validated.contains(id) || !hasManifest(referenced)) {
+                continue;
+            }
+            LOG.atWarn().log("the manifest in the referenced {} with the Id {} is not validated, " +
+                "as it isn't the content of a ds:Object of the signature", referenced.getLocalName(), id);
+            return false;
+        }
+        return true;
+    }
+
+    private static void addId(Set<String> ids, String id) {
+        if (id != null) {
+            ids.add(id);
+        }
+    }
+
+    private static boolean hasManifest(Element referenced) {
+        return (XML_DIGSIG_NS.equals(referenced.getNamespaceURI()) && "Manifest".equals(referenced.getLocalName()))
+            || referenced.getElementsByTagNameNS(XML_DIGSIG_NS, "Manifest").getLength() > 0;
     }
 
     /**
