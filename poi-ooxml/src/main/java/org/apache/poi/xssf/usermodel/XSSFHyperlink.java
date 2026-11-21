@@ -38,7 +38,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
 public class XSSFHyperlink implements Hyperlink, Duplicatable {
     final private HyperlinkType _type;
     private PackageRelationship _externalRel;
-    final private CTHyperlink _ctHyperlink; //contains a reference to the cell where the hyperlink is anchored, getRef()
+    private CTHyperlink _ctHyperlink; //contains a reference to the cell where the hyperlink is anchored, getRef()
     private String _location; //what the hyperlink refers to
     private String _relLocation; //the location that was folded into _location as the fragment of the relationship target
     private XSSFSheet _sheet; //the sheet this hyperlink belongs to, null as long as it is not added to one
@@ -161,15 +161,43 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
      * Generates the relation if required
      */
     protected void generateRelationIfNeeded(PackagePart sheetPart) {
-        if (_externalRel == null && needsRelationToo()) {
+        if (!needsRelationToo()) {
+            return;
+        }
+        if (_externalRel == null) {
             // Generate the relation
             _externalRel =
                     sheetPart.addExternalRelationship(_location, XSSFRelation.SHEET_HYPERLINKS.getRelation());
-            _relShared = false;
-
-            // Update the r:id
-            _ctHyperlink.setId(_externalRel.getId());
+        } else if (isRemovedFrom(sheetPart) || isMovedTo(sheetPart)) {
+            // the hyperlink was added to this sheet again after its relationship was removed with it,
+            // or it was moved here from another sheet, whose relationships this sheet can't refer to.
+            // The old target is used, as the location is still written as a separate attribute.
+            _externalRel = sheetPart.addExternalRelationship(
+                    _externalRel.getTargetURI().toString(), XSSFRelation.SHEET_HYPERLINKS.getRelation());
+        } else {
+            return;
         }
+        _relShared = false;
+
+        // Update the r:id
+        _ctHyperlink.setId(_externalRel.getId());
+    }
+
+    /**
+     * @return whether the relationship belongs to the sheet part but has been removed from it
+     */
+    private boolean isRemovedFrom(PackagePart sheetPart) {
+        return sheetPart.equals(_externalRel.getSource()) && sheetPart.getRelationship(_externalRel.getId()) == null;
+    }
+
+    /**
+     * @return whether the relationship belongs to another sheet, while this hyperlink was last added to
+     *  the given sheet part. A hyperlink still listed by the other sheet as well keeps the relationship
+     *  there, as it is only written to the sheet it was last added to.
+     */
+    private boolean isMovedTo(PackagePart sheetPart) {
+        return !sheetPart.equals(_externalRel.getSource())
+            && _sheet != null && sheetPart.equals(_sheet.getPackagePart());
     }
 
     /**
@@ -193,6 +221,15 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
      */
     void markRelationshipShared() {
         _relShared = true;
+    }
+
+    /**
+     * Give this hyperlink its own copy of its XML, which can belong to the worksheet XML of the
+     * sheet it was read from. That sheet drops its hyperlinks element when it is written without
+     * hyperlinks, which would disconnect the XML of a hyperlink moved to another sheet.
+     */
+    void detachFromSheetXml() {
+        _ctHyperlink = (CTHyperlink) _ctHyperlink.copy();
     }
 
     /**

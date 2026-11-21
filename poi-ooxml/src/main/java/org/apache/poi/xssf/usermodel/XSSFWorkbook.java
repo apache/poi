@@ -720,7 +720,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         List<ReferenceRelationship> referenceRelationships = srcSheet.getReferenceRelationships();
         for (ReferenceRelationship ref : referenceRelationships) {
             if (ref instanceof HyperlinkRelationship) {
-                createHyperlink(ref.getUri(), ref.isExternal(), ref.getId());
+                // on the cloned sheet: the ids are the source sheet's, so on the workbook part they
+                // would replace the workbook's own relationships with the same ids, e.g. of a sheet
+                clonedSheet.createHyperlink(ref.getUri(), ref.isExternal(), ref.getId());
             }
         }
 
