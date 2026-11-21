@@ -41,10 +41,10 @@ plugins {
     id 'com.github.spotbugs' version '6.5.13'
 
     id 'de.thetaphi.forbiddenapis' version '3.11'
-    id 'org.sonarqube' version '7.5.0.8588'
-    id 'org.cyclonedx.bom' version '3.5.1'
+    id 'org.sonarqube' version '7.6.0.18749'
+    id 'org.cyclonedx.bom' version '3.6.1'
     id 'com.adarshr.test-logger' version '4.0.0'
-    id 'me.champeau.jmh' version '0.7.3' apply false
+    id 'me.champeau.jmh' version '0.7.4' apply false
 }
 
 repositories {
@@ -159,7 +159,7 @@ subprojects {
     apply plugin: 'com.adarshr.test-logger'
 
     ext {
-        bouncyCastleVersion = '1.86'
+        bouncyCastleVersion = '1.87'
         commonsCodecVersion = '1.23.0'
         commonsCompressVersion = '1.28.0'
         commonsIoVersion = '2.22.0'
@@ -168,16 +168,16 @@ subprojects {
         mockitoVersion = '5.24.0'
         hamcrestVersion = '3.0'
         xmlbeansVersion = '5.4.1'
-        batikVersion = '1.19'
+        batikVersion = '1.20'
         graphics2dVersion = '3.0.5'
         pdfboxVersion = '3.0.8'
-        saxonVersion = '13.0'
-        guavaVersion = '33.7.2-jre'
+        saxonVersion = '13.1'
+        guavaVersion = '33.8.0-jre'
         slf4jVersion = '2.0.20'
         jspecifyVersion = '1.0.1'
         xmlSecVersion = '4.0.4'
-        jakartaXmlBindVersion = '4.0.2'
-        jakartaActivationVersion = '2.1.3'
+        jakartaXmlBindVersion = '4.0.5'
+        jakartaActivationVersion = '2.1.4'
         apiGuardianVersion = '1.1.2'
 
         jdkVersion = (project.properties['jdkVersion'] ?: '17') as int
@@ -521,7 +521,7 @@ subprojects {
     }
 
     jacoco {
-        toolVersion = '0.8.15'
+        toolVersion = '0.8.16'
     }
 
     jacocoTestReport {
