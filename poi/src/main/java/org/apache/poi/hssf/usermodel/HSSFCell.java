@@ -1088,7 +1088,16 @@ public class HSSFCell extends CellBase {
         if (null == comment){
             return;
         }
-        _sheet.getDrawingPatriarch().removeShape(comment);
+        HSSFSheet.removeComment(_sheet.getDrawingPatriarch(), comment);
+    }
+
+    /**
+     * Forgets the comment this cell has cached, without touching the sheet's drawing. Used when
+     * the comment has been removed from the drawing already, for example because the cell's row
+     * was removed.
+     */
+    void clearCachedComment() {
+        _comment = null;
     }
 
     /**

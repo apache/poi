@@ -1130,15 +1130,120 @@ final class TestHSSFSheet extends BaseTestSheet {
                 cell.setCellComment(comment);
             }
 
+            HSSFCell removedCell = sheet.getRow(0).getCell(0);
+            sheet.removeRow(sheet.getRow(0));
+            assertEquals("[A2]", sheet.getCellComments().keySet().toString());
+            // the comment records are gone, so the removed cell must not return it from its cache
+            assertNull(removedCell.getCellComment());
+
+            try (HSSFWorkbook wb2 = writeOutAndReadBack(wb1)) {
+                HSSFSheet sheet2 = wb2.getSheetAt(0);
+                // read the records before anything aggregates the drawing: neither the NoteRecord
+                // of the removed comment nor its text is in the written stream
+                assertEquals(List.of(1), noteRows(sheet2));
+                assertEquals(List.of("comment 1"), textObjectStrings(sheet2));
+
+                assertEquals("[A2]", sheet2.getCellComments().keySet().toString());
+                assertEquals("comment 1", sheet2.getCellComment(new CellAddress(1, 0)).getString().getString());
+            }
+        }
+    }
+
+    @Test
+    void removeRowRemovesCommentInShapeGroup() throws IOException {
+        try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb1.createSheet();
+            sheet.createRow(0).createCell(0);
+            sheet.createRow(1).createCell(0);
+            HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+            HSSFShapeGroup group = patriarch.createGroup(
+                    new HSSFClientAnchor(0, 0, 0, 0, (short) 1, 0, (short) 5, 5));
+            group.setCoordinates(0, 0, 1023, 255);
+            addCommentToGroup(patriarch, group, 0, "grouped 0");
+            addCommentToGroup(patriarch, group, 1, "grouped 1");
+
             sheet.removeRow(sheet.getRow(0));
             assertEquals("[A2]", sheet.getCellComments().keySet().toString());
 
             try (HSSFWorkbook wb2 = writeOutAndReadBack(wb1)) {
                 HSSFSheet sheet2 = wb2.getSheetAt(0);
-                assertEquals("[A2]", sheet2.getCellComments().keySet().toString());
-                assertEquals("comment 1", sheet2.getCellComment(new CellAddress(1, 0)).getString().getString());
+                assertEquals(List.of(1), noteRows(sheet2));
+                assertEquals(List.of("grouped 1"), textObjectStrings(sheet2));
             }
         }
+    }
+
+    @Test
+    void removeRowLeavesASheetWithoutADrawingAlone() throws IOException {
+        try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb1.createSheet();
+            sheet.createRow(0).createCell(0).setCellValue("a");
+            sheet.createRow(1).createCell(0).setCellValue("b");
+
+            sheet.removeRow(sheet.getRow(0));
+
+            // removing a row must not give the sheet a drawing it did not have
+            assertNull(sheet.getDrawingPatriarch());
+            try (HSSFWorkbook wb2 = writeOutAndReadBack(wb1)) {
+                assertNull(wb2.getSheetAt(0).getDrawingPatriarch());
+            }
+        }
+    }
+
+    @Test
+    void removeRowWithoutACommentDoesNotAggregateTheDrawing() throws IOException {
+        try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb1.createSheet();
+            sheet.createRow(0).createCell(0).setCellValue("a");
+            sheet.createRow(1).createCell(0).setCellValue("b");
+            int picture = wb1.addPicture(new byte[]{1, 2, 3}, Workbook.PICTURE_TYPE_JPEG);
+            sheet.createDrawingPatriarch().createPicture(
+                    new HSSFClientAnchor(0, 0, 0, 0, (short) 1, 0, (short) 3, 3), picture);
+
+            try (HSSFWorkbook wb2 = writeOutAndReadBack(wb1)) {
+                HSSFSheet sheet2 = wb2.getSheetAt(0);
+                sheet2.removeRow(sheet2.getRow(0));
+
+                // the row has no comment, so the sheet's drawing records are left as they were read
+                assertNull(sheet2.getSheet().findFirstRecordBySid(EscherAggregate.sid));
+                assertNotNull(sheet2.getSheet().findFirstRecordBySid(DrawingRecord.sid));
+            }
+        }
+    }
+
+    /**
+     * Puts a comment in a shape group, the way a workbook saved by Excel has it once the drawing
+     * objects have been grouped. {@link HSSFShapeGroup} has no createComment of its own.
+     */
+    private static void addCommentToGroup(HSSFPatriarch patriarch, HSSFShapeGroup group, int row, String text) {
+        HSSFComment comment = new HSSFComment(group, new HSSFChildAnchor(0, row * 100, 100, row * 100 + 100));
+        comment.setRow(row);
+        comment.setColumn(0);
+        comment.setString(new HSSFRichTextString(text));
+        group.addShape(comment);
+        comment.setShapeId(patriarch.newShapeId());
+        group.getEscherContainer().addChildRecord(comment.getEscherContainer());
+        comment.afterInsert(patriarch);
+    }
+
+    private static List<Integer> noteRows(HSSFSheet sheet) {
+        List<Integer> rows = new ArrayList<>();
+        for (RecordBase rec : sheet.getSheet().getRecords()) {
+            if (rec instanceof NoteRecord note) {
+                rows.add(note.getRow());
+            }
+        }
+        return rows;
+    }
+
+    private static List<String> textObjectStrings(HSSFSheet sheet) {
+        List<String> strings = new ArrayList<>();
+        for (RecordBase rec : sheet.getSheet().getRecords()) {
+            if (rec instanceof TextObjectRecord txo) {
+                strings.add(txo.getStr().getString());
+            }
+        }
+        return strings;
     }
 
     @Test
