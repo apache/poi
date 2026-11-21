@@ -456,6 +456,8 @@ public class XMLSlideShow extends POIXMLDocument
      * Return all the charts in the slideshow
      */
     public List<XSLFChart> getCharts() {
+        // charts can be removed together with their shapes
+        _charts.removeIf(c -> !getPackage().containPart(c.getPackagePart().getPartName()));
         return Collections.unmodifiableList(_charts);
     }
 

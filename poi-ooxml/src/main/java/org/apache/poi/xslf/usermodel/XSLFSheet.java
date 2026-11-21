@@ -27,9 +27,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.IntConsumer;
 
 import javax.xml.namespace.QName;
@@ -77,6 +79,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 public abstract class XSLFSheet extends POIXMLDocumentPart
         implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     private static final Logger LOG = PoiLogManager.getLogger(XSLFSheet.class);
+    private static final String RELATIONSHIPS_NS = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
 
     private XSLFDrawing _drawing;
     private List<XSLFShape> _shapes;
@@ -382,7 +385,9 @@ public abstract class XSLFSheet extends POIXMLDocumentPart
         } else if (obj instanceof CTConnector) {
             removeElement(spTree.getCxnSpArray(), obj, spTree::removeCxnSp);
         } else if (obj instanceof CTGraphicalObjectFrame) {
+            Set<String> relIds = getRelationIds((XSLFGraphicFrame)xShape);
             removeElement(spTree.getGraphicFrameArray(), obj, spTree::removeGraphicFrame);
+            removeUnusedRelations(relIds);
         } else if (obj instanceof CTPicture) {
             XSLFPictureShape ps = (XSLFPictureShape)xShape;
             removePictureRelation(ps);
@@ -725,6 +730,48 @@ public abstract class XSLFSheet extends POIXMLDocumentPart
         if (numberOfRelations <= 1) {
             removeRelation(pictureShape.getBlipId());
         }
+    }
+
+    /**
+     * Helper method for sheet and group shapes
+     *
+     * @param frame the graphic frame of a chart, an embedded object, a diagram, ...
+     * @return the ids of the relationships of this sheet, which the frame uses
+     */
+    Set<String> getRelationIds(XSLFGraphicFrame frame) {
+        Set<String> ids = getRelationIds(frame.getXmlObject());
+        if (frame instanceof XSLFDiagram diagram && diagram.getDiagramDrawing() != null) {
+            // the diagram drawing is referred to by the diagram data and not by the frame
+            String drawingId = getRelationId(diagram.getDiagramDrawing());
+            if (drawingId != null) {
+                ids.add(drawingId);
+            }
+        }
+        return ids;
+    }
+
+    private static Set<String> getRelationIds(XmlObject xml) {
+        Set<String> ids = new HashSet<>();
+        try (XmlCursor cur = xml.newCursor(); XmlCursor end = xml.newCursor()) {
+            end.toEndToken();
+            while (cur.toNextToken() != XmlCursor.TokenType.NONE && cur.isLeftOf(end)) {
+                if (cur.isAttr() && RELATIONSHIPS_NS.equals(cur.getName().getNamespaceURI())) {
+                    ids.add(cur.getTextValue());
+                }
+            }
+        }
+        return ids;
+    }
+
+    /**
+     * Helper method for sheet and group shapes
+     *
+     * @param relIds the relationship ids of a removed shape, whose relations are to be removed,
+     *               only if nothing else on this sheet refers to them
+     */
+    void removeUnusedRelations(Set<String> relIds) {
+        relIds.removeAll(getRelationIds(getXmlObject()));
+        relIds.forEach(this::removeRelation);
     }
 
 
