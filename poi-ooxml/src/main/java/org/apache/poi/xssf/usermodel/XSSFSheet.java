@@ -232,7 +232,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
                     hyperRel = hyperRels.getRelationshipByID(hyperlink.getId());
                 }
 
-                hyperlinks.add( new XSSFHyperlink(hyperlink, hyperRel) );
+                XSSFHyperlink link = new XSSFHyperlink(hyperlink, hyperRel);
+                link.setSheet(this);
+                hyperlinks.add(link);
             }
         } catch (InvalidFormatException e){
             throw new POIXMLException(e);
@@ -240,28 +242,61 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     }
 
     /**
-     * Remove the hyperlink relations no hyperlink refers to anymore, i.e. those of hyperlinks
-     * that were removed or got a new address, as they still hold the old target
+     * Add the relationship for the new address of a hyperlink of this sheet and remove the one it
+     * had, as that still holds the old target. A new relationship id is used, so that references
+     * to the old one, e.g. in a sheet already cloned from this one, keep resolving.
+     *
+     * @param hyperlink the hyperlink whose address changed
+     * @param address the new address
+     * @return the new relationship, {@code null} if this sheet has no package part yet
      */
-    private void removeUnusedHyperlinkRelations() {
+    PackageRelationship replaceHyperlinkRelation(XSSFHyperlink hyperlink, String address) {
         PackagePart part = getPackagePart();
         if (part == null) {
+            return null;
+        }
+
+        PackageRelationship rel =
+            part.addExternalRelationship(address, XSSFRelation.SHEET_HYPERLINKS.getRelation());
+        removeHyperlinkRelation(hyperlink);
+        return rel;
+    }
+
+    /**
+     * Remove the relationship of a hyperlink that was removed or got a new address, as it still
+     * holds the link target. Only the relationship the hyperlink itself held is removed, and only
+     * if it belongs to this sheet and no other hyperlink refers to it anymore, e.g. a hyperlink
+     * shared with another sheet or the copies {@link #removeHyperlink(int, int)} creates when a
+     * hyperlink is removed from part of its cell range.
+     *
+     * @param hyperlink the hyperlink that no longer uses its relationship
+     */
+    private void removeHyperlinkRelation(XSSFHyperlink hyperlink) {
+        PackageRelationship rel = hyperlink.getExternalRelationship();
+        PackagePart part = getPackagePart();
+        if (rel == null || part == null || !part.equals(rel.getSource())) {
             return;
         }
 
-        Set<String> ids = new HashSet<>();
-        for (XSSFHyperlink hyperlink : hyperlinks) {
-            ids.add(hyperlink.getCTHyperlink().getId());
-        }
-
-        try {
-            for (PackageRelationship rel : part.getRelationshipsByType(XSSFRelation.SHEET_HYPERLINKS.getRelation())) {
-                if (!ids.contains(rel.getId())) {
-                    part.removeRelationship(rel.getId());
+        for (Sheet sheet : getWorkbook()) {
+            if (!(sheet instanceof XSSFSheet)) {
+                continue;
+            }
+            List<XSSFHyperlink> links = ((XSSFSheet) sheet).hyperlinks;
+            if (links == null) {
+                continue;
+            }
+            for (XSSFHyperlink other : links) {
+                if (other != hyperlink && rel.equals(other.getExternalRelationship())) {
+                    return;
                 }
             }
-        } catch (InvalidFormatException e) {
-            throw new POIXMLException(e);
+        }
+
+        // removeReferenceRelationship keeps the reference relationships of this part in sync with
+        // the package, it only knows the relationships the sheet was read with
+        if (!removeReferenceRelationship(rel.getId())) {
+            part.removeRelationship(rel.getId());
         }
     }
 
@@ -3670,6 +3705,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      * @param hyperlink the link to add
      */
     public void addHyperlink(XSSFHyperlink hyperlink) {
+        hyperlink.setSheet(this);
         hyperlinks.add(hyperlink);
     }
 
@@ -3681,7 +3717,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      * @since 5.1.0
      */
     public void removeHyperlink(XSSFHyperlink hyperlink) {
-        hyperlinks.remove(hyperlink);
+        if (hyperlinks.remove(hyperlink)) {
+            // the relationship still holds the link target
+            removeHyperlinkRelation(hyperlink);
+        }
     }
 
     /**
@@ -3987,7 +4026,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
                 // nothing to do
             }*/
         }
-        removeUnusedHyperlinkRelations();
 
         CellRangeAddress cellRangeAddress = dimensionOverride;
         if (cellRangeAddress == null) {

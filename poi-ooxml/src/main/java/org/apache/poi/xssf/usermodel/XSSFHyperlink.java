@@ -40,6 +40,8 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
     private PackageRelationship _externalRel;
     final private CTHyperlink _ctHyperlink; //contains a reference to the cell where the hyperlink is anchored, getRef()
     private String _location; //what the hyperlink refers to
+    private String _relLocation; //the location that was folded into _location as the fragment of the relationship target
+    private XSSFSheet _sheet; //the sheet this hyperlink belongs to, null as long as it is not added to one
 
     /**
      * Create a new XSSFHyperlink. This method is protected to be used only by
@@ -84,7 +86,8 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
             _location = target.toString();
             if (ctHyperlink.getLocation() != null) {
                 // URI fragment
-                _location += "#" + ctHyperlink.getLocation();
+                _relLocation = ctHyperlink.getLocation();
+                _location += "#" + _relLocation;
             }
 
             // Try to figure out the type
@@ -114,6 +117,9 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
             XSSFHyperlink xlink = (XSSFHyperlink) other;
             _type = xlink.getType();
             _location = xlink._location;
+            _relLocation = xlink._relLocation;
+            // the copy shares the relationship until it is added to a sheet and its address changes,
+            // the owning sheet is not copied so that changing the copy cannot touch the original's relationship
             _externalRel = xlink._externalRel;
             _ctHyperlink = (CTHyperlink) xlink._ctHyperlink.copy();
         }
@@ -151,12 +157,27 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
     protected void generateRelationIfNeeded(PackagePart sheetPart) {
         if (_externalRel == null && needsRelationToo()) {
             // Generate the relation
-            PackageRelationship rel =
+            _externalRel =
                     sheetPart.addExternalRelationship(_location, XSSFRelation.SHEET_HYPERLINKS.getRelation());
 
             // Update the r:id
-            _ctHyperlink.setId(rel.getId());
+            _ctHyperlink.setId(_externalRel.getId());
         }
+    }
+
+    /**
+     * @return the relationship holding this hyperlink's target, {@code null} if it doesn't have one yet
+     */
+    PackageRelationship getExternalRelationship() {
+        return _externalRel;
+    }
+
+    /**
+     * Remember the sheet this hyperlink was read from or added to, so that a changed address can
+     * replace the relationship holding the old target
+     */
+    void setSheet(XSSFSheet sheet) {
+        _sheet = sheet;
     }
 
     /**
@@ -238,11 +259,19 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
         validate(address);
 
         if (_externalRel != null && !address.equals(_location)) {
-            // the relationship holds the old target, a new one is generated when the sheet is written
-            _externalRel = null;
-            if (_ctHyperlink.isSetLocation()) {
+            // the relationship holds the old target, so it is replaced by one for the new address.
+            // Without an owning sheet there is no package to update, the relationship is then
+            // generated when the sheet is written.
+            _externalRel = _sheet == null ? null : _sheet.replaceHyperlinkRelation(this, address);
+            if (_externalRel != null) {
+                _ctHyperlink.setId(_externalRel.getId());
+            }
+            if (_relLocation != null && _relLocation.equals(_ctHyperlink.getLocation())) {
+                // the location was the fragment of the old address, which the new address replaces.
+                // A location set by the caller is kept, as it is not part of the old address.
                 _ctHyperlink.unsetLocation();
             }
+            _relLocation = null;
         }
        _location = address;
         //we must set location for internal hyperlinks
