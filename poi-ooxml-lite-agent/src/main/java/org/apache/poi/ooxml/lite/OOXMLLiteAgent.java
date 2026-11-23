@@ -119,6 +119,11 @@ public class OOXMLLiteAgent {
         public byte[] transform(ClassLoader loader, String className, Class redefiningClass, ProtectionDomain domain, byte[] bytes) {
             if (logPath != null && className != null && includes.matcher(className).find()) {
                 write(logPath, className, hashes);
+
+                // ensure that we include parent class for $Enum sub-classes
+                if (className.endsWith("$Enum")) {
+                    write(logPath, className.substring(0, className.length() - "$Enum".length()), hashes);
+                }
             }
             return bytes;
         }
