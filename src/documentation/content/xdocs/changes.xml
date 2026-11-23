@@ -71,6 +71,13 @@
     </section>
 
     <release version="6.0.1" date="TBD">
+        <summary>
+            <summary-item>Upgrade bouncycastle dependency to 1.87</summary-item>
+            <summary-item>Upgrade batik dependency to 1.20</summary-item>
+            <summary-item>Upgrade jakarta.xml.bind-api dependency to 4.0.5</summary-item>
+            <summary-item>Upgrade jakarta.activation-api dependency to 2.1.4</summary-item>
+            <summary-item>Upgrade Gradle to 9.9.1</summary-item>
+        </summary>
         <actions>
             <action type="fix" fixes-bug="70292" context="HSSF">FileSharingRecord: support UTF-16LE user names</action>
             <action type="fix" fixes-bug="github-1473" context="SS_Common">Fraction formatting: fix SimpleFraction overflow, cap denominator digits and allow an improper fraction's numerator up to an unsigned 32-bit int</action>
