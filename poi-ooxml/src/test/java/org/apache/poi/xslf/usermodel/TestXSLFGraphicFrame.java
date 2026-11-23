@@ -16,17 +16,25 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import org.apache.poi.openxml4j.opc.PackagePart;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.apache.poi.xslf.XSLFTestDataSamples.openSampleDocument;
 import static org.apache.poi.xslf.XSLFTestDataSamples.writeOutAndReadBack;
 
 class TestXSLFGraphicFrame {
+
+    private static final Pattern CHART_PARTS = Pattern.compile("/ppt/(charts|embeddings)/.*");
+    private static final Pattern DIAGRAM_PARTS = Pattern.compile("/ppt/(diagrams|media)/.*");
 
     /**
      * Removing the frame of a chart, an embedded object or a diagram also removes the parts
@@ -37,10 +45,10 @@ class TestXSLFGraphicFrame {
         try (XMLSlideShow ppt = openSampleDocument("pie-chart.pptx")) {
             XSLFSlide slide = ppt.getSlides().get(0);
             assertTrue(slide.removeShape(findFrame(slide)));
-            assertTrue(ppt.getCharts().isEmpty());
+            assertThat(ppt.getCharts(), empty());
             try (XMLSlideShow ppt2 = writeOutAndReadBack(ppt)) {
-                assertEquals(0, ppt2.getPackage().getPartsByName(Pattern.compile("/ppt/(charts|embeddings)/.*")).size());
-                assertTrue(ppt2.getCharts().isEmpty());
+                assertThat(ppt2.getPackage().getPartsByName(CHART_PARTS), empty());
+                assertThat(ppt2.getCharts(), empty());
             }
         }
 
@@ -48,7 +56,7 @@ class TestXSLFGraphicFrame {
             XSLFSlide slide = ppt.getSlides().get(0);
             assertTrue(slide.removeShape(findFrame(slide)));
             try (XMLSlideShow ppt2 = writeOutAndReadBack(ppt)) {
-                assertEquals(0, ppt2.getPackage().getPartsByName(Pattern.compile("/ppt/embeddings/oleObject1.bin")).size());
+                assertThat(ppt2.getPackage().getPartsByName(Pattern.compile("/ppt/embeddings/oleObject1.bin")), empty());
                 // the objects of the other slides are kept
                 assertEquals(2, ppt2.getPackage().getPartsByName(Pattern.compile("/ppt/embeddings/.*")).size());
             }
@@ -58,7 +66,7 @@ class TestXSLFGraphicFrame {
             XSLFSlide slide = ppt.getSlides().get(0);
             assertTrue(slide.removeShape(findFrame(slide)));
             try (XMLSlideShow ppt2 = writeOutAndReadBack(ppt)) {
-                assertEquals(0, ppt2.getPackage().getPartsByName(Pattern.compile("/ppt/(diagrams|media)/.*")).size());
+                assertThat(ppt2.getPackage().getPartsByName(DIAGRAM_PARTS), empty());
                 assertEquals(1, ppt2.getSlides().get(0).getRelations().size());
             }
         }
@@ -71,8 +79,7 @@ class TestXSLFGraphicFrame {
     void testRemoveGraphicFrameKeepsSharedParts() throws IOException {
         try (XMLSlideShow ppt1 = openSampleDocument("pie-chart.pptx")) {
             XSLFSlide slide1 = ppt1.getSlides().get(0);
-            CTGraphicalObjectFrame frameXml = (CTGraphicalObjectFrame) findFrame(slide1).getXmlObject();
-            slide1.getSpTree().addNewGraphicFrame().set(frameXml.copy());
+            duplicateFrame(slide1);
 
             try (XMLSlideShow ppt = writeOutAndReadBack(ppt1)) {
                 XSLFSlide slide = ppt.getSlides().get(0);
@@ -81,10 +88,59 @@ class TestXSLFGraphicFrame {
                 assertNotNull(findFrame(slide).getChart());
 
                 assertTrue(slide.removeShape(findFrame(slide)));
-                assertTrue(ppt.getCharts().isEmpty());
+                assertThat(ppt.getCharts(), empty());
                 try (XMLSlideShow ppt2 = writeOutAndReadBack(ppt)) {
-                    assertEquals(0, ppt2.getPackage().getPartsByName(Pattern.compile("/ppt/(charts|embeddings)/.*")).size());
+                    assertThat(ppt2.getPackage().getPartsByName(CHART_PARTS), empty());
                 }
+            }
+        }
+
+        // two diagram frames sharing the diagram data also share its drawing, which the data
+        // and not the frame refers to
+        try (XMLSlideShow ppt1 = openSampleDocument("smartart-simple.pptx")) {
+            XSLFSlide slide1 = ppt1.getSlides().get(0);
+            duplicateFrame(slide1);
+
+            try (XMLSlideShow ppt = writeOutAndReadBack(ppt1)) {
+                XSLFSlide slide = ppt.getSlides().get(0);
+                int diagramParts = ppt.getPackage().getPartsByName(DIAGRAM_PARTS).size();
+                assertTrue(slide.removeShape(findFrame(slide)));
+                XSLFDiagram diagram = (XSLFDiagram) findFrame(slide);
+                assertNotNull(diagram.getDiagramDrawing());
+                assertNotNull(slide.getRelationId(diagram.getDiagramDrawing()));
+                try (XMLSlideShow ppt2 = writeOutAndReadBack(ppt)) {
+                    assertEquals(diagramParts, ppt2.getPackage().getPartsByName(DIAGRAM_PARTS).size());
+                    XSLFDiagram diagram2 = (XSLFDiagram) findFrame(ppt2.getSlides().get(0));
+                    assertNotNull(diagram2.getDiagramDrawing());
+                    assertFalse(diagram2.getGroupShape().getShapes().isEmpty());
+                }
+
+                assertTrue(slide.removeShape(findFrame(slide)));
+                try (XMLSlideShow ppt2 = writeOutAndReadBack(ppt)) {
+                    assertThat(ppt2.getPackage().getPartsByName(DIAGRAM_PARTS), empty());
+                }
+            }
+        }
+    }
+
+    /**
+     * A chart created after a chart was removed reuses the free part name, so the removed
+     * chart must be gone from the slideshow's list by then
+     */
+    @Test
+    void testCreateChartAfterRemoveGraphicFrame() throws IOException {
+        try (XMLSlideShow ppt = openSampleDocument("pie-chart.pptx")) {
+            XSLFSlide slide = ppt.getSlides().get(0);
+            XSLFChart removed = findFrame(slide).getChart();
+            assertTrue(slide.removeShape(findFrame(slide)));
+
+            XSLFChart chart = ppt.createChart(slide);
+            assertEquals(removed.getPackagePart().getPartName(), chart.getPackagePart().getPartName());
+            assertEquals(List.of(chart), ppt.getCharts());
+            try (XMLSlideShow ppt2 = writeOutAndReadBack(ppt)) {
+                assertEquals(1, ppt2.getCharts().size());
+                assertEquals(List.of(chart.getPackagePart().getPartName()),
+                    ppt2.getPackage().getPartsByName(Pattern.compile("/ppt/charts/chart.*")).stream().map(PackagePart::getPartName).collect(Collectors.toList()));
             }
         }
     }
@@ -94,6 +150,14 @@ class TestXSLFGraphicFrame {
             .filter(XSLFGraphicFrame.class::isInstance)
             .map(XSLFGraphicFrame.class::cast)
             .findFirst().orElseThrow(AssertionError::new);
+    }
+
+    /**
+     * Adds a copy of the first graphic frame, which refers to the same parts as the original
+     */
+    private static void duplicateFrame(XSLFSlide slide) {
+        CTGraphicalObjectFrame frameXml = (CTGraphicalObjectFrame) findFrame(slide).getXmlObject();
+        slide.getSpTree().addNewGraphicFrame().set(frameXml.copy());
     }
 
     @Test

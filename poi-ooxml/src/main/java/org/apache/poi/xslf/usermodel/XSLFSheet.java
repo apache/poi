@@ -80,6 +80,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart
         implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     private static final Logger LOG = PoiLogManager.getLogger(XSLFSheet.class);
     private static final String RELATIONSHIPS_NS = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+    private static final String STRICT_RELATIONSHIPS_NS = "http://purl.oclc.org/ooxml/officeDocument/relationships";
 
     private XSLFDrawing _drawing;
     private List<XSLFShape> _shapes;
@@ -385,9 +386,9 @@ public abstract class XSLFSheet extends POIXMLDocumentPart
         } else if (obj instanceof CTConnector) {
             removeElement(spTree.getCxnSpArray(), obj, spTree::removeCxnSp);
         } else if (obj instanceof CTGraphicalObjectFrame) {
-            Set<String> relIds = getRelationIds((XSLFGraphicFrame)xShape);
+            Set<String> relIds = getRelationIds(obj);
             removeElement(spTree.getGraphicFrameArray(), obj, spTree::removeGraphicFrame);
-            removeUnusedRelations(relIds);
+            removeUnusedRelations((XSLFGraphicFrame)xShape, relIds);
         } else if (obj instanceof CTPicture) {
             XSLFPictureShape ps = (XSLFPictureShape)xShape;
             removePictureRelation(ps);
@@ -735,32 +736,42 @@ public abstract class XSLFSheet extends POIXMLDocumentPart
     /**
      * Helper method for sheet and group shapes
      *
-     * @param frame the graphic frame of a chart, an embedded object, a diagram, ...
-     * @return the ids of the relationships of this sheet, which the frame uses
+     * @param xml the xml of a shape, which is about to be removed
+     * @return the ids of the relationships of this sheet, which the shape uses
      */
-    Set<String> getRelationIds(XSLFGraphicFrame frame) {
-        Set<String> ids = getRelationIds(frame.getXmlObject());
-        if (frame instanceof XSLFDiagram diagram && diagram.getDiagramDrawing() != null) {
-            // the diagram drawing is referred to by the diagram data and not by the frame
-            String drawingId = getRelationId(diagram.getDiagramDrawing());
-            if (drawingId != null) {
-                ids.add(drawingId);
-            }
-        }
-        return ids;
-    }
-
-    private static Set<String> getRelationIds(XmlObject xml) {
+    static Set<String> getRelationIds(XmlObject xml) {
         Set<String> ids = new HashSet<>();
         try (XmlCursor cur = xml.newCursor(); XmlCursor end = xml.newCursor()) {
             end.toEndToken();
             while (cur.toNextToken() != XmlCursor.TokenType.NONE && cur.isLeftOf(end)) {
-                if (cur.isAttr() && RELATIONSHIPS_NS.equals(cur.getName().getNamespaceURI())) {
+                if (cur.isAttr() && isRelationshipsNamespace(cur.getName().getNamespaceURI())) {
                     ids.add(cur.getTextValue());
                 }
             }
         }
         return ids;
+    }
+
+    private static boolean isRelationshipsNamespace(String namespaceURI) {
+        return RELATIONSHIPS_NS.equals(namespaceURI) || STRICT_RELATIONSHIPS_NS.equals(namespaceURI);
+    }
+
+    /**
+     * Helper method for sheet and group shapes
+     *
+     * @param frame  the removed graphic frame of a chart, an embedded object, a diagram, ...
+     * @param relIds the relationship ids the frame used, collected before it was removed
+     */
+    void removeUnusedRelations(XSLFGraphicFrame frame, Set<String> relIds) {
+        removeUnusedRelations(relIds);
+        if (frame instanceof XSLFDiagram diagram) {
+            // the diagram drawing is referred to by the diagram data and not by the frame,
+            // so it is released together with the relation to the data
+            XSLFDiagramDrawing drawing = diagram.getDiagramDrawing();
+            if (drawing != null && getRelationById(diagram.getDataModelId()) == null) {
+                removeRelation(drawing);
+            }
+        }
     }
 
     /**
@@ -770,8 +781,19 @@ public abstract class XSLFSheet extends POIXMLDocumentPart
      *               only if nothing else on this sheet refers to them
      */
     void removeUnusedRelations(Set<String> relIds) {
+        if (relIds.isEmpty()) {
+            // e.g. a table without hyperlinks, no need to scan the sheet
+            return;
+        }
         relIds.removeAll(getRelationIds(getXmlObject()));
-        relIds.forEach(this::removeRelation);
+        for (String relId : relIds) {
+            POIXMLDocumentPart part = getRelationById(relId);
+            removeRelation(relId);
+            if (part instanceof XSLFChart chart
+                    && !getPackagePart().getPackage().containPart(part.getPackagePart().getPartName())) {
+                getSlideShow().onChartRemoved(chart);
+            }
+        }
     }
 
 

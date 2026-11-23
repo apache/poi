@@ -184,12 +184,9 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
         } else if (obj instanceof CTConnector){
             XSLFSheet.removeElement(grpSp.getCxnSpArray(), obj, grpSp::removeCxnSp);
         } else if (obj instanceof CTGraphicalObjectFrame) {
-            XSLFSheet sh = getSheet();
-            Set<String> relIds = (sh != null) ? sh.getRelationIds((XSLFGraphicFrame)xShape) : null;
+            Set<String> relIds = XSLFSheet.getRelationIds(obj);
             XSLFSheet.removeElement(grpSp.getGraphicFrameArray(), obj, grpSp::removeGraphicFrame);
-            if (relIds != null) {
-                sh.removeUnusedRelations(relIds);
-            }
+            getSheet().removeUnusedRelations((XSLFGraphicFrame)xShape, relIds);
         } else if (obj instanceof CTPicture) {
             XSLFPictureShape ps = (XSLFPictureShape)xShape;
             XSLFSheet sh = getSheet();
