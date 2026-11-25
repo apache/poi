@@ -305,6 +305,11 @@ public class CellFormat {
                     throw new IllegalStateException("Cannot apply format " + format + " on object " + value + ", no applicable format part found ("
                             + "posNumFmt: " + posNumFmt + ", negNumFmt: " + negNumFmt + ", zeroNumFmt: " + zeroNumFmt);
                 }
+                if (applicableFormatPart.getCellFormatType() == CellFormatType.DATE
+                        && !DateUtil.isValidExcelDate(val)) {
+                    // as for a cell: a number that is not a date, such as a negative one, can't be shown as a date
+                    return apply(INVALID_VALUE_FOR_FORMAT);
+                }
                 return applicableFormatPart.apply(val);
             }
         } else if (value instanceof java.util.Date d) {

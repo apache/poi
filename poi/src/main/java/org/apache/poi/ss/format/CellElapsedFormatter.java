@@ -54,9 +54,9 @@ public class CellElapsedFormatter extends CellFormatter {
         }
 
         /**
-         * Returns this part of an elapsed time given as a whole number of the smallest units the format shows.
-         * Splitting an already rounded value lets a rounding carry into the larger parts, as in Excel
-         * (27:29:59.97 shown as {@code [h]:mm:ss} is 27:30:00, not 27:29:60).
+         * Returns this part of an elapsed time given as a whole number of units: seconds, or the fraction
+         * of a second the format shows. Splitting an already rounded value lets a rounding carry into the
+         * larger parts, as in Excel (27:29:59.97 shown as {@code [h]:mm:ss} is 27:30:00, not 27:29:60).
          */
         public long valueFor(long units, double smallestFactor) {
             long val = units / Math.round(factor / smallestFactor);
@@ -186,7 +186,9 @@ public class CellElapsedFormatter extends CellFormatter {
             elapsed = -elapsed;
         }
 
-        double smallestFactor = Double.MAX_VALUE;
+        // Round to seconds, or to the fraction of a second that is shown. Hours and minutes are not
+        // rounded up when nothing smaller is shown: 1:30:45 as [h]:mm is 1:30
+        double smallestFactor = SEC__FACTOR;
         for (TimeSpec spec : specs) {
             smallestFactor = Math.min(smallestFactor, spec.factor);
         }
