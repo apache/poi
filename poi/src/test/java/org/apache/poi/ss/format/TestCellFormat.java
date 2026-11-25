@@ -1407,4 +1407,35 @@ class TestCellFormat {
         Date aug4 = DateUtil.getJavaDate(AUG_4_2025_22_21_15, false, LocaleUtil.getUserTimeZone(), true);
         assertEquals("45873.93", CellFormat.getInstance("0.00").apply(aug4).text);
     }
+
+    /** 125:30:10 */
+    private static final double ELAPSED_125_30_10 = 5.2292824074;
+
+    /** Elapsed time is rounded as a whole, so the rounding carries into hours and minutes, as in Excel. */
+    @Test
+    void testElapsedTimeRoundsAsAWhole() {
+        assertEquals("27:30:00", CellFormat.getInstance("[h]:mm:ss").apply(1.145833).text);
+        assertEquals("24:00:00", CellFormat.getInstance("[h]:mm:ss").apply(0.999999).text);
+        assertEquals("125:30:10", CellFormat.getInstance("[h]:mm:ss").apply(ELAPSED_125_30_10).text);
+        assertEquals("7530:10", CellFormat.getInstance("[mm]:ss").apply(ELAPSED_125_30_10).text);
+        assertEquals("451810.00", CellFormat.getInstance("[ss].00").apply(ELAPSED_125_30_10).text);
+        assertEquals("75.25", CellFormat.getInstance("[ss].00").apply(75.25 / 86400).text);
+        assertEquals("-25:00:00", CellFormat.getInstance("[h]:mm:ss").apply(-1.041667).text);
+    }
+
+    /** Multi-section codes with elapsed sections, also through DataFormatter. */
+    @Test
+    void testMultiSectionElapsedFormat() {
+        String format = "[h]:mm:ss;\"<0\";\"0\";@\" h\"";
+        CellFormat cf = CellFormat.getInstance(format);
+        assertEquals("125:30:10", cf.apply(ELAPSED_125_30_10).text);
+        assertEquals("<0", cf.apply(-ELAPSED_125_30_10).text);
+        assertEquals("0", cf.apply(0.0).text);
+        assertEquals("27:30:00", cf.apply(1.145833).text);
+        assertEquals("Mixer-01 h", cf.apply("Mixer-01").text);
+
+        org.apache.poi.ss.usermodel.DataFormatter formatter = new org.apache.poi.ss.usermodel.DataFormatter(Locale.US);
+        assertEquals("125:30:10", formatter.formatRawCellContents(ELAPSED_125_30_10, -1, format));
+        assertEquals("<0", formatter.formatRawCellContents(-ELAPSED_125_30_10, -1, format));
+    }
 }
