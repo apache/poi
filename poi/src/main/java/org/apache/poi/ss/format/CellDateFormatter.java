@@ -37,6 +37,7 @@ public class CellDateFormatter extends CellFormatter {
     private final boolean amPmUpper;
     private final boolean showM;
     private final boolean showAmPm;
+    private final boolean monthInitial;
     private final DateFormat dateFmt;
     private final String sFmt;
 
@@ -51,6 +52,7 @@ public class CellDateFormatter extends CellFormatter {
         private boolean amPmUpper;
         private boolean showM;
         private boolean showAmPm;
+        private boolean monthInitial;
         private String sFmt;
         private int mStart = -1;
         private int mLen;
@@ -95,8 +97,13 @@ public class CellDateFormatter extends CellFormatter {
                     // For 'm' after 'h', output minutes ('m') not month ('M')
                     if (hStart >= 0)
                         return part.toLowerCase(Locale.ROOT);
-                    else
-                        return part.toUpperCase(Locale.ROOT);
+                    if (part.length() == 5) {
+                        // "mmmmm" is the month's first letter: format the full name, keep its first letter later
+                        monthInitial = true;
+                        mLen = 4;
+                        return "MMMM";
+                    }
+                    return part.toUpperCase(Locale.ROOT);
 
                 case 'y':
                 case 'Y':
@@ -177,6 +184,7 @@ public class CellDateFormatter extends CellFormatter {
         amPmUpper = partHandler.amPmUpper;
         showM = partHandler.showM;
         showAmPm = partHandler.showAmPm;
+        monthInitial = partHandler.monthInitial;
         sFmt = partHandler.sFmt;
         dateFmt = new SimpleDateFormat(descBuf.toString(), locale);
         dateFmt.setTimeZone(LocaleUtil.getUserTimeZone());
@@ -240,6 +248,11 @@ public class CellDateFormatter extends CellFormatter {
                         }
                     }
                     doneAm = true;
+                }
+            } else if (monthInitial && it.getAttribute(DateFormat.Field.MONTH) != null
+                    && Character.isLetter(ch)) {
+                if (it.getIndex() == it.getRunStart(DateFormat.Field.MONTH)) {
+                    toAppendTo.append(ch);
                 }
             } else {
                 toAppendTo.append(ch);
