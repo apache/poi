@@ -1362,4 +1362,219 @@ class TestCellFormat {
         assertThrows(IllegalArgumentException.class,
                 () -> cellFormat.apply(""));
     }
+
+    /** A single section with a text placeholder formats text, as in Excel. */
+    @Test
+    void testSingleTextSectionFormatsText() {
+        assertEquals("ID: Mixer-01", CellFormat.getInstance("\"ID: \"@").apply("Mixer-01").text);
+        assertEquals("HelloHello", CellFormat.getInstance("@@").apply("Hello").text);
+        assertEquals("Mixer-01 text", CellFormat.getInstance("@\" text\"").apply("Mixer-01").text);
+
+        CellFormatResult colored = CellFormat.getInstance("[Red]@").apply("Mixer-01");
+        assertEquals("Mixer-01", colored.text);
+        assertEquals(CellFormatPart.getColor("red"), colored.textColor);
+    }
+
+    /** A format with only a text section shows numbers as General, as in Excel. */
+    @Test
+    void testSingleTextSectionLeavesNumbersUnchanged() {
+        assertEquals("12.5", CellFormat.getInstance("\"ID: \"@").apply(12.5).text);
+        assertEquals("-12.5", CellFormat.getInstance("\"ID: \"@").apply(-12.5).text);
+        assertEquals("0", CellFormat.getInstance("@@").apply(0.0).text);
+    }
+
+    /** A last section with a text placeholder is the text section, not a number section, as in Excel. */
+    @Test
+    void testLastTextSectionOfTwoOrThree() {
+        CellFormat two = CellFormat.getInstance("0.00;\"t: \"@");
+        assertEquals("1.50", two.apply(1.5).text);
+        assertEquals("-1.50", two.apply(-1.5).text);
+        assertEquals("0.00", two.apply(0.0).text);
+        assertEquals("t: abc", two.apply("abc").text);
+
+        CellFormat three = CellFormat.getInstance("0.0;(0.0);@\" text\"");
+        assertEquals("1.5", three.apply(1.5).text);
+        assertEquals("(1.5)", three.apply(-1.5).text);
+        assertEquals("0.0", three.apply(0.0).text);
+        assertEquals("abc text", three.apply("abc").text);
+
+        // the date section is the only number section, so a negative number is not a valid date
+        CellFormat date = CellFormat.getInstance("yyyy-mm-dd;@");
+        assertEquals("2025-08-04", date.apply(AUG_4_2025_22_21_15).text);
+        assertEquals(255, date.apply(-1.0).text.length());
+        assertEquals("abc", date.apply("abc").text);
+    }
+
+    /** A section of literal text only is a number section: it formats numbers and leaves text unchanged. */
+    @Test
+    void testLiteralOnlySectionIsANumberSection() {
+        assertEquals("n/a", CellFormat.getInstance("\"n/a\"").apply(12.5).text);
+        assertEquals("abc", CellFormat.getInstance("\"n/a\"").apply("abc").text);
+        assertEquals("abc", CellFormat.getInstance("\"user@host\"").apply("abc").text);
+        assertEquals("abc", CellFormat.getInstance("\\@").apply("abc").text);
+
+        CellFormat three = CellFormat.getInstance("\"TRUE\";\"FALSE\";\"ZERO\"");
+        assertEquals("TRUE", three.apply(1.0).text);
+        assertEquals("FALSE", three.apply(-1.0).text);
+        assertEquals("ZERO", three.apply(0.0).text);
+        assertEquals("abc", three.apply("abc").text);
+    }
+
+    /** A single section without a text placeholder leaves text unchanged, as in Excel. */
+    @Test
+    void testSingleNumberSectionLeavesTextUnchanged() {
+        assertEquals("Mixer-01", CellFormat.getInstance("0.00").apply("Mixer-01").text);
+        assertEquals("Mixer-01", CellFormat.getInstance("yyyy-mm-dd").apply("Mixer-01").text);
+        assertEquals("Mixer-01", CellFormat.getInstance("@").apply("Mixer-01").text);
+    }
+
+    /** 2025-08-04 22:21:15 */
+    private static final double AUG_4_2025_22_21_15 = 45873 + (22 * 3600 + 21 * 60 + 15) / 86400.0;
+
+    /** A number in a date section is an Excel serial date. */
+    @Test
+    void testNumberInDateSection() {
+        assertEquals("2025-08-04 22:21:15",
+                CellFormat.getInstance("yyyy-mm-dd hh:mm:ss").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("04.08.2025 22:21", CellFormat.getInstance("dd.mm.yyyy hh:mm").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("10:21 P", CellFormat.getInstance("h:mm A/P").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("2025-08-04 22:21:15.000",
+                CellFormat.getInstance("yyyy-mm-dd hh:mm:ss.000").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("2025-08-04", CellFormat.getInstance("yyyy-mm-dd;\"neg\";\"zero\"").apply(AUG_4_2025_22_21_15).text);
+    }
+
+    /** A Date in an elapsed or number section is formatted as its serial number, as in Excel. */
+    @Test
+    void testDateInElapsedAndNumberSections() {
+        Date oneDayOneHour = DateUtil.getJavaDate(1 + 1 / 24.0, false, LocaleUtil.getUserTimeZone(), true);
+        assertEquals("25:00:00", CellFormat.getInstance("[h]:mm:ss").apply(oneDayOneHour).text);
+
+        Date aug4 = DateUtil.getJavaDate(AUG_4_2025_22_21_15, false, LocaleUtil.getUserTimeZone(), true);
+        assertEquals("45873.93", CellFormat.getInstance("0.00").apply(aug4).text);
+    }
+
+    /** 125:30:10 */
+    private static final double ELAPSED_125_30_10 = 5.2292824074;
+
+    /** Elapsed time is rounded as a whole, so the rounding carries into hours and minutes, as in Excel. */
+    @Test
+    void testElapsedTimeRoundsAsAWhole() {
+        assertEquals("27:30:00", CellFormat.getInstance("[h]:mm:ss").apply(1.145833).text);
+        assertEquals("24:00:00", CellFormat.getInstance("[h]:mm:ss").apply(0.999999).text);
+        assertEquals("125:30:10", CellFormat.getInstance("[h]:mm:ss").apply(ELAPSED_125_30_10).text);
+        assertEquals("7530:10", CellFormat.getInstance("[mm]:ss").apply(ELAPSED_125_30_10).text);
+        assertEquals("451810.00", CellFormat.getInstance("[ss].00").apply(ELAPSED_125_30_10).text);
+        assertEquals("75.25", CellFormat.getInstance("[ss].00").apply(75.25 / 86400).text);
+        assertEquals("-25:00:00", CellFormat.getInstance("[h]:mm:ss").apply(-1.041667).text);
+    }
+
+    /** Multi-section codes with elapsed sections, also through DataFormatter. */
+    @Test
+    void testMultiSectionElapsedFormat() {
+        String format = "[h]:mm:ss;\"<0\";\"0\";@\" h\"";
+        CellFormat cf = CellFormat.getInstance(format);
+        assertEquals("125:30:10", cf.apply(ELAPSED_125_30_10).text);
+        assertEquals("<0", cf.apply(-ELAPSED_125_30_10).text);
+        assertEquals("0", cf.apply(0.0).text);
+        assertEquals("27:30:00", cf.apply(1.145833).text);
+        assertEquals("Mixer-01 h", cf.apply("Mixer-01").text);
+
+        org.apache.poi.ss.usermodel.DataFormatter formatter = new org.apache.poi.ss.usermodel.DataFormatter(Locale.US);
+        assertEquals("125:30:10", formatter.formatRawCellContents(ELAPSED_125_30_10, -1, format));
+        assertEquals("<0", formatter.formatRawCellContents(-ELAPSED_125_30_10, -1, format));
+    }
+
+    /** Hours and minutes are not rounded up when no smaller unit is shown; only the seconds are rounded. */
+    @Test
+    void testElapsedTimeTruncatesHoursAndMinutes() {
+        double oneThirtyFortyFive = (3600 + 30 * 60 + 45) / 86400.0;
+        assertEquals("1:30", CellFormat.getInstance("[h]:mm").apply(oneThirtyFortyFive).text);
+        assertEquals("1", CellFormat.getInstance("[h]").apply(1.6 / 24).text);
+        assertEquals("1", CellFormat.getInstance("[m]").apply(90 / 86400.0).text);
+        assertEquals("90", CellFormat.getInstance("[m]").apply(1.5 / 24).text);
+        assertEquals("2:00", CellFormat.getInstance("[h]:mm").apply(2 / 24.0).text);
+        assertEquals("-1:30", CellFormat.getInstance("[h]:mm").apply(-oneThirtyFortyFive).text);
+        // the same as DataFormatter
+        assertEquals("1:30", new org.apache.poi.ss.usermodel.DataFormatter(Locale.US)
+                .formatRawCellContents(oneThirtyFortyFive, -1, "[h]:mm"));
+    }
+
+    /** Zero and times without a day are serial dates like any other number: 1900 date windowing, not 1904. */
+    @Test
+    void testSmallNumbersInDateSection() {
+        assertEquals("1899-12-31 00:00", CellFormat.getInstance("yyyy-mm-dd hh:mm").apply(0.0).text);
+        assertEquals("1899-12-31 06:00", CellFormat.getInstance("yyyy-mm-dd hh:mm").apply(0.25).text);
+        assertEquals("1900-01-01 00:00", CellFormat.getInstance("yyyy-mm-dd hh:mm").apply(1.0).text);
+        assertEquals("0:00", CellFormat.getInstance("h:mm").apply(0.0).text);
+        assertEquals("18:00", CellFormat.getInstance("h:mm").apply(0.75).text);
+    }
+
+    /** A number that is not a valid date is shown as #s in a date section, as for a cell and as in Excel. */
+    @Test
+    void testNegativeNumberInDateSection() {
+        String invalid = CellFormat.getInstance("yyyy-mm-dd").apply(-1.0).text;
+        assertEquals(255, invalid.length());
+        assertEquals("", invalid.replace("#", ""));
+        assertEquals(invalid, CellFormat.getInstance("h:mm").apply(-0.25).text);
+        assertEquals(invalid, CellFormat.getInstance("[Red]yyyy-mm-dd").apply(-1.0).text);
+
+        // a negative number is still formatted by a number or elapsed section
+        assertEquals("-1.00", CellFormat.getInstance("0.00").apply(-1.0).text);
+        assertEquals("-24:00:00", CellFormat.getInstance("[h]:mm:ss").apply(-1.0).text);
+
+        // the formatter itself has no text to fall back to
+        assertThrows(IllegalArgumentException.class,
+                () -> new CellDateFormatter("yyyy-mm-dd").formatValue(new StringBuffer(), -1.0));
+    }
+
+    /** A cached format converts a number in the time zone it prints in, whatever the user time zone is by then. */
+    @Test
+    void testNumberInDateSectionAfterTimeZoneChange() {
+        TimeZone userTimeZone = LocaleUtil.getUserTimeZone();
+        try {
+            LocaleUtil.setUserTimeZone(TimeZone.getTimeZone("UTC"));
+            CellFormat cf = CellFormat.getInstance(Locale.US, "yyyy/mm/dd hh:mm:ss");
+            assertEquals("2025/08/04 22:21:15", cf.apply(AUG_4_2025_22_21_15).text);
+
+            LocaleUtil.setUserTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
+            assertEquals("2025/08/04 22:21:15", cf.apply(AUG_4_2025_22_21_15).text);
+        } finally {
+            LocaleUtil.setUserTimeZone(userTimeZone);
+        }
+    }
+
+    /** Only the "mmmmm" months of a format are shortened, and three or more "m" are a month even next to a time. */
+    @Test
+    void testMonthInitialWithOtherMonths() {
+        assertEquals("A August", CellFormat.getInstance("mmmmm mmmm").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("August A", CellFormat.getInstance("mmmm mmmmm").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("Aug-A-08", CellFormat.getInstance("mmm-mmmmm-mm").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("22:A", CellFormat.getInstance("hh:mmmmm").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("A:15", CellFormat.getInstance("mmmmm:ss").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("22:21 A", CellFormat.getInstance("hh:mm mmmmm").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("A 21:15", CellFormat.getInstance("mmmmm mm:ss").apply(AUG_4_2025_22_21_15).text);
+        // a Date is formatted the same way
+        Date aug4 = DateUtil.getJavaDate(AUG_4_2025_22_21_15, false, LocaleUtil.getUserTimeZone(), true);
+        assertEquals("A August", CellFormat.getInstance("mmmmm mmmm").apply(aug4).text);
+    }
+
+    /** "m" is the minutes only right after the hours or right before the seconds, as in Excel. */
+    @Test
+    void testMonthAfterTime() {
+        assertEquals("22:21 04/08/2025", CellFormat.getInstance("hh:mm dd/mm/yyyy").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("22:21:15 08-04", CellFormat.getInstance("hh:mm:ss mm-dd").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("04/08/2025 22:21", CellFormat.getInstance("dd/mm/yyyy hh:mm").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("08 22:21 08", CellFormat.getInstance("mm hh:mm mm").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("10:21 PM 8", CellFormat.getInstance("h:mm AM/PM m").apply(AUG_4_2025_22_21_15).text);
+    }
+
+    /** "mmmmm" is the first letter of the month, as in Excel. */
+    @Test
+    void testMonthInitial() {
+        assertEquals("A", CellFormat.getInstance("mmmmm").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("A 2025", CellFormat.getInstance("mmmmm yyyy").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("Aug", CellFormat.getInstance("mmm").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("August", CellFormat.getInstance("mmmm").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("08", CellFormat.getInstance("mm").apply(AUG_4_2025_22_21_15).text);
+    }
 }
