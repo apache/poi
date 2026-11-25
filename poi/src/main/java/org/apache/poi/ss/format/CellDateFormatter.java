@@ -26,8 +26,8 @@ import java.util.Formatter;
 import java.util.Locale;
 import java.util.regex.Matcher;
 
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -192,12 +192,13 @@ public class CellDateFormatter extends CellFormatter {
             if (v == 0L) {
                 value = EXCEL_EPOCH_CAL.getTime();
             } else {
-                Calendar c = (Calendar)EXCEL_EPOCH_CAL.clone();
+                // The number is an Excel serial date, with 1900 date windowing as in CellFormat.apply(Date).
                 // If milliseconds were not requested in the format string, round the seconds.
-                int seconds = MathUtil.safeDoubleToInt(sFmt == null ? Math.round(v / 1000) : v / 1000);
-                c.add(Calendar.SECOND, seconds);
-                c.add(Calendar.MILLISECOND, (int)(v % 1000));
-                value = c.getTime();
+                Date date = DateUtil.getJavaDate(num.doubleValue(), false, LocaleUtil.getUserTimeZone(), sFmt == null);
+                if (date == null) {
+                    throw new IllegalArgumentException("value " + num + " is not a valid Excel date");
+                }
+                value = date;
             }
         } else if (value instanceof Date date && sFmt == null) {
             // as for a number: if milliseconds were not requested in the format string, round the seconds

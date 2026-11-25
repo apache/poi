@@ -1382,4 +1382,29 @@ class TestCellFormat {
         assertEquals("Mixer-01", CellFormat.getInstance("yyyy-mm-dd").apply("Mixer-01").text);
         assertEquals("Mixer-01", CellFormat.getInstance("@").apply("Mixer-01").text);
     }
+
+    /** 2025-08-04 22:21:15 */
+    private static final double AUG_4_2025_22_21_15 = 45873 + (22 * 3600 + 21 * 60 + 15) / 86400.0;
+
+    /** A number in a date section is an Excel serial date. */
+    @Test
+    void testNumberInDateSection() {
+        assertEquals("2025-08-04 22:21:15",
+                CellFormat.getInstance("yyyy-mm-dd hh:mm:ss").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("04.08.2025 22:21", CellFormat.getInstance("dd.mm.yyyy hh:mm").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("10:21 P", CellFormat.getInstance("h:mm A/P").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("2025-08-04 22:21:15.000",
+                CellFormat.getInstance("yyyy-mm-dd hh:mm:ss.000").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("2025-08-04", CellFormat.getInstance("yyyy-mm-dd;\"neg\";\"zero\"").apply(AUG_4_2025_22_21_15).text);
+    }
+
+    /** A Date in an elapsed or number section is formatted as its serial number, as in Excel. */
+    @Test
+    void testDateInElapsedAndNumberSections() {
+        Date oneDayOneHour = DateUtil.getJavaDate(1 + 1 / 24.0, false, LocaleUtil.getUserTimeZone(), true);
+        assertEquals("25:00:00", CellFormat.getInstance("[h]:mm:ss").apply(oneDayOneHour).text);
+
+        Date aug4 = DateUtil.getJavaDate(AUG_4_2025_22_21_15, false, LocaleUtil.getUserTimeZone(), true);
+        assertEquals("45873.93", CellFormat.getInstance("0.00").apply(aug4).text);
+    }
 }
