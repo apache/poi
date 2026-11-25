@@ -1375,6 +1375,51 @@ class TestCellFormat {
         assertEquals(CellFormatPart.getColor("red"), colored.textColor);
     }
 
+    /** A format with only a text section shows numbers as General, as in Excel. */
+    @Test
+    void testSingleTextSectionLeavesNumbersUnchanged() {
+        assertEquals("12.5", CellFormat.getInstance("\"ID: \"@").apply(12.5).text);
+        assertEquals("-12.5", CellFormat.getInstance("\"ID: \"@").apply(-12.5).text);
+        assertEquals("0", CellFormat.getInstance("@@").apply(0.0).text);
+    }
+
+    /** A last section with a text placeholder is the text section, not a number section, as in Excel. */
+    @Test
+    void testLastTextSectionOfTwoOrThree() {
+        CellFormat two = CellFormat.getInstance("0.00;\"t: \"@");
+        assertEquals("1.50", two.apply(1.5).text);
+        assertEquals("-1.50", two.apply(-1.5).text);
+        assertEquals("0.00", two.apply(0.0).text);
+        assertEquals("t: abc", two.apply("abc").text);
+
+        CellFormat three = CellFormat.getInstance("0.0;(0.0);@\" text\"");
+        assertEquals("1.5", three.apply(1.5).text);
+        assertEquals("(1.5)", three.apply(-1.5).text);
+        assertEquals("0.0", three.apply(0.0).text);
+        assertEquals("abc text", three.apply("abc").text);
+
+        // the date section is the only number section, so a negative number is not a valid date
+        CellFormat date = CellFormat.getInstance("yyyy-mm-dd;@");
+        assertEquals("2025-08-04", date.apply(AUG_4_2025_22_21_15).text);
+        assertEquals(255, date.apply(-1.0).text.length());
+        assertEquals("abc", date.apply("abc").text);
+    }
+
+    /** A section of literal text only is a number section: it formats numbers and leaves text unchanged. */
+    @Test
+    void testLiteralOnlySectionIsANumberSection() {
+        assertEquals("n/a", CellFormat.getInstance("\"n/a\"").apply(12.5).text);
+        assertEquals("abc", CellFormat.getInstance("\"n/a\"").apply("abc").text);
+        assertEquals("abc", CellFormat.getInstance("\"user@host\"").apply("abc").text);
+        assertEquals("abc", CellFormat.getInstance("\\@").apply("abc").text);
+
+        CellFormat three = CellFormat.getInstance("\"TRUE\";\"FALSE\";\"ZERO\"");
+        assertEquals("TRUE", three.apply(1.0).text);
+        assertEquals("FALSE", three.apply(-1.0).text);
+        assertEquals("ZERO", three.apply(0.0).text);
+        assertEquals("abc", three.apply("abc").text);
+    }
+
     /** A single section without a text placeholder leaves text unchanged, as in Excel. */
     @Test
     void testSingleNumberSectionLeavesTextUnchanged() {
