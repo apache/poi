@@ -312,7 +312,10 @@ public class CellFormat {
             // so assume 1900 date windowing
             double numericValue = DateUtil.getExcelDate(d);
             if (DateUtil.isValidExcelDate(numericValue)) {
-                return getApplicableFormatPart(numericValue).apply(value);
+                CellFormatPart part = getApplicableFormatPart(numericValue);
+                // Only a date part formats the Date itself; elapsed and number parts take its serial number, as in Excel
+                return part.getCellFormatType() == CellFormatType.DATE
+                        ? part.apply(value) : part.apply(numericValue);
             } else {
                 throw new IllegalArgumentException("value " + numericValue + " of date " + value + " is not a valid Excel date");
             }
