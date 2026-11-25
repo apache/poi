@@ -19,6 +19,7 @@ package org.apache.poi.xssf.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import com.zaxxer.sparsebits.SparseBitSet;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -239,5 +241,14 @@ public final class TestSharedStringsTable {
         w2.close();
         assertNotNull(w3);
         w3.close();
+    }
+
+    @Test
+    void testRemoveUnusedEntriesInSubclass() {
+        // a subclass may keep its entries elsewhere, so it has to override the method
+        SharedStringsTable sst = new SharedStringsTable() {};
+        sst.addSharedStringItem(new XSSFRichTextString("unused"));
+        assertThrows(UnsupportedOperationException.class, () -> sst.removeUnusedEntries(new SparseBitSet(), 0));
+        assertEquals(1, sst.getUniqueCount());
     }
 }
