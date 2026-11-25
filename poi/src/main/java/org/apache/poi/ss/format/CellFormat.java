@@ -243,7 +243,9 @@ public class CellFormat {
             posNumFmt = parts.get(0);
             negNumFmt = null;
             zeroNumFmt = null;
-            textFmt = defaultTextFormat;
+            // As in Excel, a single section with a text placeholder (@) also formats text
+            textFmt = posNumFmt != null && posNumFmt.getCellFormatType() == CellFormatType.TEXT
+                    ? posNumFmt : defaultTextFormat;
             break;
         case 2:
             posNumFmt = parts.get(0);

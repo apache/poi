@@ -1362,4 +1362,24 @@ class TestCellFormat {
         assertThrows(IllegalArgumentException.class,
                 () -> cellFormat.apply(""));
     }
+
+    /** A single section with a text placeholder formats text, as in Excel. */
+    @Test
+    void testSingleTextSectionFormatsText() {
+        assertEquals("ID: Mixer-01", CellFormat.getInstance("\"ID: \"@").apply("Mixer-01").text);
+        assertEquals("HelloHello", CellFormat.getInstance("@@").apply("Hello").text);
+        assertEquals("Mixer-01 text", CellFormat.getInstance("@\" text\"").apply("Mixer-01").text);
+
+        CellFormatResult colored = CellFormat.getInstance("[Red]@").apply("Mixer-01");
+        assertEquals("Mixer-01", colored.text);
+        assertEquals(CellFormatPart.getColor("red"), colored.textColor);
+    }
+
+    /** A single section without a text placeholder leaves text unchanged, as in Excel. */
+    @Test
+    void testSingleNumberSectionLeavesTextUnchanged() {
+        assertEquals("Mixer-01", CellFormat.getInstance("0.00").apply("Mixer-01").text);
+        assertEquals("Mixer-01", CellFormat.getInstance("yyyy-mm-dd").apply("Mixer-01").text);
+        assertEquals("Mixer-01", CellFormat.getInstance("@").apply("Mixer-01").text);
+    }
 }
