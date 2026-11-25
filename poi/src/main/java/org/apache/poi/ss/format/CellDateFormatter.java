@@ -54,6 +54,8 @@ public class CellDateFormatter extends CellFormatter {
         private int mStart = -1;
         private int mLen;
         private boolean mIsMonth;
+        /** whether the last date or time part was the hours, so that a following 'm' is the minutes */
+        private boolean afterHour;
         private int hStart = -1;
         private int hLen;
 
@@ -75,11 +77,13 @@ public class CellDateFormatter extends CellFormatter {
                         }
                         mStart = -1;
                     }
+                    afterHour = false;
                     return part.toLowerCase(Locale.ROOT);
 
                 case 'h':
                 case 'H':
                     mStart = -1;
+                    afterHour = true;
                     hStart = pos;
                     hLen = part.length();
                     return part.toLowerCase(Locale.ROOT);
@@ -87,6 +91,7 @@ public class CellDateFormatter extends CellFormatter {
                 case 'd':
                 case 'D':
                     mStart = -1;
+                    afterHour = false;
                     if (part.length() <= 2)
                         return part.toLowerCase(Locale.ROOT);
                     else
@@ -97,6 +102,7 @@ public class CellDateFormatter extends CellFormatter {
                     if (part.length() > 2) {
                         // three or more are always a month name, never minutes
                         mStart = -1;
+                        afterHour = false;
                         boolean initial = part.length() == 5;
                         monthInitials.add(initial);
                         // "mmmmm" is the month's first letter: format the full name, keep its first letter later
@@ -104,8 +110,10 @@ public class CellDateFormatter extends CellFormatter {
                     }
                     mStart = pos;
                     mLen = part.length();
-                    // For 'm' after 'h', output minutes ('m') not month ('M')
-                    mIsMonth = hStart < 0;
+                    // For 'm' right after 'h', output minutes ('m') not month ('M').
+                    // Later in the format it is a month again: hh:mm dd/mm/yyyy
+                    mIsMonth = !afterHour;
+                    afterHour = false;
                     if (!mIsMonth)
                         return part.toLowerCase(Locale.ROOT);
                     monthInitials.add(false);
@@ -114,6 +122,7 @@ public class CellDateFormatter extends CellFormatter {
                 case 'y':
                 case 'Y':
                     mStart = -1;
+                    afterHour = false;
                     // See https://issues.apache.org/bugzilla/show_bug.cgi?id=53369
                     if (part.length() == 1)
                         part = "yy";

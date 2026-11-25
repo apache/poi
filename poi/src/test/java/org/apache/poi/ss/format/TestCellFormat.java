@@ -1513,6 +1513,16 @@ class TestCellFormat {
         assertEquals("A August", CellFormat.getInstance("mmmmm mmmm").apply(aug4).text);
     }
 
+    /** "m" is the minutes only right after the hours or right before the seconds, as in Excel. */
+    @Test
+    void testMonthAfterTime() {
+        assertEquals("22:21 04/08/2025", CellFormat.getInstance("hh:mm dd/mm/yyyy").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("22:21:15 08-04", CellFormat.getInstance("hh:mm:ss mm-dd").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("04/08/2025 22:21", CellFormat.getInstance("dd/mm/yyyy hh:mm").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("08 22:21 08", CellFormat.getInstance("mm hh:mm mm").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("10:21 PM 8", CellFormat.getInstance("h:mm AM/PM m").apply(AUG_4_2025_22_21_15).text);
+    }
+
     /** "mmmmm" is the first letter of the month, as in Excel. */
     @Test
     void testMonthInitial() {
