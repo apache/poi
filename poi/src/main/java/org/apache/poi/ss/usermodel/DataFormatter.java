@@ -932,6 +932,18 @@ public class DataFormatter {
                     sb.append('H');
                 }
             }
+            else if ((c == 'm' || c == 'M') && j + 2 < chars.length
+                    && toLowerAscii(chars[j + 1]) == 'm' && toLowerAscii(chars[j + 2]) == 'm') {
+                // three or more are always the month name (or its initial), never the minutes,
+                // even straight after the hours or before the seconds: hh:mmm, mmmmm:ss
+                while (j < chars.length && toLowerAscii(chars[j]) == 'm') {
+                    sb.append('M');
+                    j++;
+                }
+                j--;
+                mIsMonth = true;
+                ms.clear();
+            }
             else if (c == 'm' || c == 'M') {
                 if(mIsMonth) {
                     sb.append('M');

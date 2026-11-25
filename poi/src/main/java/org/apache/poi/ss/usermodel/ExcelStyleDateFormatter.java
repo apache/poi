@@ -134,10 +134,11 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
     @Override
     public StringBuffer format(Date date, StringBuffer paramStringBuffer,
                                FieldPosition paramFieldPosition) {
-        // Excel rounds to the nearest second when it shows seconds but no fractions of a second,
-        // e.g. hh:mm:ss shows 00:04:37.638 as 00:04:38
+        // Excel rounds to the nearest second when it shows a time but no fractions of a second,
+        // e.g. hh:mm:ss shows 00:04:37.638 as 00:04:38. It does so even when the seconds are not shown:
+        // h:mm shows 1:59:59.7 as 2:00, while hours and minutes are otherwise not rounded up (1:30:45 is 1:30)
         double elapsed = dateToBeFormatted;
-        if (showsWholeSeconds()) {
+        if (roundsToSeconds()) {
             if (date != null) {
                 date = new Date(Math.round(date.getTime() / 1000.0) * 1000);
             }
@@ -209,12 +210,12 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
     }
 
     /**
-     * Whether the pattern shows seconds, or elapsed seconds, but no fractions of a second
+     * Whether the pattern shows a time (hours, minutes or seconds, elapsed or not) but no fractions of a second
      */
-    private boolean showsWholeSeconds() {
+    private boolean roundsToSeconds() {
         String pattern = toPattern();
         if (!pattern.equals(roundToSecondsPattern)) {
-            boolean seconds = false;
+            boolean time = false;
             boolean fractions = false;
             boolean quoted = false;
             for (int i = 0; i < pattern.length(); i++) {
@@ -222,11 +223,14 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
                 if (c == '\'') {
                     quoted = !quoted;
                 } else if (!quoted) {
-                    seconds |= c == 's' || c == S_BRACKET_SYMBOL || c == SS_BRACKET_SYMBOL;
+                    time |= c == 'h' || c == 'H' || c == 'm' || c == 's'
+                            || c == H_BRACKET_SYMBOL || c == HH_BRACKET_SYMBOL
+                            || c == M_BRACKET_SYMBOL || c == MM_BRACKET_SYMBOL
+                            || c == S_BRACKET_SYMBOL || c == SS_BRACKET_SYMBOL;
                     fractions |= c == 'S' || c == L_BRACKET_SYMBOL || c == LL_BRACKET_SYMBOL;
                 }
             }
-            roundToSeconds = seconds && !fractions;
+            roundToSeconds = time && !fractions;
             roundToSecondsPattern = pattern;
         }
         return roundToSeconds;

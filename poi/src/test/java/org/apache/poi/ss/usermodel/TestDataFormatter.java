@@ -1371,6 +1371,57 @@ class TestDataFormatter {
      * A numeric format string like 0E0 shouldn't be E+
      * A numeric format string like 0E+0 should be E+
      */
+    /** 2025-08-04 22:21:15 */
+    private static final double AUG_4_2025_22_21_15 = 45873 + (22 * 3600 + 21 * 60 + 15) / 86400.0;
+
+    /** Three or more "m" are the month, even straight after the hours or before the seconds, as in Excel. */
+    @Test
+    void testMonthNameNextToTime() {
+        DataFormatter formatter = new DataFormatter(Locale.US);
+        assertEquals("22:Aug", formatter.formatRawCellContents(AUG_4_2025_22_21_15, -1, "hh:mmm"));
+        assertEquals("22:August", formatter.formatRawCellContents(AUG_4_2025_22_21_15, -1, "hh:mmmm"));
+        assertEquals("22:A", formatter.formatRawCellContents(AUG_4_2025_22_21_15, -1, "hh:mmmmm"));
+        assertEquals("Aug:15", formatter.formatRawCellContents(AUG_4_2025_22_21_15, -1, "mmm:ss"));
+        assertEquals("A:15", formatter.formatRawCellContents(AUG_4_2025_22_21_15, -1, "mmmmm:ss"));
+        assertEquals("22:21 A", formatter.formatRawCellContents(AUG_4_2025_22_21_15, -1, "hh:mm mmmmm"));
+        assertEquals("A 21:15", formatter.formatRawCellContents(AUG_4_2025_22_21_15, -1, "mmmmm mm:ss"));
+        assertEquals("Aug-A-08", formatter.formatRawCellContents(AUG_4_2025_22_21_15, -1, "mmm-mmmmm-mm"));
+        assertEquals("22:21:15 AUG", formatter.formatRawCellContents(AUG_4_2025_22_21_15, -1, "HH:MM:SS MMM").toUpperCase(Locale.ROOT));
+
+        // one or two are still the minutes there
+        assertEquals("22:21", formatter.formatRawCellContents(AUG_4_2025_22_21_15, -1, "hh:mm"));
+        assertEquals("22:21", formatter.formatRawCellContents(AUG_4_2025_22_21_15, -1, "h:m"));
+        assertEquals("21:15", formatter.formatRawCellContents(AUG_4_2025_22_21_15, -1, "mm:ss"));
+        assertEquals("22:21 04/08/2025", formatter.formatRawCellContents(AUG_4_2025_22_21_15, -1, "hh:mm dd/mm/yyyy"));
+    }
+
+    /** A time is rounded to the second before it is shown, also when the seconds are not shown, as in Excel. */
+    @Test
+    void testTimeWithoutSecondsRoundsToSeconds() {
+        DataFormatter formatter = new DataFormatter(Locale.US);
+        double almostTwo = 7199.7 / 86400;
+        assertEquals("2:00", formatter.formatRawCellContents(almostTwo, -1, "h:mm"));
+        assertEquals("02:00", formatter.formatRawCellContents(almostTwo, -1, "hh:mm"));
+        assertEquals("2:00", formatter.formatRawCellContents(almostTwo, -1, "[h]:mm"));
+        assertEquals("120", formatter.formatRawCellContents(almostTwo, -1, "[m]"));
+        assertEquals("2:00 AM", formatter.formatRawCellContents(almostTwo, -1, "h:mm AM/PM"));
+        assertEquals("2:00:00", formatter.formatRawCellContents(almostTwo, -1, "h:mm:ss"));
+        assertEquals("1:59:59.7", formatter.formatRawCellContents(almostTwo, -1, "h:mm:ss.0"));
+        assertEquals("2025-08-05 00:00",
+                formatter.formatRawCellContents(45873 + 86399.7 / 86400, -1, "yyyy-mm-dd hh:mm"));
+
+        // hours and minutes are not rounded up otherwise
+        assertEquals("1:59", formatter.formatRawCellContents(7199.4 / 86400, -1, "h:mm"));
+        assertEquals("1:59", formatter.formatRawCellContents(7199.4 / 86400, -1, "[h]:mm"));
+        assertEquals("1:30", formatter.formatRawCellContents(5445 / 86400.0, -1, "h:mm"));
+        assertEquals("1:30", formatter.formatRawCellContents(5445 / 86400.0, -1, "[h]:mm"));
+        assertEquals("1", formatter.formatRawCellContents(1.6 / 24, -1, "[h]"));
+        assertEquals("1", formatter.formatRawCellContents(90 / 86400.0, -1, "[m]"));
+
+        // a format without a time is not affected
+        assertEquals("2025-08-04", formatter.formatRawCellContents(45873 + 86399.7 / 86400, -1, "yyyy-mm-dd"));
+    }
+
     @Test
     void testWithEinFormat() {
         DataFormatter formatter = new DataFormatter();
