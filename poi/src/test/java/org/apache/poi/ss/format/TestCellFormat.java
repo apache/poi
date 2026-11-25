@@ -1438,4 +1438,14 @@ class TestCellFormat {
         assertEquals("125:30:10", formatter.formatRawCellContents(ELAPSED_125_30_10, -1, format));
         assertEquals("<0", formatter.formatRawCellContents(-ELAPSED_125_30_10, -1, format));
     }
+
+    /** "mmmmm" is the first letter of the month, as in Excel. */
+    @Test
+    void testMonthInitial() {
+        assertEquals("A", CellFormat.getInstance("mmmmm").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("A 2025", CellFormat.getInstance("mmmmm yyyy").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("Aug", CellFormat.getInstance("mmm").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("August", CellFormat.getInstance("mmmm").apply(AUG_4_2025_22_21_15).text);
+        assertEquals("08", CellFormat.getInstance("mm").apply(AUG_4_2025_22_21_15).text);
+    }
 }
