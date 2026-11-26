@@ -704,6 +704,65 @@ class TestSignatureInfo {
         }
     }
 
+    @Test
+    void testSecondSignatureIsValidated() throws Exception {
+        // a copy of the signature part, registered as a second signature of the same document
+        try (OPCPackage pkg = OPCPackage.open(addSecondSignature(false))) {
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(new SignatureConfig());
+            assertTrue(si.verifySignature(), "a copy of a valid signature is valid as well");
+        }
+
+        // the same copy with a reference digest its signature value doesn't cover anymore
+        try (OPCPackage pkg = OPCPackage.open(addSecondSignature(true))) {
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(new SignatureConfig());
+            assertFalse(si.verifySignature(), "every signature of the package has to be validated");
+        }
+    }
+
+    /**
+     * Copies hello-world-signed.docx, adding _xmlsignatures/sig2.xml as a second signature of the
+     * document, which is a copy of sig1.xml, with its first reference digest changed if
+     * {@code corrupt} is set
+     */
+    private static InputStream addSecondSignature(boolean corrupt) throws IOException {
+        String originRels = "_xmlsignatures/_rels/origin.sigs.rels";
+        return rewriteSignedDocx(entries -> {
+            byte[] signature = entries.get("_xmlsignatures/sig1.xml");
+            assertNotNull(signature);
+            entries.put("_xmlsignatures/sig2.xml", corrupt ? corruptFirstDigest(signature) : signature);
+            entries.put("[Content_Types].xml", replace(entries.get("[Content_Types].xml"), "</Types>",
+                "<Override PartName=\"/_xmlsignatures/sig2.xml\" ContentType=\"" +
+                "application/vnd.openxmlformats-package.digital-signature-xmlsignature+xml\"/></Types>"));
+            entries.put(originRels, replace(entries.get(originRels), "</Relationships>",
+                "<Relationship Id=\"rId2\" Type=\"" + PackageRelationshipTypes.DIGITAL_SIGNATURE +
+                "\" Target=\"sig2.xml\"/></Relationships>"));
+        });
+    }
+
+    /**
+     * @return {@code signature} with the first ds:DigestValue, i.e. the one in its ds:SignedInfo,
+     *          replaced by a digest which is still well-formed but doesn't match
+     */
+    private static byte[] corruptFirstDigest(byte[] signature) {
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
+        try (InputStream is = UnsynchronizedByteArrayInputStream.builder().setByteArray(signature).get()) {
+            Document doc = DocumentHelper.readDocument(is);
+            Element digest = (Element)doc
+                .getElementsByTagNameNS(SignatureFacet.XML_DIGSIG_NS, "DigestValue").item(0);
+            assertNotNull(digest);
+            String value = digest.getTextContent().trim();
+            digest.setTextContent((value.startsWith("A") ? "B" : "A") + value.substring(1));
+            XMLHelper.newTransformer().transform(new DOMSource(doc), new StreamResult(bos));
+        } catch (IOException | SAXException | TransformerException e) {
+            fail(e);
+        }
+        return bos.toByteArray();
+    }
+
     /**
      * Copies hello-world-signed.docx, letting {@code modifier} change the ds:Signature of
      * _xmlsignatures/sig1.xml and, if {@code tamperDocument} is set, making word/document.xml
