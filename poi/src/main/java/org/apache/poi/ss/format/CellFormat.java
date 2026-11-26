@@ -211,6 +211,7 @@ public class CellFormat {
         CellFormatPart defaultTextFormat = new CellFormatPart(locale, "@");
         Matcher m = ONE_PART.matcher(format);
         List<CellFormatPart> parts = new ArrayList<>();
+        String lastDesc = "";
 
         try {
             while (m.find()) {
@@ -221,6 +222,7 @@ public class CellFormat {
                     if (valueDesc.endsWith(";"))
                         valueDesc = valueDesc.substring(0, valueDesc.length() - 1);
 
+                    lastDesc = valueDesc;
                     parts.add(new CellFormatPart(locale, valueDesc));
                 } catch (RuntimeException e) {
                     LOG.warn("Invalid format: {}", CellFormatter.quote(m.group()), e);
@@ -236,6 +238,23 @@ public class CellFormat {
                     "to allow handling this format");
         }
 
+        // As in Excel, a last section with a text placeholder (@) is the text section, however few sections
+        // there are: "ID: "@ formats text only, and 0.00;@ is one number section and the text section.
+        CellFormatPart lastTextFormat = null;
+        if (!parts.isEmpty() && parts.size() < 4) {
+            CellFormatPart last = parts.get(parts.size() - 1);
+            // a section of literal text only, such as "ZERO", is a number section
+            if (last != null && last.getCellFormatType() == CellFormatType.TEXT
+                    && hasTextPlaceholder(lastDesc)) {
+                lastTextFormat = last;
+                parts.remove(parts.size() - 1);
+                if (parts.isEmpty()) {
+                    // no number section: numbers are shown as General
+                    parts.add(new CellFormatPart(locale, "General"));
+                }
+            }
+        }
+
         formatPartCount = parts.size();
 
         switch (formatPartCount) {
@@ -243,13 +262,13 @@ public class CellFormat {
             posNumFmt = parts.get(0);
             negNumFmt = null;
             zeroNumFmt = null;
-            textFmt = defaultTextFormat;
+            textFmt = lastTextFormat != null ? lastTextFormat : defaultTextFormat;
             break;
         case 2:
             posNumFmt = parts.get(0);
             negNumFmt = parts.get(1);
             zeroNumFmt = null;
-            textFmt = defaultTextFormat;
+            textFmt = lastTextFormat != null ? lastTextFormat : defaultTextFormat;
             break;
         case 3:
             posNumFmt = parts.get(0);
@@ -265,6 +284,32 @@ public class CellFormat {
             textFmt = parts.get(3);
             break;
         }
+    }
+
+    /**
+     * Returns whether a format section has a text placeholder (@) that is not quoted, escaped or in brackets.
+     */
+    private static boolean hasTextPlaceholder(String section) {
+        boolean quoted = false;
+        boolean bracketed = false;
+        for (int i = 0; i < section.length(); i++) {
+            char ch = section.charAt(i);
+            if (quoted) {
+                quoted = ch != '"';
+            } else if (bracketed) {
+                bracketed = ch != ']';
+            } else if (ch == '"') {
+                quoted = true;
+            } else if (ch == '[') {
+                bracketed = true;
+            } else if (ch == '\\' || ch == '_' || ch == '*') {
+                // the next character is a literal, a space of its width or a fill character
+                i++;
+            } else if (ch == '@') {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -289,14 +334,23 @@ public class CellFormat {
                 // the default leading minus sign is not also output
                 return negNumFmt.apply(-val);
             } else {
-                return getApplicableFormatPart(val).apply(val);
+                CellFormatPart applicableFormatPart = getApplicableFormatPart(val);
+                if (applicableFormatPart.getCellFormatType() == CellFormatType.DATE
+                        && !DateUtil.isValidExcelDate(val)) {
+                    // as for a cell: a number that is not a date, such as a negative one, can't be shown as a date
+                    return apply(INVALID_VALUE_FOR_FORMAT);
+                }
+                return applicableFormatPart.apply(val);
             }
         } else if (value instanceof java.util.Date d) {
             // Don't know (and can't get) the workbook date windowing (1900 or 1904)
             // so assume 1900 date windowing
             double numericValue = DateUtil.getExcelDate(d);
             if (DateUtil.isValidExcelDate(numericValue)) {
-                return getApplicableFormatPart(numericValue).apply(value);
+                CellFormatPart part = getApplicableFormatPart(numericValue);
+                // Only a date part formats the Date itself; elapsed and number parts take its serial number, as in Excel
+                return part.getCellFormatType() == CellFormatType.DATE
+                        ? part.apply(value) : part.apply(numericValue);
             } else {
                 throw new IllegalArgumentException("value " + numericValue + " of date " + value + " is not a valid Excel date");
             }
