@@ -1577,4 +1577,16 @@ class TestCellFormat {
         assertEquals("August", CellFormat.getInstance("mmmm").apply(AUG_4_2025_22_21_15).text);
         assertEquals("08", CellFormat.getInstance("mm").apply(AUG_4_2025_22_21_15).text);
     }
+
+    /** A decimal point before any digit placeholder is still the decimal point, as in Excel. */
+    @Test
+    void testLeadingDecimalPoint() {
+        assertEquals(".50", CellFormat.getInstance(".00").apply(0.5).text);
+        assertEquals("12.50", CellFormat.getInstance(".00").apply(12.5).text);
+        assertEquals("-.50", CellFormat.getInstance(".00").apply(-0.5).text);
+        assertEquals(".00", CellFormat.getInstance(".00").apply(0.0).text);
+        assertEquals(".5", CellFormat.getInstance(".##").apply(0.5).text);
+        assertEquals("25.0%", CellFormat.getInstance(".0%").apply(0.25).text);
+        assertEquals("$.75", CellFormat.getInstance("\"$\".00").apply(0.75).text);
+    }
 }

@@ -82,7 +82,15 @@ public class CellNumberPartHandler implements PartHandler {
             break;
 
         case '.':
-            if (decimalPoint == null && !specials.isEmpty()) {
+            if (decimalPoint == null && specials.isEmpty()) {
+                // As in Excel, a decimal point before any digit placeholder still shows the integer digits:
+                // .00 shows 0.5 as .50 and 12.5 as 12.50, as #.00 does
+                specials.add(new Special('#', pos));
+                decimalPoint = new Special('.', pos + 1);
+                specials.add(decimalPoint);
+                return "#.";
+            }
+            if (decimalPoint == null) {
                 decimalPoint = new Special('.', pos);
                 specials.add(decimalPoint);
             }
