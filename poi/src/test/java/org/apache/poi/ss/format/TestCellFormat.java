@@ -1589,4 +1589,29 @@ class TestCellFormat {
         assertEquals("25.0%", CellFormat.getInstance(".0%").apply(0.25).text);
         assertEquals("$.75", CellFormat.getInstance("\"$\".00").apply(0.75).text);
     }
+
+    /** An empty section shows nothing, as in Excel: 0;-0;;@ hides zeros and ;;; hides every value. */
+    @Test
+    void testEmptySections() {
+        CellFormat hideZeros = CellFormat.getInstance("0;-0;;@");
+        assertEquals("3", hideZeros.apply(2.5).text);
+        assertEquals("-1", hideZeros.apply(-1.0).text);
+        assertEquals("", hideZeros.apply(0.0).text);
+        assertEquals("abc", hideZeros.apply("abc").text);
+
+        CellFormat hideAll = CellFormat.getInstance(";;;");
+        assertEquals("", hideAll.apply(5.0).text);
+        assertEquals("", hideAll.apply(-5.0).text);
+        assertEquals("", hideAll.apply(0.0).text);
+        assertEquals("", hideAll.apply("abc").text);
+
+        assertEquals("", CellFormat.getInstance("0;-0;").apply(0.0).text);
+        assertEquals("7", CellFormat.getInstance("0;-0;").apply(7.0).text);
+        assertEquals("", CellFormat.getInstance("0;").apply(-3.0).text);
+        assertEquals("", CellFormat.getInstance(";-0").apply(5.0).text);
+        assertEquals("-5", CellFormat.getInstance(";-0").apply(-5.0).text);
+        assertEquals("", CellFormat.getInstance("[Red]0;;").apply(0.0).text);
+        // a semicolon in quotes does not separate sections
+        assertEquals("a;b 5", CellFormat.getInstance("\"a;b \"0").apply(5.0).text);
+    }
 }

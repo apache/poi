@@ -96,6 +96,8 @@ public class CellFormat {
     /** The logger to use in the formatting code. */
     private static final Logger LOG = PoiLogManager.getLogger(CellFormat.class);
 
+    private static final String EMPTY_SECTION = "\"\"";
+
     private static final Pattern ONE_PART = Pattern.compile(
             CellFormatPart.FORMAT_PAT.pattern() + "(;|$)",
             Pattern.COMMENTS | Pattern.CASE_INSENSITIVE);
@@ -212,9 +214,15 @@ public class CellFormat {
         Matcher m = ONE_PART.matcher(format);
         List<CellFormatPart> parts = new ArrayList<>();
         String lastDesc = "";
+        int end = 0;
 
         try {
             while (m.find()) {
+                // As in Excel, an empty section shows nothing: 0;-0;;@ hides zeros and ;;; hides every value
+                if (addEmptySections(locale, parts, format.substring(end, m.start()))) {
+                    lastDesc = "";
+                }
+                end = m.end();
                 try {
                     String valueDesc = m.group();
 
@@ -228,6 +236,11 @@ public class CellFormat {
                     LOG.warn("Invalid format: {}", CellFormatter.quote(m.group()), e);
                     parts.add(null);
                 }
+            }
+            String rest = format.substring(end);
+            boolean separatorLast = !format.isEmpty() && format.charAt(format.length() - 1) == ';';
+            if (addEmptySections(locale, parts, separatorLast ? rest + ";" : rest)) {
+                lastDesc = "";
             }
         } catch (StackOverflowError e) {
             // very complex formats can cause the regex-parsing to exceed the available stack
@@ -284,6 +297,22 @@ public class CellFormat {
             textFmt = parts.get(3);
             break;
         }
+    }
+
+    /**
+     * Adds an empty section, which shows nothing, for each section separator in text that no section has taken.
+     *
+     * @return whether any section was added
+     */
+    private static boolean addEmptySections(Locale locale, List<CellFormatPart> parts, String skipped) {
+        boolean added = false;
+        for (int i = 0; i < skipped.length(); i++) {
+            if (skipped.charAt(i) == ';') {
+                parts.add(new CellFormatPart(locale, EMPTY_SECTION));
+                added = true;
+            }
+        }
+        return added;
     }
 
     /**
