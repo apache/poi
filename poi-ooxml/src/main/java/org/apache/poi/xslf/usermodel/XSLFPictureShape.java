@@ -431,18 +431,29 @@ public class XSLFPictureShape extends XSLFSimpleShape
             nvPr.unsetCustDataLst();
         }
         if (blip.isSetExtLst()) {
-            // TODO: check for SVG copying
             CTOfficeArtExtensionList extLst = blip.getExtLst();
             for(CTOfficeArtExtension ext : extLst.getExtArray()){
                 String xpath = "declare namespace a14='"+ MS_DML_NS +"' $this//a14:imgProps/a14:imgLayer";
-                XmlObject[] obj = ext.selectPath(xpath);
-                if(obj != null && obj.length == 1) {
-                    try (XmlCursor c = obj[0].newCursor()) {
-                        String id = c.getAttributeText(EMBED_TAG);
-                        String newId = getSheet().importBlip(id, p.getSheet());
-                        c.setAttributeText(EMBED_TAG, newId);
-                    }
-                }
+                importEmbeddedBlip(ext.selectPath(xpath), p);
+                xpath = "declare namespace asvg='"+ MS_SVG_NS +"' $this/asvg:svgBlip";
+                importEmbeddedBlip(ext.selectPath(xpath), p);
+            }
+        }
+    }
+
+    /**
+     * Imports the picture referenced by the r:embed attribute of a blip extension element
+     * (e.g. the image layer or the SVG image) and points the attribute to the new relation.
+     */
+    private void importEmbeddedBlip(XmlObject[] obj, XSLFPictureShape source) {
+        if (obj == null || obj.length != 1) {
+            return;
+        }
+        try (XmlCursor c = obj[0].newCursor()) {
+            String id = c.getAttributeText(EMBED_TAG);
+            if (id != null) {
+                String newId = getSheet().importBlip(id, source.getSheet());
+                c.setAttributeText(EMBED_TAG, newId);
             }
         }
     }

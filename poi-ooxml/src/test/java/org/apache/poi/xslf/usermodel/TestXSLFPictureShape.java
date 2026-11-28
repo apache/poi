@@ -271,6 +271,38 @@ class TestXSLFPictureShape {
         }
     }
 
+    @Test
+    void testImportSvgImage() throws Exception {
+        try (XMLSlideShow ppt1 = new XMLSlideShow()) {
+            byte[] pngData = new byte[]{1, 2, 3};
+            byte[] svgData = IOUtils.toByteArray(
+                POIDataSamples.getDocumentInstance().openResourceAsStream("../project-header.svg"));
+
+            XSLFSlide slide1 = ppt1.createSlide();
+            XSLFPictureShape shape1 = slide1.createPicture(ppt1.addPicture(pngData, PictureType.PNG));
+            shape1.setSvgImage(ppt1.addPicture(svgData, PictureType.SVG));
+            assertArrayEquals(svgData, shape1.getSvgImage().getData());
+
+            // copy into another slideshow and into the same one
+            try (XMLSlideShow ppt2 = new XMLSlideShow()) {
+                for (XMLSlideShow target : new XMLSlideShow[]{ppt2, ppt1}) {
+                    XSLFSlide slideCopy = target.createSlide().importContent(slide1);
+                    XSLFPictureShape shapeCopy = (XSLFPictureShape) slideCopy.getShapes().get(0);
+
+                    assertArrayEquals(pngData, shapeCopy.getPictureData().getData());
+                    XSLFPictureData svgCopy = shapeCopy.getSvgImage();
+                    assertNotNull(svgCopy, "the svgBlip of the copy must point to a relation of the new slide");
+                    assertArrayEquals(svgData, svgCopy.getData());
+                }
+
+                try (XMLSlideShow ppt3 = writeOutAndReadBack(ppt2)) {
+                    XSLFPictureShape shapeCopy = (XSLFPictureShape) ppt3.getSlides().get(0).getShapes().get(0);
+                    assertArrayEquals(svgData, shapeCopy.getSvgImage().getData());
+                }
+            }
+        }
+    }
+
     private void differentShapeName(XSLFShape shape1, XSLFShape shape2) {
         assertNotEquals(shape1.getShapeName(), shape2.getShapeName(),
             "We should have different names now, but had: " + shape1.getShapeName() + " for both");
