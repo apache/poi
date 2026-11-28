@@ -5219,8 +5219,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
                     clonedStyle.setLastColumn(style.isShowLastColumn());
                 }
 
-                //clone autofilter
-                clonedTable.getCTTable().setAutoFilter(table.getCTTable().getAutoFilter());
+                //clone autofilter, a table without one would otherwise get a nil autoFilter element
+                if (table.getCTTable().isSetAutoFilter()) {
+                    clonedTable.getCTTable().setAutoFilter(table.getCTTable().getAutoFilter());
+                } else if (clonedTable.getCTTable().isSetAutoFilter()) {
+                    clonedTable.getCTTable().unsetAutoFilter();
+                }
 
                 //clone totalsrow
                 int totalsRowCount = table.getTotalsRowCount();
