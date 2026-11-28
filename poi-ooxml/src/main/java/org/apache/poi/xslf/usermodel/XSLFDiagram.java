@@ -74,12 +74,15 @@ import java.util.List;
 public class XSLFDiagram extends XSLFGraphicFrame {
 
     public static final String DRAWINGML_DIAGRAM_URI = "http://schemas.openxmlformats.org/drawingml/2006/diagram";
+    private final String _dataModelId;
     private final XSLFDiagramDrawing _drawing;
     private final XSLFDiagramGroupShape _groupShape;
 
     /* package protected */ XSLFDiagram(CTGraphicalObjectFrame shape, XSLFSheet sheet) {
         super(shape, sheet);
-        _drawing = readDiagramDrawing(shape, sheet);
+        CTRelIds relIds = readRelIds(shape);
+        _dataModelId = (relIds == null) ? null : relIds.getDm();
+        _drawing = readDiagramDrawing(_dataModelId, sheet);
         _groupShape = initGroupShape();
     }
 
@@ -93,18 +96,20 @@ public class XSLFDiagram extends XSLFGraphicFrame {
                 .anyMatch(run -> run.getT() != null && !run.getT().trim().isEmpty());
     }
 
-    private static XSLFDiagramDrawing readDiagramDrawing(CTGraphicalObjectFrame shape, XSLFSheet sheet) {
+    private static CTRelIds readRelIds(CTGraphicalObjectFrame shape) {
         CTGraphicalObjectData graphicData = shape.getGraphic().getGraphicData();
         XmlObject[] children = graphicData.selectChildren(new QName(DRAWINGML_DIAGRAM_URI, "relIds"));
+        return (children.length == 0) ? null : (CTRelIds) children[0];
+    }
 
-        if (children.length == 0) {
+    private static XSLFDiagramDrawing readDiagramDrawing(String dataModelId, XSLFSheet sheet) {
+        if (dataModelId == null) {
             return null;
         }
 
         // CTRelIds doesn't contain a relationship to the drawing#.xml
         // But it has the same name as the other data#.xml, layout#.xml, etc.
-        CTRelIds relIds = (CTRelIds) children[0];
-        POIXMLDocumentPart dataModelPart = sheet.getRelationById(relIds.getDm());
+        POIXMLDocumentPart dataModelPart = sheet.getRelationById(dataModelId);
         if (dataModelPart == null) {
             return null;
         }
@@ -127,6 +132,13 @@ public class XSLFDiagram extends XSLFGraphicFrame {
      */
     public XSLFDiagramDrawing getDiagramDrawing() {
         return _drawing;
+    }
+
+    /**
+     * @return the id of the relationship to the diagram data, which the diagram drawing belongs to
+     */
+    String getDataModelId() {
+        return _dataModelId;
     }
 
     /**

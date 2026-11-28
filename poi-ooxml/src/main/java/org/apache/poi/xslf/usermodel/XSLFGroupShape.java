@@ -24,6 +24,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
@@ -183,7 +184,9 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
         } else if (obj instanceof CTConnector){
             XSLFSheet.removeElement(grpSp.getCxnSpArray(), obj, grpSp::removeCxnSp);
         } else if (obj instanceof CTGraphicalObjectFrame) {
+            Set<String> relIds = XSLFSheet.getRelationIds(obj);
             XSLFSheet.removeElement(grpSp.getGraphicFrameArray(), obj, grpSp::removeGraphicFrame);
+            getSheet().removeUnusedRelations((XSLFGraphicFrame)xShape, relIds);
         } else if (obj instanceof CTPicture) {
             XSLFPictureShape ps = (XSLFPictureShape)xShape;
             XSLFSheet sh = getSheet();

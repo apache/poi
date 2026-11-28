@@ -460,6 +460,14 @@ public class XMLSlideShow extends POIXMLDocument
     }
 
     /**
+     * Helper method for sheets, called when the part of a chart was removed from the package,
+     * e.g. together with the last graphic frame which showed it
+     */
+    void onChartRemoved(XSLFChart chart) {
+        _charts.remove(chart);
+    }
+
+    /**
      * Returns the list of comment authors, if there is one.
      * Will only be present if at least one slide has comments on it.
      */
