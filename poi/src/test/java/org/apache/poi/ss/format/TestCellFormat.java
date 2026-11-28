@@ -1577,4 +1577,41 @@ class TestCellFormat {
         assertEquals("August", CellFormat.getInstance("mmmm").apply(AUG_4_2025_22_21_15).text);
         assertEquals("08", CellFormat.getInstance("mm").apply(AUG_4_2025_22_21_15).text);
     }
+
+    /** A decimal point before any digit placeholder is still the decimal point, as in Excel. */
+    @Test
+    void testLeadingDecimalPoint() {
+        assertEquals(".50", CellFormat.getInstance(".00").apply(0.5).text);
+        assertEquals("12.50", CellFormat.getInstance(".00").apply(12.5).text);
+        assertEquals("-.50", CellFormat.getInstance(".00").apply(-0.5).text);
+        assertEquals(".00", CellFormat.getInstance(".00").apply(0.0).text);
+        assertEquals(".5", CellFormat.getInstance(".##").apply(0.5).text);
+        assertEquals("25.0%", CellFormat.getInstance(".0%").apply(0.25).text);
+        assertEquals("$.75", CellFormat.getInstance("\"$\".00").apply(0.75).text);
+    }
+
+    /** An empty section shows nothing, as in Excel: 0;-0;;@ hides zeros and ;;; hides every value. */
+    @Test
+    void testEmptySections() {
+        CellFormat hideZeros = CellFormat.getInstance("0;-0;;@");
+        assertEquals("3", hideZeros.apply(2.5).text);
+        assertEquals("-1", hideZeros.apply(-1.0).text);
+        assertEquals("", hideZeros.apply(0.0).text);
+        assertEquals("abc", hideZeros.apply("abc").text);
+
+        CellFormat hideAll = CellFormat.getInstance(";;;");
+        assertEquals("", hideAll.apply(5.0).text);
+        assertEquals("", hideAll.apply(-5.0).text);
+        assertEquals("", hideAll.apply(0.0).text);
+        assertEquals("", hideAll.apply("abc").text);
+
+        assertEquals("", CellFormat.getInstance("0;-0;").apply(0.0).text);
+        assertEquals("7", CellFormat.getInstance("0;-0;").apply(7.0).text);
+        assertEquals("", CellFormat.getInstance("0;").apply(-3.0).text);
+        assertEquals("", CellFormat.getInstance(";-0").apply(5.0).text);
+        assertEquals("-5", CellFormat.getInstance(";-0").apply(-5.0).text);
+        assertEquals("", CellFormat.getInstance("[Red]0;;").apply(0.0).text);
+        // a semicolon in quotes does not separate sections
+        assertEquals("a;b 5", CellFormat.getInstance("\"a;b \"0").apply(5.0).text);
+    }
 }
