@@ -1558,6 +1558,50 @@ class TestCellFormat {
         assertEquals("A August", CellFormat.getInstance("mmmmm mmmm").apply(aug4).text);
     }
 
+    /** An empty format has no sections: it used to fail with an IndexOutOfBoundsException. */
+    @Test
+    void testEmptyFormat() {
+        CellFormat cf = CellFormat.getInstance(Locale.US, "");
+        assertEquals("12.5", cf.apply(12.5).text);
+        assertEquals("-3", cf.apply(-3.0).text);
+        assertEquals("0", cf.apply(0.0).text);
+        assertEquals("abc", cf.apply("abc").text);
+    }
+
+    /**
+     * A section with a color and/or a condition but no format specification is shown as General in that color:
+     * it used to be dropped, so that the format failed with an IllegalStateException for the section's values.
+     */
+    @Test
+    void testSectionWithoutSpecification() {
+        CellFormat cf = CellFormat.getInstance(Locale.US, "0;[Red]");
+        assertEquals("3", cf.apply(2.5).text);
+        assertNull(cf.apply(2.5).textColor);
+        CellFormatResult negative = cf.apply(-2.5);
+        assertEquals(CellFormat.getInstance(Locale.US, "0;[Red]General").apply(-2.5).text, negative.text);
+        assertEquals(Color.RED, negative.textColor);
+
+        CellFormatResult single = CellFormat.getInstance(Locale.US, "[Blue]").apply(12.5);
+        assertEquals("12.5", single.text);
+        assertEquals(Color.BLUE, single.textColor);
+
+        // a condition only, and a color with a condition
+        assertEquals("12.5", CellFormat.getInstance(Locale.US, "[>10];0.00").apply(12.5).text);
+        assertEquals("2.50", CellFormat.getInstance(Locale.US, "[>10];0.00").apply(2.5).text);
+        CellFormatResult both = CellFormat.getInstance(Locale.US, "[Red][>10];0.00").apply(12.5);
+        assertEquals("12.5", both.text);
+        assertEquals(Color.RED, both.textColor);
+
+        // the zero and the text section
+        assertEquals("0", CellFormat.getInstance(Locale.US, "0.0;-0.0;[Red]").apply(0.0).text);
+        CellFormatResult text = CellFormat.getInstance(Locale.US, "0;-0;0;[Red]").apply("abc");
+        assertEquals("abc", text.text);
+        assertEquals(Color.RED, text.textColor);
+
+        // the part itself
+        assertEquals(CellFormatType.GENERAL, new CellFormatPart(Locale.US, "[Red]").getCellFormatType());
+    }
+
     /** "m" is the minutes only right after the hours or right before the seconds, as in Excel. */
     @Test
     void testMonthAfterTime() {
