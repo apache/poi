@@ -767,6 +767,98 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
     }
 
     @Test
+    void testCloneSheetWithNewHyperlink() throws IOException, InvalidFormatException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet("src");
+            XSSFHyperlink link = wb.getCreationHelper().createHyperlink(HyperlinkType.URL);
+            link.setAddress("https://example.com/new");
+            sheet.createRow(0).createCell(0).setHyperlink(link);
+            XSSFHyperlink internal = wb.getCreationHelper().createHyperlink(HyperlinkType.DOCUMENT);
+            internal.setAddress("'src'!B2");
+            sheet.createRow(1).createCell(0).setHyperlink(internal);
+
+            // the hyperlink has no relationship yet, it is only added when the sheet is written
+            XSSFSheet clone = wb.cloneSheet(0, "clone");
+
+            assertEquals("https://example.com/new", clone.getHyperlink(0, 0).getAddress());
+            assertEquals("'src'!B2", clone.getHyperlink(1, 0).getAddress());
+            assertEquals(List.of("https://example.com/new"), hyperlinkTargets(clone));
+            assertEquals(List.of("https://example.com/new"), hyperlinkTargets(sheet));
+
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                for (String name : new String[]{"src", "clone"}) {
+                    XSSFSheet read = wb2.getSheet(name);
+                    assertEquals("https://example.com/new", read.getHyperlink(0, 0).getAddress(), name);
+                    assertEquals("'src'!B2", read.getHyperlink(1, 0).getAddress(), name);
+                    assertEquals(List.of("https://example.com/new"), hyperlinkTargets(read), name);
+                }
+            }
+        }
+    }
+
+    @Test
+    void testCloneSheetWithLoadedHyperlinkAddedAgain() throws IOException, InvalidFormatException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet("src");
+            XSSFHyperlink link = wb.getCreationHelper().createHyperlink(HyperlinkType.URL);
+            link.setAddress("https://example.com/again");
+            sheet.createRow(0).createCell(0).setHyperlink(link);
+
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                // removing the loaded hyperlink removes its relationship, adding it again
+                // only creates a new one when the sheet is written
+                XSSFSheet src = wb2.getSheet("src");
+                XSSFHyperlink loaded = src.getHyperlink(0, 0);
+                src.getRow(0).getCell(0).removeHyperlink();
+                src.createRow(1).createCell(0).setHyperlink(loaded);
+
+                XSSFSheet clone = wb2.cloneSheet(0, "clone");
+                assertEquals("https://example.com/again", clone.getHyperlink(1, 0).getAddress());
+
+                try (XSSFWorkbook wb3 = XSSFTestDataSamples.writeOutAndReadBack(wb2)) {
+                    for (String name : new String[]{"src", "clone"}) {
+                        XSSFSheet read = wb3.getSheet(name);
+                        assertNull(read.getHyperlink(0, 0), name);
+                        assertEquals("https://example.com/again", read.getHyperlink(1, 0).getAddress(), name);
+                        assertEquals(List.of("https://example.com/again"), hyperlinkTargets(read), name);
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    void testCloneSheetWithLoadedHyperlinkMovedFromAnotherSheet() throws IOException, InvalidFormatException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet other = wb.createSheet("other");
+            wb.createSheet("src");
+            XSSFHyperlink link = wb.getCreationHelper().createHyperlink(HyperlinkType.URL);
+            link.setAddress("https://example.com/moved");
+            other.createRow(0).createCell(0).setHyperlink(link);
+
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                // the relationship of the moved hyperlink still belongs to the other sheet
+                XSSFSheet other2 = wb2.getSheet("other");
+                XSSFHyperlink loaded = other2.getHyperlink(0, 0);
+                other2.getRow(0).getCell(0).removeHyperlink();
+                wb2.getSheet("src").createRow(2).createCell(1).setHyperlink(loaded);
+
+                XSSFSheet clone = wb2.cloneSheet(1, "clone");
+                assertEquals("https://example.com/moved", clone.getHyperlink(2, 1).getAddress());
+
+                try (XSSFWorkbook wb3 = XSSFTestDataSamples.writeOutAndReadBack(wb2)) {
+                    assertTrue(hyperlinkTargets(wb3.getSheet("other")).isEmpty());
+                    for (String name : new String[]{"src", "clone"}) {
+                        XSSFSheet read = wb3.getSheet(name);
+                        assertEquals("https://example.com/moved", read.getHyperlink(2, 1).getAddress(), name);
+                        assertEquals(List.of("https://example.com/moved"), hyperlinkTargets(read), name);
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
     void testCloneSheetWithLoadedHyperlinkKeepsWorkbookRelationships() throws IOException, InvalidFormatException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet("src");
