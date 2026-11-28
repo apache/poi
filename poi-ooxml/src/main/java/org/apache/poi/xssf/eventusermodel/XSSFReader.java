@@ -43,6 +43,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.model.*;
@@ -305,25 +306,42 @@ public class XSSFReader {
     }
 
     /**
-     * Returns the drawing parts associated with a sheet. Missing parts are skipped.
+     * Returns the drawing parts associated with a sheet. Missing parts, external targets and
+     * targets that are not valid part names are skipped, and a part targeted by several
+     * relationships is only returned once.
      *
      * @param sheetPart the package part holding the sheet data
      * @param allowStrictOoxmlFiles whether to also look for the Strict OOXML drawing relationship.
      *     Note that the returned parts are then in Strict OOXML format and {@link XSSFDrawing}
      *     cannot parse them directly.
      * @return the drawing parts, never null
-     * @throws InvalidFormatException if a relationship target is not a valid part name
+     * @throws InvalidFormatException if the relationships of the sheet cannot be read
      * @since 6.0.0
      */
     public static List<PackagePart> getSheetDrawingParts(PackagePart sheetPart, boolean allowStrictOoxmlFiles)
             throws InvalidFormatException {
         PackageRelationshipCollection drawingsList =
                 getRelationshipsByType(sheetPart, XSSFRelation.DRAWINGS, allowStrictOoxmlFiles);
-        int drawingsSize = drawingsList.size();
-        List<PackagePart> drawingParts = new ArrayList<>(drawingsSize);
-        for (int i = 0; i < drawingsSize; i++) {
-            PackageRelationship drawings = drawingsList.getRelationship(i);
-            PackagePartName drawingsName = PackagingURIHelper.createPartName(drawings.getTargetURI());
+        List<PackagePart> drawingParts = new ArrayList<>();
+        Set<PackagePartName> seen = new HashSet<>();
+        for (PackageRelationship drawings : drawingsList) {
+            if (drawings.getTargetMode() == TargetMode.EXTERNAL) {
+                // a drawing has to be a part of the package
+                LOGGER.atWarn().log("External drawing target: {}. Skipping it.", drawings.getTargetURI());
+                continue;
+            }
+            PackagePartName drawingsName;
+            try {
+                drawingsName = PackagingURIHelper.createPartName(drawings.getTargetURI());
+            } catch (InvalidFormatException e) {
+                // one bad relationship shouldn't hide the valid drawings of the sheet
+                LOGGER.atWarn().withThrowable(e).log("Invalid drawing target: {}. Skipping it.", drawings.getTargetURI());
+                continue;
+            }
+            if (!seen.add(drawingsName)) {
+                // several relationships can target the same part, return it only once
+                continue;
+            }
             PackagePart drawingsPart = sheetPart.getPackage().getPart(drawingsName);
             if (drawingsPart == null) {
                 //parts can go missing; Excel ignores them silently -- TIKA-2134
@@ -397,6 +415,13 @@ public class XSSFReader {
         protected final Iterator<XSSFSheetRef> sheetIterator;
 
         private final List<XSSFSheetRef> sheetRefs;
+
+        /**
+         * Shapes of the drawings parsed so far, by drawing part name. Several sheets can
+         * point at the same drawing and {@link #getShapes()} can be called more than once
+         * per sheet, each drawing is parsed only once.
+         */
+        private final Map<PackagePartName, List<XSSFShape>> shapesByDrawing = new HashMap<>();
 
         /**
          * Construct a new SheetIterator
@@ -560,18 +585,29 @@ public class XSSFReader {
 
         /**
          * Returns the shapes associated with this sheet,
-         * an empty list or null if there is an exception
+         * an empty list or null if there is an exception.
+         * Each drawing is parsed once per iterator, so sheets sharing a drawing
+         * or repeated calls for one sheet don't parse it again.
          */
         public List<XSSFShape> getShapes() {
             List<XSSFShape> shapes = new LinkedList<>();
             try {
                 for (PackagePart drawingsPart : XSSFReader.getSheetDrawingParts(getSheetPart(), false)) {
-                    XSSFDrawing drawing = new XSSFDrawing(drawingsPart);
-                    shapes.addAll(drawing.getShapes());
+                    shapes.addAll(getShapes(drawingsPart));
                 }
             } catch (XmlException|InvalidFormatException|IOException e) {
                 LOGGER.atWarn().withThrowable(e).log("Failed to load shapes");
                 return null;
+            }
+            return shapes;
+        }
+
+        private List<XSSFShape> getShapes(PackagePart drawingsPart) throws XmlException, IOException {
+            PackagePartName drawingsName = drawingsPart.getPartName();
+            List<XSSFShape> shapes = shapesByDrawing.get(drawingsName);
+            if (shapes == null) {
+                shapes = new XSSFDrawing(drawingsPart).getShapes();
+                shapesByDrawing.put(drawingsName, shapes);
             }
             return shapes;
         }

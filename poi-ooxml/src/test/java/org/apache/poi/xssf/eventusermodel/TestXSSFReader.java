@@ -23,6 +23,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Base64;
 import java.util.HashSet;
@@ -38,6 +41,8 @@ import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.ss.usermodel.Comment;
@@ -458,6 +463,103 @@ public final class TestXSSFReader {
                     XSSFRelation.DRAWINGS.getStrictRelation());
             assertTrue(XSSFReader.getSheetDrawingParts(sheet, false).isEmpty());
             assertEquals(drawings, XSSFReader.getSheetDrawingParts(sheet, true));
+        }
+    }
+
+    @Test
+    void testDrawingTargetedByDuplicateRelationships() throws Exception {
+        try (OPCPackage pkg = XSSFTestDataSamples.openSamplePackage("WithTextBox.xlsx")) {
+            XSSFReader r = new XSSFReader(pkg);
+            XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) r.getSheetsData();
+            it.next().close();
+            PackagePart sheet = it.getSheetPart();
+            List<PackagePart> drawings = XSSFReader.getSheetDrawingParts(sheet, false);
+            assertEquals(1, drawings.size());
+            int shapes = it.getShapes().size();
+
+            // every extra relationship to the same drawing used to parse it once more
+            PackageRelationship rel = sheet.getRelationshipsByType(
+                    XSSFRelation.DRAWINGS.getRelation()).getRelationship(0);
+            for (int i = 0; i < 100; i++) {
+                sheet.addRelationship(rel.getTargetURI(), rel.getTargetMode(), rel.getRelationshipType());
+            }
+            assertEquals(drawings, XSSFReader.getSheetDrawingParts(sheet, false));
+            assertEquals(shapes, it.getShapes().size());
+        }
+    }
+
+    @Test
+    void testDrawingRelationshipsWithUnusableTargets() throws Exception {
+        try (OPCPackage pkg = XSSFTestDataSamples.openSamplePackage("WithTextBox.xlsx")) {
+            XSSFReader r = new XSSFReader(pkg);
+            XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) r.getSheetsData();
+            it.next().close();
+            PackagePart sheet = it.getSheetPart();
+            List<PackagePart> drawings = XSSFReader.getSheetDrawingParts(sheet, false);
+            assertEquals(1, drawings.size());
+            int shapes = it.getShapes().size();
+            assertTrue(shapes > 0);
+
+            // an external target or one that isn't a part name can't be a drawing,
+            // either of them used to abort the lookup and hide the valid drawing
+            String type = XSSFRelation.DRAWINGS.getRelation();
+            sheet.addExternalRelationship("http://example.com/drawing1.xml", type);
+            sheet.addRelationship(new URI("/xl/drawings/"), TargetMode.INTERNAL, type);
+            sheet.addRelationship(new URI("../drawings/drawing1.xml/./"), TargetMode.INTERNAL, type);
+            assertEquals(4, sheet.getRelationshipsByType(type).size());
+
+            assertEquals(drawings, XSSFReader.getSheetDrawingParts(sheet, false));
+            assertEquals(shapes, it.getShapes().size());
+        }
+    }
+
+    @Test
+    void testSheetsSharingOneDrawing() throws Exception {
+        try (OPCPackage pkg = XSSFTestDataSamples.openSamplePackage("WithTextBox.xlsx")) {
+            // several <sheet> entries can point at the same worksheet part,
+            // each of them used to parse the drawing of that sheet again
+            PackagePart workbook = pkg.getPart(PackagingURIHelper.createPartName("/xl/workbook.xml"));
+            String xml;
+            try (InputStream is = workbook.getInputStream()) {
+                xml = new String(IOUtils.toByteArray(is), StandardCharsets.UTF_8);
+            }
+            assertContains(xml, "</sheets>");
+            xml = xml.replace("</sheets>",
+                    "<sheet name=\"Copy1\" sheetId=\"4\" r:id=\"rId1\"/>"
+                    + "<sheet name=\"Copy2\" sheetId=\"5\" r:id=\"rId1\"/></sheets>");
+            try (OutputStream os = workbook.getOutputStream()) {
+                os.write(xml.getBytes(StandardCharsets.UTF_8));
+            }
+
+            XSSFReader r = new XSSFReader(pkg);
+            XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) r.getSheetsData();
+            assertEquals(5, it.getSheetRefs().size());
+
+            List<XSSFShape> sheet1Shapes = null;
+            PackagePart sheet1Part = null;
+            while (it.hasNext()) {
+                it.next().close();
+                List<XSSFShape> shapes = it.getShapes();
+                assertNotNull(shapes);
+                switch (it.getSheetName()) {
+                    case "Sheet1":
+                        assertFalse(shapes.isEmpty());
+                        // a second call for the same sheet doesn't parse the drawing again either
+                        assertSame(shapes.get(0), it.getShapes().get(0));
+                        sheet1Shapes = shapes;
+                        sheet1Part = it.getSheetPart();
+                        break;
+                    case "Copy1":
+                    case "Copy2":
+                        assertSame(sheet1Part, it.getSheetPart());
+                        assertEquals(sheet1Shapes.size(), shapes.size());
+                        assertSame(sheet1Shapes.get(0), shapes.get(0));
+                        break;
+                    default:
+                        assertTrue(shapes.isEmpty(), it.getSheetName());
+                }
+            }
+            assertNotNull(sheet1Shapes);
         }
     }
 
