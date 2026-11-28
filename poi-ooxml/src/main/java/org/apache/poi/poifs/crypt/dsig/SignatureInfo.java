@@ -201,14 +201,22 @@ public class SignatureInfo {
     }
 
     /**
-     * @return true, if first signature part is valid
+     * @return true, if the package has at least one signature and all of its signatures are valid
      */
     public boolean verifySignature() {
         initXmlProvider();
         // http://www.oracle.com/technetwork/articles/javase/dig-signature-api-140772.html
-        // only validate first part
-        Iterator<SignaturePart> iter = getSignatureParts().iterator();
-        return iter.hasNext() && iter.next().validate();
+        // a package can hold several signatures, e.g. when a document is co-signed, and which one
+        // comes first follows from the ids of the signature origin's relationships, so validating
+        // one of them says nothing about the state of the others
+        boolean signed = false;
+        for (SignaturePart sp : getSignatureParts()) {
+            if (!sp.validate()) {
+                return false;
+            }
+            signed = true;
+        }
+        return signed;
     }
 
     /**
