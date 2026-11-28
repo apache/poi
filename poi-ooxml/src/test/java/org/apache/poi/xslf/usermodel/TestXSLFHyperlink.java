@@ -16,7 +16,9 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.awt.geom.Rectangle2D;
@@ -27,8 +29,12 @@ import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTHyperlink;
 
 class TestXSLFHyperlink {
 
@@ -176,5 +182,120 @@ class TestXSLFHyperlink {
         assertEquals(HyperlinkType.DOCUMENT, hl5.getType());
 
         ppt2.close();
+    }
+
+    @Test
+    void testImportContentKeepsShapeHyperlinks() throws IOException {
+        try (XMLSlideShow src = new XMLSlideShow(); XMLSlideShow dst = new XMLSlideShow()) {
+            XSLFSlide slide1 = src.createSlide();
+            XSLFSlide slide2 = src.createSlide();
+
+            XSLFAutoShape urlShape = slide1.createAutoShape();
+            urlShape.createHyperlink().linkToUrl("https://poi.apache.org/");
+            XSLFAutoShape slideShape = slide1.createAutoShape();
+            slideShape.createHyperlink().linkToSlide(slide2);
+            XSLFAutoShape nextShape = slide1.createAutoShape();
+            nextShape.createHyperlink().linkToNextSlide();
+            XSLFPictureShape picture = slide1.createPicture(src.addPicture(new byte[]{1, 2, 3}, PictureType.PNG));
+            picture.createHyperlink().linkToEmail("dev@poi.apache.org");
+
+            // the slide link refers to the second slide by its part name, so the target deck has one too
+            XSLFSlide target = dst.createSlide();
+            dst.createSlide();
+            target.importContent(slide1);
+            assertShapeHyperlinks(target.getShapes(), slide2.getPackagePart().getPartName().getName());
+
+            try (XMLSlideShow read = XSLFTestDataSamples.writeOutAndReadBack(dst)) {
+                assertShapeHyperlinks(read.getSlides().get(0).getShapes(), "/ppt/slides/slide2.xml");
+            }
+        }
+    }
+
+    private static void assertShapeHyperlinks(List<XSLFShape> shapes, String slidePartName) {
+        XSLFHyperlink url = ((XSLFAutoShape) shapes.get(0)).getHyperlink();
+        assertEquals(HyperlinkType.URL, url.getType());
+        assertEquals("https://poi.apache.org/", url.getAddress());
+
+        XSLFHyperlink toSlide = ((XSLFAutoShape) shapes.get(1)).getHyperlink();
+        assertEquals(HyperlinkType.DOCUMENT, toSlide.getType());
+        assertEquals(slidePartName, toSlide.getAddress());
+
+        XSLFHyperlink next = ((XSLFAutoShape) shapes.get(2)).getHyperlink();
+        assertEquals(HyperlinkType.DOCUMENT, next.getType());
+        assertEquals("ppaction://hlinkshowjump?jump=nextslide", next.getXmlObject().getAction());
+
+        XSLFPictureShape pictureCopy = (XSLFPictureShape) shapes.get(3);
+        XSLFHyperlink email = pictureCopy.getHyperlink();
+        assertEquals(HyperlinkType.EMAIL, email.getType());
+        assertEquals("mailto:dev@poi.apache.org", email.getAddress());
+        assertArrayEquals(new byte[]{1, 2, 3}, pictureCopy.getPictureData().getData());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"ppaction://media", "ppaction://macro?name=Module1.Show Total", "ppaction://noaction", ""})
+    void testImportContentKeepsShapeActionsWithoutRelation(String action) throws IOException, InvalidFormatException {
+        try (XMLSlideShow src = new XMLSlideShow(); XMLSlideShow dst = new XMLSlideShow()) {
+            XSLFSlide slide1 = src.createSlide();
+            XSLFAutoShape shape = slide1.createAutoShape();
+            CTHyperlink link = shape.getCNvPr().addNewHlinkClick();
+            link.setId("");
+            if (!action.isEmpty()) {
+                link.setAction(action);
+            }
+
+            XSLFSlide copy = dst.createSlide().importContent(slide1);
+            assertActionWithoutRelation(copy, action);
+            try (XMLSlideShow read = XSLFTestDataSamples.writeOutAndReadBack(dst)) {
+                assertActionWithoutRelation(read.getSlides().get(0), action);
+            }
+        }
+    }
+
+    private static void assertActionWithoutRelation(XSLFSlide slide, String action) throws InvalidFormatException {
+        CTHyperlink link = ((XSLFAutoShape) slide.getShapes().get(0)).getHyperlink().getXmlObject();
+        assertEquals("", link.getId());
+        if (action.isEmpty()) {
+            assertFalse(link.isSetAction(), "an empty action should not be written to the copy");
+        } else {
+            assertEquals(action, link.getAction());
+        }
+        assertEquals(0, slide.getPackagePart().getRelationshipsByType(XSLFRelation.HYPERLINK.getRelation()).size());
+    }
+
+    @Test
+    void testImportContentKeepsFileLinkAction() throws IOException {
+        try (XMLSlideShow src = new XMLSlideShow(); XMLSlideShow dst = new XMLSlideShow()) {
+            XSLFSlide slide1 = src.createSlide();
+            XSLFAutoShape shape = slide1.createAutoShape();
+            PackageRelationship rel = slide1.getPackagePart().addExternalRelationship(
+                "file:///C:/docs/report.docx", XSLFRelation.HYPERLINK.getRelation());
+            CTHyperlink link = shape.getCNvPr().addNewHlinkClick();
+            link.setId(rel.getId());
+            link.setAction("ppaction://hlinkfile");
+
+            dst.createSlide().importContent(slide1);
+            try (XMLSlideShow read = XSLFTestDataSamples.writeOutAndReadBack(dst)) {
+                XSLFHyperlink copy = ((XSLFAutoShape) read.getSlides().get(0).getShapes().get(0)).getHyperlink();
+                assertEquals("ppaction://hlinkfile", copy.getXmlObject().getAction());
+                assertEquals("file:///C:/docs/report.docx", copy.getAddress());
+            }
+        }
+    }
+
+    @Test
+    void testImportContentWithDanglingShapeHyperlink() throws IOException {
+        try (XMLSlideShow src = new XMLSlideShow(); XMLSlideShow dst = new XMLSlideShow()) {
+            XSLFSlide slide1 = src.createSlide();
+            XSLFAutoShape shape = slide1.createAutoShape();
+            CTHyperlink link = shape.getCNvPr().addNewHlinkClick();
+            link.setId("rId99");
+            link.setAction("ppaction://hlinksldjump");
+
+            XSLFSlide copy = dst.createSlide().importContent(slide1);
+            CTHyperlink copied = ((XSLFAutoShape) copy.getShapes().get(0)).getHyperlink().getXmlObject();
+            // no slide jump without a target is left behind
+            assertEquals("", copied.getId());
+            assertFalse(copied.isSetAction(), "a slide jump whose target is missing should lose its action");
+        }
     }
 }

@@ -708,6 +708,11 @@ public abstract class XSLFSimpleShape extends XSLFShape
 
         XSLFSimpleShape s = (XSLFSimpleShape)sh;
 
+        XSLFHyperlink hyperSrc = s.getHyperlink();
+        if (hyperSrc != null) {
+            getHyperlink().copy(hyperSrc);
+        }
+
         Color srsSolidFill = s.getFillColor();
         Color tgtSoliFill = getFillColor();
         if(srsSolidFill != null && !srsSolidFill.equals(tgtSoliFill)){
@@ -1073,7 +1078,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
     @Override
     public XSLFHyperlink getHyperlink() {
         CTNonVisualDrawingProps cNvPr = getCNvPr();
-        if (!cNvPr.isSetHlinkClick()) {
+        if (cNvPr == null || !cNvPr.isSetHlinkClick()) {
             return null;
         }
         return new XSLFHyperlink(cNvPr.getHlinkClick(), getSheet());
