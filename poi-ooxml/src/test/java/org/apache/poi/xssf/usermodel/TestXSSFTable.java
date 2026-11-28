@@ -829,6 +829,41 @@ public final class TestXSSFTable {
     }
 
     @Test
+    void testCloneTableKeepsAutoFilterOnlyIfSet() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet("src");
+            for (int r = 0; r < 3; r++) {
+                XSSFRow row = sheet.createRow(r);
+                row.createCell(0).setCellValue(r == 0 ? "A" : "a" + r);
+                row.createCell(1).setCellValue(r == 0 ? "B" : "b" + r);
+                row.createCell(3).setCellValue(r == 0 ? "D" : "d" + r);
+                row.createCell(4).setCellValue(r == 0 ? "E" : "e" + r);
+            }
+            XSSFTable noFilter = sheet.createTable(new AreaReference("A1:B3", SpreadsheetVersion.EXCEL2007));
+            assertFalse(noFilter.getCTTable().isSetAutoFilter());
+            XSSFTable withFilter = sheet.createTable(new AreaReference("D1:E3", SpreadsheetVersion.EXCEL2007));
+            withFilter.getCTTable().addNewAutoFilter().setRef("D1:E3");
+
+            wb.cloneSheet(0, "clone");
+
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                List<XSSFTable> tables = wb2.getSheet("clone").getTables();
+                assertEquals(2, tables.size());
+                for (XSSFTable table : tables) {
+                    CTTable ct = table.getCTTable();
+                    if (ct.getRef().startsWith("A")) {
+                        // a nil autoFilter element is not allowed by the schema
+                        assertFalse(ct.isSetAutoFilter(), "table without an autoFilter");
+                    } else {
+                        assertTrue(ct.isSetAutoFilter(), "table with an autoFilter");
+                        assertEquals("D1:E3", ct.getAutoFilter().getRef());
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
     void testCloneSingleCellTable() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("SingleCellTable.xlsx")) {
             wb.cloneSheet(0, "Test");
