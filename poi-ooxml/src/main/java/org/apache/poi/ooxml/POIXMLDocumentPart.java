@@ -409,9 +409,33 @@ public class POIXMLDocumentPart {
 
         if (removeUnusedParts) {
             /* if last relation to target part was removed, delete according target part */
-            if (part.getRelationCounter() == 0 && !part.isRelationshipTarget()) {
+            if (part.getRelationCounter() == 0) {
                 part.removeFromPackage();
             }
+        }
+        return true;
+    }
+
+    /**
+     * Remove the relation with the specified id, and the related part from the package
+     * when nothing relates to it any more: neither this nor another document part, and
+     * no relationship elsewhere in the package. A package part can be represented by more
+     * than one document part, e.g. a picture used in the body and in a header of a document,
+     * so the relation counter alone is not enough.
+     *
+     * @param partId the id of the relation to remove
+     * @return true, if the relation was removed
+     * @since 6.1.0
+     */
+    protected final boolean removeRelationAndUnusedPart(String partId) {
+        RelationPart rp = relations.get(partId);
+        if (rp == null) {
+            return false;
+        }
+        POIXMLDocumentPart part = rp.getDocumentPart();
+        removeRelation(partId, false);
+        if (part.getRelationCounter() == 0 && !part.isRelationshipTarget()) {
+            part.removeFromPackage();
         }
         return true;
     }
