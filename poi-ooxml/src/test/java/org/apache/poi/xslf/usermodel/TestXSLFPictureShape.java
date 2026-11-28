@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
@@ -36,13 +37,19 @@ import java.util.List;
 import java.util.Map;
 
 import javax.imageio.IIOException;
+import javax.xml.namespace.QName;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xslf.util.PPTX2PNG;
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlObject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 
 class TestXSLFPictureShape {
@@ -267,6 +274,78 @@ class TestXSLFPictureShape {
                 assertEquals(tb2.getShapeName(), tbCopy2.getShapeName());
 
                 differentShapeName(tb1, tb2);
+            }
+        }
+    }
+
+    @Test
+    void testImportSvgImage() throws Exception {
+        byte[] svgData;
+        try (InputStream is = POIDataSamples.getDocumentInstance().openResourceAsStream("../project-header.svg")) {
+            svgData = IOUtils.toByteArray(is);
+        }
+        byte[] pngData = new byte[]{1, 2, 3};
+
+        try (XMLSlideShow ppt1 = new XMLSlideShow()) {
+            XSLFSlide slide1 = ppt1.createSlide();
+            XSLFPictureShape shape1 = slide1.createPicture(ppt1.addPicture(pngData, PictureType.PNG));
+            shape1.setSvgImage(ppt1.addPicture(svgData, PictureType.SVG));
+            assertArrayEquals(svgData, shape1.getSvgImage().getData());
+
+            // copy into another slideshow and into the same one
+            try (XMLSlideShow ppt2 = new XMLSlideShow()) {
+                for (XMLSlideShow target : new XMLSlideShow[]{ppt2, ppt1}) {
+                    XSLFSlide slideCopy = target.createSlide().importContent(slide1);
+                    XSLFPictureShape shapeCopy = (XSLFPictureShape) slideCopy.getShapes().get(0);
+
+                    assertArrayEquals(pngData, shapeCopy.getPictureData().getData());
+                    XSLFPictureData svgCopy = shapeCopy.getSvgImage();
+                    assertNotNull(svgCopy, "the svgBlip of the copy must point to a relation of the new slide");
+                    assertArrayEquals(svgData, svgCopy.getData());
+                }
+
+                for (XMLSlideShow target : new XMLSlideShow[]{ppt2, ppt1}) {
+                    try (XMLSlideShow read = writeOutAndReadBack(target)) {
+                        List<XSLFSlide> slides = read.getSlides();
+                        XSLFPictureShape shapeCopy = (XSLFPictureShape) slides.get(slides.size() - 1).getShapes().get(0);
+                        assertArrayEquals(pngData, shapeCopy.getPictureData().getData());
+                        XSLFPictureData svgCopy = shapeCopy.getSvgImage();
+                        assertEquals(PictureType.SVG, svgCopy.getType());
+                        assertEquals("image/svg+xml", svgCopy.getContentType());
+                        assertArrayEquals(svgData, svgCopy.getData());
+                    }
+                }
+            }
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void testImportSvgImageWithInvalidReference(boolean missingRelation) throws Exception {
+        byte[] pngData = new byte[]{1, 2, 3};
+        try (XMLSlideShow ppt1 = new XMLSlideShow(); XMLSlideShow ppt2 = new XMLSlideShow()) {
+            XSLFSlide slide1 = ppt1.createSlide();
+            XSLFPictureShape shape1 = slide1.createPicture(ppt1.addPicture(pngData, PictureType.PNG));
+            shape1.setSvgImage(ppt1.addPicture(new byte[]{'<', 's', 'v', 'g', '/', '>'}, PictureType.SVG));
+
+            // point the svgBlip to a relation that doesn't exist, or to one that isn't a picture
+            String badId = missingRelation ? "rId99" : slide1.getRelationId(slide1.getSlideLayout());
+            CTBlip blip = ((CTPicture) shape1.getXmlObject()).getBlipFill().getBlip();
+            XmlObject[] svgBlips = blip.getExtLst().selectPath(
+                "declare namespace asvg='http://schemas.microsoft.com/office/drawing/2016/SVG/main' .//asvg:svgBlip");
+            try (XmlCursor c = svgBlips[0].newCursor()) {
+                c.setAttributeText(new QName("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "embed"), badId);
+            }
+
+            XSLFSlide slideCopy = ppt2.createSlide().importContent(slide1);
+            XSLFPictureShape shapeCopy = (XSLFPictureShape) slideCopy.getShapes().get(0);
+            assertArrayEquals(pngData, shapeCopy.getPictureData().getData());
+            assertNull(shapeCopy.getSvgImage());
+
+            try (XMLSlideShow read = writeOutAndReadBack(ppt2)) {
+                XSLFPictureShape readCopy = (XSLFPictureShape) read.getSlides().get(0).getShapes().get(0);
+                assertArrayEquals(pngData, readCopy.getPictureData().getData());
+                assertNull(readCopy.getSvgImage());
             }
         }
     }
