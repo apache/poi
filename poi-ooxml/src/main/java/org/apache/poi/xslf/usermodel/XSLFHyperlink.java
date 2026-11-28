@@ -18,17 +18,22 @@ package org.apache.poi.xslf.usermodel;
 
 import java.net.URI;
 
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.usermodel.HyperlinkType;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.sl.usermodel.Hyperlink;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTHyperlink;
 
 public class XSLFHyperlink implements Hyperlink<XSLFShape,XSLFTextParagraph> {
+    private static final Logger LOG = PoiLogManager.getLogger(XSLFHyperlink.class);
+
     private final XSLFSheet _sheet;
     private final CTHyperlink _link;
 
@@ -149,39 +154,45 @@ public class XSLFHyperlink implements Hyperlink<XSLFShape,XSLFTextParagraph> {
         linkToRelativeSlide("lastslide");
     }
 
+    /**
+     * Points this link, whose xml was copied from {@code src}, to the same target from this sheet.
+     * The copied action and label are kept: a link without a relation (e.g. a media, macro or
+     * relative slide jump action) needs nothing else, an external relation is recreated with the
+     * same type and target, and a link to a slide gets a relation to that slide.
+     */
     void copy(XSLFHyperlink src) {
-        // the link was copied together with the xml of another sheet, so its id
-        // is not a relation of this sheet and must not be removed by the linkTo methods
-        _link.setId("");
-        switch (src.getType()) {
-            case EMAIL:
-            case URL:
-                linkToExternal(src.getAddress());
-                break;
-            case DOCUMENT:
-                final String idSrc = src._link.getId();
-                if (idSrc == null || idSrc.isEmpty()) {
-                    // link to slide - relative reference
-                    linkToRelativeSlide(src.getAddress());
-                } else {
-                    // link to slide . absolute reference
-                    // this is kind of a hack, as we might link to pages not yet imported,
-                    // but the underlying implementation is based only on package part names,
-                    // so this actually works ...
-                    POIXMLDocumentPart pp = src._sheet.getRelationById(idSrc);
-                    if (pp != null) {
-                        RelationPart rp = _sheet.addRelation(null, XSLFRelation.SLIDE, pp);
-                        _link.setId(rp.getRelationship().getId());
-                        _link.setAction(src._link.getAction());
-                    }
-                }
-                break;
-            default:
-            case FILE:
-            case NONE:
-                return;
+        final String idSrc = src._link.getId();
+        if (idSrc == null || idSrc.isEmpty()) {
+            return;
         }
-        setLabel(src.getLabel());
+
+        // the copied id is a relation of the source sheet, not of this one
+        _link.setId("");
+
+        final PackageRelationship rel = src._sheet.getPackagePart().getRelationship(idSrc);
+        if (rel != null && rel.getTargetMode() == TargetMode.EXTERNAL) {
+            PackageRelationship copy = _sheet.getPackagePart().addExternalRelationship(
+                rel.getTargetURI().toString(), rel.getRelationshipType());
+            _link.setId(copy.getId());
+            return;
+        }
+
+        // link to slide - absolute reference
+        // this is kind of a hack, as we might link to pages not yet imported,
+        // but the underlying implementation is based only on package part names,
+        // so this actually works ...
+        final POIXMLDocumentPart pp = (rel == null) ? null : src._sheet.getRelationById(idSrc);
+        if (pp instanceof XSLFSlide) {
+            RelationPart rp = _sheet.addRelation(null, XSLFRelation.SLIDE, pp);
+            _link.setId(rp.getRelationship().getId());
+            return;
+        }
+
+        // the target can't be resolved, so don't leave an action pointing nowhere
+        LOG.atWarn().log("dropping the action of a copied hyperlink, as its relation {} can't be copied", idSrc);
+        if (_link.isSetAction()) {
+            _link.unsetAction();
+        }
     }
 
     private void linkToRelativeSlide(String jump) {

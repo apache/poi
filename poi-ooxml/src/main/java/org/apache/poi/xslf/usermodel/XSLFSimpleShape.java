@@ -1078,7 +1078,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
     @Override
     public XSLFHyperlink getHyperlink() {
         CTNonVisualDrawingProps cNvPr = getCNvPr();
-        if (!cNvPr.isSetHlinkClick()) {
+        if (cNvPr == null || !cNvPr.isSetHlinkClick()) {
             return null;
         }
         return new XSLFHyperlink(cNvPr.getHlinkClick(), getSheet());
