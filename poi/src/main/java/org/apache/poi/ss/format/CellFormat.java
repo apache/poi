@@ -173,7 +173,8 @@ public class CellFormat {
 
         // parse outside the lock, so that threads formatting with other formats are not held up
         CellFormat parsed;
-        if (format.equals("General") || format.equals("@"))
+        // an empty format has no sections, and is shown as General
+        if (format.isEmpty() || format.equals("General") || format.equals("@"))
             parsed = createGeneralFormat(locale);
         else
             parsed = new CellFormat(locale, format);

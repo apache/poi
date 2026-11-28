@@ -69,6 +69,8 @@ public class CellFormatPart {
     public static final Pattern CURRENCY_PAT;
     /** Pattern for an entire cell single part. */
     public static final Pattern FORMAT_PAT;
+    /** Pattern for a part that has a color and/or a condition but no format specification. */
+    private static final Pattern NO_SPECIFICATION_PAT;
 
     /** Within {@link #FORMAT_PAT}, the group number for the matched color. */
     public static final int COLOR_GROUP;
@@ -188,6 +190,9 @@ public class CellFormatPart {
         SPECIFICATION_PAT = Pattern.compile(part, flags);
         CURRENCY_PAT = Pattern.compile(currency, flags);
         FORMAT_PAT = Pattern.compile(format, flags);
+        NO_SPECIFICATION_PAT = Pattern.compile(
+                "(?:" + color + "(?:\\[" + condition + "])?|\\[" + condition + "])" +
+                "(?:\\[\\$-[0-9a-fA-F]+])?", flags);
 
         // Calculate the group numbers of important groups.  (They shift around
         // when the pattern is changed; this way we figure out the numbers by
@@ -231,6 +236,10 @@ public class CellFormatPart {
      * @param desc The string to parse.
      */
     public CellFormatPart(Locale locale, String desc) {
+        if (NO_SPECIFICATION_PAT.matcher(desc).matches()) {
+            // Excel takes a part with only a color and/or a condition, such as [Red], as [Red]General
+            desc += "General";
+        }
         Matcher m = FORMAT_PAT.matcher(desc);
         if (!m.matches()) {
             throw new IllegalArgumentException("Unrecognized format: " + quote(
