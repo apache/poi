@@ -150,6 +150,9 @@ public class XSLFHyperlink implements Hyperlink<XSLFShape,XSLFTextParagraph> {
     }
 
     void copy(XSLFHyperlink src) {
+        // the link was copied together with the xml of another sheet, so its id
+        // is not a relation of this sheet and must not be removed by the linkTo methods
+        _link.setId("");
         switch (src.getType()) {
             case EMAIL:
             case URL:

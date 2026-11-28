@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -27,6 +28,7 @@ import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
@@ -176,5 +178,43 @@ class TestXSLFHyperlink {
         assertEquals(HyperlinkType.DOCUMENT, hl5.getType());
 
         ppt2.close();
+    }
+
+    @Test
+    void testImportContentKeepsShapeHyperlinks() throws IOException {
+        try (XMLSlideShow src = new XMLSlideShow(); XMLSlideShow dst = new XMLSlideShow()) {
+            XSLFSlide slide1 = src.createSlide();
+            XSLFSlide slide2 = src.createSlide();
+
+            XSLFAutoShape urlShape = slide1.createAutoShape();
+            urlShape.createHyperlink().linkToUrl("https://poi.apache.org/");
+            XSLFAutoShape slideShape = slide1.createAutoShape();
+            slideShape.createHyperlink().linkToSlide(slide2);
+            XSLFAutoShape nextShape = slide1.createAutoShape();
+            nextShape.createHyperlink().linkToNextSlide();
+            XSLFPictureShape picture = slide1.createPicture(src.addPicture(new byte[]{1, 2, 3}, PictureType.PNG));
+            picture.createHyperlink().linkToEmail("dev@poi.apache.org");
+
+            XSLFSlide copy = dst.createSlide().importContent(slide1);
+            List<XSLFShape> shapes = copy.getShapes();
+
+            XSLFHyperlink url = ((XSLFAutoShape) shapes.get(0)).getHyperlink();
+            assertEquals(HyperlinkType.URL, url.getType());
+            assertEquals("https://poi.apache.org/", url.getAddress());
+
+            XSLFHyperlink toSlide = ((XSLFAutoShape) shapes.get(1)).getHyperlink();
+            assertEquals(HyperlinkType.DOCUMENT, toSlide.getType());
+            assertEquals(slide2.getPackagePart().getPartName().getName(), toSlide.getAddress());
+
+            XSLFHyperlink next = ((XSLFAutoShape) shapes.get(2)).getHyperlink();
+            assertEquals(HyperlinkType.DOCUMENT, next.getType());
+            assertEquals("ppaction://hlinkshowjump?jump=nextslide", next.getXmlObject().getAction());
+
+            XSLFPictureShape pictureCopy = (XSLFPictureShape) shapes.get(3);
+            XSLFHyperlink email = pictureCopy.getHyperlink();
+            assertEquals(HyperlinkType.EMAIL, email.getType());
+            assertEquals("mailto:dev@poi.apache.org", email.getAddress());
+            assertArrayEquals(new byte[]{1, 2, 3}, pictureCopy.getPictureData().getData());
+        }
     }
 }

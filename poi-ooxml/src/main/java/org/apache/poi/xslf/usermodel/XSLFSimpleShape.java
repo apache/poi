@@ -708,6 +708,11 @@ public abstract class XSLFSimpleShape extends XSLFShape
 
         XSLFSimpleShape s = (XSLFSimpleShape)sh;
 
+        XSLFHyperlink hyperSrc = s.getHyperlink();
+        if (hyperSrc != null) {
+            getHyperlink().copy(hyperSrc);
+        }
+
         Color srsSolidFill = s.getFillColor();
         Color tgtSoliFill = getFillColor();
         if(srsSolidFill != null && !srsSolidFill.equals(tgtSoliFill)){
