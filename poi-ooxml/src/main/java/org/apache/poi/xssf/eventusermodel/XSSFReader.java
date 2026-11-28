@@ -18,6 +18,7 @@ package org.apache.poi.xssf.eventusermodel;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -333,9 +334,12 @@ public class XSSFReader {
             PackagePartName drawingsName;
             try {
                 drawingsName = PackagingURIHelper.createPartName(drawings.getTargetURI());
-            } catch (InvalidFormatException e) {
-                // one bad relationship shouldn't hide the valid drawings of the sheet
-                LOGGER.atWarn().withThrowable(e).log("Invalid drawing target: {}. Skipping it.", drawings.getTargetURI());
+            } catch (InvalidFormatException | IllegalArgumentException e) {
+                // one bad relationship shouldn't hide the valid drawings of the sheet.
+                // The target can't be logged here, as an internal target that is an absolute URI
+                // fails when it is resolved. No stack trace, as a file can hold many of these.
+                LOGGER.atWarn().log("Invalid drawing target of relationship {}: {}. Skipping it.",
+                        drawings.getId(), e.getMessage());
                 continue;
             }
             if (!seen.add(drawingsName)) {
@@ -419,9 +423,14 @@ public class XSSFReader {
         /**
          * Shapes of the drawings parsed so far, by drawing part name. Several sheets can
          * point at the same drawing and {@link #getShapes()} can be called more than once
-         * per sheet, each drawing is parsed only once.
+         * per sheet, each drawing is parsed only once. A drawing that could not be parsed
+         * has an empty list, so that it is not parsed again either.
+         * <p>
+         * The shapes are softly referenced: this is a streaming reader, and a workbook with
+         * many sheets, each with a drawing of its own, must not need all of them in memory
+         * for as long as the iterator is used. A drawing that was reclaimed is parsed again.
          */
-        private final Map<PackagePartName, List<XSSFShape>> shapesByDrawing = new HashMap<>();
+        private final Map<PackagePartName, SoftReference<List<XSSFShape>>> shapesByDrawing = new HashMap<>();
 
         /**
          * Construct a new SheetIterator
@@ -584,10 +593,17 @@ public class XSSFReader {
         }
 
         /**
-         * Returns the shapes associated with this sheet,
-         * an empty list or null if there is an exception.
+         * Returns the shapes associated with this sheet, an empty list if it has none,
+         * or null if the drawing relationships of the sheet cannot be read.
+         * A drawing that cannot be parsed is skipped, so that it doesn't hide the shapes
+         * of the other drawings of the sheet.
          * Each drawing is parsed once per iterator, so sheets sharing a drawing
          * or repeated calls for one sheet don't parse it again.
+         * <p>
+         * As a consequence, the returned list is a new one but the shapes in it are shared
+         * between the calls for this sheet and with the other sheets using the same drawing:
+         * a change made to a shape is seen by all of them, so the shapes should be treated
+         * as read-only.
          */
         public List<XSSFShape> getShapes() {
             List<XSSFShape> shapes = new LinkedList<>();
@@ -595,19 +611,25 @@ public class XSSFReader {
                 for (PackagePart drawingsPart : XSSFReader.getSheetDrawingParts(getSheetPart(), false)) {
                     shapes.addAll(getShapes(drawingsPart));
                 }
-            } catch (XmlException|InvalidFormatException|IOException e) {
+            } catch (InvalidFormatException e) {
                 LOGGER.atWarn().withThrowable(e).log("Failed to load shapes");
                 return null;
             }
             return shapes;
         }
 
-        private List<XSSFShape> getShapes(PackagePart drawingsPart) throws XmlException, IOException {
+        private List<XSSFShape> getShapes(PackagePart drawingsPart) {
             PackagePartName drawingsName = drawingsPart.getPartName();
-            List<XSSFShape> shapes = shapesByDrawing.get(drawingsName);
+            SoftReference<List<XSSFShape>> cached = shapesByDrawing.get(drawingsName);
+            List<XSSFShape> shapes = (cached == null) ? null : cached.get();
             if (shapes == null) {
-                shapes = new XSSFDrawing(drawingsPart).getShapes();
-                shapesByDrawing.put(drawingsName, shapes);
+                try {
+                    shapes = new XSSFDrawing(drawingsPart).getShapes();
+                } catch (XmlException|IOException e) {
+                    LOGGER.atWarn().withThrowable(e).log("Failed to load the shapes of drawing {}. Skipping it.", drawingsName);
+                    shapes = Collections.emptyList();
+                }
+                shapesByDrawing.put(drawingsName, new SoftReference<>(shapes));
             }
             return shapes;
         }

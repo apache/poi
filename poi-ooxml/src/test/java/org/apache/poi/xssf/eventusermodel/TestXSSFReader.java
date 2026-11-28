@@ -40,6 +40,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
@@ -510,6 +511,59 @@ public final class TestXSSFReader {
 
             assertEquals(drawings, XSSFReader.getSheetDrawingParts(sheet, false));
             assertEquals(shapes, it.getShapes().size());
+        }
+    }
+
+    @Test
+    void testDrawingRelationshipWithAbsoluteInternalTarget() throws Exception {
+        try (OPCPackage pkg = XSSFTestDataSamples.openSamplePackage("WithTextBox.xlsx")) {
+            XSSFReader r = new XSSFReader(pkg);
+            XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) r.getSheetsData();
+            it.next().close();
+            PackagePart sheet = it.getSheetPart();
+            List<PackagePart> drawings = XSSFReader.getSheetDrawingParts(sheet, false);
+            assertEquals(1, drawings.size());
+            int shapes = it.getShapes().size();
+            assertTrue(shapes > 0);
+
+            // an absolute URI that is not marked as external can't be resolved to a part name,
+            // which used to fail with an IllegalArgumentException
+            String type = XSSFRelation.DRAWINGS.getRelation();
+            sheet.addRelationship(new URI("http://example.com/drawing1.xml"), TargetMode.INTERNAL, type);
+            sheet.addRelationship(new URI("mailto:drawing@example.com"), TargetMode.INTERNAL, type);
+            assertEquals(3, sheet.getRelationshipsByType(type).size());
+
+            assertEquals(drawings, XSSFReader.getSheetDrawingParts(sheet, false));
+            assertEquals(shapes, it.getShapes().size());
+        }
+    }
+
+    @Test
+    void testUnparseableDrawingDoesNotHideOtherDrawings() throws Exception {
+        try (OPCPackage pkg = XSSFTestDataSamples.openSamplePackage("WithTextBox.xlsx")) {
+            XSSFReader r = new XSSFReader(pkg);
+            XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) r.getSheetsData();
+            it.next().close();
+            PackagePart sheet = it.getSheetPart();
+
+            // a second drawing of the sheet, which is not well-formed
+            PackagePartName brokenName = PackagingURIHelper.createPartName("/xl/drawings/drawing99.xml");
+            PackagePart broken = pkg.createPart(brokenName, XSSFRelation.DRAWINGS.getContentType());
+            try (OutputStream os = broken.getOutputStream()) {
+                os.write("<xdr:wsDr".getBytes(StandardCharsets.UTF_8));
+            }
+            sheet.addRelationship(brokenName, TargetMode.INTERNAL, XSSFRelation.DRAWINGS.getRelation());
+            assertEquals(2, XSSFReader.getSheetDrawingParts(sheet, false).size());
+
+            // the shapes of the valid drawing used to be lost, as null was returned
+            List<XSSFShape> shapes = it.getShapes();
+            assertNotNull(shapes);
+            assertFalse(shapes.isEmpty());
+            // and again, with the failure remembered
+            List<XSSFShape> shapes2 = it.getShapes();
+            assertNotNull(shapes2);
+            assertEquals(shapes.size(), shapes2.size());
+            assertSame(shapes.get(0), shapes2.get(0));
         }
     }
 

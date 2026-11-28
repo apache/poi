@@ -185,8 +185,10 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
             XSLFSheet.removeElement(grpSp.getCxnSpArray(), obj, grpSp::removeCxnSp);
         } else if (obj instanceof CTGraphicalObjectFrame) {
             Set<String> relIds = XSLFSheet.getRelationIds(obj);
-            XSLFSheet.removeElement(grpSp.getGraphicFrameArray(), obj, grpSp::removeGraphicFrame);
-            getSheet().removeUnusedRelations((XSLFGraphicFrame)xShape, relIds);
+            // the relationship ids of a frame, which is not in this group, can be the ones of another sheet
+            if (XSLFSheet.removeElement(grpSp.getGraphicFrameArray(), obj, grpSp::removeGraphicFrame)) {
+                getSheet().removeUnusedRelations((XSLFGraphicFrame)xShape, relIds);
+            }
         } else if (obj instanceof CTPicture) {
             XSLFPictureShape ps = (XSLFPictureShape)xShape;
             XSLFSheet sh = getSheet();

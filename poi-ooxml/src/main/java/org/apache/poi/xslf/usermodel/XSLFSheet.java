@@ -39,6 +39,7 @@ import javax.xml.namespace.QName;
 import com.zaxxer.sparsebits.SparseBitSet;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
+import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -81,6 +82,26 @@ public abstract class XSLFSheet extends POIXMLDocumentPart
     private static final Logger LOG = PoiLogManager.getLogger(XSLFSheet.class);
     private static final String RELATIONSHIPS_NS = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
     private static final String STRICT_RELATIONSHIPS_NS = "http://purl.oclc.org/ooxml/officeDocument/relationships";
+
+    /**
+     * The types of the relationships a graphic frame can use, i.e. the ones which may be removed
+     * together with the frame. A sheet has relationships which no attribute of its xml refers to,
+     * e.g. to its notes, layout or comments, and these must never be taken for unused.
+     */
+    private static final Set<String> GRAPHIC_FRAME_RELATION_TYPES = Set.of(
+        XSLFRelation.CHART.getRelation(),
+        POIXMLDocument.OLE_OBJECT_REL_TYPE,
+        POIXMLDocument.PACK_OBJECT_REL_TYPE,
+        XSLFRelation.IMAGES.getRelation(),
+        XSLFRelation.HDPHOTO_WDP.getRelation(),
+        XSLFRelation.HYPERLINK.getRelation(),
+        XSLFRelation.SLIDE.getRelation(),
+        RELATIONSHIPS_NS + "/diagramData",
+        RELATIONSHIPS_NS + "/diagramLayout",
+        RELATIONSHIPS_NS + "/diagramQuickStyle",
+        RELATIONSHIPS_NS + "/diagramColors",
+        XSLFRelation.DIAGRAM_DRAWING.getRelation()
+    );
 
     private XSLFDrawing _drawing;
     private List<XSLFShape> _shapes;
@@ -363,13 +384,17 @@ public abstract class XSLFSheet extends POIXMLDocumentPart
      * Removes {@code obj} via {@code remover}, looking up its index in {@code elements}.
      * This avoids {@code List.remove(Object)} on an xmlbeans list, which looks up each element by index.
      */
-    static void removeElement(XmlObject[] elements, XmlObject obj, IntConsumer remover) {
+    /**
+     * @return true, if {@code obj} was one of the elements and has been removed
+     */
+    static boolean removeElement(XmlObject[] elements, XmlObject obj, IntConsumer remover) {
         for (int i = 0; i < elements.length; i++) {
             if (elements[i] == obj) {
                 remover.accept(i);
-                return;
+                return true;
             }
         }
+        return false;
     }
 
     @Override
@@ -387,8 +412,10 @@ public abstract class XSLFSheet extends POIXMLDocumentPart
             removeElement(spTree.getCxnSpArray(), obj, spTree::removeCxnSp);
         } else if (obj instanceof CTGraphicalObjectFrame) {
             Set<String> relIds = getRelationIds(obj);
-            removeElement(spTree.getGraphicFrameArray(), obj, spTree::removeGraphicFrame);
-            removeUnusedRelations((XSLFGraphicFrame)xShape, relIds);
+            // the relationship ids of a frame of another sheet are not the ones of this sheet
+            if (removeElement(spTree.getGraphicFrameArray(), obj, spTree::removeGraphicFrame)) {
+                removeUnusedRelations((XSLFGraphicFrame)xShape, relIds);
+            }
         } else if (obj instanceof CTPicture) {
             XSLFPictureShape ps = (XSLFPictureShape)xShape;
             removePictureRelation(ps);
@@ -745,7 +772,11 @@ public abstract class XSLFSheet extends POIXMLDocumentPart
             end.toEndToken();
             while (cur.toNextToken() != XmlCursor.TokenType.NONE && cur.isLeftOf(end)) {
                 if (cur.isAttr() && isRelationshipsNamespace(cur.getName().getNamespaceURI())) {
-                    ids.add(cur.getTextValue());
+                    // an action hyperlink, e.g. to the next slide, has an empty id and no relationship
+                    String id = cur.getTextValue();
+                    if (id != null && !id.isEmpty()) {
+                        ids.add(id);
+                    }
                 }
             }
         }
@@ -786,13 +817,30 @@ public abstract class XSLFSheet extends POIXMLDocumentPart
             return;
         }
         relIds.removeAll(getRelationIds(getXmlObject()));
+        PackagePart sheetPart = getPackagePart();
         for (String relId : relIds) {
+            PackageRelationship rel = sheetPart.hasRelationships() ? sheetPart.getRelationship(relId) : null;
+            if (rel == null || !GRAPHIC_FRAME_RELATION_TYPES.contains(rel.getRelationshipType())) {
+                // e.g. the id of a frame copied from another sheet, which is the id of the notes here
+                continue;
+            }
             POIXMLDocumentPart part = getRelationById(relId);
+            if (part == null) {
+                // not a relation to a part of the package, e.g. the url of a hyperlink in a table cell
+                removeExternalRelationship(rel);
+                continue;
+            }
             removeRelation(relId);
             if (part instanceof XSLFChart chart
                     && !getPackagePart().getPackage().containPart(part.getPackagePart().getPartName())) {
                 getSlideShow().onChartRemoved(chart);
             }
+        }
+    }
+
+    private void removeExternalRelationship(PackageRelationship rel) {
+        if (!removeReferenceRelationship(rel.getId()) && rel.getTargetMode() == TargetMode.EXTERNAL) {
+            getPackagePart().removeRelationship(rel.getId());
         }
     }
 
