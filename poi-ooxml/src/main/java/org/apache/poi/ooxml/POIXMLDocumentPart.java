@@ -409,7 +409,7 @@ public class POIXMLDocumentPart {
 
         if (removeUnusedParts) {
             /* if last relation to target part was removed, delete according target part */
-            if (part.getRelationCounter() == 0) {
+            if (part.getRelationCounter() == 0 && !part.isRelationshipTarget()) {
                 part.removeFromPackage();
             }
         }

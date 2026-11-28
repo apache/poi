@@ -1172,20 +1172,116 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     public boolean removeBodyElement(int pos) {
         if (pos >= 0 && pos < bodyElements.size()) {
             BodyElementType type = bodyElements.get(pos).getElementType();
+            Set<String> relIds = Collections.emptySet();
             if (type == BodyElementType.TABLE) {
                 int tablePos = getTablePos(pos);
+                relIds = collectRelationshipIds(ctDocument.getBody().getTblArray(tablePos));
                 tables.remove(tablePos);
                 ctDocument.getBody().removeTbl(tablePos);
             }
             if (type == BodyElementType.PARAGRAPH) {
                 int paraPos = getParagraphPos(pos);
+                relIds = collectRelationshipIds(ctDocument.getBody().getPArray(paraPos));
                 paragraphs.remove(paraPos);
                 ctDocument.getBody().removeP(paraPos);
             }
             bodyElements.remove(pos);
+            if (!relIds.isEmpty()) {
+                removeUnusedRelations(relIds);
+            }
             return true;
         }
         return false;
+    }
+
+    private static Set<String> collectRelationshipIds(XmlObject xml) {
+        Set<String> relIds = new LinkedHashSet<>();
+        try (XmlCursor cursor = xml.newCursor();
+             XmlCursor end = xml.newCursor()) {
+            end.toEndToken();
+            while (cursor.toNextToken() != XmlCursor.TokenType.NONE && !cursor.isAtSamePositionAs(end)) {
+                if (cursor.isAttr()) {
+                    QName name = cursor.getName();
+                    if (name != null && PackageRelationshipTypes.CORE_PROPERTIES_ECMA376_NS.equals(name.getNamespaceURI())) {
+                        String id = cursor.getTextValue();
+                        if (id != null && !id.isEmpty()) {
+                            relIds.add(id);
+                        }
+                    }
+                }
+            }
+        }
+        return relIds;
+    }
+
+    private static void removeReferencedIds(XmlObject xml, Set<String> candidateIds) {
+        try (XmlCursor cursor = xml.newCursor();
+             XmlCursor end = xml.newCursor()) {
+            end.toEndToken();
+            while (!candidateIds.isEmpty() && cursor.toNextToken() != XmlCursor.TokenType.NONE
+                    && !cursor.isAtSamePositionAs(end)) {
+                if (cursor.isAttr()) {
+                    QName name = cursor.getName();
+                    if (name != null && PackageRelationshipTypes.CORE_PROPERTIES_ECMA376_NS.equals(name.getNamespaceURI())) {
+                        candidateIds.remove(cursor.getTextValue());
+                    }
+                }
+            }
+        }
+    }
+
+    private void removeUnusedRelations(Set<String> candidateIds) {
+        removeReferencedIds(ctDocument, candidateIds);
+        if (candidateIds.isEmpty()) {
+            return;
+        }
+
+        // Remove non-child-part relationships (hyperlinks, external links, etc.) first
+        // so that isRelationshipTarget() sees their removal before deleting child parts.
+        List<String> partRelIds = new ArrayList<>();
+        PackagePart docPart = getPackagePart();
+        for (String id : candidateIds) {
+            if (getRelationPartById(id) != null) {
+                partRelIds.add(id);
+            } else {
+                if (!removeReferenceRelationship(id) && docPart.hasRelationships() && docPart.getRelationship(id) != null) {
+                    docPart.removeRelationship(id);
+                }
+                for (Iterator<XWPFHyperlink> it = hyperlinks.iterator(); it.hasNext(); ) {
+                    XWPFHyperlink link = it.next();
+                    if (readHyperlinks.contains(link) && id.equals(link.getId())) {
+                        readHyperlinks.remove(link);
+                        it.remove();
+                    }
+                }
+            }
+        }
+
+        boolean removedPart = false;
+        for (String id : partRelIds) {
+            POIXMLDocumentPart part = getRelationById(id);
+            if (part == null || part instanceof XWPFHeaderFooter) {
+                // headers and footers belong to the section properties, not to the removed content
+                continue;
+            }
+            removeRelation(id);
+            removedPart = true;
+            if (getRelationId(part) == null) {
+                if (part instanceof XWPFPictureData) {
+                    pictures.removeIf(p -> p == part);
+                } else if (part instanceof XWPFChart) {
+                    charts.removeIf(c -> c == part);
+                }
+            }
+        }
+
+        if (removedPart) {
+            OPCPackage pkg = getPackage();
+            packagePictures.values().removeIf(list -> {
+                list.removeIf(p -> p.getPackagePart() != null && !pkg.containPart(p.getPackagePart().getPartName()));
+                return list.isEmpty();
+            });
+        }
     }
 
     /**
