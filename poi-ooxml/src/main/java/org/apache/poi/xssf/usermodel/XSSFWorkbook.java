@@ -701,6 +701,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
 
         XSSFSheet clonedSheet = createSheet(newName);
 
+        // a hyperlink added since the sheet was read gets its relationship only when the sheet is
+        // written, which happens below after the relationships are copied, so add them now
+        for (XSSFHyperlink hyperlink : srcSheet.getHyperlinkList()) {
+            hyperlink.generateRelationIfNeeded(srcSheet.getPackagePart());
+        }
+
         // copy sheet's relations
         List<RelationPart> rels = srcSheet.getRelationParts();
         // if the sheet being cloned has a drawing then remember it and re-create it too

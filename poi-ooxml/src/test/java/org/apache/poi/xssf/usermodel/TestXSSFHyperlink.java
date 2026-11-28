@@ -767,6 +767,36 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
     }
 
     @Test
+    void testCloneSheetWithNewHyperlink() throws IOException, InvalidFormatException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet("src");
+            XSSFHyperlink link = wb.getCreationHelper().createHyperlink(HyperlinkType.URL);
+            link.setAddress("https://example.com/new");
+            sheet.createRow(0).createCell(0).setHyperlink(link);
+            XSSFHyperlink internal = wb.getCreationHelper().createHyperlink(HyperlinkType.DOCUMENT);
+            internal.setAddress("'src'!B2");
+            sheet.createRow(1).createCell(0).setHyperlink(internal);
+
+            // the hyperlink has no relationship yet, it is only added when the sheet is written
+            XSSFSheet clone = wb.cloneSheet(0, "clone");
+
+            assertEquals("https://example.com/new", clone.getHyperlink(0, 0).getAddress());
+            assertEquals("'src'!B2", clone.getHyperlink(1, 0).getAddress());
+            assertEquals(List.of("https://example.com/new"), hyperlinkTargets(clone));
+            assertEquals(List.of("https://example.com/new"), hyperlinkTargets(sheet));
+
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                for (String name : new String[]{"src", "clone"}) {
+                    XSSFSheet read = wb2.getSheet(name);
+                    assertEquals("https://example.com/new", read.getHyperlink(0, 0).getAddress(), name);
+                    assertEquals("'src'!B2", read.getHyperlink(1, 0).getAddress(), name);
+                    assertEquals(List.of("https://example.com/new"), hyperlinkTargets(read), name);
+                }
+            }
+        }
+    }
+
+    @Test
     void testCloneSheetWithLoadedHyperlinkKeepsWorkbookRelationships() throws IOException, InvalidFormatException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet("src");
