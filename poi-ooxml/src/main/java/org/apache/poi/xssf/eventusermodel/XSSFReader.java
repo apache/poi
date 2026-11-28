@@ -333,9 +333,12 @@ public class XSSFReader {
             PackagePartName drawingsName;
             try {
                 drawingsName = PackagingURIHelper.createPartName(drawings.getTargetURI());
-            } catch (InvalidFormatException e) {
-                // one bad relationship shouldn't hide the valid drawings of the sheet
-                LOGGER.atWarn().withThrowable(e).log("Invalid drawing target: {}. Skipping it.", drawings.getTargetURI());
+            } catch (InvalidFormatException | IllegalArgumentException e) {
+                // one bad relationship shouldn't hide the valid drawings of the sheet.
+                // The target can't be logged here, as an internal target that is an absolute URI
+                // fails when it is resolved. No stack trace, as a file can hold many of these.
+                LOGGER.atWarn().log("Invalid drawing target of relationship {}: {}. Skipping it.",
+                        drawings.getId(), e.getMessage());
                 continue;
             }
             if (!seen.add(drawingsName)) {
@@ -419,7 +422,8 @@ public class XSSFReader {
         /**
          * Shapes of the drawings parsed so far, by drawing part name. Several sheets can
          * point at the same drawing and {@link #getShapes()} can be called more than once
-         * per sheet, each drawing is parsed only once.
+         * per sheet, each drawing is parsed only once. A drawing that could not be parsed
+         * has an empty list, so that it is not parsed again either.
          */
         private final Map<PackagePartName, List<XSSFShape>> shapesByDrawing = new HashMap<>();
 
@@ -584,8 +588,10 @@ public class XSSFReader {
         }
 
         /**
-         * Returns the shapes associated with this sheet,
-         * an empty list or null if there is an exception.
+         * Returns the shapes associated with this sheet, an empty list if it has none,
+         * or null if the drawing relationships of the sheet cannot be read.
+         * A drawing that cannot be parsed is skipped, so that it doesn't hide the shapes
+         * of the other drawings of the sheet.
          * Each drawing is parsed once per iterator, so sheets sharing a drawing
          * or repeated calls for one sheet don't parse it again.
          */
@@ -595,18 +601,23 @@ public class XSSFReader {
                 for (PackagePart drawingsPart : XSSFReader.getSheetDrawingParts(getSheetPart(), false)) {
                     shapes.addAll(getShapes(drawingsPart));
                 }
-            } catch (XmlException|InvalidFormatException|IOException e) {
+            } catch (InvalidFormatException e) {
                 LOGGER.atWarn().withThrowable(e).log("Failed to load shapes");
                 return null;
             }
             return shapes;
         }
 
-        private List<XSSFShape> getShapes(PackagePart drawingsPart) throws XmlException, IOException {
+        private List<XSSFShape> getShapes(PackagePart drawingsPart) {
             PackagePartName drawingsName = drawingsPart.getPartName();
             List<XSSFShape> shapes = shapesByDrawing.get(drawingsName);
             if (shapes == null) {
-                shapes = new XSSFDrawing(drawingsPart).getShapes();
+                try {
+                    shapes = new XSSFDrawing(drawingsPart).getShapes();
+                } catch (XmlException|IOException e) {
+                    LOGGER.atWarn().withThrowable(e).log("Failed to load the shapes of drawing {}. Skipping it.", drawingsName);
+                    shapes = Collections.emptyList();
+                }
                 shapesByDrawing.put(drawingsName, shapes);
             }
             return shapes;

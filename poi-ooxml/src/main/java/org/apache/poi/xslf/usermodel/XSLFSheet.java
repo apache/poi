@@ -745,7 +745,11 @@ public abstract class XSLFSheet extends POIXMLDocumentPart
             end.toEndToken();
             while (cur.toNextToken() != XmlCursor.TokenType.NONE && cur.isLeftOf(end)) {
                 if (cur.isAttr() && isRelationshipsNamespace(cur.getName().getNamespaceURI())) {
-                    ids.add(cur.getTextValue());
+                    // an action hyperlink, e.g. to the next slide, has an empty id and no relationship
+                    String id = cur.getTextValue();
+                    if (id != null && !id.isEmpty()) {
+                        ids.add(id);
+                    }
                 }
             }
         }
@@ -788,11 +792,27 @@ public abstract class XSLFSheet extends POIXMLDocumentPart
         relIds.removeAll(getRelationIds(getXmlObject()));
         for (String relId : relIds) {
             POIXMLDocumentPart part = getRelationById(relId);
+            if (part == null) {
+                // not a relation to a part of the package, e.g. the url of a hyperlink in a table cell
+                removeExternalRelationship(relId);
+                continue;
+            }
             removeRelation(relId);
             if (part instanceof XSLFChart chart
                     && !getPackagePart().getPackage().containPart(part.getPackagePart().getPartName())) {
                 getSlideShow().onChartRemoved(chart);
             }
+        }
+    }
+
+    private void removeExternalRelationship(String relId) {
+        if (removeReferenceRelationship(relId)) {
+            return;
+        }
+        PackagePart sheetPart = getPackagePart();
+        PackageRelationship rel = sheetPart.hasRelationships() ? sheetPart.getRelationship(relId) : null;
+        if (rel != null && rel.getTargetMode() == TargetMode.EXTERNAL) {
+            sheetPart.removeRelationship(relId);
         }
     }
 
