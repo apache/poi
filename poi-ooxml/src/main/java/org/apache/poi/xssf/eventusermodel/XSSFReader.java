@@ -18,6 +18,7 @@ package org.apache.poi.xssf.eventusermodel;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -424,8 +425,12 @@ public class XSSFReader {
          * point at the same drawing and {@link #getShapes()} can be called more than once
          * per sheet, each drawing is parsed only once. A drawing that could not be parsed
          * has an empty list, so that it is not parsed again either.
+         * <p>
+         * The shapes are softly referenced: this is a streaming reader, and a workbook with
+         * many sheets, each with a drawing of its own, must not need all of them in memory
+         * for as long as the iterator is used. A drawing that was reclaimed is parsed again.
          */
-        private final Map<PackagePartName, List<XSSFShape>> shapesByDrawing = new HashMap<>();
+        private final Map<PackagePartName, SoftReference<List<XSSFShape>>> shapesByDrawing = new HashMap<>();
 
         /**
          * Construct a new SheetIterator
@@ -594,6 +599,11 @@ public class XSSFReader {
          * of the other drawings of the sheet.
          * Each drawing is parsed once per iterator, so sheets sharing a drawing
          * or repeated calls for one sheet don't parse it again.
+         * <p>
+         * As a consequence, the returned list is a new one but the shapes in it are shared
+         * between the calls for this sheet and with the other sheets using the same drawing:
+         * a change made to a shape is seen by all of them, so the shapes should be treated
+         * as read-only.
          */
         public List<XSSFShape> getShapes() {
             List<XSSFShape> shapes = new LinkedList<>();
@@ -610,7 +620,8 @@ public class XSSFReader {
 
         private List<XSSFShape> getShapes(PackagePart drawingsPart) {
             PackagePartName drawingsName = drawingsPart.getPartName();
-            List<XSSFShape> shapes = shapesByDrawing.get(drawingsName);
+            SoftReference<List<XSSFShape>> cached = shapesByDrawing.get(drawingsName);
+            List<XSSFShape> shapes = (cached == null) ? null : cached.get();
             if (shapes == null) {
                 try {
                     shapes = new XSSFDrawing(drawingsPart).getShapes();
@@ -618,7 +629,7 @@ public class XSSFReader {
                     LOGGER.atWarn().withThrowable(e).log("Failed to load the shapes of drawing {}. Skipping it.", drawingsName);
                     shapes = Collections.emptyList();
                 }
-                shapesByDrawing.put(drawingsName, shapes);
+                shapesByDrawing.put(drawingsName, new SoftReference<>(shapes));
             }
             return shapes;
         }

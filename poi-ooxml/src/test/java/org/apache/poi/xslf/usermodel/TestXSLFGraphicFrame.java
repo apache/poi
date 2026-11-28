@@ -206,6 +206,70 @@ class TestXSLFGraphicFrame {
         }
     }
 
+    /**
+     * A sheet has relations which no attribute of its xml refers to, e.g. to its notes.
+     * A frame can carry such an id, e.g. when it was copied from a sheet where the id
+     * was the one of an embedded object, and removing it must not remove the notes.
+     */
+    @Test
+    void testRemoveGraphicFrameKeepsRelationsOfTheSheet() throws Exception {
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            XSLFSlide slide = ppt.createSlide();
+            XSLFNotes notes = ppt.getNotesSlide(slide);
+            String notesId = slide.getRelationId(notes);
+            String layoutId = slide.getRelationId(slide.getSlideLayout());
+            assertNotNull(notesId);
+            assertNotNull(layoutId);
+
+            XSLFTable table = slide.createTable(1, 2);
+            table.getCell(0, 0).setText("notes").createHyperlink().getXmlObject().setId(notesId);
+            table.getCell(0, 1).setText("layout").createHyperlink().getXmlObject().setId(layoutId);
+            assertEquals(Set.of(notesId, layoutId), XSLFSheet.getRelationIds(table.getXmlObject()));
+
+            assertTrue(slide.removeShape(table));
+            assertSame(notes, slide.getRelationById(notesId));
+            assertSame(slide.getSlideLayout(), slide.getRelationById(layoutId));
+            assertTrue(ppt.getPackage().containPart(notes.getPackagePart().getPartName()));
+
+            try (XMLSlideShow ppt2 = writeOutAndReadBack(ppt)) {
+                XSLFSlide slide2 = ppt2.getSlides().get(0);
+                assertNotNull(slide2.getNotes());
+                assertNotNull(slide2.getSlideLayout());
+            }
+        }
+    }
+
+    /**
+     * The relationship ids of a frame of another sheet say nothing about the relations of this sheet
+     */
+    @Test
+    void testRemoveGraphicFrameOfAnotherSheet() throws Exception {
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            XSLFSlide slide1 = ppt.createSlide();
+            XSLFTable table = slide1.createTable(1, 1);
+            XSLFHyperlink link = table.getCell(0, 0).setText("table").createHyperlink();
+            link.linkToUrl(TABLE_URL);
+            String relId = link.getXmlObject().getId();
+
+            // a chart, which no frame shows yet, with the same relationship id on the other slide
+            XSLFSlide slide2 = ppt.createSlide();
+            XSLFChart chart = ppt.createChart(slide2);
+            assertEquals(relId, slide2.getRelationId(chart));
+            XSLFGroupShape group = slide2.createGroup();
+
+            assertFalse(slide2.removeShape(table));
+            assertFalse(group.removeShape(table));
+            assertSame(chart, slide2.getRelationById(relId));
+            assertEquals(List.of(chart), ppt.getCharts());
+            assertTrue(ppt.getPackage().containPart(chart.getPackagePart().getPartName()));
+
+            // the table and its hyperlink are still on the first slide
+            assertEquals(List.of(TABLE_URL), hyperlinkTargets(slide1));
+            assertTrue(slide1.removeShape(table));
+            assertThat(hyperlinkTargets(slide1), empty());
+        }
+    }
+
     private static final String TABLE_URL = "https://poi.apache.org/table";
     private static final String TEXT_BOX_URL = "https://poi.apache.org/textbox";
 
