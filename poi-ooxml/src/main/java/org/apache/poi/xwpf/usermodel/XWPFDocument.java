@@ -40,6 +40,7 @@ import org.apache.poi.ooxml.util.PackageHelper;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -95,6 +96,19 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
 @SuppressWarnings("unused")
 public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     private static final Logger LOG = PoiLogManager.getLogger(XWPFDocument.class);
+
+    /** the kinds of relations that content of the document body can own */
+    private static final Set<String> BODY_CONTENT_RELATIONS = new HashSet<>(Arrays.asList(
+        PackageRelationshipTypes.IMAGE_PART,
+        PackageRelationshipTypes.HYPERLINK_PART,
+        XWPFRelation.CHART.getRelation(),
+        POIXMLDocument.OLE_OBJECT_REL_TYPE,
+        POIXMLDocument.PACK_OBJECT_REL_TYPE,
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/diagramData",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/diagramLayout",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/diagramQuickStyle",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/diagramColors",
+        "http://schemas.microsoft.com/office/2007/relationships/diagramDrawing"));
     private static final int MAX_NODE_DEPTH = 1000;
 
     protected List<XWPFFooter> footers = new ArrayList<>();
@@ -1168,24 +1182,144 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * remove a BodyElement from bodyElements array list
      *
      * @return true if removing was successfully, else return false
+     * @see #removeBodyElement(int, boolean)
      */
     public boolean removeBodyElement(int pos) {
+        return removeBodyElement(pos, false);
+    }
+
+    /**
+     * Removes the body element at the given position.
+     * <p>
+     * With {@code removeUnusedParts}, the relations that only the removed element used are
+     * removed as well: pictures, charts, embedded objects, diagrams and hyperlinks that nothing
+     * left in the document body refers to. Their parts are removed from the package when no
+     * other part refers to them either, so a picture also shown in a header stays. Headers,
+     * footers and other parts of the document itself are never removed, and nothing is removed
+     * when the package was opened read-only.
+     * <p>
+     * Don't use {@code removeUnusedParts} when the element is put back into the document
+     * afterwards, e.g. to move it, as its pictures and links would then be gone.
+     *
+     * @param pos the position of the element in {@link #getBodyElements()}
+     * @param removeUnusedParts whether to remove the relations and parts only the element used
+     * @return true if removing was successfully, else return false
+     * @since 6.1.0
+     */
+    public boolean removeBodyElement(int pos, boolean removeUnusedParts) {
         if (pos >= 0 && pos < bodyElements.size()) {
+            boolean cleanUp = removeUnusedParts && getPackage().getPackageAccess() != PackageAccess.READ;
             BodyElementType type = bodyElements.get(pos).getElementType();
+            Set<String> relIds = Collections.emptySet();
             if (type == BodyElementType.TABLE) {
                 int tablePos = getTablePos(pos);
+                if (cleanUp) {
+                    relIds = collectRelationshipIds(ctDocument.getBody().getTblArray(tablePos));
+                }
                 tables.remove(tablePos);
                 ctDocument.getBody().removeTbl(tablePos);
             }
             if (type == BodyElementType.PARAGRAPH) {
                 int paraPos = getParagraphPos(pos);
+                if (cleanUp) {
+                    relIds = collectRelationshipIds(ctDocument.getBody().getPArray(paraPos));
+                }
                 paragraphs.remove(paraPos);
                 ctDocument.getBody().removeP(paraPos);
             }
             bodyElements.remove(pos);
+            if (!relIds.isEmpty()) {
+                removeUnusedRelations(relIds);
+            }
             return true;
         }
         return false;
+    }
+
+    private static Set<String> collectRelationshipIds(XmlObject xml) {
+        Set<String> relIds = new LinkedHashSet<>();
+        try (XmlCursor cursor = xml.newCursor();
+             XmlCursor end = xml.newCursor()) {
+            end.toEndToken();
+            while (cursor.toNextToken() != XmlCursor.TokenType.NONE && !cursor.isAtSamePositionAs(end)) {
+                if (cursor.isAttr()) {
+                    QName name = cursor.getName();
+                    if (name != null && PackageRelationshipTypes.CORE_PROPERTIES_ECMA376_NS.equals(name.getNamespaceURI())) {
+                        String id = cursor.getTextValue();
+                        if (id != null && !id.isEmpty()) {
+                            relIds.add(id);
+                        }
+                    }
+                }
+            }
+        }
+        return relIds;
+    }
+
+    private static void removeReferencedIds(XmlObject xml, Set<String> candidateIds) {
+        try (XmlCursor cursor = xml.newCursor();
+             XmlCursor end = xml.newCursor()) {
+            end.toEndToken();
+            while (!candidateIds.isEmpty() && cursor.toNextToken() != XmlCursor.TokenType.NONE
+                    && !cursor.isAtSamePositionAs(end)) {
+                if (cursor.isAttr()) {
+                    QName name = cursor.getName();
+                    if (name != null && PackageRelationshipTypes.CORE_PROPERTIES_ECMA376_NS.equals(name.getNamespaceURI())) {
+                        candidateIds.remove(cursor.getTextValue());
+                    }
+                }
+            }
+        }
+    }
+
+    private void removeUnusedRelations(Set<String> candidateIds) {
+        removeReferencedIds(ctDocument, candidateIds);
+        PackagePart docPart = getPackagePart();
+        List<String> partRelIds = new ArrayList<>();
+        // relations without a document part, such as hyperlinks, go first, so that a part
+        // only one of them targeted is no longer counted as used when the parts are removed
+        for (String id : candidateIds) {
+            PackageRelationship rel = docPart.getRelationship(id);
+            if (rel == null || !BODY_CONTENT_RELATIONS.contains(rel.getRelationshipType())) {
+                continue;
+            }
+            if (getRelationPartById(id) != null) {
+                partRelIds.add(id);
+                continue;
+            }
+            if (!removeReferenceRelationship(id)) {
+                docPart.removeRelationship(id);
+            }
+            for (Iterator<XWPFHyperlink> it = hyperlinks.iterator(); it.hasNext(); ) {
+                XWPFHyperlink link = it.next();
+                if (readHyperlinks.contains(link) && id.equals(link.getId())) {
+                    readHyperlinks.remove(link);
+                    it.remove();
+                }
+            }
+        }
+
+        boolean removedPart = false;
+        for (String id : partRelIds) {
+            POIXMLDocumentPart part = getRelationById(id);
+            removeRelationAndUnusedPart(id);
+            removedPart = true;
+            if (getRelationId(part) == null) {
+                if (part instanceof XWPFPictureData) {
+                    pictures.removeIf(p -> p == part);
+                } else if (part instanceof XWPFChart) {
+                    charts.removeIf(c -> c == part);
+                }
+            }
+        }
+
+        if (removedPart) {
+            OPCPackage pkg = getPackage();
+            packagePictures.values().removeIf(list -> {
+                list.removeIf(p -> p.getPackagePart() != null && !pkg.containPart(p.getPackagePart().getPartName()));
+                return list.isEmpty();
+            });
+        }
     }
 
     /**

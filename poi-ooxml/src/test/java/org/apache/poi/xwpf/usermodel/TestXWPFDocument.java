@@ -28,12 +28,17 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.common.usermodel.PictureType;
@@ -46,17 +51,22 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
+import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.util.TempFile;
+import org.apache.poi.wp.usermodel.HeaderFooterType;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlObject;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHyperlink;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
 
 public final class TestXWPFDocument {
 
@@ -396,6 +406,454 @@ public final class TestXWPFDocument {
 
             assertEquals(p3, doc.getBodyElements().get(0));
             assertEquals(p3, doc.getParagraphs().get(0));
+        }
+    }
+
+    @Test
+    void testRemoveBodyElementParagraphWithPicture() throws Exception {
+        byte[] png = XWPFTestDataSamples.getImage("nature1.png");
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFParagraph p1 = doc.createParagraph();
+            p1.createRun().addPicture(new ByteArrayInputStream(png), PictureType.PNG, "nature1.png", 100000, 100000);
+            doc.createParagraph().createRun().setText("keep");
+
+            assertEquals(1, doc.getAllPictures().size());
+            assertEquals(1, doc.getAllPackagePictures().size());
+
+            assertTrue(doc.removeBodyElement(0, true));
+            assertTrue(doc.getAllPictures().isEmpty());
+            assertTrue(doc.getAllPackagePictures().isEmpty());
+            assertTrue(doc.getPackage().getPartsByName(Pattern.compile("/word/media/.*")).isEmpty());
+
+            try (XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc)) {
+                assertTrue(doc2.getAllPictures().isEmpty());
+                assertTrue(doc2.getAllPackagePictures().isEmpty());
+                assertTrue(doc2.getPackage().getPartsByName(Pattern.compile("/word/media/.*")).isEmpty());
+                assertEquals(1, doc2.getParagraphs().size());
+                assertEquals("keep", doc2.getParagraphs().get(0).getText());
+            }
+
+            // Re-adding the same picture bytes creates a fresh part instead of reusing the deleted one
+            doc.createParagraph().createRun().addPicture(new ByteArrayInputStream(png), PictureType.PNG, "nature1.png", 100000, 100000);
+            try (XWPFDocument doc3 = XWPFTestDataSamples.writeOutAndReadBack(doc)) {
+                assertEquals(1, doc3.getAllPictures().size());
+                assertArrayEquals(png, doc3.getAllPictures().get(0).getData());
+            }
+        }
+    }
+
+    @Test
+    void testRemoveBodyElementSharedPictureBetweenParagraphs() throws Exception {
+        byte[] png = XWPFTestDataSamples.getImage("nature1.png");
+        try (XWPFDocument doc = new XWPFDocument()) {
+            doc.createParagraph().createRun().addPicture(new ByteArrayInputStream(png), PictureType.PNG, "nature1.png", 100000, 100000);
+            doc.createParagraph().createRun().addPicture(new ByteArrayInputStream(png), PictureType.PNG, "nature1.png", 100000, 100000);
+
+            assertEquals(1, doc.getAllPictures().size());
+            assertEquals(1, doc.getPackage().getPartsByName(Pattern.compile("/word/media/.*")).size());
+
+            // Removing the first paragraph keeps the picture for the second paragraph
+            assertTrue(doc.removeBodyElement(0, true));
+            assertEquals(1, doc.getAllPictures().size());
+            assertEquals(1, doc.getAllPackagePictures().size());
+
+            try (XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc)) {
+                assertEquals(1, doc2.getAllPictures().size());
+                assertEquals(1, doc2.getPackage().getPartsByName(Pattern.compile("/word/media/.*")).size());
+                assertArrayEquals(png, doc2.getParagraphs().get(0).getRuns().get(0).getEmbeddedPictures().get(0).getPictureData().getData());
+
+                // Removing the last paragraph using the picture drops the image part
+                assertTrue(doc2.removeBodyElement(0, true));
+                assertTrue(doc2.getAllPictures().isEmpty());
+                assertTrue(doc2.getAllPackagePictures().isEmpty());
+
+                try (XWPFDocument doc3 = XWPFTestDataSamples.writeOutAndReadBack(doc2)) {
+                    assertTrue(doc3.getAllPictures().isEmpty());
+                    assertTrue(doc3.getPackage().getPartsByName(Pattern.compile("/word/media/.*")).isEmpty());
+                }
+            }
+        }
+    }
+
+    @Test
+    void testRemoveBodyElementPictureAlsoUsedInHeader() throws Exception {
+        // Loaded document where body and header share the same image part
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_2.docx")) {
+            byte[] expectedBytes = doc.getHeaderArray(0).getAllPictures().get(0).getData();
+            assertEquals(1, doc.getAllPictures().size());
+            assertEquals(1, doc.getAllPackagePictures().size());
+            assertEquals(1, doc.getHeaderArray(0).getAllPictures().size());
+
+            assertTrue(doc.removeBodyElement(0, true));
+            assertTrue(doc.getAllPictures().isEmpty());
+            assertEquals(0, doc.getPackagePart().getRelationshipsByType(XWPFRelation.IMAGES.getRelation()).size());
+            assertEquals(1, doc.getAllPackagePictures().size());
+            assertEquals(1, doc.getHeaderArray(0).getAllPictures().size());
+
+            try (XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc)) {
+                assertTrue(doc2.getAllPictures().isEmpty());
+                assertEquals(1, doc2.getAllPackagePictures().size());
+                assertEquals(1, doc2.getHeaderArray(0).getAllPictures().size());
+                assertEquals(1, doc2.getPackage().getPartsByName(Pattern.compile("/word/media/.*")).size());
+                assertArrayEquals(expectedBytes, doc2.getHeaderArray(0).getAllPictures().get(0).getData());
+            }
+        }
+
+        // Programmatically created document with the same picture in body and header
+        byte[] png = XWPFTestDataSamples.getImage("nature1.png");
+        try (XWPFDocument doc = new XWPFDocument()) {
+            doc.createParagraph().createRun().addPicture(new ByteArrayInputStream(png), PictureType.PNG, "nature1.png", 100000, 100000);
+            XWPFHeader header = doc.createHeader(HeaderFooterType.DEFAULT);
+            header.createParagraph().createRun().addPicture(new ByteArrayInputStream(png), PictureType.PNG, "nature1.png", 100000, 100000);
+
+            assertTrue(doc.removeBodyElement(0, true));
+            assertTrue(doc.getAllPictures().isEmpty());
+            assertEquals(1, doc.getAllPackagePictures().size());
+
+            try (XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc)) {
+                assertTrue(doc2.getAllPictures().isEmpty());
+                assertEquals(1, doc2.getHeaderArray(0).getAllPictures().size());
+                assertEquals(1, doc2.getPackage().getPartsByName(Pattern.compile("/word/media/.*")).size());
+                assertArrayEquals(png, doc2.getHeaderArray(0).getAllPictures().get(0).getData());
+            }
+        }
+    }
+
+    @Test
+    void testRemoveBodyElementTableWithPicture() throws Exception {
+        byte[] png = XWPFTestDataSamples.getImage("nature1.png");
+        byte[] jpg = XWPFTestDataSamples.getImage("nature1.jpg");
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFTable table = doc.createTable(1, 1);
+            XWPFTableCell cell = table.getRow(0).getCell(0);
+            cell.getParagraphArray(0).createRun().addPicture(new ByteArrayInputStream(png), PictureType.PNG, "nature1.png", 100000, 100000);
+
+            // Also place a picture inside a nested table in the same cell
+            CTTbl nestedCtTbl = cell.getCTTc().addNewTbl();
+            XWPFTable nestedTable = new XWPFTable(nestedCtTbl, cell, 1, 1);
+            nestedTable.getRow(0).getCell(0).getParagraphArray(0).createRun()
+                    .addPicture(new ByteArrayInputStream(jpg), PictureType.JPEG, "nature1.jpg", 100000, 100000);
+
+            assertEquals(2, doc.getAllPictures().size());
+            assertEquals(2, doc.getPackage().getPartsByName(Pattern.compile("/word/media/.*")).size());
+
+            assertTrue(doc.removeBodyElement(0, true));
+            assertTrue(doc.getTables().isEmpty());
+            assertTrue(doc.getAllPictures().isEmpty());
+            assertTrue(doc.getAllPackagePictures().isEmpty());
+
+            try (XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc)) {
+                assertTrue(doc2.getTables().isEmpty());
+                assertTrue(doc2.getAllPictures().isEmpty());
+                assertTrue(doc2.getPackage().getPartsByName(Pattern.compile("/word/media/.*")).isEmpty());
+            }
+        }
+    }
+
+    @Test
+    void testRemoveBodyElementChart() throws Exception {
+        // Loaded document with two charts, each with style, colors, and an embedded Excel workbook
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("61745.docx")) {
+            assertEquals(2, doc.getCharts().size());
+            assertEquals(2, doc.getPackage().getPartsByName(Pattern.compile("/word/charts/chart\\d+\\.xml")).size());
+            assertEquals(2, doc.getPackage().getPartsByName(Pattern.compile("/word/embeddings/.*")).size());
+
+            assertTrue(doc.removeBodyElement(0, true));
+            assertEquals(1, doc.getCharts().size());
+            assertEquals("/word/charts/chart2.xml", doc.getCharts().get(0).getPackagePart().getPartName().getName());
+
+            try (XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc)) {
+                assertEquals(1, doc2.getCharts().size());
+                assertFalse(doc2.getPackage().containPart(PackagingURIHelper.createPartName("/word/charts/chart1.xml")));
+                assertFalse(doc2.getPackage().containPart(PackagingURIHelper.createPartName("/word/charts/colors1.xml")));
+                assertFalse(doc2.getPackage().containPart(PackagingURIHelper.createPartName("/word/charts/style1.xml")));
+                assertFalse(doc2.getPackage().containPart(PackagingURIHelper.createPartName("/word/embeddings/Microsoft_Excel_Worksheet1.xlsx")));
+                assertTrue(doc2.getPackage().containPart(PackagingURIHelper.createPartName("/word/charts/chart2.xml")));
+                assertTrue(doc2.getPackage().containPart(PackagingURIHelper.createPartName("/word/embeddings/Microsoft_Excel_Worksheet2.xlsx")));
+
+                // Removing the second chart removes the remaining chart and embedded workbook parts
+                assertTrue(doc2.removeBodyElement(0, true));
+                assertTrue(doc2.getCharts().isEmpty());
+
+                try (XWPFDocument doc3 = XWPFTestDataSamples.writeOutAndReadBack(doc2)) {
+                    assertTrue(doc3.getCharts().isEmpty());
+                    assertTrue(doc3.getPackage().getPartsByName(Pattern.compile("/word/(charts|embeddings)/.*")).isEmpty());
+                }
+            }
+        }
+
+        // Programmatically created chart with an embedded workbook
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFChart chart = doc.createChart();
+            chart.saveWorkbook(chart.getWorkbook());
+            assertEquals(1, doc.getCharts().size());
+            assertEquals(1, doc.getPackage().getPartsByName(Pattern.compile("/word/embeddings/.*")).size());
+
+            assertTrue(doc.removeBodyElement(0, true));
+            assertTrue(doc.getCharts().isEmpty());
+
+            try (XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc)) {
+                assertTrue(doc2.getCharts().isEmpty());
+                assertTrue(doc2.getPackage().getPartsByName(Pattern.compile("/word/(charts|embeddings)/.*")).isEmpty());
+            }
+        }
+    }
+
+    @Test
+    void testRemoveBodyElementHyperlink() throws Exception {
+        String idUnique;
+        String idShared;
+        try (XWPFDocument doc = new XWPFDocument()) {
+            idUnique = doc.createParagraph().createHyperlinkRun("https://poi.apache.org/unique").getHyperlinkId();
+            idShared = doc.createParagraph().createHyperlinkRun("https://poi.apache.org/shared").getHyperlinkId();
+            // Share idShared with a second paragraph
+            CTHyperlink sharedLink = doc.createParagraph().getCTP().addNewHyperlink();
+            sharedLink.setId(idShared);
+            sharedLink.addNewR().addNewT().setStringValue("shared2");
+
+            try (XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc)) {
+                // Also add a hyperlink after loading (exists in packagePart, not referenceRelationships)
+                String idCreatedAfterLoad = doc2.createParagraph().createHyperlinkRun("https://poi.apache.org/new").getHyperlinkId();
+                assertEquals(3, doc2.getHyperlinks().length);
+
+                // Removing paragraph 0 drops idUnique
+                assertTrue(doc2.removeBodyElement(0, true));
+                assertNull(doc2.getHyperlinkByID(idUnique));
+                assertNull(doc2.getReferenceRelationship(idUnique));
+                assertNull(doc2.getPackagePart().getRelationship(idUnique));
+                assertEquals(2, doc2.getHyperlinks().length);
+
+                // Removing paragraph 0 (originally 1) keeps idShared because the next paragraph still uses it
+                assertTrue(doc2.removeBodyElement(0, true));
+                assertNotNull(doc2.getHyperlinkByID(idShared));
+                assertNotNull(doc2.getPackagePart().getRelationship(idShared));
+
+                // Removing paragraph 1 (idCreatedAfterLoad) drops its external relationship
+                assertTrue(doc2.removeBodyElement(1, true));
+                assertNull(doc2.getHyperlinkByID(idCreatedAfterLoad));
+                assertNull(doc2.getPackagePart().getRelationship(idCreatedAfterLoad));
+                assertEquals(1, doc2.getHyperlinks().length);
+
+                try (XWPFDocument doc3 = XWPFTestDataSamples.writeOutAndReadBack(doc2)) {
+                    assertEquals(1, doc3.getHyperlinks().length);
+                    assertEquals("https://poi.apache.org/shared", doc3.getHyperlinks()[0].getURL());
+                    assertEquals(1, doc3.getPackagePart().getRelationshipsByType(XWPFRelation.HYPERLINK.getRelation()).size());
+                }
+            }
+        }
+    }
+
+    @Test
+    void testRemoveBodyElementPlainParagraphLeavesRelationsUnchanged() throws Exception {
+        byte[] png = XWPFTestDataSamples.getImage("nature1.png");
+        try (XWPFDocument doc = new XWPFDocument()) {
+            doc.createParagraph().createRun().setText("plain paragraph");
+            XWPFParagraph pWithContent = doc.createParagraph();
+            pWithContent.createRun().addPicture(new ByteArrayInputStream(png), PictureType.PNG, "nature1.png", 100000, 100000);
+            pWithContent.createHyperlinkRun("https://poi.apache.org/");
+
+            int relCountBefore = doc.getPackagePart().getRelationships().size();
+            assertTrue(doc.removeBodyElement(0, true));
+            assertEquals(relCountBefore, doc.getPackagePart().getRelationships().size());
+            assertEquals(1, doc.getAllPictures().size());
+            assertEquals(1, doc.getHyperlinks().length);
+
+            // Removing the paragraph with content drops its two relations while keeping document structural relations
+            assertTrue(doc.removeBodyElement(0, true));
+            assertEquals(relCountBefore - 2, doc.getPackagePart().getRelationships().size());
+
+            try (XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc)) {
+                assertEquals(relCountBefore - 2, doc2.getPackagePart().getRelationships().size());
+                assertTrue(doc2.getAllPictures().isEmpty());
+                assertEquals(0, doc2.getHyperlinks().length);
+                assertNotNull(doc2.getSettings());
+            }
+        }
+    }
+
+    @Test
+    void testRemoveBodyElementEmbeddedOleObject() throws Exception {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("EmbeddedDocument.docx")) {
+            assertEquals(1, doc.getAllEmbeddedParts().size());
+            assertEquals(1, doc.getAllPictures().size());
+
+            // Body element 2 holds the VML imagedata and o:OLEObject
+            assertTrue(doc.removeBodyElement(2, true));
+            assertTrue(doc.getAllEmbeddedParts().isEmpty());
+            assertTrue(doc.getAllPictures().isEmpty());
+            assertTrue(doc.getAllPackagePictures().isEmpty());
+
+            try (XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc)) {
+                assertTrue(doc2.getAllEmbeddedParts().isEmpty());
+                assertTrue(doc2.getAllPictures().isEmpty());
+                assertTrue(doc2.getPackage().getPartsByName(Pattern.compile("/word/(embeddings|media)/.*")).isEmpty());
+            }
+        }
+    }
+
+    @Test
+    void testRemoveBodyElementTextboxAlternateContentSmartArtAndExternalLink() throws Exception {
+        byte[] png = XWPFTestDataSamples.getImage("nature1.png");
+        byte[] jpg = XWPFTestDataSamples.getImage("nature1.jpg");
+        try (XWPFDocument doc = new XWPFDocument()) {
+            String txbxPicId = doc.addPictureData(png, PictureType.PNG);
+            String fallbackPicId = doc.addPictureData(jpg, PictureType.JPEG);
+            String extImgId = doc.getPackagePart().addExternalRelationship(
+                    "https://poi.apache.org/linked.png", XWPFRelation.IMAGES.getRelation()).getId();
+
+            // Create a SmartArt data part and relate it to the document
+            PackagePartName dmName = PackagingURIHelper.createPartName("/word/diagrams/data1.xml");
+            PackagePart dmPart = doc.getPackage().createPart(dmName, "application/vnd.openxmlformats-officedocument.drawingml.diagramData+xml");
+            try (OutputStream out = dmPart.getOutputStream()) {
+                out.write("<dgm:dataModel xmlns:dgm=\"http://schemas.openxmlformats.org/drawingml/2006/diagram\"/>".getBytes(StandardCharsets.UTF_8));
+            }
+            String dmRelId = doc.getPackagePart().addRelationship(
+                    dmName, TargetMode.INTERNAL,
+                    "http://schemas.openxmlformats.org/officeDocument/2006/relationships/diagramData").getId();
+
+            // Build a paragraph containing a textbox, mc:AlternateContent fallback, SmartArt relIds, and a linked image
+            XWPFParagraph p = doc.createParagraph();
+            String xml = "<w:r xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\""
+                    + " xmlns:r=\"" + PackageRelationshipTypes.CORE_PROPERTIES_ECMA376_NS + "\""
+                    + " xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\""
+                    + " xmlns:v=\"urn:schemas-microsoft-com:vml\""
+                    + " xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\""
+                    + " xmlns:dgm=\"http://schemas.openxmlformats.org/drawingml/2006/diagram\">"
+                    + "<mc:AlternateContent>"
+                    + "<mc:Choice Requires=\"wps\">"
+                    + "<w:txbxContent><w:p><w:r><a:blip r:embed=\"" + txbxPicId + "\" r:link=\"" + extImgId + "\"/></w:r></w:p></w:txbxContent>"
+                    + "</mc:Choice>"
+                    + "<mc:Fallback>"
+                    + "<w:pict><v:shape><v:imagedata r:id=\"" + fallbackPicId + "\"/></v:shape></w:pict>"
+                    + "</mc:Fallback>"
+                    + "</mc:AlternateContent>"
+                    + "<dgm:relIds r:dm=\"" + dmRelId + "\"/>"
+                    + "</w:r>";
+            XmlObject parsed = XmlObject.Factory.parse(xml);
+            try (XmlCursor src = parsed.newCursor();
+                 XmlCursor dst = p.getCTP().newCursor()) {
+                src.toFirstChild();
+                dst.toEndToken();
+                src.copyXml(dst);
+            }
+
+            try (XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc)) {
+                assertEquals(2, doc2.getAllPictures().size());
+                assertTrue(doc2.getPackage().containPart(dmName));
+                assertNotNull(doc2.getPackagePart().getRelationship(extImgId));
+
+                assertTrue(doc2.removeBodyElement(0, true));
+                assertTrue(doc2.getAllPictures().isEmpty());
+                assertTrue(doc2.getAllPackagePictures().isEmpty());
+                assertNull(doc2.getPackagePart().getRelationship(extImgId));
+                assertFalse(doc2.getPackage().containPart(dmName));
+
+                try (XWPFDocument doc3 = XWPFTestDataSamples.writeOutAndReadBack(doc2)) {
+                    assertTrue(doc3.getAllPictures().isEmpty());
+                    assertNull(doc3.getPackagePart().getRelationship(extImgId));
+                    assertTrue(doc3.getPackage().getPartsByName(Pattern.compile("/word/(media|diagrams)/.*")).isEmpty());
+                }
+            }
+        }
+    }
+
+    @Test
+    void testRemoveBodyElementKeepsPartTargetedByInternalHyperlink() throws Exception {
+        byte[] png = XWPFTestDataSamples.getImage("nature1.png");
+        try (XWPFDocument doc = new XWPFDocument()) {
+            doc.createParagraph().createRun().addPicture(new ByteArrayInputStream(png), PictureType.PNG, "nature1.png", 100000, 100000);
+            PackagePartName imageName = doc.getAllPictures().get(0).getPackagePart().getPartName();
+
+            // Add a second paragraph with an internal hyperlink targeting the image part
+            String linkId = doc.getPackagePart().addRelationship(
+                    new URI("media/" + doc.getAllPictures().get(0).getFileName()),
+                    TargetMode.INTERNAL, PackageRelationshipTypes.HYPERLINK_PART).getId();
+            CTHyperlink link = doc.createParagraph().getCTP().addNewHyperlink();
+            link.setId(linkId);
+            link.addNewR().addNewT().setStringValue("see image");
+
+            try (XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc)) {
+                assertEquals(1, doc2.getAllPictures().size());
+                assertTrue(doc2.removeBodyElement(0, true));
+                // Document's image relation is dropped, but the image part stays because the internal hyperlink targets it
+                assertTrue(doc2.getAllPictures().isEmpty());
+                assertTrue(doc2.getPackage().containPart(imageName));
+
+                try (XWPFDocument doc3 = XWPFTestDataSamples.writeOutAndReadBack(doc2)) {
+                    assertTrue(doc3.getAllPictures().isEmpty());
+                    assertTrue(doc3.getPackage().containPart(imageName));
+                    assertNotNull(doc3.getPackagePart().getRelationship(linkId));
+                }
+            }
+        }
+    }
+
+    @Test
+    void testRemoveBodyElementKeepsPartsByDefault() throws Exception {
+        byte[] png = XWPFTestDataSamples.getImage("nature1.png");
+        try (XWPFDocument doc = new XWPFDocument()) {
+            doc.createParagraph().createRun().addPicture(new ByteArrayInputStream(png), PictureType.PNG, "nature1.png", 100000, 100000);
+            doc.createParagraph().createRun().setText("after");
+
+            // move the paragraph with the picture to the end: copy it, remove it, add the copy again
+            CTP copy = (CTP) doc.getParagraphArray(0).getCTP().copy();
+            assertTrue(doc.removeBodyElement(0));
+            XWPFParagraph moved = doc.createParagraph();
+            doc.setParagraph(new XWPFParagraph(copy, doc), doc.getParagraphs().indexOf(moved));
+
+            assertEquals(1, doc.getAllPictures().size());
+            try (XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc)) {
+                XWPFPicture picture = doc2.getParagraphArray(1).getRuns().get(0).getEmbeddedPictures().get(0);
+                assertArrayEquals(png, picture.getPictureData().getData());
+            }
+        }
+    }
+
+    @Test
+    void testRemoveBodyElementKeepsDocumentParts() throws Exception {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            doc.createStyles();
+            XWPFParagraph paragraph = doc.createParagraph();
+            paragraph.createRun().setText("text");
+            String stylesId = doc.getRelationId(doc.getStyles());
+            assertNotNull(stylesId);
+            // a malformed hyperlink that uses the id of the styles relation
+            paragraph.getCTP().addNewHyperlink().setId(stylesId);
+
+            assertTrue(doc.removeBodyElement(0, true));
+            assertEquals(stylesId, doc.getRelationId(doc.getStyles()));
+            assertNotNull(doc.getPackagePart().getRelationship(stylesId));
+            try (XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc)) {
+                assertNotNull(doc2.getStyles());
+            }
+        }
+    }
+
+    @Test
+    void testRemoveBodyElementOnReadOnlyPackage() throws Exception {
+        byte[] png = XWPFTestDataSamples.getImage("nature1.png");
+        File file = TempFile.createTempFile("removeBodyElement", ".docx");
+        try {
+            try (XWPFDocument doc = new XWPFDocument()) {
+                doc.createParagraph().createRun().addPicture(new ByteArrayInputStream(png), PictureType.PNG, "nature1.png", 100000, 100000);
+                doc.createParagraph().createHyperlinkRun("https://poi.apache.org/");
+                try (FileOutputStream out = new FileOutputStream(file)) {
+                    doc.write(out);
+                }
+            }
+            try (OPCPackage pkg = OPCPackage.open(file, PackageAccess.READ);
+                 XWPFDocument doc = new XWPFDocument(pkg)) {
+                int relations = doc.getPackagePart().getRelationships().size();
+                assertTrue(doc.removeBodyElement(0, true));
+                assertTrue(doc.removeBodyElement(0, true));
+                assertTrue(doc.getBodyElements().isEmpty());
+                // nothing can be removed from a read-only package, so the relations stay
+                assertEquals(relations, doc.getPackagePart().getRelationships().size());
+                assertEquals(1, doc.getAllPictures().size());
+                pkg.revert();
+            }
+        } finally {
+            assertTrue(file.delete());
         }
     }
 
