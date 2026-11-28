@@ -36,6 +36,7 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
+import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.ooxml.util.XPathHelper;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -432,30 +433,46 @@ public class XSLFPictureShape extends XSLFSimpleShape
         }
         if (blip.isSetExtLst()) {
             CTOfficeArtExtensionList extLst = blip.getExtLst();
-            for(CTOfficeArtExtension ext : extLst.getExtArray()){
+            CTOfficeArtExtension[] exts = extLst.getExtArray();
+            // backwards, so that an extension can be removed
+            for (int i = exts.length - 1; i >= 0; i--) {
+                CTOfficeArtExtension ext = exts[i];
                 String xpath = "declare namespace a14='"+ MS_DML_NS +"' $this//a14:imgProps/a14:imgLayer";
-                importEmbeddedBlip(ext.selectPath(xpath), p);
+                boolean imported = importEmbeddedBlips(ext.selectPath(xpath), p);
                 xpath = "declare namespace asvg='"+ MS_SVG_NS +"' $this/asvg:svgBlip";
-                importEmbeddedBlip(ext.selectPath(xpath), p);
+                imported &= importEmbeddedBlips(ext.selectPath(xpath), p);
+                if (!imported) {
+                    LOG.atWarn().log("dropping the blip extension {} of a copied picture, as it refers to a missing picture", ext.getUri());
+                    extLst.removeExt(i);
+                }
             }
         }
     }
 
     /**
-     * Imports the picture referenced by the r:embed attribute of a blip extension element
-     * (e.g. the image layer or the SVG image) and points the attribute to the new relation.
+     * Imports the pictures referenced by the r:embed attribute of blip extension elements
+     * (e.g. the image layer or the SVG image) and points the attributes to the new relations.
+     *
+     * @return false if a reference doesn't resolve to picture data of the source sheet,
+     *  in which case it is left unchanged
      */
-    private void importEmbeddedBlip(XmlObject[] obj, XSLFPictureShape source) {
-        if (obj == null || obj.length != 1) {
-            return;
-        }
-        try (XmlCursor c = obj[0].newCursor()) {
-            String id = c.getAttributeText(EMBED_TAG);
-            if (id != null) {
-                String newId = getSheet().importBlip(id, source.getSheet());
-                c.setAttributeText(EMBED_TAG, newId);
+    private boolean importEmbeddedBlips(XmlObject[] objs, XSLFPictureShape source) {
+        boolean imported = true;
+        for (XmlObject obj : objs) {
+            try (XmlCursor c = obj.newCursor()) {
+                String id = c.getAttributeText(EMBED_TAG);
+                if (id == null) {
+                    continue;
+                }
+                RelationPart rp = source.getSheet().getRelationPartById(id);
+                if (rp == null || !(rp.getDocumentPart() instanceof XSLFPictureData)) {
+                    imported = false;
+                    continue;
+                }
+                c.setAttributeText(EMBED_TAG, getSheet().importBlip(id, source.getSheet()));
             }
         }
+        return imported;
     }
 
     /**
