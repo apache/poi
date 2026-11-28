@@ -255,7 +255,7 @@ class TestXSLFHyperlink {
         CTHyperlink link = ((XSLFAutoShape) slide.getShapes().get(0)).getHyperlink().getXmlObject();
         assertEquals("", link.getId());
         if (action.isEmpty()) {
-            assertFalse(link.isSetAction());
+            assertFalse(link.isSetAction(), "an empty action should not be written to the copy");
         } else {
             assertEquals(action, link.getAction());
         }
@@ -295,7 +295,7 @@ class TestXSLFHyperlink {
             CTHyperlink copied = ((XSLFAutoShape) copy.getShapes().get(0)).getHyperlink().getXmlObject();
             // no slide jump without a target is left behind
             assertEquals("", copied.getId());
-            assertFalse(copied.isSetAction());
+            assertFalse(copied.isSetAction(), "a slide jump whose target is missing should lose its action");
         }
     }
 }
